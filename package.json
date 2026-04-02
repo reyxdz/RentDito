@@ -1,0 +1,14 @@
+{
+  "name": "rentdito-root",
+  "version": "1.0.0",
+  "description": "RentDito root package for running client and server concurrently",
+  "private": true,
+  "scripts": {
+    "postinstall": "npm install --prefix server && npm install --prefix client",
+    "dev": "concurrently \"npm run dev --prefix server\" \"npm run dev --prefix client\"",
+    "build": "npm run build --prefix client && npm run build --prefix server"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
