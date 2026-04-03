@@ -13,8 +13,8 @@ import Login from './presentation/pages/auth/Login';
 
 import LandlordLayout from './presentation/layouts/LandlordLayout';
 import LandlordOverview from './presentation/pages/landlord/Overview';
+import LandlordProperties from './presentation/pages/landlord/Properties';
 import {
-  PropertiesPlaceholder as LandlordProperties,
   UnitsPlaceholder,
   BookingsPlaceholder,
   FinancialsPlaceholder as LandlordFinancials,
