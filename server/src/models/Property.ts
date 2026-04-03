@@ -1,6 +1,7 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
 export type PropertyStatus = 'Active' | 'Inactive' | 'Maintenance' | 'Archived';
+export type PropertyType = 'Boarding House' | 'Apartment' | 'Commercial' | 'Parking' | 'Land' | 'Mixed Use';
 
 export interface IProperty extends Document {
   landlordId: mongoose.Types.ObjectId;  // Relation to User
@@ -14,6 +15,7 @@ export interface IProperty extends Document {
     country: string;
   };
   amenities: string[];
+  propertyType: PropertyType;
   status: PropertyStatus;
   images: string[];
   createdAt: Date;
@@ -37,6 +39,11 @@ const PropertySchema = new Schema<IProperty>(
       country: { type: String, default: 'Philippines' },
     },
     amenities: [{ type: String }],
+    propertyType: {
+      type: String,
+      enum: ['Boarding House', 'Apartment', 'Commercial', 'Parking', 'Land', 'Mixed Use'],
+      required: true
+    },
     status: { 
       type: String, 
       enum: ['Active', 'Inactive', 'Maintenance', 'Archived'], 
