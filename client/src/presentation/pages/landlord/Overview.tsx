@@ -1,4 +1,4 @@
-import { Box, Typography, Grid, Card, Button } from '@mui/material';
+import { Box, Typography, Grid, Card } from '@mui/material';
 import { HomeWork, AccountBalanceWallet, DateRange, Person } from '@mui/icons-material';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 
@@ -17,19 +17,7 @@ const OCCUPANCY_DATA = [
 export default function LandlordOverview() {
   return (
     <Box sx={{ pb: 4 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 4 }}>
-        <Box>
-          <Typography variant="h4" sx={{ fontWeight: 800, color: 'text.primary', mb: 1, letterSpacing: -0.5 }}>
-            Landlord Overview
-          </Typography>
-          <Typography variant="body1" color="text.secondary">
-            Welcome back! Here is a summary of your property portfolio.
-          </Typography>
-        </Box>
-        <Button variant="contained" color="primary" sx={{ borderRadius: 2, fontWeight: 600 }}>
-          Add New Property
-        </Button>
-      </Box>
+
 
       <Grid container spacing={3} sx={{ mb: 4 }}>
         {/* Metric Cards */}
