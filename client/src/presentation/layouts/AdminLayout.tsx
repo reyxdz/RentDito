@@ -70,11 +70,9 @@ export default function AdminLayout() {
           alt="RentDito Logo"
           sx={{ height: 36, objectFit: 'contain', ml: isCollapsed && isSmUp ? 0 : 0 }}
         />
-        {!(isCollapsed && isSmUp) && (
-          <Typography variant="h6" sx={{ fontWeight: 800, color: 'primary.main', letterSpacing: -0.5 }}>
-            Admin Panel
-          </Typography>
-        )}
+        <Typography variant="h6" sx={{ fontWeight: 800, color: 'primary.main', letterSpacing: -0.5, whiteSpace: 'nowrap', opacity: isCollapsed && isSmUp ? 0 : 1, transition: 'all 0.3s ease', maxWidth: isCollapsed && isSmUp ? 0 : 200, overflow: 'hidden' }}>
+          Admin Panel
+        </Typography>
       </Toolbar>
       <Divider sx={{ borderColor: mode === 'light' ? 'rgba(0,0,0,0.08)' : 'rgba(255,255,255,0.08)' }} />
       <List sx={{ px: isCollapsed && isSmUp ? 1 : 2, pt: 2, flexGrow: 1 }}>
@@ -107,12 +105,11 @@ export default function AdminLayout() {
               }}>
                 {item.icon}
               </ListItemIcon>
-              {!(isCollapsed && isSmUp) && (
-                <ListItemText 
-                  primary={item.text} 
-                  primaryTypographyProps={{ fontWeight: isActive ? 600 : 500, fontSize: '0.95rem' }} 
-                />
-              )}
+              <ListItemText 
+                primary={item.text} 
+                sx={{ opacity: isCollapsed && isSmUp ? 0 : 1, transition: 'all 0.3s ease', whiteSpace: 'nowrap', maxWidth: isCollapsed && isSmUp ? 0 : 200, overflow: 'hidden' }}
+                primaryTypographyProps={{ fontWeight: isActive ? 600 : 500, fontSize: '0.95rem' }} 
+              />
             </ListItemButton>
           );
 
@@ -151,18 +148,14 @@ export default function AdminLayout() {
               <Tooltip title={isCollapsed && isSmUp ? "Profile Options" : ""} placement="right">
                 <Avatar src={user?.avatar} sx={{ width: 40, height: 40, mx: 'auto' }} />
               </Tooltip>
-              {!(isCollapsed && isSmUp) && (
-                <Box sx={{ flexGrow: 1, minWidth: 0 }}>
-                  <Typography variant="subtitle2" sx={{ fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis' }}>{user?.name}</Typography>
-                  <Typography variant="caption" color="text.secondary" sx={{ display: 'block', overflow: 'hidden', textOverflow: 'ellipsis' }}>{user?.email}</Typography>
-                </Box>
-              )}
+              <Box sx={{ flexGrow: 1, minWidth: 0, opacity: isCollapsed && isSmUp ? 0 : 1, transition: 'all 0.3s ease', whiteSpace: 'nowrap', maxWidth: isCollapsed && isSmUp ? 0 : 200, overflow: 'hidden' }}>
+                <Typography variant="subtitle2" sx={{ fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis' }}>{user?.name}</Typography>
+                <Typography variant="caption" color="text.secondary" sx={{ display: 'block', overflow: 'hidden', textOverflow: 'ellipsis' }}>{user?.email}</Typography>
+              </Box>
            </Box>
-           {!(isCollapsed && isSmUp) && (
-             <Button fullWidth variant="text" color="error" size="small" onClick={() => logout()} sx={{ mt: 1 }}>
-                Sign Out
-             </Button>
-           )}
+           <Button fullWidth variant="text" color="error" size="small" onClick={() => logout()} sx={{ mt: 1, opacity: isCollapsed && isSmUp ? 0 : 1, transition: 'all 0.3s ease', whiteSpace: 'nowrap', pointerEvents: isCollapsed && isSmUp ? 'none' : 'auto', maxWidth: isCollapsed && isSmUp ? 0 : 200, minWidth: isCollapsed && isSmUp ? 0 : 64, overflow: 'hidden', px: isCollapsed && isSmUp ? 0 : 2, maxHeight: isCollapsed && isSmUp ? 0 : 40, py: isCollapsed && isSmUp ? 0 : undefined }}>
+              Sign Out
+           </Button>
         </Card>
         
         {/* Profile menu only on collapsed state */}
@@ -186,12 +179,13 @@ export default function AdminLayout() {
       <AppBar
         position="fixed"
         sx={{
-          width: { md: 'calc(100% - ' + activeDrawerWidth + 'px)' },
-          ml: { md: activeDrawerWidth + 'px' },
+          width: { md: 'calc(100% - ' + collapsedDrawerWidth + 'px)' },
+          ml: { md: collapsedDrawerWidth + 'px' },
           bgcolor: 'background.paper',
           borderBottom: 1,
           borderColor: mode === 'light' ? 'rgba(0,0,0,0.08)' : 'rgba(255,255,255,0.08)',
           boxShadow: 'none',
+          transition: 'width 0.3s ease, margin 0.3s ease',
         }}
       >
         <Toolbar>
@@ -217,7 +211,11 @@ export default function AdminLayout() {
       
       <Box
         component="nav"
-        sx={{ width: { md: activeDrawerWidth }, flexShrink: { md: 0 } }}
+        sx={{ 
+          width: { md: collapsedDrawerWidth }, 
+          flexShrink: { md: 0 },
+          transition: 'width 0.3s ease'
+        }}
       >
         <Drawer
           variant={isSmUp ? 'permanent' : 'temporary'}
@@ -232,6 +230,7 @@ export default function AdminLayout() {
                 borderRight: 1,
                 borderColor: mode === 'light' ? 'rgba(0,0,0,0.08)' : 'rgba(255,255,255,0.08)',
                 overflowX: 'visible',
+                transition: 'width 0.3s ease',
             },
           }}
         >
@@ -252,6 +251,7 @@ export default function AdminLayout() {
               borderColor: mode === 'light' ? 'rgba(0,0,0,0.08)' : 'rgba(255,255,255,0.08)',
               boxShadow: 2,
               zIndex: theme.zIndex.drawer + 2,
+              transition: 'left 0.3s ease',
               '&:hover': { bgcolor: 'action.hover' }
             }}
           >
@@ -263,8 +263,9 @@ export default function AdminLayout() {
         component="main"
         sx={{ 
           flexGrow: 1, p: 3, 
-          width: { md: 'calc(100% - ' + activeDrawerWidth + 'px)' }, 
+          width: { md: 'calc(100% - ' + collapsedDrawerWidth + 'px)' }, 
           pt: 10,
+          transition: 'width 0.3s ease',
         }}
       >
         <Outlet />
