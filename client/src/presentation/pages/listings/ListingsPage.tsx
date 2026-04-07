@@ -314,21 +314,6 @@ export default function ListingsPage() {
                       <ImageCarousel images={property.images} height={220} borderRadius={0} />
 
                       <CardContent sx={{ p: 2.5 }}>
-                        {/* Type badge */}
-                        <Chip
-                          label={property.propertyType}
-                          size="small"
-                          sx={{
-                            mb: 1.5,
-                            bgcolor: 'primary.main',
-                            color: 'white',
-                            fontWeight: 700,
-                            fontSize: '0.7rem',
-                            borderRadius: 1,
-                            letterSpacing: 0.3,
-                          }}
-                        />
-
                         {/* Name */}
                         <Typography
                           variant="h6"
