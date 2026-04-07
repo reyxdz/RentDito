@@ -8,7 +8,8 @@ export interface Property {
   description: string;
   propertyType: PropertyType;
   status: PropertyStatus;
-  
+  images: string[];
+
   address: {
     street: string;
     city: string;
@@ -17,13 +18,20 @@ export interface Property {
     country: string;
   };
 
+  inclusions: string[];
+  otherDetails: string[];
+
   // Aggregated metadata mapped specifically for the dashboard stats
   metrics: {
     totalUnits: number;
     activeUnits: number;
     vacantUnits: number;
+    priceRange: {
+      min: number;
+      max: number;
+    };
   };
-  
+
   createdAt: Date;
   updatedAt: Date;
 }
