@@ -10,24 +10,18 @@ import {
   InputAdornment,
   Chip,
   MenuItem,
-  AppBar,
-  Toolbar,
-  IconButton,
   Skeleton,
 } from '@mui/material';
 import {
   Search,
   LocationOnOutlined,
   MeetingRoomOutlined,
-  Brightness4,
-  Brightness7,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import { useColorMode } from '../../context/ThemeContext';
 import { useListings } from '../../../application/hooks/useListings';
 import ImageCarousel from '../../components/ImageCarousel';
+import Navbar from '../../components/Navbar';
 import type { PropertyType } from '../../../domain/entities/Property';
-import logoPng from '../../../assets/logo.png';
 
 const PROPERTY_TYPES: PropertyType[] = [
   'Boarding House',
@@ -40,7 +34,6 @@ const PROPERTY_TYPES: PropertyType[] = [
 
 export default function ListingsPage() {
   const navigate = useNavigate();
-  const { mode, toggleColorMode } = useColorMode();
   const { properties, loading, error } = useListings();
 
   const [searchTerm, setSearchTerm] = useState('');
@@ -67,38 +60,7 @@ export default function ListingsPage() {
 
   return (
     <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      {/* ── Navbar ─────────────────────────────────────────────────────── */}
-      <AppBar position="sticky" sx={{ pt: 1, pb: 1 }}>
-        <Container maxWidth="lg">
-          <Toolbar disableGutters sx={{ justifyContent: 'space-between' }}>
-            <Box
-              sx={{ display: 'flex', alignItems: 'center', gap: 1, cursor: 'pointer' }}
-              onClick={() => navigate('/')}
-            >
-              <Box
-                component="img"
-                src={logoPng}
-                alt="RentDito Logo"
-                sx={{ height: 40, objectFit: 'contain' }}
-              />
-              <Typography
-                variant="h5"
-                sx={{ fontWeight: 800, color: 'primary.main', ml: 1, letterSpacing: -0.5 }}
-              >
-                RentDito
-              </Typography>
-            </Box>
-
-
-
-            <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
-              <IconButton onClick={toggleColorMode} sx={{ color: 'text.secondary' }}>
-                {mode === 'dark' ? <Brightness7 /> : <Brightness4 />}
-              </IconButton>
-            </Box>
-          </Toolbar>
-        </Container>
-      </AppBar>
+      <Navbar />
 
       {/* ── Hero / Search Section ──────────────────────────────────────── */}
       <Box
