@@ -19,4 +19,5 @@ export interface Unit {
   vacancies: number;
   status: UnitStatus;
   features: string[];
+  otherDetails: string[];
 }
