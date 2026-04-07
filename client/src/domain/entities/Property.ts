@@ -1,5 +1,12 @@
 export type PropertyStatus = 'Active' | 'Disabled' | 'Maintenance' | 'Archived';
 export type PropertyType = 'Boarding House' | 'Apartment' | 'Commercial' | 'Parking' | 'Land' | 'Mixed Use';
+export type PropertyCategory = 'Review Centers' | 'Schools and Universities' | 'Commercial Establishments';
+
+export interface NearbyCategory {
+  category: PropertyCategory;
+  distance?: string;
+  name?: string;
+}
 
 export interface Property {
   id: string;
@@ -20,6 +27,7 @@ export interface Property {
 
   inclusions: string[];
   otherDetails: string[];
+  nearbyCategories: NearbyCategory[];
 
   // Aggregated metadata mapped specifically for the dashboard stats
   metrics: {
