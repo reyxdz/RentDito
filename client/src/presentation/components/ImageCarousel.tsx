@@ -45,7 +45,7 @@ export default function ImageCarousel({
       <Dialog
         open={isFullscreen}
         onClose={() => setIsFullscreen(false)}
-        maxWidth="100vw"
+        maxWidth={false}
         fullWidth
         PaperProps={{
           sx: {
@@ -90,6 +90,8 @@ export default function ImageCarousel({
               sx={{
                 position: 'absolute',
                 left: 16,
+                top: '50%',
+                transform: 'translateY(-50%)',
                 color: '#fff',
                 bgcolor: 'rgba(0,0,0,0.5)',
                 width: 50,
@@ -121,6 +123,8 @@ export default function ImageCarousel({
               sx={{
                 position: 'absolute',
                 right: 16,
+                top: '50%',
+                transform: 'translateY(-50%)',
                 color: '#fff',
                 bgcolor: 'rgba(0,0,0,0.5)',
                 width: 50,
