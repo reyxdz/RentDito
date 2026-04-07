@@ -29,7 +29,6 @@ import {
 } from '@mui/icons-material';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useColorMode } from '../../context/ThemeContext';
-import { useAuth } from '../../../application/context/AuthContext';
 import { usePropertyDetail } from '../../../application/hooks/usePropertyDetail';
 import ImageCarousel from '../../components/ImageCarousel';
 import logoPng from '../../../assets/logo.png';
@@ -38,7 +37,6 @@ export default function PropertyDetailPage() {
   const { propertyId } = useParams<{ propertyId: string }>();
   const navigate = useNavigate();
   const { mode, toggleColorMode } = useColorMode();
-  const { isAuthenticated, user, logout } = useAuth();
   const { property, units, loading, error } = usePropertyDetail(propertyId);
 
   const formatPrice = (amount: number) =>

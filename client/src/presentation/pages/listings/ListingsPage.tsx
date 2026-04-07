@@ -13,7 +13,6 @@ import {
   AppBar,
   Toolbar,
   IconButton,
-  Button,
   Skeleton,
 } from '@mui/material';
 import {
@@ -25,7 +24,6 @@ import {
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useColorMode } from '../../context/ThemeContext';
-import { useAuth } from '../../../application/context/AuthContext';
 import { useListings } from '../../../application/hooks/useListings';
 import ImageCarousel from '../../components/ImageCarousel';
 import type { PropertyType } from '../../../domain/entities/Property';
@@ -43,7 +41,6 @@ const PROPERTY_TYPES: PropertyType[] = [
 export default function ListingsPage() {
   const navigate = useNavigate();
   const { mode, toggleColorMode } = useColorMode();
-  const { isAuthenticated, user, logout } = useAuth();
   const { properties, loading, error } = useListings();
 
   const [searchTerm, setSearchTerm] = useState('');
