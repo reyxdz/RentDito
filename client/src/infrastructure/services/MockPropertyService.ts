@@ -37,13 +37,24 @@ const MOCK_PROPERTIES: Property[] = [
       zipCode: '6543',
       country: 'Philippines',
     },
-    inclusions: ['WiFi', 'Foam', 'Pillow', 'Table', 'Chair', 'Clip Fan', 'Electric Rice Cooker'],
-    otherDetails: [
-      'Utility bills are excluded but each room has its own submeters',
-      'Near local amenities',
-      'Can cook',
-      'Can do laundry',
-      'No curfew'
+    inclusions: ['WiFi', 'Foam', 'Pillow', 'Table', 'Chair', 'Clip Fan', 'Electric Rice Cooker', 'Can Cook', 'Can Wash Clothes', 'No Curfew'],
+    otherDetails: [],
+    nearbyCategories: [
+      {
+        category: 'Review Centers',
+        distance: '9 minutes walk',
+        name: 'Mega Review Center',
+      },
+      {
+        category: 'Schools and Universities',
+        distance: '10 minutes',
+        name: 'University of Cebu',
+      },
+      {
+        category: 'Commercial Establishments',
+        distance: '5 minutes walk',
+        name: 'Naval Town Market',
+      },
     ],
     metrics: {
       totalUnits: 10,
@@ -86,6 +97,7 @@ export const mockPropertyService: PropertyRepository & {
       images: [],
       inclusions: [],
       otherDetails: [],
+      nearbyCategories: [],
       metrics: { totalUnits: 0, activeUnits: 0, vacantUnits: 0, priceRange: { min: 0, max: 0 } },
       createdAt: new Date(),
       updatedAt: new Date(),
