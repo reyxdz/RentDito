@@ -1,19 +1,22 @@
 import { useState, useCallback } from 'react';
-import { Box, IconButton } from '@mui/material';
-import { ChevronLeft, ChevronRight } from '@mui/icons-material';
+import { Box, IconButton, Dialog, Typography } from '@mui/material';
+import { ChevronLeft, ChevronRight, Fullscreen, Close } from '@mui/icons-material';
 
 interface ImageCarouselProps {
   images: string[];
   height?: number | string;
   borderRadius?: number;
+  arrowPosition?: 'inside' | 'outside';
 }
 
 export default function ImageCarousel({
   images,
   height = 220,
   borderRadius = 12,
+  arrowPosition = 'inside',
 }: ImageCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   const handlePrev = useCallback(
     (e: React.MouseEvent) => {
@@ -36,6 +39,151 @@ export default function ImageCarousel({
     setCurrentIndex(index);
   }, []);
 
+  // Fullscreen Modal
+  if (isFullscreen) {
+    return (
+      <Dialog
+        open={isFullscreen}
+        onClose={() => setIsFullscreen(false)}
+        maxWidth="100vw"
+        fullWidth
+        PaperProps={{
+          sx: {
+            bgcolor: 'rgb(0, 0, 0)',
+            m: 0,
+            maxHeight: '100vh',
+            borderRadius: 0,
+          },
+        }}
+      >
+        <Box
+          sx={{
+            width: '100vw',
+            height: '100vh',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            position: 'relative',
+            bgcolor: '#000',
+          }}
+        >
+          {/* Close Button */}
+          <IconButton
+            onClick={() => setIsFullscreen(false)}
+            sx={{
+              position: 'absolute',
+              top: 16,
+              right: 16,
+              color: '#fff',
+              bgcolor: 'rgba(0,0,0,0.5)',
+              zIndex: 10,
+              '&:hover': { bgcolor: 'rgba(0,0,0,0.8)' },
+            }}
+          >
+            <Close />
+          </IconButton>
+
+          {/* Left Arrow */}
+          {images.length > 1 && (
+            <IconButton
+              onClick={handlePrev}
+              sx={{
+                position: 'absolute',
+                left: 16,
+                color: '#fff',
+                bgcolor: 'rgba(0,0,0,0.5)',
+                width: 50,
+                height: 50,
+                zIndex: 10,
+                '&:hover': { bgcolor: 'rgba(0,0,0,0.8)' },
+              }}
+            >
+              <ChevronLeft sx={{ fontSize: 32 }} />
+            </IconButton>
+          )}
+
+          {/* Main Image */}
+          <Box
+            component="img"
+            src={images[currentIndex]}
+            alt={`Slide ${currentIndex + 1}`}
+            sx={{
+              maxWidth: '100%',
+              maxHeight: '100%',
+              objectFit: 'contain',
+            }}
+          />
+
+          {/* Right Arrow */}
+          {images.length > 1 && (
+            <IconButton
+              onClick={handleNext}
+              sx={{
+                position: 'absolute',
+                right: 16,
+                color: '#fff',
+                bgcolor: 'rgba(0,0,0,0.5)',
+                width: 50,
+                height: 50,
+                zIndex: 10,
+                '&:hover': { bgcolor: 'rgba(0,0,0,0.8)' },
+              }}
+            >
+              <ChevronRight sx={{ fontSize: 32 }} />
+            </IconButton>
+          )}
+
+          {/* Dot indicators */}
+          {images.length > 1 && (
+            <Box
+              sx={{
+                position: 'absolute',
+                bottom: 24,
+                left: '50%',
+                transform: 'translateX(-50%)',
+                display: 'flex',
+                gap: 1,
+              }}
+            >
+              {images.map((_, i) => (
+                <Box
+                  key={i}
+                  onClick={(e) => handleDot(e, i)}
+                  sx={{
+                    width: currentIndex === i ? 32 : 10,
+                    height: 10,
+                    borderRadius: 1,
+                    bgcolor: currentIndex === i ? '#fff' : 'rgba(255,255,255,0.5)',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    '&:hover': { bgcolor: 'rgba(255,255,255,0.8)' },
+                  }}
+                />
+              ))}
+            </Box>
+          )}
+
+          {/* Image counter */}
+          <Typography
+            sx={{
+              position: 'absolute',
+              bottom: 24,
+              right: 24,
+              color: '#fff',
+              bgcolor: 'rgba(0,0,0,0.5)',
+              px: 2,
+              py: 1,
+              borderRadius: 1,
+              fontSize: '0.875rem',
+            }}
+          >
+            {currentIndex + 1} / {images.length}
+          </Typography>
+        </Box>
+      </Dialog>
+    );
+  }
+
   if (!images.length) {
     return (
       <Box
@@ -54,7 +202,135 @@ export default function ImageCarousel({
       </Box>
     );
   }
+if (arrowPosition === 'outside') {
+    return (
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+        {/* Left Arrow */}
+        <IconButton
+          onClick={handlePrev}
+          size="small"
+          sx={{
+            bgcolor: 'action.hover',
+            color: 'text.secondary',
+            width: 40,
+            height: 40,
+            flexShrink: 0,
+            '&:hover': { bgcolor: 'primary.main', color: '#fff' },
+          }}
+        >
+          <ChevronLeft />
+        </IconButton>
 
+        {/* Carousel */}
+        <Box
+          sx={{
+            position: 'relative',
+            height,
+            borderRadius: `${borderRadius}px`,
+            overflow: 'hidden',
+            flex: 1,
+            '&:hover .fullscreen-btn': { opacity: 1 },
+          }}
+        >
+          {/* Image slides */}
+          <Box
+            sx={{
+              display: 'flex',
+              transition: 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+              transform: `translateX(-${currentIndex * 100}%)`,
+              height: '100%',
+            }}
+          >
+            {images.map((src, i) => (
+              <Box
+                key={i}
+                component="img"
+                src={src}
+                alt={`Slide ${i + 1}`}
+                loading="lazy"
+                sx={{
+                  minWidth: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  flexShrink: 0,
+                }}
+              />
+            ))}
+          </Box>
+
+          {/* Fullscreen Button */}
+          <IconButton
+            onClick={() => setIsFullscreen(true)}
+            className="fullscreen-btn"
+            size="small"
+            sx={{
+              position: 'absolute',
+              top: 8,
+              right: 8,
+              bgcolor: 'rgba(0,0,0,0.45)',
+              color: '#fff',
+              width: 32,
+              height: 32,
+              opacity: 0,
+              transition: 'opacity 0.25s ease',
+              zIndex: 5,
+              '&:hover': { bgcolor: 'rgba(0,0,0,0.7)' },
+            }}
+          >
+            <Fullscreen fontSize="small" />
+          </IconButton>
+
+          {/* Dot indicators */}
+          {images.length > 1 && (
+            <Box
+              sx={{
+                position: 'absolute',
+                bottom: 8,
+                left: '50%',
+                transform: 'translateX(-50%)',
+                display: 'flex',
+                gap: 0.75,
+              }}
+            >
+              {images.map((_, i) => (
+                <Box
+                  key={i}
+                  onClick={(e) => handleDot(e, i)}
+                  sx={{
+                    width: currentIndex === i ? 24 : 8,
+                    height: 8,
+                    borderRadius: 1,
+                    bgcolor: currentIndex === i ? 'primary.main' : 'rgba(255,255,255,0.5)',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    '&:hover': { bgcolor: 'rgba(255,255,255,0.8)' },
+                  }}
+                />
+              ))}
+            </Box>
+          )}
+        </Box>
+
+        {/* Right Arrow */}
+        <IconButton
+          onClick={handleNext}
+          size="small"
+          sx={{
+            bgcolor: 'action.hover',
+            color: 'text.secondary',
+            width: 40,
+            height: 40,
+            flexShrink: 0,
+            '&:hover': { bgcolor: 'primary.main', color: '#fff' },
+          }}
+        >
+          <ChevronRight />
+        </IconButton>
+      </Box>
+    );
+  }
+
+  
   return (
     <Box
       sx={{
@@ -63,6 +339,7 @@ export default function ImageCarousel({
         borderRadius: `${borderRadius}px`,
         overflow: 'hidden',
         '&:hover .carousel-controls': { opacity: 1 },
+        '&:hover .fullscreen-btn': { opacity: 1 },
       }}
     >
       {/* Image slides */}
@@ -90,6 +367,28 @@ export default function ImageCarousel({
           />
         ))}
       </Box>
+
+      {/* Fullscreen Button */}
+      <IconButton
+        onClick={() => setIsFullscreen(true)}
+        className="fullscreen-btn"
+        size="small"
+        sx={{
+          position: 'absolute',
+          top: 8,
+          right: 8,
+          bgcolor: 'rgba(0,0,0,0.45)',
+          color: '#fff',
+          width: 32,
+          height: 32,
+          opacity: 0,
+          transition: 'opacity 0.25s ease',
+          zIndex: 5,
+          '&:hover': { bgcolor: 'rgba(0,0,0,0.7)' },
+        }}
+      >
+        <Fullscreen fontSize="small" />
+      </IconButton>
 
       {/* Prev / Next arrows — only show when multiple images */}
       {images.length > 1 && (
