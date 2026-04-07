@@ -14,7 +14,6 @@ import {
   Toolbar,
   IconButton,
   Button,
-  CircularProgress,
   Skeleton,
 } from '@mui/material';
 import {

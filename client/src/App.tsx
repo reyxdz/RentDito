@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LandingPage from './presentation/pages/LandingPage';
+/* DASHBOARD IMPORTS - HIDDEN FOR VERCEL MVP
 import AdminLayout from './presentation/layouts/AdminLayout';
 import Overview from './presentation/pages/admin/Overview';
 import { 
@@ -9,11 +10,14 @@ import {
 } from './presentation/pages/admin/Placeholders';
 import Users from './presentation/pages/admin/Users';
 import ProtectedRoute from './presentation/components/ProtectedRoute';
+*/
+
 import Login from './presentation/pages/auth/Login';
 
 import ListingsPage from './presentation/pages/listings/ListingsPage';
 import PropertyDetailPage from './presentation/pages/listings/PropertyDetailPage';
 
+/* DASHBOARD IMPORTS - HIDDEN FOR VERCEL MVP
 import LandlordLayout from './presentation/layouts/LandlordLayout';
 import LandlordOverview from './presentation/pages/landlord/Overview';
 import LandlordProperties from './presentation/pages/landlord/Properties';
@@ -24,6 +28,7 @@ import {
   AgentsPlaceholder,
   MaintenancePlaceholder
 } from './presentation/pages/landlord/Placeholders';
+*/
 
 function App() {
   return (
