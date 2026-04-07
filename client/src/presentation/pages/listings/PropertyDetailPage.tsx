@@ -101,8 +101,8 @@ export default function PropertyDetailPage() {
         <Grid container spacing={4}>
           <Grid size={{ xs: 12 }}>
             {/* Property Images */}
-            <Box sx={{ mb: 4, borderRadius: 4, overflow: 'hidden', boxShadow: 1 }}>
-              <ImageCarousel images={property.images} height={400} borderRadius={16} />
+            <Box sx={{ mb: 4, maxWidth: 1000, mx: 'auto' }}>
+              <ImageCarousel images={property.images} height={500} borderRadius={16} arrowPosition="outside" />
             </Box>
 
             {/* Property Details */}
@@ -186,7 +186,22 @@ export default function PropertyDetailPage() {
           <Grid container spacing={3}>
             {units.map((unit) => (
               <Grid size={{ xs: 12, sm: 6, md: 4 }} key={unit.id}>
-                <Card sx={{ borderRadius: 4, overflow: 'hidden', height: '100%', display: 'flex', flexDirection: 'column' }}>
+                <Card 
+                  sx={{ 
+                    borderRadius: 4, 
+                    overflow: 'hidden', 
+                    height: '100%', 
+                    display: 'flex', 
+                    flexDirection: 'column',
+                    cursor: 'pointer',
+                    transition: 'transform 0.2s, box-shadow 0.2s',
+                    '&:hover': {
+                      transform: 'translateY(-4px)',
+                      boxShadow: 3,
+                    }
+                  }}
+                  onClick={() => navigate(`/listings/unit/${unit.id}`)}
+                >
                   <ImageCarousel images={unit.images} height={180} borderRadius={0} />
                   
                   <CardContent sx={{ flexGrow: 1, p: 2.5, display: 'flex', flexDirection: 'column' }}>
@@ -236,8 +251,17 @@ export default function PropertyDetailPage() {
                       <Typography variant="h6" color="primary.main" sx={{ fontWeight: 800 }}>
                         ₱{formatPrice(unit.monthlyRent)}<Typography component="span" variant="caption" color="text.secondary">/mo</Typography>
                       </Typography>
-                      <Button variant="contained" size="small" sx={{ borderRadius: 2 }} disabled={unit.vacancies === 0}>
-                        Inquire
+                      <Button 
+                        variant="contained" 
+                        size="small" 
+                        sx={{ borderRadius: 2 }}
+                        disabled={unit.vacancies === 0}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/listings/unit/${unit.id}`);
+                        }}
+                      >
+                        View
                       </Button>
                     </Box>
                   </CardContent>
