@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   Box,
   Typography,
@@ -6,9 +7,6 @@ import {
   CardContent,
   Grid,
   Chip,
-  AppBar,
-  Toolbar,
-  IconButton,
   Button,
   CircularProgress,
   Divider,
@@ -16,27 +14,33 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
+  Dialog,
+  DialogTitle,
+  DialogContent,
 } from '@mui/material';
 import {
   ArrowBack,
   CheckCircleOutline,
   InfoOutlined,
   GroupOutlined,
-  Brightness4,
-  Brightness7,
   MeetingRoomOutlined,
+  Phone,
+  Email,
+  Facebook,
+  SchoolOutlined,
+  StorefrontOutlined,
+  LocationOnOutlined,
 } from '@mui/icons-material';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useColorMode } from '../../context/ThemeContext';
 import { useUnitDetail } from '../../../application/hooks/useUnitDetail';
 import ImageCarousel from '../../components/ImageCarousel';
-import logoPng from '../../../assets/logo.png';
+import Navbar from '../../components/Navbar';
 
 export default function UnitDetailPage() {
   const { unitId } = useParams<{ unitId: string }>();
   const navigate = useNavigate();
-  const { mode, toggleColorMode } = useColorMode();
-  const { unit, loading, error } = useUnitDetail(unitId);
+  const { unit, property, loading, error } = useUnitDetail(unitId);
+  const [inquireDialogOpen, setInquireDialogOpen] = useState(false);
 
   const formatPrice = (amount: number) =>
     new Intl.NumberFormat('en-PH').format(amount);
@@ -64,28 +68,7 @@ export default function UnitDetailPage() {
 
   return (
     <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      {/* ── Navbar ─────────────────────────────────────────────────────── */}
-      <AppBar position="sticky" sx={{ pt: 1, pb: 1, boxShadow: 'none', borderBottom: '1px solid', borderColor: 'divider' }}>
-        <Container maxWidth="lg">
-          <Toolbar disableGutters sx={{ justifyContent: 'space-between' }}>
-            <Box
-              sx={{ display: 'flex', alignItems: 'center', gap: 1, cursor: 'pointer' }}
-              onClick={() => navigate('/')}
-            >
-              <Box component="img" src={logoPng} alt="RentDito Logo" sx={{ height: 40, objectFit: 'contain' }} />
-              <Typography variant="h5" sx={{ fontWeight: 800, color: 'primary.main', ml: 1, letterSpacing: -0.5 }}>
-                RentDito
-              </Typography>
-            </Box>
-
-            <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
-              <IconButton onClick={toggleColorMode} sx={{ color: 'text.secondary' }}>
-                {mode === 'dark' ? <Brightness7 /> : <Brightness4 />}
-              </IconButton>
-            </Box>
-          </Toolbar>
-        </Container>
-      </AppBar>
+      <Navbar />
 
       {/* ── Main Content ───────────────────────────────────────────────── */}
       <Container maxWidth="lg" sx={{ py: 4, flexGrow: 1 }}>
@@ -205,17 +188,51 @@ export default function UnitDetailPage() {
                 <Grid size={{ xs: 12, sm: 6 }}>
                   <Card variant="outlined" sx={{ borderRadius: 3, height: '100%', border: 'none', bgcolor: 'background.default' }}>
                     <CardContent>
-                      <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>Other Details</Typography>
-                      <List dense disablePadding>
-                        {unit.otherDetails.map((item, i) => (
-                          <ListItem key={i} disablePadding sx={{ mb: 1 }}>
-                            <ListItemIcon sx={{ minWidth: 32 }}>
-                              <InfoOutlined color="primary" fontSize="small" />
-                            </ListItemIcon>
-                            <ListItemText primary={item} primaryTypographyProps={{ variant: 'body2' }} />
-                          </ListItem>
-                        ))}
-                      </List>
+                      <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>Nearby Categories</Typography>
+                      {property && property.nearbyCategories && property.nearbyCategories.length > 0 ? (
+                        <List dense disablePadding>
+                          {property.nearbyCategories.map((item, i) => {
+                            // Select icon based on category type
+                            let icon = <LocationOnOutlined />;
+                            if (item.category === 'Review Centers') {
+                              icon = <InfoOutlined />;
+                            } else if (item.category === 'Schools and Universities') {
+                              icon = <SchoolOutlined />;
+                            } else if (item.category === 'Commercial Establishments') {
+                              icon = <StorefrontOutlined />;
+                            }
+
+                            return (
+                              <ListItem key={i} disablePadding sx={{ mb: 2, flexDirection: 'column', alignItems: 'flex-start' }}>
+                                <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5, width: '100%' }}>
+                                  <Box sx={{ pt: 0.5 }}>
+                                    {icon}
+                                  </Box>
+                                  <Box sx={{ flex: 1 }}>
+                                    <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+                                      {item.category}
+                                    </Typography>
+                                    {item.distance && (
+                                      <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+                                        {item.distance}
+                                      </Typography>
+                                    )}
+                                    {item.name && (
+                                      <Typography variant="body2" sx={{ mt: 0.5 }}>
+                                        {item.name}
+                                      </Typography>
+                                    )}
+                                  </Box>
+                                </Box>
+                              </ListItem>
+                            );
+                          })}
+                        </List>
+                      ) : (
+                        <Typography variant="body2" color="text.secondary">
+                          No nearby categories available
+                        </Typography>
+                      )}
                     </CardContent>
                   </Card>
                 </Grid>
@@ -226,7 +243,7 @@ export default function UnitDetailPage() {
                   variant="contained" 
                   size="large"
                   disabled={unit.vacancies === 0}
-                  sx={{ minWidth: 200 }}
+                  onClick={() => setInquireDialogOpen(true)}
                 >
                   Inquire Now
                 </Button>
@@ -234,6 +251,127 @@ export default function UnitDetailPage() {
             </Box>
           </Grid>
         </Grid>
+
+        {/* ── Inquire Modal ──────────────────────────────────────────── */}
+        <Dialog
+          open={inquireDialogOpen}
+          onClose={() => setInquireDialogOpen(false)}
+          PaperProps={{
+            sx: {
+              borderRadius: 3,
+              minWidth: 300,
+            },
+          }}
+        >
+          <DialogTitle sx={{ fontWeight: 700, fontSize: '1.25rem', pb: 1 }}>
+            Get in Touch
+          </DialogTitle>
+          <DialogContent sx={{ py: 3 }}>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+              Contact us through any of these channels:
+            </Typography>
+            
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              {/* Phone */}
+              <Box
+                component="a"
+                href="tel:+639123456789"
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 2,
+                  p: 2,
+                  borderRadius: 2,
+                  bgcolor: 'action.hover',
+                  textDecoration: 'none',
+                  color: 'inherit',
+                  transition: 'all 0.2s',
+                  '&:hover': {
+                    bgcolor: 'primary.main',
+                    color: '#fff',
+                    transform: 'translateX(4px)',
+                  },
+                }}
+              >
+                <Phone sx={{ fontSize: 28, color: 'primary.main' }} />
+                <Box>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+                    Call Us
+                  </Typography>
+                  <Typography variant="body2">
+                    +63 (912) 345-6789
+                  </Typography>
+                </Box>
+              </Box>
+
+              {/* Email */}
+              <Box
+                component="a"
+                href="mailto:rentdito.stay@gmail.com"
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 2,
+                  p: 2,
+                  borderRadius: 2,
+                  bgcolor: 'action.hover',
+                  textDecoration: 'none',
+                  color: 'inherit',
+                  transition: 'all 0.2s',
+                  '&:hover': {
+                    bgcolor: 'primary.main',
+                    color: '#fff',
+                    transform: 'translateX(4px)',
+                  },
+                }}
+              >
+                <Email sx={{ fontSize: 28, color: 'primary.main' }} />
+                <Box>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+                    Email Us
+                  </Typography>
+                  <Typography variant="body2">
+                    inquire@rentdito.com
+                  </Typography>
+                </Box>
+              </Box>
+
+              {/* Facebook */}
+              <Box
+                component="a"
+                href="https://facebook.com/rentdito"
+                target="_blank"
+                rel="noopener noreferrer"
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 2,
+                  p: 2,
+                  borderRadius: 2,
+                  bgcolor: 'action.hover',
+                  textDecoration: 'none',
+                  color: 'inherit',
+                  transition: 'all 0.2s',
+                  '&:hover': {
+                    bgcolor: 'primary.main',
+                    color: '#fff',
+                    transform: 'translateX(4px)',
+                  },
+                }}
+              >
+                <Facebook sx={{ fontSize: 28, color: 'primary.main' }} />
+                <Box>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+                    Message on Facebook
+                  </Typography>
+                  <Typography variant="body2">
+                    RentDito
+                  </Typography>
+                </Box>
+              </Box>
+            </Box>
+          </DialogContent>
+        </Dialog>
       </Container>
 
       {/* ── Footer ─────────────────────────────────────────────────────── */}
