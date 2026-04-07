@@ -68,9 +68,9 @@ export const mockPropertyService: PropertyRepository & {
     return MOCK_PROPERTIES.filter((p) => p.status === 'Active');
   },
 
-  async getPropertiesByLandlord(_landlordId: string): Promise<Property[]> {
+  async getPropertiesByLandlord(landlordId: string): Promise<Property[]> {
     await new Promise((resolve) => setTimeout(resolve, 800));
-    return MOCK_PROPERTIES;
+    return MOCK_PROPERTIES.filter((p) => p.landlordId === landlordId);
   },
 
   async getPropertyById(propertyId: string): Promise<Property | null> {
