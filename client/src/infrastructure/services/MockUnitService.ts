@@ -20,16 +20,19 @@ const MOCK_UNITS: Unit[] = [
     id: 'unit-white-dorm-room2',
     propertyId: 'prop-white-dorm',
     name: 'Room 2',
-    accommodationType: 'Room for Rent',
+    accommodationType: 'Bedspace',
     images: [
       rm2Img1, rm2Img2, rm2Img3, rm2Img4, rm2Img5, rm2Img6, rm2Img7
     ],
-    monthlyRent: 4000,
-    capacity: 2,
+    monthlyRent: 2500,
+    capacity: 8,
     currentOccupants: 0,
-    vacancies: 2,
+    vacancies: 8,
     status: 'Available',
-    features: ['Double Bed', 'Study Desk', 'Cabinet', 'Private CR'],
+    features: ['Foam', 'Pillow', 'WiFi', 'Clip Fan', 'Table', 'Chair'],
+    otherDetails: [
+      'Vacant as a room or for Bedspace',
+    ],
   },
 
 ];
