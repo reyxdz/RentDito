@@ -18,6 +18,11 @@ import rm4Img1 from '../../assets/properties/white_dorm/units/room4/room4_img1.j
 import rm4Img2 from '../../assets/properties/white_dorm/units/room4/room4_img2.jpg';
 import rm4Img3 from '../../assets/properties/white_dorm/units/room4/room4_img3.jpg';
 
+// Room 6
+import rm6Img1 from '../../assets/properties/white_dorm/units/room6/room6_img1.jpg';
+import rm6Img2 from '../../assets/properties/white_dorm/units/room6/room6_img2.jpg';
+import rm6Img3 from '../../assets/properties/white_dorm/units/room6/room6_img3.jpg';
+
 //==============================================================================
 
 
@@ -85,6 +90,24 @@ const MOCK_UNITS: Unit[] = [
     ],
   },
 
+      {
+    id: 'unit-white-dorm-room6',
+    propertyId: 'prop-white-dorm',
+    name: 'Room 6',
+    accommodationType: 'Bedspace',
+    images: [
+      rm6Img1, rm6Img2, rm6Img3
+    ],
+    monthlyRent: 2500,
+    capacity: 4,
+    currentOccupants: 0,
+    vacancies: 4,
+    status: 'Available',
+    features: ['Foam', 'Pillow', 'WiFi', 'Clip Fan', 'Table', 'Chair'],
+    otherDetails: [
+      'Vacant as a room or for Bedspace',
+    ],
+  },
 
 ];
 
