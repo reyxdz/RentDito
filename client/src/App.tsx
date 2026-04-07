@@ -16,6 +16,7 @@ import Login from './presentation/pages/auth/Login';
 
 import ListingsPage from './presentation/pages/listings/ListingsPage';
 import PropertyDetailPage from './presentation/pages/listings/PropertyDetailPage';
+import UnitDetailPage from './presentation/pages/listings/UnitDetailPage';
 
 /* DASHBOARD IMPORTS - HIDDEN FOR VERCEL MVP
 import LandlordLayout from './presentation/layouts/LandlordLayout';
@@ -40,6 +41,7 @@ function App() {
         {/* PUBLIC LISTINGS */}
         <Route path="/listings" element={<ListingsPage />} />
         <Route path="/listings/:propertyId" element={<PropertyDetailPage />} />
+        <Route path="/listings/unit/:unitId" element={<UnitDetailPage />} />
 
         {/* DASHBOARD ROUTES - HIDDEN FOR VERCEL MVP
         <Route 
