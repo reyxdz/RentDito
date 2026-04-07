@@ -31,7 +31,7 @@ export default function LandingPage() {
             </Box>
             
             <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 3, alignItems: 'center' }}>
-              <Typography variant="body2" sx={{ fontWeight: 500, cursor: 'pointer', '&:hover': { color: 'primary.main' } }}>Properties</Typography>
+              <Typography variant="body2" onClick={() => navigate('/listings')} sx={{ fontWeight: 500, cursor: 'pointer', '&:hover': { color: 'primary.main' } }}>Properties</Typography>
               <Typography variant="body2" sx={{ fontWeight: 500, cursor: 'pointer', '&:hover': { color: 'primary.main' } }}>Landlords</Typography>
               <Typography variant="body2" sx={{ fontWeight: 500, cursor: 'pointer', '&:hover': { color: 'primary.main' } }}>About</Typography>
             </Box>
@@ -93,7 +93,7 @@ export default function LandingPage() {
               </Typography>
               
               <Box sx={{ display: 'flex', gap: 2 }}>
-                <Button variant="contained" color="primary" size="large" startIcon={<Search />} sx={{ px: 4, py: 1.5, fontSize: '1.1rem' }}>
+                <Button variant="contained" color="primary" size="large" startIcon={<Search />} onClick={() => navigate('/listings')} sx={{ px: 4, py: 1.5, fontSize: '1.1rem' }}>
                   Start Browsing
                 </Button>
                 <Button variant="outlined" color="primary" size="large" sx={{ px: 4, py: 1.5, fontSize: '1.1rem', backgroundColor: 'white' }}>
