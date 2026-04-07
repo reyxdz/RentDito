@@ -98,28 +98,6 @@ export default function ListingsPage() {
               <IconButton onClick={toggleColorMode} sx={{ color: 'text.secondary' }}>
                 {mode === 'dark' ? <Brightness7 /> : <Brightness4 />}
               </IconButton>
-              {!isAuthenticated ? (
-                <Button variant="contained" color="primary" onClick={() => navigate('/login')}>
-                  Sign In
-                </Button>
-              ) : (
-                <>
-                  <Button
-                    variant="outlined"
-                    color="primary"
-                    onClick={() => {
-                      if (user?.role === 'admin') navigate('/admin');
-                      else if (user?.role === 'landlord') navigate('/landlord');
-                      else navigate('/tenant');
-                    }}
-                  >
-                    Dashboard
-                  </Button>
-                  <Button variant="text" color="error" onClick={() => logout()}>
-                    Sign Out
-                  </Button>
-                </>
-              )}
             </Box>
           </Toolbar>
         </Container>
