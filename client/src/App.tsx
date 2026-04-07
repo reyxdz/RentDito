@@ -11,6 +11,9 @@ import Users from './presentation/pages/admin/Users';
 import ProtectedRoute from './presentation/components/ProtectedRoute';
 import Login from './presentation/pages/auth/Login';
 
+import ListingsPage from './presentation/pages/listings/ListingsPage';
+import PropertyDetailPage from './presentation/pages/listings/PropertyDetailPage';
+
 import LandlordLayout from './presentation/layouts/LandlordLayout';
 import LandlordOverview from './presentation/pages/landlord/Overview';
 import LandlordProperties from './presentation/pages/landlord/Properties';
@@ -29,6 +32,11 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
         
+        {/* PUBLIC LISTINGS */}
+        <Route path="/listings" element={<ListingsPage />} />
+        <Route path="/listings/:propertyId" element={<PropertyDetailPage />} />
+
+        {/* DASHBOARD ROUTES - HIDDEN FOR VERCEL MVP
         <Route 
           path="/admin" 
           element={
@@ -64,6 +72,7 @@ function App() {
           <Route path="agents" element={<AgentsPlaceholder />} />
           <Route path="maintenance" element={<MaintenancePlaceholder />} />
         </Route>
+        */}
       </Routes>
     </Router>
   )
