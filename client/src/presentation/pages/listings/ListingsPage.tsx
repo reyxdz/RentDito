@@ -11,6 +11,9 @@ import {
   Chip,
   MenuItem,
   Skeleton,
+  FormGroup,
+  FormControlLabel,
+  Checkbox,
 } from '@mui/material';
 import {
   Search,
@@ -21,7 +24,7 @@ import { useNavigate } from 'react-router-dom';
 import { useListings } from '../../../application/hooks/useListings';
 import ImageCarousel from '../../components/ImageCarousel';
 import Navbar from '../../components/Navbar';
-import type { PropertyType } from '../../../domain/entities/Property';
+import type { PropertyType, PropertyCategory } from '../../../domain/entities/Property';
 
 const PROPERTY_TYPES: PropertyType[] = [
   'Boarding House',
@@ -32,12 +35,19 @@ const PROPERTY_TYPES: PropertyType[] = [
   'Mixed Use',
 ];
 
+const PROPERTY_CATEGORIES: PropertyCategory[] = [
+  'Review Centers',
+  'Schools and Universities',
+  'Commercial Establishments',
+];
+
 export default function ListingsPage() {
   const navigate = useNavigate();
   const { properties, loading, error } = useListings();
 
   const [searchTerm, setSearchTerm] = useState('');
   const [typeFilter, setTypeFilter] = useState<PropertyType | 'All'>('All');
+  const [categoryFilters, setCategoryFilters] = useState<PropertyCategory[]>([]);
 
   const filteredProperties = useMemo(() => {
     return properties.filter((p) => {
@@ -51,9 +61,18 @@ export default function ListingsPage() {
         return false;
       }
       if (typeFilter !== 'All' && p.propertyType !== typeFilter) return false;
+      
+      // Category filter: if categories are selected, property must have at least one matching category
+      if (categoryFilters.length > 0) {
+        const hasMatchingCategory = p.nearbyCategories.some((nc) =>
+          categoryFilters.includes(nc.category)
+        );
+        if (!hasMatchingCategory) return false;
+      }
+      
       return true;
     });
-  }, [properties, searchTerm, typeFilter]);
+  }, [properties, searchTerm, typeFilter, categoryFilters]);
 
   const formatPrice = (amount: number) =>
     new Intl.NumberFormat('en-PH').format(amount);
@@ -136,6 +155,38 @@ export default function ListingsPage() {
                 </TextField>
               </Grid>
             </Grid>
+
+            {/* Category Filter */}
+            <Box sx={{ mt: 3, pt: 3, borderTop: '1px solid', borderColor: 'divider' }}>
+              <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 2 }}>
+                Filter by Nearby Categories
+              </Typography>
+              <FormGroup row sx={{ gap: 3 }}>
+                {PROPERTY_CATEGORIES.map((category) => (
+                  <FormControlLabel
+                    key={category}
+                    control={
+                      <Checkbox
+                        checked={categoryFilters.includes(category)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setCategoryFilters([...categoryFilters, category]);
+                          } else {
+                            setCategoryFilters(categoryFilters.filter((c) => c !== category));
+                          }
+                        }}
+                        size="small"
+                      />
+                    }
+                    label={
+                      <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                        {category}
+                      </Typography>
+                    }
+                  />
+                ))}
+              </FormGroup>
+            </Box>
           </Card>
         </Container>
       </Box>
