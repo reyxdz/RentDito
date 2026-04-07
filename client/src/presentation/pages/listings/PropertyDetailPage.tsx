@@ -123,7 +123,7 @@ export default function PropertyDetailPage() {
         </Button>
 
         <Grid container spacing={4}>
-          <Grid item xs={12} md={7} lg={8}>
+          <Grid size={{ xs: 12 }}>
             {/* Property Images */}
             <Box sx={{ mb: 4, borderRadius: 4, overflow: 'hidden', boxShadow: 1 }}>
               <ImageCarousel images={property.images} height={400} borderRadius={16} />
@@ -133,11 +133,6 @@ export default function PropertyDetailPage() {
             <Box sx={{ mb: 4 }}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
                 <Box>
-                  <Chip
-                    label={property.propertyType}
-                    size="small"
-                    sx={{ mb: 1.5, bgcolor: 'primary.light', color: 'white', fontWeight: 600, borderRadius: 1 }}
-                  />
                   <Typography variant="h3" sx={{ fontWeight: 800, mb: 1 }}>
                     {property.name}
                   </Typography>
@@ -164,7 +159,7 @@ export default function PropertyDetailPage() {
               </Typography>
 
               <Grid container spacing={4} sx={{ mt: 2 }}>
-                <Grid item xs={12} sm={6}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <Card variant="outlined" sx={{ borderRadius: 3, height: '100%', border: 'none', bgcolor: 'background.default' }}>
                     <CardContent>
                       <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>Inclusions</Typography>
@@ -181,7 +176,7 @@ export default function PropertyDetailPage() {
                     </CardContent>
                   </Card>
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <Card variant="outlined" sx={{ borderRadius: 3, height: '100%', border: 'none', bgcolor: 'background.default' }}>
                     <CardContent>
                       <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>Other Details</Typography>
@@ -202,31 +197,7 @@ export default function PropertyDetailPage() {
             </Box>
           </Grid>
 
-          <Grid item xs={12} md={5} lg={4}>
-            {/* Contact / Inquiry Card (Sticky) */}
-            <Box sx={{ position: 'sticky', top: 100 }}>
-              <Card sx={{ borderRadius: 4, p: 3, boxShadow: '0 8px 32px rgba(0,0,0,0.08)' }}>
-                <Typography variant="h5" sx={{ fontWeight: 700, mb: 2 }}>Interested?</Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-                  Contact the property owner to schedule a viewing or inquire about availability.
-                </Typography>
-                
-                <Button variant="contained" color="primary" fullWidth size="large" sx={{ py: 1.5, mb: 2, borderRadius: 2 }}>
-                  Send Inquiry
-                </Button>
-                <Button variant="outlined" color="primary" fullWidth size="large" sx={{ py: 1.5, borderRadius: 2 }}>
-                  Schedule Viewing
-                </Button>
-                
-                <Box sx={{ mt: 3, p: 2, bgcolor: 'background.default', borderRadius: 2, textAlign: 'center' }}>
-                   <Typography variant="caption" color="text.secondary">
-                     Or call directly: <br />
-                     <Typography component="span" variant="body2" sx={{ fontWeight: 700, color: 'text.primary' }}>+63 912 345 6789</Typography>
-                   </Typography>
-                </Box>
-              </Card>
-            </Box>
-          </Grid>
+
         </Grid>
 
         {/* ── Units Section ──────────────────────────────────────────────── */}
@@ -238,7 +209,7 @@ export default function PropertyDetailPage() {
 
           <Grid container spacing={3}>
             {units.map((unit) => (
-              <Grid item xs={12} sm={6} md={4} key={unit.id}>
+              <Grid size={{ xs: 12, sm: 6, md: 4 }} key={unit.id}>
                 <Card sx={{ borderRadius: 4, overflow: 'hidden', height: '100%', display: 'flex', flexDirection: 'column' }}>
                   <ImageCarousel images={unit.images} height={180} borderRadius={0} />
                   
