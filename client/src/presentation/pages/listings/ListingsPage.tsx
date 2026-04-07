@@ -108,32 +108,6 @@ export default function ListingsPage() {
           overflow: 'hidden',
         }}
       >
-        {/* Decorative blobs */}
-        <Box
-          sx={{
-            position: 'absolute',
-            top: '-20%',
-            right: '-10%',
-            width: '45%',
-            height: '100%',
-            background:
-              'radial-gradient(circle, rgba(90,49,232,0.06) 0%, rgba(90,49,232,0) 70%)',
-            zIndex: 0,
-          }}
-        />
-        <Box
-          sx={{
-            position: 'absolute',
-            bottom: '-30%',
-            left: '-10%',
-            width: '50%',
-            height: '100%',
-            background:
-              'radial-gradient(circle, rgba(43,208,248,0.06) 0%, rgba(43,208,248,0) 70%)',
-            zIndex: 0,
-          }}
-        />
-
         <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
           <Typography
             variant="h3"
