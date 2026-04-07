@@ -92,27 +92,7 @@ export default function ListingsPage() {
               </Typography>
             </Box>
 
-            <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 3, alignItems: 'center' }}>
-              <Typography
-                variant="body2"
-                onClick={() => navigate('/listings')}
-                sx={{
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                  color: 'primary.main',
-                  '&:hover': { color: 'primary.dark' },
-                }}
-              >
-                Properties
-              </Typography>
-              <Typography
-                variant="body2"
-                onClick={() => navigate('/')}
-                sx={{ fontWeight: 500, cursor: 'pointer', '&:hover': { color: 'primary.main' } }}
-              >
-                Home
-              </Typography>
-            </Box>
+
 
             <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
               <IconButton onClick={toggleColorMode} sx={{ color: 'text.secondary' }}>
