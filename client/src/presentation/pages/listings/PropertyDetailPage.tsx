@@ -6,9 +6,6 @@ import {
   CardContent,
   Grid,
   Chip,
-  AppBar,
-  Toolbar,
-  IconButton,
   Button,
   CircularProgress,
   Divider,
@@ -23,20 +20,16 @@ import {
   CheckCircleOutline,
   InfoOutlined,
   GroupOutlined,
-  Brightness4,
-  Brightness7,
   MeetingRoomOutlined,
 } from '@mui/icons-material';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useColorMode } from '../../context/ThemeContext';
 import { usePropertyDetail } from '../../../application/hooks/usePropertyDetail';
 import ImageCarousel from '../../components/ImageCarousel';
-import logoPng from '../../../assets/logo.png';
+import Navbar from '../../components/Navbar';
 
 export default function PropertyDetailPage() {
   const { propertyId } = useParams<{ propertyId: string }>();
   const navigate = useNavigate();
-  const { mode, toggleColorMode } = useColorMode();
   const { property, units, loading, error } = usePropertyDetail(propertyId);
 
   const formatPrice = (amount: number) =>
@@ -65,28 +58,7 @@ export default function PropertyDetailPage() {
 
   return (
     <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      {/* ── Navbar ─────────────────────────────────────────────────────── */}
-      <AppBar position="sticky" sx={{ pt: 1, pb: 1, boxShadow: 'none', borderBottom: '1px solid', borderColor: 'divider' }}>
-        <Container maxWidth="lg">
-          <Toolbar disableGutters sx={{ justifyContent: 'space-between' }}>
-            <Box
-              sx={{ display: 'flex', alignItems: 'center', gap: 1, cursor: 'pointer' }}
-              onClick={() => navigate('/')}
-            >
-              <Box component="img" src={logoPng} alt="RentDito Logo" sx={{ height: 40, objectFit: 'contain' }} />
-              <Typography variant="h5" sx={{ fontWeight: 800, color: 'primary.main', ml: 1, letterSpacing: -0.5 }}>
-                RentDito
-              </Typography>
-            </Box>
-
-            <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
-              <IconButton onClick={toggleColorMode} sx={{ color: 'text.secondary' }}>
-                {mode === 'dark' ? <Brightness7 /> : <Brightness4 />}
-              </IconButton>
-            </Box>
-          </Toolbar>
-        </Container>
-      </AppBar>
+      <Navbar />
 
       {/* ── Main Content ───────────────────────────────────────────────── */}
       <Container maxWidth="lg" sx={{ py: 4, flexGrow: 1 }}>
