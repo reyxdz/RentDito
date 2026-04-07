@@ -37,10 +37,13 @@ const MOCK_PROPERTIES: Property[] = [
       zipCode: '6543',
       country: 'Philippines',
     },
-    inclusions: ['WiFi', 'Water', 'Shared Kitchen', 'Parking'],
+    inclusions: ['WiFi', 'Foam', 'Pillow', 'Table', 'Chair', 'Clip Fan', 'Electric Rice Cooker'],
     otherDetails: [
-      'No pets allowed',
+      'Utility bills are excluded but each room has its own submeters',
       'Near local amenities',
+      'Can cook',
+      'Can do laundry',
+      'No curfew'
     ],
     metrics: {
       totalUnits: 10,
