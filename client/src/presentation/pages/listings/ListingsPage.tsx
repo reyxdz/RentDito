@@ -10,24 +10,21 @@ import {
   InputAdornment,
   Chip,
   MenuItem,
-  AppBar,
-  Toolbar,
-  IconButton,
   Skeleton,
+  FormGroup,
+  FormControlLabel,
+  Checkbox,
 } from '@mui/material';
 import {
   Search,
   LocationOnOutlined,
   MeetingRoomOutlined,
-  Brightness4,
-  Brightness7,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import { useColorMode } from '../../context/ThemeContext';
 import { useListings } from '../../../application/hooks/useListings';
 import ImageCarousel from '../../components/ImageCarousel';
+import Navbar from '../../components/Navbar';
 import type { PropertyType } from '../../../domain/entities/Property';
-import logoPng from '../../../assets/logo.png';
 
 const PROPERTY_TYPES: PropertyType[] = [
   'Boarding House',
@@ -38,13 +35,21 @@ const PROPERTY_TYPES: PropertyType[] = [
   'Mixed Use',
 ];
 
+type CategoryType = 'reviewCenters' | 'schools' | 'commercialEstablishments';
+
+const PROPERTY_CATEGORIES: { type: CategoryType; label: string }[] = [
+  { type: 'reviewCenters', label: 'Review Centers' },
+  { type: 'schools', label: 'Schools and Universities' },
+  { type: 'commercialEstablishments', label: 'Commercial Establishments' },
+];
+
 export default function ListingsPage() {
   const navigate = useNavigate();
-  const { mode, toggleColorMode } = useColorMode();
   const { properties, loading, error } = useListings();
 
   const [searchTerm, setSearchTerm] = useState('');
   const [typeFilter, setTypeFilter] = useState<PropertyType | 'All'>('All');
+  const [categoryFilters, setCategoryFilters] = useState<CategoryType[]>([]);
 
   const filteredProperties = useMemo(() => {
     return properties.filter((p) => {
@@ -58,47 +63,28 @@ export default function ListingsPage() {
         return false;
       }
       if (typeFilter !== 'All' && p.propertyType !== typeFilter) return false;
+      
+      // Category filter: if categories are selected, property must have at least one matching category
+      if (categoryFilters.length > 0) {
+        const hasMatchingCategory = categoryFilters.some((cat) => {
+          if (cat === 'reviewCenters') return p.reviewCenters.length > 0;
+          if (cat === 'schools') return p.schools.length > 0;
+          if (cat === 'commercialEstablishments') return p.commercialEstablishments.length > 0;
+          return false;
+        });
+        if (!hasMatchingCategory) return false;
+      }
+      
       return true;
     });
-  }, [properties, searchTerm, typeFilter]);
+  }, [properties, searchTerm, typeFilter, categoryFilters]);
 
   const formatPrice = (amount: number) =>
     new Intl.NumberFormat('en-PH').format(amount);
 
   return (
     <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      {/* ── Navbar ─────────────────────────────────────────────────────── */}
-      <AppBar position="sticky" sx={{ pt: 1, pb: 1 }}>
-        <Container maxWidth="lg">
-          <Toolbar disableGutters sx={{ justifyContent: 'space-between' }}>
-            <Box
-              sx={{ display: 'flex', alignItems: 'center', gap: 1, cursor: 'pointer' }}
-              onClick={() => navigate('/')}
-            >
-              <Box
-                component="img"
-                src={logoPng}
-                alt="RentDito Logo"
-                sx={{ height: 40, objectFit: 'contain' }}
-              />
-              <Typography
-                variant="h5"
-                sx={{ fontWeight: 800, color: 'primary.main', ml: 1, letterSpacing: -0.5 }}
-              >
-                RentDito
-              </Typography>
-            </Box>
-
-
-
-            <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
-              <IconButton onClick={toggleColorMode} sx={{ color: 'text.secondary' }}>
-                {mode === 'dark' ? <Brightness7 /> : <Brightness4 />}
-              </IconButton>
-            </Box>
-          </Toolbar>
-        </Container>
-      </AppBar>
+      <Navbar />
 
       {/* ── Hero / Search Section ──────────────────────────────────────── */}
       <Box
@@ -174,6 +160,38 @@ export default function ListingsPage() {
                 </TextField>
               </Grid>
             </Grid>
+
+            {/* Category Filter */}
+            <Box sx={{ mt: 3, pt: 3, borderTop: '1px solid', borderColor: 'divider' }}>
+              <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 2 }}>
+                Filter by Nearby Categories
+              </Typography>
+              <FormGroup row sx={{ gap: 3 }}>
+                {PROPERTY_CATEGORIES.map((category) => (
+                  <FormControlLabel
+                    key={category.type}
+                    control={
+                      <Checkbox
+                        checked={categoryFilters.includes(category.type)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setCategoryFilters([...categoryFilters, category.type]);
+                          } else {
+                            setCategoryFilters(categoryFilters.filter((c) => c !== category.type));
+                          }
+                        }}
+                        size="small"
+                      />
+                    }
+                    label={
+                      <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                        {category.label}
+                      </Typography>
+                    }
+                  />
+                ))}
+              </FormGroup>
+            </Box>
           </Card>
         </Container>
       </Box>

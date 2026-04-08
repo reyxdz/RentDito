@@ -6,9 +6,6 @@ import {
   CardContent,
   Grid,
   Chip,
-  AppBar,
-  Toolbar,
-  IconButton,
   Button,
   CircularProgress,
   Divider,
@@ -21,22 +18,20 @@ import {
   ArrowBack,
   LocationOnOutlined,
   CheckCircleOutline,
-  InfoOutlined,
   GroupOutlined,
-  Brightness4,
-  Brightness7,
   MeetingRoomOutlined,
+  InfoOutlined,
+  SchoolOutlined,
+  StorefrontOutlined,
 } from '@mui/icons-material';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useColorMode } from '../../context/ThemeContext';
 import { usePropertyDetail } from '../../../application/hooks/usePropertyDetail';
 import ImageCarousel from '../../components/ImageCarousel';
-import logoPng from '../../../assets/logo.png';
+import Navbar from '../../components/Navbar';
 
 export default function PropertyDetailPage() {
   const { propertyId } = useParams<{ propertyId: string }>();
   const navigate = useNavigate();
-  const { mode, toggleColorMode } = useColorMode();
   const { property, units, loading, error } = usePropertyDetail(propertyId);
 
   const formatPrice = (amount: number) =>
@@ -65,28 +60,7 @@ export default function PropertyDetailPage() {
 
   return (
     <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      {/* ── Navbar ─────────────────────────────────────────────────────── */}
-      <AppBar position="sticky" sx={{ pt: 1, pb: 1, boxShadow: 'none', borderBottom: '1px solid', borderColor: 'divider' }}>
-        <Container maxWidth="lg">
-          <Toolbar disableGutters sx={{ justifyContent: 'space-between' }}>
-            <Box
-              sx={{ display: 'flex', alignItems: 'center', gap: 1, cursor: 'pointer' }}
-              onClick={() => navigate('/')}
-            >
-              <Box component="img" src={logoPng} alt="RentDito Logo" sx={{ height: 40, objectFit: 'contain' }} />
-              <Typography variant="h5" sx={{ fontWeight: 800, color: 'primary.main', ml: 1, letterSpacing: -0.5 }}>
-                RentDito
-              </Typography>
-            </Box>
-
-            <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
-              <IconButton onClick={toggleColorMode} sx={{ color: 'text.secondary' }}>
-                {mode === 'dark' ? <Brightness7 /> : <Brightness4 />}
-              </IconButton>
-            </Box>
-          </Toolbar>
-        </Container>
-      </AppBar>
+      <Navbar />
 
       {/* ── Main Content ───────────────────────────────────────────────── */}
       <Container maxWidth="lg" sx={{ py: 4, flexGrow: 1 }}>
@@ -136,9 +110,30 @@ export default function PropertyDetailPage() {
 
               <Grid container spacing={4} sx={{ mt: 2 }}>
                 <Grid size={{ xs: 12, sm: 6 }}>
-                  <Card variant="outlined" sx={{ borderRadius: 3, height: '100%', border: 'none', bgcolor: 'background.default' }}>
-                    <CardContent>
+                  <Card variant="outlined" sx={{ borderRadius: 3, height: 500, border: 'none', bgcolor: 'background.default', display: 'flex', flexDirection: 'column' }}>
+                    <CardContent sx={{ pb: 1, flexGrow: 0 }}>
                       <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>Inclusions</Typography>
+                    </CardContent>
+                    <CardContent sx={{ 
+                      overflow: 'auto', 
+                      flexGrow: 1, 
+                      pt: 0,
+                      '&::-webkit-scrollbar': {
+                        width: '8px',
+                      },
+                      '&::-webkit-scrollbar-track': {
+                        background: 'transparent',
+                      },
+                      '&::-webkit-scrollbar-thumb': {
+                        backgroundColor: 'primary.main',
+                        borderRadius: '4px',
+                        border: '2px solid transparent',
+                        backgroundClip: 'content-box',
+                        '&:hover': {
+                          backgroundColor: 'primary.light',
+                        },
+                      },
+                    }}>
                       <List dense disablePadding>
                         {property.inclusions.map((item, i) => (
                           <ListItem key={i} disablePadding sx={{ mb: 1 }}>
@@ -153,19 +148,130 @@ export default function PropertyDetailPage() {
                   </Card>
                 </Grid>
                 <Grid size={{ xs: 12, sm: 6 }}>
-                  <Card variant="outlined" sx={{ borderRadius: 3, height: '100%', border: 'none', bgcolor: 'background.default' }}>
-                    <CardContent>
-                      <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>Other Details</Typography>
-                      <List dense disablePadding>
-                        {property.otherDetails.map((item, i) => (
-                          <ListItem key={i} disablePadding sx={{ mb: 1 }}>
-                            <ListItemIcon sx={{ minWidth: 32 }}>
-                              <InfoOutlined color="primary" fontSize="small" />
-                            </ListItemIcon>
-                            <ListItemText primary={item} primaryTypographyProps={{ variant: 'body2' }} />
-                          </ListItem>
-                        ))}
-                      </List>
+                  <Card variant="outlined" sx={{ borderRadius: 3, height: 500, border: 'none', bgcolor: 'background.default', display: 'flex', flexDirection: 'column' }}>
+                    <CardContent sx={{ pb: 1, flexGrow: 0 }}>
+                      <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>Nearby Categories</Typography>
+                    </CardContent>
+                    <CardContent sx={{ 
+                      overflow: 'auto', 
+                      flexGrow: 1, 
+                      pt: 0,
+                      '&::-webkit-scrollbar': {
+                        width: '8px',
+                      },
+                      '&::-webkit-scrollbar-track': {
+                        background: 'transparent',
+                      },
+                      '&::-webkit-scrollbar-thumb': {
+                        backgroundColor: 'primary.main',
+                        borderRadius: '4px',
+                        border: '2px solid transparent',
+                        backgroundClip: 'content-box',
+                        '&:hover': {
+                          backgroundColor: 'primary.light',
+                        },
+                      },
+                    }}>
+                      {property.reviewCenters.length > 0 || property.schools.length > 0 || property.commercialEstablishments.length > 0 ? (
+                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+                          {/* Review Centers */}
+                          {property.reviewCenters.length > 0 && (
+                            <Box>
+                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                                <InfoOutlined sx={{ color: 'primary.main', fontSize: 20 }} />
+                                <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+                                  Review Centers ({property.reviewCenters.length})
+                                </Typography>
+                              </Box>
+                              <List dense disablePadding sx={{ pl: 3.5 }}>
+                                {property.reviewCenters.map((venue, i) => (
+                                  <ListItem key={i} disablePadding sx={{ mb: 1.5 }}>
+                                    <Box sx={{ flex: 1 }}>
+                                      <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                                        {venue.name}
+                                      </Typography>
+                                      <Box sx={{ display: 'flex', gap: 2, mt: 0.5, flexWrap: 'wrap' }}>
+                                        <Typography variant="caption" color="text.secondary">
+                                          🚶 {venue.walking}
+                                        </Typography>
+                                        <Typography variant="caption" color="text.secondary">
+                                          🚗 {venue.commute}
+                                        </Typography>
+                                      </Box>
+                                    </Box>
+                                  </ListItem>
+                                ))}
+                              </List>
+                            </Box>
+                          )}
+
+                          {/* Schools */}
+                          {property.schools.length > 0 && (
+                            <Box>
+                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                                <SchoolOutlined sx={{ color: 'primary.main', fontSize: 20 }} />
+                                <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+                                  Schools & Universities ({property.schools.length})
+                                </Typography>
+                              </Box>
+                              <List dense disablePadding sx={{ pl: 3.5 }}>
+                                {property.schools.map((venue, i) => (
+                                  <ListItem key={i} disablePadding sx={{ mb: 1.5 }}>
+                                    <Box sx={{ flex: 1 }}>
+                                      <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                                        {venue.name}
+                                      </Typography>
+                                      <Box sx={{ display: 'flex', gap: 2, mt: 0.5, flexWrap: 'wrap' }}>
+                                        <Typography variant="caption" color="text.secondary">
+                                          🚶 {venue.walking}
+                                        </Typography>
+                                        <Typography variant="caption" color="text.secondary">
+                                          🚗 {venue.commute}
+                                        </Typography>
+                                      </Box>
+                                    </Box>
+                                  </ListItem>
+                                ))}
+                              </List>
+                            </Box>
+                          )}
+
+                          {/* Commercial Establishments */}
+                          {property.commercialEstablishments.length > 0 && (
+                            <Box>
+                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                                <StorefrontOutlined sx={{ color: 'primary.main', fontSize: 20 }} />
+                                <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+                                  Commercial Establishments ({property.commercialEstablishments.length})
+                                </Typography>
+                              </Box>
+                              <List dense disablePadding sx={{ pl: 3.5 }}>
+                                {property.commercialEstablishments.map((venue, i) => (
+                                  <ListItem key={i} disablePadding sx={{ mb: 1.5 }}>
+                                    <Box sx={{ flex: 1 }}>
+                                      <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                                        {venue.name}
+                                      </Typography>
+                                      <Box sx={{ display: 'flex', gap: 2, mt: 0.5, flexWrap: 'wrap' }}>
+                                        <Typography variant="caption" color="text.secondary">
+                                          🚶 {venue.walking}
+                                        </Typography>
+                                        <Typography variant="caption" color="text.secondary">
+                                          🚗 {venue.commute}
+                                        </Typography>
+                                      </Box>
+                                    </Box>
+                                  </ListItem>
+                                ))}
+                              </List>
+                            </Box>
+                          )}
+                        </Box>
+                      ) : (
+                        <Typography variant="body2" color="text.secondary">
+                          No nearby categories available
+                        </Typography>
+                      )}
                     </CardContent>
                   </Card>
                 </Grid>

@@ -6,36 +6,32 @@ import {
   CardContent,
   Grid,
   Chip,
-  AppBar,
-  Toolbar,
-  IconButton,
-  Button,
   CircularProgress,
   Divider,
   List,
   ListItem,
   ListItemIcon,
   ListItemText,
+  Button,
 } from '@mui/material';
 import {
   ArrowBack,
   CheckCircleOutline,
-  InfoOutlined,
   GroupOutlined,
-  Brightness4,
-  Brightness7,
   MeetingRoomOutlined,
+  Phone,
+  Email,
+  Facebook,
+  Send,
 } from '@mui/icons-material';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useColorMode } from '../../context/ThemeContext';
 import { useUnitDetail } from '../../../application/hooks/useUnitDetail';
 import ImageCarousel from '../../components/ImageCarousel';
-import logoPng from '../../../assets/logo.png';
+import Navbar from '../../components/Navbar';
 
 export default function UnitDetailPage() {
   const { unitId } = useParams<{ unitId: string }>();
   const navigate = useNavigate();
-  const { mode, toggleColorMode } = useColorMode();
   const { unit, loading, error } = useUnitDetail(unitId);
 
   const formatPrice = (amount: number) =>
@@ -64,28 +60,7 @@ export default function UnitDetailPage() {
 
   return (
     <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      {/* ── Navbar ─────────────────────────────────────────────────────── */}
-      <AppBar position="sticky" sx={{ pt: 1, pb: 1, boxShadow: 'none', borderBottom: '1px solid', borderColor: 'divider' }}>
-        <Container maxWidth="lg">
-          <Toolbar disableGutters sx={{ justifyContent: 'space-between' }}>
-            <Box
-              sx={{ display: 'flex', alignItems: 'center', gap: 1, cursor: 'pointer' }}
-              onClick={() => navigate('/')}
-            >
-              <Box component="img" src={logoPng} alt="RentDito Logo" sx={{ height: 40, objectFit: 'contain' }} />
-              <Typography variant="h5" sx={{ fontWeight: 800, color: 'primary.main', ml: 1, letterSpacing: -0.5 }}>
-                RentDito
-              </Typography>
-            </Box>
-
-            <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
-              <IconButton onClick={toggleColorMode} sx={{ color: 'text.secondary' }}>
-                {mode === 'dark' ? <Brightness7 /> : <Brightness4 />}
-              </IconButton>
-            </Box>
-          </Toolbar>
-        </Container>
-      </AppBar>
+      <Navbar />
 
       {/* ── Main Content ───────────────────────────────────────────────── */}
       <Container maxWidth="lg" sx={{ py: 4, flexGrow: 1 }}>
@@ -185,7 +160,8 @@ export default function UnitDetailPage() {
               </Grid>
 
               <Grid container spacing={3}>
-                <Grid size={{ xs: 12, sm: 6 }}>
+                {/* Features & Inclusions Card */}
+                <Grid size={{ xs: 12, md: 6 }}>
                   <Card variant="outlined" sx={{ borderRadius: 3, height: '100%', border: 'none', bgcolor: 'background.default' }}>
                     <CardContent>
                       <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>Features & Inclusions</Typography>
@@ -202,35 +178,149 @@ export default function UnitDetailPage() {
                     </CardContent>
                   </Card>
                 </Grid>
-                <Grid size={{ xs: 12, sm: 6 }}>
+
+                {/* Inquire Us Card */}
+                <Grid size={{ xs: 12, md: 6 }}>
                   <Card variant="outlined" sx={{ borderRadius: 3, height: '100%', border: 'none', bgcolor: 'background.default' }}>
                     <CardContent>
-                      <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>Other Details</Typography>
-                      <List dense disablePadding>
-                        {unit.otherDetails.map((item, i) => (
-                          <ListItem key={i} disablePadding sx={{ mb: 1 }}>
-                            <ListItemIcon sx={{ minWidth: 32 }}>
-                              <InfoOutlined color="primary" fontSize="small" />
-                            </ListItemIcon>
-                            <ListItemText primary={item} primaryTypographyProps={{ variant: 'body2' }} />
-                          </ListItem>
-                        ))}
-                      </List>
+                      <Typography variant="h6" sx={{ fontWeight: 700, mb: 3 }}>Inquire Us</Typography>
+                      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                        {/* Phone */}
+                        <Box
+                          component="a"
+                          href="tel:+639123456789"
+                          sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 2,
+                            p: 1.5,
+                            borderRadius: 2,
+                            bgcolor: 'action.hover',
+                            textDecoration: 'none',
+                            color: '#fff',
+                            transition: 'all 0.2s',
+                            '&:hover': {
+                              bgcolor: 'primary.main',
+                              color: '#fff',
+                              transform: 'translateX(4px)',
+                            },
+                          }}
+                        >
+                          <Phone sx={{ fontSize: 24, color: 'inherit', flexShrink: 0 }} />
+                          <Box sx={{ minWidth: 0 }}>
+                            <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+                              Call Us
+                            </Typography>
+                            <Typography variant="caption">
+                              +63 (912) 345-6789
+                            </Typography>
+                          </Box>
+                        </Box>
+
+                        {/* Email */}
+                        <Box
+                          component="a"
+                          href="mailto:inquire@rentdito.com"
+                          sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 2,
+                            p: 1.5,
+                            borderRadius: 2,
+                            bgcolor: 'action.hover',
+                            textDecoration: 'none',
+                            color: '#fff',
+                            transition: 'all 0.2s',
+                            '&:hover': {
+                              bgcolor: 'primary.main',
+                              color: '#fff',
+                              transform: 'translateX(4px)',
+                            },
+                          }}
+                        >
+                          <Email sx={{ fontSize: 24, color: 'inherit', flexShrink: 0 }} />
+                          <Box sx={{ minWidth: 0 }}>
+                            <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+                              Email Us
+                            </Typography>
+                            <Typography variant="caption">
+                              inquire@rentdito.com
+                            </Typography>
+                          </Box>
+                        </Box>
+
+                        {/* Telegram */}
+                        <Box
+                          component="a"
+                          href="https://t.me/rentdito"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 2,
+                            p: 1.5,
+                            borderRadius: 2,
+                            bgcolor: 'action.hover',
+                            textDecoration: 'none',
+                            color: '#fff',
+                            transition: 'all 0.2s',
+                            '&:hover': {
+                              bgcolor: 'primary.main',
+                              color: '#fff',
+                              transform: 'translateX(4px)',
+                            },
+                          }}
+                        >
+                          <Send sx={{ fontSize: 24, color: 'inherit', flexShrink: 0 }} />
+                          <Box sx={{ minWidth: 0 }}>
+                            <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+                              Message on Telegram
+                            </Typography>
+                            <Typography variant="caption">
+                              @rentdito
+                            </Typography>
+                          </Box>
+                        </Box>
+
+                        {/* Facebook */}
+                        <Box
+                          component="a"
+                          href="https://facebook.com/rentdito"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 2,
+                            p: 1.5,
+                            borderRadius: 2,
+                            bgcolor: 'action.hover',
+                            textDecoration: 'none',
+                            color: '#fff',
+                            transition: 'all 0.2s',
+                            '&:hover': {
+                              bgcolor: 'primary.main',
+                              color: '#fff',
+                              transform: 'translateX(4px)',
+                            },
+                          }}
+                        >
+                          <Facebook sx={{ fontSize: 24, color: 'inherit', flexShrink: 0 }} />
+                          <Box sx={{ minWidth: 0 }}>
+                            <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+                              Message on Facebook
+                            </Typography>
+                            <Typography variant="caption">
+                              RentDito
+                            </Typography>
+                          </Box>
+                        </Box>
+                      </Box>
                     </CardContent>
                   </Card>
                 </Grid>
               </Grid>
-
-              <Box sx={{ mt: 4, display: 'flex', gap: 2, justifyContent: 'center' }}>
-                <Button 
-                  variant="contained" 
-                  size="large"
-                  disabled={unit.vacancies === 0}
-                  sx={{ minWidth: 200 }}
-                >
-                  Inquire Now
-                </Button>
-              </Box>
             </Box>
           </Grid>
         </Grid>
