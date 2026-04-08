@@ -197,7 +197,7 @@ export default function UnitDetailPage() {
                             borderRadius: 2,
                             bgcolor: 'action.hover',
                             textDecoration: 'none',
-                            color: 'inherit',
+                            color: 'primary.main',
                             transition: 'all 0.2s',
                             '&:hover': {
                               bgcolor: 'primary.main',
@@ -206,7 +206,7 @@ export default function UnitDetailPage() {
                             },
                           }}
                         >
-                          <Phone sx={{ fontSize: 24, color: 'primary.main', flexShrink: 0 }} />
+                          <Phone sx={{ fontSize: 24, color: 'inherit', flexShrink: 0 }} />
                           <Box sx={{ minWidth: 0 }}>
                             <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
                               Call Us
@@ -229,7 +229,7 @@ export default function UnitDetailPage() {
                             borderRadius: 2,
                             bgcolor: 'action.hover',
                             textDecoration: 'none',
-                            color: 'inherit',
+                            color: 'primary.main',
                             transition: 'all 0.2s',
                             '&:hover': {
                               bgcolor: 'primary.main',
@@ -238,7 +238,7 @@ export default function UnitDetailPage() {
                             },
                           }}
                         >
-                          <Email sx={{ fontSize: 24, color: 'primary.main', flexShrink: 0 }} />
+                          <Email sx={{ fontSize: 24, color: 'inherit', flexShrink: 0 }} />
                           <Box sx={{ minWidth: 0 }}>
                             <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
                               Email Us
@@ -263,7 +263,7 @@ export default function UnitDetailPage() {
                             borderRadius: 2,
                             bgcolor: 'action.hover',
                             textDecoration: 'none',
-                            color: 'inherit',
+                            color: 'primary.main',
                             transition: 'all 0.2s',
                             '&:hover': {
                               bgcolor: 'primary.main',
@@ -272,7 +272,7 @@ export default function UnitDetailPage() {
                             },
                           }}
                         >
-                          <Send sx={{ fontSize: 24, color: 'primary.main', flexShrink: 0 }} />
+                          <Send sx={{ fontSize: 24, color: 'inherit', flexShrink: 0 }} />
                           <Box sx={{ minWidth: 0 }}>
                             <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
                               Message on Telegram
@@ -297,7 +297,7 @@ export default function UnitDetailPage() {
                             borderRadius: 2,
                             bgcolor: 'action.hover',
                             textDecoration: 'none',
-                            color: 'inherit',
+                            color: 'primary.main',
                             transition: 'all 0.2s',
                             '&:hover': {
                               bgcolor: 'primary.main',
@@ -306,7 +306,7 @@ export default function UnitDetailPage() {
                             },
                           }}
                         >
-                          <Facebook sx={{ fontSize: 24, color: 'primary.main', flexShrink: 0 }} />
+                          <Facebook sx={{ fontSize: 24, color: 'inherit', flexShrink: 0 }} />
                           <Box sx={{ minWidth: 0 }}>
                             <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
                               Message on Facebook
