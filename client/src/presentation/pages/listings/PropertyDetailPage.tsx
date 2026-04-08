@@ -115,7 +115,7 @@ export default function PropertyDetailPage() {
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, color: 'text.secondary' }}>
                     <LocationOnOutlined fontSize="small" />
                     <Typography variant="body1">
-                      {property.address.street}, {property.address.city}, {property.address.state}
+                      {property.address.street}, {property.address.city},
                     </Typography>
                   </Box>
                 </Box>

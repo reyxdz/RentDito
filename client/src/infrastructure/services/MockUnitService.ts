@@ -7,7 +7,13 @@ import rm2Img4 from '../../assets/properties/white_dorm/units/room2/room2_img4.j
 import rm2Img5 from '../../assets/properties/white_dorm/units/room2/room2_img5.jpg';
 import rm2Img6 from '../../assets/properties/white_dorm/units/room2/room2_img6.jpg';
 import rm2Img7 from '../../assets/properties/white_dorm/units/room2/room2_img7.jpg';
+// Uytengso Boarding House Unit
+import uyRm1Img1 from '../../assets/properties/uytengso/units/room1/room1_t.jpg';
+import uyRm1Img2 from '../../assets/properties/uytengso/units/room1/room1_u.jpg';
+import uyRm1Img3 from '../../assets/properties/uytengso/units/room1/room1_y.jpg';
 
+// =============================================================================
+// HAR
 // =============================================================================
 // HARDCODED UNIT DATA
 // Edit the entries below to update unit listings per property.
@@ -34,6 +40,26 @@ const MOCK_UNITS: Unit[] = [
       'Vacant as a room or for Bedspace',
     ],
   },
+
+   {
+    id: 'unit-uytengso',
+    propertyId: 'prop-uytengson-boardings',
+    name: 'Room 1',
+    accommodationType: 'Bedspace',
+    images: [
+      uyRm1Img1, uyRm1Img2, uyRm1Img3
+    ],
+    monthlyRent: 2500,
+    capacity: 8,
+    currentOccupants: 0,
+    vacancies: 8,
+    status: 'Available',
+    features: ['Foam', 'Pillow', 'WiFi', 'Clip Fan', 'Table', 'Chair'],
+    otherDetails: [
+      'Vacant as a room or for Bedspace',
+    ],
+  },
+
 
 ];
 

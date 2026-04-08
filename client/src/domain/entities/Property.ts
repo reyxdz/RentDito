@@ -13,7 +13,7 @@ export interface Property {
   address: {
     street: string;
     city: string;
-    state: string;
+    province: string;
     zipCode: string;
     country: string;
   };

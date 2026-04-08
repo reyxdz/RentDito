@@ -245,7 +245,7 @@ export default function Properties() {
                    }}>
                      <LocationOnOutlined color="action" fontSize="small" />
                      <Typography variant="caption" color="text.secondary" noWrap sx={{ fontWeight: 500 }}>
-                       {property.address.street}, {property.address.city}, {property.address.state}
+                       {property.address.street}, {property.address.city}, {property.address.province}
                      </Typography>
                   </Box>
 

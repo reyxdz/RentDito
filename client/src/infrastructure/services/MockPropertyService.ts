@@ -11,7 +11,13 @@ import wdImg7 from '../../assets/properties/white_dorm/images/image7.jpg';
 import wdImg8 from '../../assets/properties/white_dorm/images/image8.jpg';
 import wdImg9 from '../../assets/properties/white_dorm/images/image9.jpg';
 import wdImg10 from '../../assets/properties/white_dorm/images/image10.jpg';
-
+// Uytengso Boarding House Property
+import uyImg1 from '../../assets/properties/uytengso/images/u.jpg';
+import uyImg2 from '../../assets/properties/uytengso/images/y.jpg';
+import uyImg3 from '../../assets/properties/uytengso/images/t.jpg';    
+import uyImg4 from '../../assets/properties/uytengso/images/e.jpg';
+import uyImg5 from '../../assets/properties/uytengso/images/n.jpg';
+import uyImg6 from '../../assets/properties/uytengso/images/s.jpg';
 // =============================================================================
 // HARDCODED PROPERTY DATA
 // Edit the entries below to update the public listing page.
@@ -31,9 +37,45 @@ const MOCK_PROPERTIES: Property[] = [
       wdImg1, wdImg2, wdImg3, wdImg4, wdImg5, wdImg6, wdImg7, wdImg8, wdImg9, wdImg10
     ],
     address: {
-      street: 'Naval Town',
-      city: 'Naval',
-      state: 'Biliran',
+      street: 'Sikatuna Street',
+      city: 'Cebu city',
+      province: 'Cebu',
+      zipCode: '6543',
+      country: 'Philippines',
+    },
+    inclusions: ['WiFi', 'Foam', 'Pillow', 'Table', 'Chair', 'Clip Fan', 'Electric Rice Cooker'],
+    otherDetails: [
+      'Utility bills are excluded but each room has its own submeters',
+      'Near local amenities',
+      'Can cook',
+      'Can do laundry',
+      'No curfew'
+    ],
+    metrics: {
+      totalUnits: 10,
+      activeUnits: 8,
+      vacantUnits: 2,
+      priceRange: { min: 2500, max: 5000 },
+    },
+    createdAt: new Date('2026-01-01'),
+    updatedAt: new Date(),
+  },
+  {
+    id: 'prop-uytengson-boardings',
+    landlordId: 'usr_landlord_2',
+    name: 'Uytengso Boardings House',
+    description:
+      'A beautiful and well-maintained property. Ideal for students and young professionals seeking affordable and comfortable accommodation.',
+    propertyType: 'Boarding House',
+    status: 'Active',
+    images: [
+      uyImg1, uyImg2, uyImg3, uyImg4, uyImg5, uyImg6
+      
+    ],
+    address: {
+      street: 'Uytengso Street',
+      city: 'Cebu City',
+      province: 'Cebu',
       zipCode: '6543',
       country: 'Philippines',
     },
