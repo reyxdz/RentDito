@@ -114,7 +114,26 @@ export default function PropertyDetailPage() {
                     <CardContent sx={{ pb: 1, flexGrow: 0 }}>
                       <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>Inclusions</Typography>
                     </CardContent>
-                    <CardContent sx={{ overflow: 'auto', flexGrow: 1, pt: 0 }}>
+                    <CardContent sx={{ 
+                      overflow: 'auto', 
+                      flexGrow: 1, 
+                      pt: 0,
+                      '&::-webkit-scrollbar': {
+                        width: '8px',
+                      },
+                      '&::-webkit-scrollbar-track': {
+                        background: 'transparent',
+                      },
+                      '&::-webkit-scrollbar-thumb': {
+                        backgroundColor: 'primary.main',
+                        borderRadius: '4px',
+                        border: '2px solid transparent',
+                        backgroundClip: 'content-box',
+                        '&:hover': {
+                          backgroundColor: 'primary.light',
+                        },
+                      },
+                    }}>
                       <List dense disablePadding>
                         {property.inclusions.map((item, i) => (
                           <ListItem key={i} disablePadding sx={{ mb: 1 }}>
@@ -133,7 +152,26 @@ export default function PropertyDetailPage() {
                     <CardContent sx={{ pb: 1, flexGrow: 0 }}>
                       <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>Nearby Categories</Typography>
                     </CardContent>
-                    <CardContent sx={{ overflow: 'auto', flexGrow: 1, pt: 0 }}>
+                    <CardContent sx={{ 
+                      overflow: 'auto', 
+                      flexGrow: 1, 
+                      pt: 0,
+                      '&::-webkit-scrollbar': {
+                        width: '8px',
+                      },
+                      '&::-webkit-scrollbar-track': {
+                        background: 'transparent',
+                      },
+                      '&::-webkit-scrollbar-thumb': {
+                        backgroundColor: 'primary.main',
+                        borderRadius: '4px',
+                        border: '2px solid transparent',
+                        backgroundClip: 'content-box',
+                        '&:hover': {
+                          backgroundColor: 'primary.light',
+                        },
+                      },
+                    }}>
                       {property.reviewCenters.length > 0 || property.schools.length > 0 || property.commercialEstablishments.length > 0 ? (
                         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
                           {/* Review Centers */}
