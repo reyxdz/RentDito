@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import {
   Box,
   Typography,
@@ -7,16 +6,13 @@ import {
   CardContent,
   Grid,
   Chip,
-  Button,
   CircularProgress,
   Divider,
   List,
   ListItem,
   ListItemIcon,
   ListItemText,
-  Dialog,
-  DialogTitle,
-  DialogContent,
+  Button,
 } from '@mui/material';
 import {
   ArrowBack,
@@ -26,6 +22,7 @@ import {
   Phone,
   Email,
   Facebook,
+  Send,
 } from '@mui/icons-material';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useUnitDetail } from '../../../application/hooks/useUnitDetail';
@@ -36,7 +33,6 @@ export default function UnitDetailPage() {
   const { unitId } = useParams<{ unitId: string }>();
   const navigate = useNavigate();
   const { unit, loading, error } = useUnitDetail(unitId);
-  const [inquireDialogOpen, setInquireDialogOpen] = useState(false);
 
   const formatPrice = (amount: number) =>
     new Intl.NumberFormat('en-PH').format(amount);
@@ -164,7 +160,8 @@ export default function UnitDetailPage() {
               </Grid>
 
               <Grid container spacing={3}>
-                <Grid size={{ xs: 12 }}>
+                {/* Features & Inclusions Card */}
+                <Grid size={{ xs: 12, md: 6 }}>
                   <Card variant="outlined" sx={{ borderRadius: 3, height: '100%', border: 'none', bgcolor: 'background.default' }}>
                     <CardContent>
                       <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>Features & Inclusions</Typography>
@@ -181,142 +178,152 @@ export default function UnitDetailPage() {
                     </CardContent>
                   </Card>
                 </Grid>
-              </Grid>
 
-              <Box sx={{ mt: 4, display: 'flex', gap: 2, justifyContent: 'center' }}>
-                <Button 
-                  variant="contained" 
-                  size="large"
-                  disabled={unit.vacancies === 0}
-                  onClick={() => setInquireDialogOpen(true)}
-                >
-                  Inquire Now
-                </Button>
-              </Box>
+                {/* Inquire Us Card */}
+                <Grid size={{ xs: 12, md: 6 }}>
+                  <Card variant="outlined" sx={{ borderRadius: 3, height: '100%', border: 'none', bgcolor: 'background.default' }}>
+                    <CardContent>
+                      <Typography variant="h6" sx={{ fontWeight: 700, mb: 3 }}>Inquire Us</Typography>
+                      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                        {/* Phone */}
+                        <Box
+                          component="a"
+                          href="tel:+639123456789"
+                          sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 2,
+                            p: 1.5,
+                            borderRadius: 2,
+                            bgcolor: 'action.hover',
+                            textDecoration: 'none',
+                            color: 'inherit',
+                            transition: 'all 0.2s',
+                            '&:hover': {
+                              bgcolor: 'primary.main',
+                              color: '#fff',
+                              transform: 'translateX(4px)',
+                            },
+                          }}
+                        >
+                          <Phone sx={{ fontSize: 24, color: 'primary.main', flexShrink: 0 }} />
+                          <Box sx={{ minWidth: 0 }}>
+                            <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+                              Call Us
+                            </Typography>
+                            <Typography variant="caption">
+                              +63 (912) 345-6789
+                            </Typography>
+                          </Box>
+                        </Box>
+
+                        {/* Email */}
+                        <Box
+                          component="a"
+                          href="mailto:inquire@rentdito.com"
+                          sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 2,
+                            p: 1.5,
+                            borderRadius: 2,
+                            bgcolor: 'action.hover',
+                            textDecoration: 'none',
+                            color: 'inherit',
+                            transition: 'all 0.2s',
+                            '&:hover': {
+                              bgcolor: 'primary.main',
+                              color: '#fff',
+                              transform: 'translateX(4px)',
+                            },
+                          }}
+                        >
+                          <Email sx={{ fontSize: 24, color: 'primary.main', flexShrink: 0 }} />
+                          <Box sx={{ minWidth: 0 }}>
+                            <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+                              Email Us
+                            </Typography>
+                            <Typography variant="caption">
+                              inquire@rentdito.com
+                            </Typography>
+                          </Box>
+                        </Box>
+
+                        {/* Telegram */}
+                        <Box
+                          component="a"
+                          href="https://t.me/rentdito"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 2,
+                            p: 1.5,
+                            borderRadius: 2,
+                            bgcolor: 'action.hover',
+                            textDecoration: 'none',
+                            color: 'inherit',
+                            transition: 'all 0.2s',
+                            '&:hover': {
+                              bgcolor: 'primary.main',
+                              color: '#fff',
+                              transform: 'translateX(4px)',
+                            },
+                          }}
+                        >
+                          <Send sx={{ fontSize: 24, color: 'primary.main', flexShrink: 0 }} />
+                          <Box sx={{ minWidth: 0 }}>
+                            <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+                              Message on Telegram
+                            </Typography>
+                            <Typography variant="caption">
+                              @rentdito
+                            </Typography>
+                          </Box>
+                        </Box>
+
+                        {/* Facebook */}
+                        <Box
+                          component="a"
+                          href="https://facebook.com/rentdito"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 2,
+                            p: 1.5,
+                            borderRadius: 2,
+                            bgcolor: 'action.hover',
+                            textDecoration: 'none',
+                            color: 'inherit',
+                            transition: 'all 0.2s',
+                            '&:hover': {
+                              bgcolor: 'primary.main',
+                              color: '#fff',
+                              transform: 'translateX(4px)',
+                            },
+                          }}
+                        >
+                          <Facebook sx={{ fontSize: 24, color: 'primary.main', flexShrink: 0 }} />
+                          <Box sx={{ minWidth: 0 }}>
+                            <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+                              Message on Facebook
+                            </Typography>
+                            <Typography variant="caption">
+                              RentDito
+                            </Typography>
+                          </Box>
+                        </Box>
+                      </Box>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              </Grid>
             </Box>
           </Grid>
         </Grid>
-
-        {/* ── Inquire Modal ──────────────────────────────────────────── */}
-        <Dialog
-          open={inquireDialogOpen}
-          onClose={() => setInquireDialogOpen(false)}
-          PaperProps={{
-            sx: {
-              borderRadius: 3,
-              minWidth: 300,
-            },
-          }}
-        >
-          <DialogTitle sx={{ fontWeight: 700, fontSize: '1.25rem', pb: 1 }}>
-            Get in Touch
-          </DialogTitle>
-          <DialogContent sx={{ py: 3 }}>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-              Contact us through any of these channels:
-            </Typography>
-            
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              {/* Phone */}
-              <Box
-                component="a"
-                href="tel:+639123456789"
-                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 2,
-                  p: 2,
-                  borderRadius: 2,
-                  bgcolor: 'action.hover',
-                  textDecoration: 'none',
-                  color: 'inherit',
-                  transition: 'all 0.2s',
-                  '&:hover': {
-                    bgcolor: 'primary.main',
-                    color: '#fff',
-                    transform: 'translateX(4px)',
-                  },
-                }}
-              >
-                <Phone sx={{ fontSize: 28, color: 'primary.main' }} />
-                <Box>
-                  <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
-                    Call Us
-                  </Typography>
-                  <Typography variant="body2">
-                    +63 (912) 345-6789
-                  </Typography>
-                </Box>
-              </Box>
-
-              {/* Email */}
-              <Box
-                component="a"
-                href="mailto:rentdito.stay@gmail.com"
-                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 2,
-                  p: 2,
-                  borderRadius: 2,
-                  bgcolor: 'action.hover',
-                  textDecoration: 'none',
-                  color: 'inherit',
-                  transition: 'all 0.2s',
-                  '&:hover': {
-                    bgcolor: 'primary.main',
-                    color: '#fff',
-                    transform: 'translateX(4px)',
-                  },
-                }}
-              >
-                <Email sx={{ fontSize: 28, color: 'primary.main' }} />
-                <Box>
-                  <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
-                    Email Us
-                  </Typography>
-                  <Typography variant="body2">
-                    inquire@rentdito.com
-                  </Typography>
-                </Box>
-              </Box>
-
-              {/* Facebook */}
-              <Box
-                component="a"
-                href="https://facebook.com/rentdito"
-                target="_blank"
-                rel="noopener noreferrer"
-                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 2,
-                  p: 2,
-                  borderRadius: 2,
-                  bgcolor: 'action.hover',
-                  textDecoration: 'none',
-                  color: 'inherit',
-                  transition: 'all 0.2s',
-                  '&:hover': {
-                    bgcolor: 'primary.main',
-                    color: '#fff',
-                    transform: 'translateX(4px)',
-                  },
-                }}
-              >
-                <Facebook sx={{ fontSize: 28, color: 'primary.main' }} />
-                <Box>
-                  <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
-                    Message on Facebook
-                  </Typography>
-                  <Typography variant="body2">
-                    RentDito
-                  </Typography>
-                </Box>
-              </Box>
-            </Box>
-          </DialogContent>
-        </Dialog>
       </Container>
 
       {/* ── Footer ─────────────────────────────────────────────────────── */}
