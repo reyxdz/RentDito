@@ -24,7 +24,7 @@ import { useNavigate } from 'react-router-dom';
 import { useListings } from '../../../application/hooks/useListings';
 import ImageCarousel from '../../components/ImageCarousel';
 import Navbar from '../../components/Navbar';
-import type { PropertyType, PropertyCategory } from '../../../domain/entities/Property';
+import type { PropertyType } from '../../../domain/entities/Property';
 
 const PROPERTY_TYPES: PropertyType[] = [
   'Boarding House',
@@ -35,10 +35,12 @@ const PROPERTY_TYPES: PropertyType[] = [
   'Mixed Use',
 ];
 
-const PROPERTY_CATEGORIES: PropertyCategory[] = [
-  'Review Centers',
-  'Schools and Universities',
-  'Commercial Establishments',
+type CategoryType = 'reviewCenters' | 'schools' | 'commercialEstablishments';
+
+const PROPERTY_CATEGORIES: { type: CategoryType; label: string }[] = [
+  { type: 'reviewCenters', label: 'Review Centers' },
+  { type: 'schools', label: 'Schools and Universities' },
+  { type: 'commercialEstablishments', label: 'Commercial Establishments' },
 ];
 
 export default function ListingsPage() {
@@ -47,7 +49,7 @@ export default function ListingsPage() {
 
   const [searchTerm, setSearchTerm] = useState('');
   const [typeFilter, setTypeFilter] = useState<PropertyType | 'All'>('All');
-  const [categoryFilters, setCategoryFilters] = useState<PropertyCategory[]>([]);
+  const [categoryFilters, setCategoryFilters] = useState<CategoryType[]>([]);
 
   const filteredProperties = useMemo(() => {
     return properties.filter((p) => {
@@ -64,9 +66,12 @@ export default function ListingsPage() {
       
       // Category filter: if categories are selected, property must have at least one matching category
       if (categoryFilters.length > 0) {
-        const hasMatchingCategory = p.nearbyCategories.some((nc) =>
-          categoryFilters.includes(nc.category)
-        );
+        const hasMatchingCategory = categoryFilters.some((cat) => {
+          if (cat === 'reviewCenters') return p.reviewCenters.length > 0;
+          if (cat === 'schools') return p.schools.length > 0;
+          if (cat === 'commercialEstablishments') return p.commercialEstablishments.length > 0;
+          return false;
+        });
         if (!hasMatchingCategory) return false;
       }
       
@@ -164,15 +169,15 @@ export default function ListingsPage() {
               <FormGroup row sx={{ gap: 3 }}>
                 {PROPERTY_CATEGORIES.map((category) => (
                   <FormControlLabel
-                    key={category}
+                    key={category.type}
                     control={
                       <Checkbox
-                        checked={categoryFilters.includes(category)}
+                        checked={categoryFilters.includes(category.type)}
                         onChange={(e) => {
                           if (e.target.checked) {
-                            setCategoryFilters([...categoryFilters, category]);
+                            setCategoryFilters([...categoryFilters, category.type]);
                           } else {
-                            setCategoryFilters(categoryFilters.filter((c) => c !== category));
+                            setCategoryFilters(categoryFilters.filter((c) => c !== category.type));
                           }
                         }}
                         size="small"
@@ -180,7 +185,7 @@ export default function ListingsPage() {
                     }
                     label={
                       <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                        {category}
+                        {category.label}
                       </Typography>
                     }
                   />
