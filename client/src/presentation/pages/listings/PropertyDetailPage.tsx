@@ -110,9 +110,11 @@ export default function PropertyDetailPage() {
 
               <Grid container spacing={4} sx={{ mt: 2 }}>
                 <Grid size={{ xs: 12, sm: 6 }}>
-                  <Card variant="outlined" sx={{ borderRadius: 3, height: '100%', border: 'none', bgcolor: 'background.default' }}>
-                    <CardContent>
+                  <Card variant="outlined" sx={{ borderRadius: 3, height: 500, border: 'none', bgcolor: 'background.default', display: 'flex', flexDirection: 'column' }}>
+                    <CardContent sx={{ pb: 1, flexGrow: 0 }}>
                       <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>Inclusions</Typography>
+                    </CardContent>
+                    <CardContent sx={{ overflow: 'auto', flexGrow: 1, pt: 0 }}>
                       <List dense disablePadding>
                         {property.inclusions.map((item, i) => (
                           <ListItem key={i} disablePadding sx={{ mb: 1 }}>
@@ -127,9 +129,11 @@ export default function PropertyDetailPage() {
                   </Card>
                 </Grid>
                 <Grid size={{ xs: 12, sm: 6 }}>
-                  <Card variant="outlined" sx={{ borderRadius: 3, height: '100%', border: 'none', bgcolor: 'background.default' }}>
-                    <CardContent>
+                  <Card variant="outlined" sx={{ borderRadius: 3, height: 500, border: 'none', bgcolor: 'background.default', display: 'flex', flexDirection: 'column' }}>
+                    <CardContent sx={{ pb: 1, flexGrow: 0 }}>
                       <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>Nearby Categories</Typography>
+                    </CardContent>
+                    <CardContent sx={{ overflow: 'auto', flexGrow: 1, pt: 0 }}>
                       {property.reviewCenters.length > 0 || property.schools.length > 0 || property.commercialEstablishments.length > 0 ? (
                         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
                           {/* Review Centers */}
