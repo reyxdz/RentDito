@@ -21,14 +21,11 @@ import {
 import {
   ArrowBack,
   CheckCircleOutline,
-  InfoOutlined,
   GroupOutlined,
   MeetingRoomOutlined,
   Phone,
   Email,
   Facebook,
-  SchoolOutlined,
-  StorefrontOutlined,
 } from '@mui/icons-material';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useUnitDetail } from '../../../application/hooks/useUnitDetail';
@@ -38,7 +35,7 @@ import Navbar from '../../components/Navbar';
 export default function UnitDetailPage() {
   const { unitId } = useParams<{ unitId: string }>();
   const navigate = useNavigate();
-  const { unit, property, loading, error } = useUnitDetail(unitId);
+  const { unit, loading, error } = useUnitDetail(unitId);
   const [inquireDialogOpen, setInquireDialogOpen] = useState(false);
 
   const formatPrice = (amount: number) =>
@@ -167,7 +164,7 @@ export default function UnitDetailPage() {
               </Grid>
 
               <Grid container spacing={3}>
-                <Grid size={{ xs: 12, sm: 6 }}>
+                <Grid size={{ xs: 12 }}>
                   <Card variant="outlined" sx={{ borderRadius: 3, height: '100%', border: 'none', bgcolor: 'background.default' }}>
                     <CardContent>
                       <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>Features & Inclusions</Typography>
@@ -181,113 +178,6 @@ export default function UnitDetailPage() {
                           </ListItem>
                         ))}
                       </List>
-                    </CardContent>
-                  </Card>
-                </Grid>
-                <Grid size={{ xs: 12, sm: 6 }}>
-                  <Card variant="outlined" sx={{ borderRadius: 3, height: '100%', border: 'none', bgcolor: 'background.default' }}>
-                    <CardContent>
-                      <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>Nearby Categories</Typography>
-                      {property && (property.reviewCenters.length > 0 || property.schools.length > 0 || property.commercialEstablishments.length > 0) ? (
-                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
-                          {/* Review Centers */}
-                          {property.reviewCenters.length > 0 && (
-                            <Box>
-                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                                <InfoOutlined sx={{ color: 'primary.main', fontSize: 20 }} />
-                                <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
-                                  Review Centers ({property.reviewCenters.length})
-                                </Typography>
-                              </Box>
-                              <List dense disablePadding sx={{ pl: 3.5 }}>
-                                {property.reviewCenters.map((venue, i) => (
-                                  <ListItem key={i} disablePadding sx={{ mb: 1.5 }}>
-                                    <Box sx={{ flex: 1 }}>
-                                      <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                                        {venue.name}
-                                      </Typography>
-                                      <Box sx={{ display: 'flex', gap: 2, mt: 0.5, flexWrap: 'wrap' }}>
-                                        <Typography variant="caption" color="text.secondary">
-                                          🚶 {venue.walking}
-                                        </Typography>
-                                        <Typography variant="caption" color="text.secondary">
-                                          🚗 {venue.commute}
-                                        </Typography>
-                                      </Box>
-                                    </Box>
-                                  </ListItem>
-                                ))}
-                              </List>
-                            </Box>
-                          )}
-
-                          {/* Schools */}
-                          {property.schools.length > 0 && (
-                            <Box>
-                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                                <SchoolOutlined sx={{ color: 'primary.main', fontSize: 20 }} />
-                                <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
-                                  Schools & Universities ({property.schools.length})
-                                </Typography>
-                              </Box>
-                              <List dense disablePadding sx={{ pl: 3.5 }}>
-                                {property.schools.map((venue, i) => (
-                                  <ListItem key={i} disablePadding sx={{ mb: 1.5 }}>
-                                    <Box sx={{ flex: 1 }}>
-                                      <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                                        {venue.name}
-                                      </Typography>
-                                      <Box sx={{ display: 'flex', gap: 2, mt: 0.5, flexWrap: 'wrap' }}>
-                                        <Typography variant="caption" color="text.secondary">
-                                          🚶 {venue.walking}
-                                        </Typography>
-                                        <Typography variant="caption" color="text.secondary">
-                                          🚗 {venue.commute}
-                                        </Typography>
-                                      </Box>
-                                    </Box>
-                                  </ListItem>
-                                ))}
-                              </List>
-                            </Box>
-                          )}
-
-                          {/* Commercial Establishments */}
-                          {property.commercialEstablishments.length > 0 && (
-                            <Box>
-                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                                <StorefrontOutlined sx={{ color: 'primary.main', fontSize: 20 }} />
-                                <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
-                                  Commercial Establishments ({property.commercialEstablishments.length})
-                                </Typography>
-                              </Box>
-                              <List dense disablePadding sx={{ pl: 3.5 }}>
-                                {property.commercialEstablishments.map((venue, i) => (
-                                  <ListItem key={i} disablePadding sx={{ mb: 1.5 }}>
-                                    <Box sx={{ flex: 1 }}>
-                                      <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                                        {venue.name}
-                                      </Typography>
-                                      <Box sx={{ display: 'flex', gap: 2, mt: 0.5, flexWrap: 'wrap' }}>
-                                        <Typography variant="caption" color="text.secondary">
-                                          🚶 {venue.walking}
-                                        </Typography>
-                                        <Typography variant="caption" color="text.secondary">
-                                          🚗 {venue.commute}
-                                        </Typography>
-                                      </Box>
-                                    </Box>
-                                  </ListItem>
-                                ))}
-                              </List>
-                            </Box>
-                          )}
-                        </Box>
-                      ) : (
-                        <Typography variant="body2" color="text.secondary">
-                          No nearby categories available
-                        </Typography>
-                      )}
                     </CardContent>
                   </Card>
                 </Grid>
