@@ -29,7 +29,6 @@ import {
   Facebook,
   SchoolOutlined,
   StorefrontOutlined,
-  LocationOnOutlined,
 } from '@mui/icons-material';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useUnitDetail } from '../../../application/hooks/useUnitDetail';
@@ -189,45 +188,101 @@ export default function UnitDetailPage() {
                   <Card variant="outlined" sx={{ borderRadius: 3, height: '100%', border: 'none', bgcolor: 'background.default' }}>
                     <CardContent>
                       <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>Nearby Categories</Typography>
-                      {property && property.nearbyCategories && property.nearbyCategories.length > 0 ? (
-                        <List dense disablePadding>
-                          {property.nearbyCategories.map((item, i) => {
-                            // Select icon based on category type
-                            let icon = <LocationOnOutlined />;
-                            if (item.category === 'Review Centers') {
-                              icon = <InfoOutlined />;
-                            } else if (item.category === 'Schools and Universities') {
-                              icon = <SchoolOutlined />;
-                            } else if (item.category === 'Commercial Establishments') {
-                              icon = <StorefrontOutlined />;
-                            }
+                      {property && (property.reviewCenters.length > 0 || property.schools.length > 0 || property.commercialEstablishments.length > 0) ? (
+                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+                          {/* Review Centers */}
+                          {property.reviewCenters.length > 0 && (
+                            <Box>
+                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                                <InfoOutlined sx={{ color: 'primary.main', fontSize: 20 }} />
+                                <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+                                  Review Centers ({property.reviewCenters.length})
+                                </Typography>
+                              </Box>
+                              <List dense disablePadding sx={{ pl: 3.5 }}>
+                                {property.reviewCenters.map((venue, i) => (
+                                  <ListItem key={i} disablePadding sx={{ mb: 1.5 }}>
+                                    <Box sx={{ flex: 1 }}>
+                                      <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                                        {venue.name}
+                                      </Typography>
+                                      <Box sx={{ display: 'flex', gap: 2, mt: 0.5, flexWrap: 'wrap' }}>
+                                        <Typography variant="caption" color="text.secondary">
+                                          🚶 {venue.walking}
+                                        </Typography>
+                                        <Typography variant="caption" color="text.secondary">
+                                          🚗 {venue.commute}
+                                        </Typography>
+                                      </Box>
+                                    </Box>
+                                  </ListItem>
+                                ))}
+                              </List>
+                            </Box>
+                          )}
 
-                            return (
-                              <ListItem key={i} disablePadding sx={{ mb: 2, flexDirection: 'column', alignItems: 'flex-start' }}>
-                                <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5, width: '100%' }}>
-                                  <Box sx={{ pt: 0.5 }}>
-                                    {icon}
-                                  </Box>
-                                  <Box sx={{ flex: 1 }}>
-                                    <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
-                                      {item.category}
-                                    </Typography>
-                                    {item.distance && (
-                                      <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
-                                        {item.distance}
+                          {/* Schools */}
+                          {property.schools.length > 0 && (
+                            <Box>
+                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                                <SchoolOutlined sx={{ color: 'primary.main', fontSize: 20 }} />
+                                <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+                                  Schools & Universities ({property.schools.length})
+                                </Typography>
+                              </Box>
+                              <List dense disablePadding sx={{ pl: 3.5 }}>
+                                {property.schools.map((venue, i) => (
+                                  <ListItem key={i} disablePadding sx={{ mb: 1.5 }}>
+                                    <Box sx={{ flex: 1 }}>
+                                      <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                                        {venue.name}
                                       </Typography>
-                                    )}
-                                    {item.name && (
-                                      <Typography variant="body2" sx={{ mt: 0.5 }}>
-                                        {item.name}
+                                      <Box sx={{ display: 'flex', gap: 2, mt: 0.5, flexWrap: 'wrap' }}>
+                                        <Typography variant="caption" color="text.secondary">
+                                          🚶 {venue.walking}
+                                        </Typography>
+                                        <Typography variant="caption" color="text.secondary">
+                                          🚗 {venue.commute}
+                                        </Typography>
+                                      </Box>
+                                    </Box>
+                                  </ListItem>
+                                ))}
+                              </List>
+                            </Box>
+                          )}
+
+                          {/* Commercial Establishments */}
+                          {property.commercialEstablishments.length > 0 && (
+                            <Box>
+                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                                <StorefrontOutlined sx={{ color: 'primary.main', fontSize: 20 }} />
+                                <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+                                  Commercial Establishments ({property.commercialEstablishments.length})
+                                </Typography>
+                              </Box>
+                              <List dense disablePadding sx={{ pl: 3.5 }}>
+                                {property.commercialEstablishments.map((venue, i) => (
+                                  <ListItem key={i} disablePadding sx={{ mb: 1.5 }}>
+                                    <Box sx={{ flex: 1 }}>
+                                      <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                                        {venue.name}
                                       </Typography>
-                                    )}
-                                  </Box>
-                                </Box>
-                              </ListItem>
-                            );
-                          })}
-                        </List>
+                                      <Box sx={{ display: 'flex', gap: 2, mt: 0.5, flexWrap: 'wrap' }}>
+                                        <Typography variant="caption" color="text.secondary">
+                                          🚶 {venue.walking}
+                                        </Typography>
+                                        <Typography variant="caption" color="text.secondary">
+                                          🚗 {venue.commute}
+                                        </Typography>
+                                      </Box>
+                                    </Box>
+                                  </ListItem>
+                                ))}
+                              </List>
+                            </Box>
+                          )}
+                        </Box>
                       ) : (
                         <Typography variant="body2" color="text.secondary">
                           No nearby categories available
