@@ -39,7 +39,7 @@ const MOCK_PROPERTIES: Property[] = [
     address: {
       street: 'Sikatuna Street',
       city: 'Cebu city',
-      province: 'Cebu',
+      state: 'Cebu',
       zipCode: '6543',
       country: 'Philippines',
     },
@@ -75,7 +75,7 @@ const MOCK_PROPERTIES: Property[] = [
     address: {
       street: 'Uytengso Street',
       city: 'Cebu City',
-      province: 'Cebu',
+      state: 'Cebu',
       zipCode: '6543',
       country: 'Philippines',
     },
