@@ -43,13 +43,18 @@ const MOCK_PROPERTIES: Property[] = [
       zipCode: '6543',
       country: 'Philippines',
     },
-    inclusions: ['WiFi', 'Foam', 'Pillow', 'Table', 'Chair', 'Clip Fan', 'Electric Rice Cooker'],
-    otherDetails: [
-      'Utility bills are excluded but each room has its own submeters',
-      'Near local amenities',
-      'Can cook',
-      'Can do laundry',
-      'No curfew'
+    inclusions: ['WiFi', 'Foam', 'Pillow', 'Table', 'Chair', 'Clip Fan', 'Electric Rice Cooker', 'Can Cook', 'Can Wash Clothes', 'No Curfew'],
+    reviewCenters: [
+      { name: 'Mega Review Center', walking: '9 minutes', commute: '15 minutes' },
+      { name: 'Top Review Academy', walking: '12 minutes', commute: '18 minutes' },
+    ],
+    schools: [
+      { name: 'University of Cebu', walking: '10 minutes', commute: '20 minutes' },
+      { name: 'Cebu Tech University', walking: '14 minutes', commute: '25 minutes' },
+    ],
+    commercialEstablishments: [
+      { name: 'Naval Town Market', walking: '5 minutes', commute: '12 minutes' },
+      { name: 'SM Mall', walking: '20 minutes', commute: '30 minutes' },
     ],
     metrics: {
       totalUnits: 10,
@@ -79,13 +84,18 @@ const MOCK_PROPERTIES: Property[] = [
       zipCode: '6543',
       country: 'Philippines',
     },
-    inclusions: ['WiFi', 'Foam', 'Pillow', 'Table', 'Chair', 'Clip Fan', 'Electric Rice Cooker'],
-    otherDetails: [
-      'Utility bills are excluded but each room has its own submeters',
-      'Near local amenities',
-      'Can cook',
-      'Can do laundry',
-      'No curfew'
+    inclusions: ['WiFi', 'Foam', 'Pillow', 'Table', 'Chair', 'Clip Fan', 'Electric Rice Cooker', 'Can Cook', 'Can Wash Clothes', 'No Curfew'],
+    reviewCenters: [
+      { name: 'Mega Review Center', walking: '9 minutes', commute: '15 minutes' },
+      { name: 'Top Review Academy', walking: '12 minutes', commute: '18 minutes' },
+    ],
+    schools: [
+      { name: 'University of Cebu', walking: '10 minutes', commute: '20 minutes' },
+      { name: 'Cebu Tech University', walking: '14 minutes', commute: '25 minutes' },
+    ],
+    commercialEstablishments: [
+      { name: 'Naval Town Market', walking: '5 minutes', commute: '12 minutes' },
+      { name: 'SM Mall', walking: '20 minutes', commute: '30 minutes' },
     ],
     metrics: {
       totalUnits: 10,
@@ -110,9 +120,9 @@ export const mockPropertyService: PropertyRepository & {
     return MOCK_PROPERTIES.filter((p) => p.status === 'Active');
   },
 
-  async getPropertiesByLandlord(_landlordId: string): Promise<Property[]> {
+  async getPropertiesByLandlord(landlordId: string): Promise<Property[]> {
     await new Promise((resolve) => setTimeout(resolve, 800));
-    return MOCK_PROPERTIES;
+    return MOCK_PROPERTIES.filter((p) => p.landlordId === landlordId);
   },
 
   async getPropertyById(propertyId: string): Promise<Property | null> {
@@ -127,7 +137,9 @@ export const mockPropertyService: PropertyRepository & {
       id: `prop-${Date.now()}`,
       images: [],
       inclusions: [],
-      otherDetails: [],
+      reviewCenters: [],
+      schools: [],
+      commercialEstablishments: [],
       metrics: { totalUnits: 0, activeUnits: 0, vacantUnits: 0, priceRange: { min: 0, max: 0 } },
       createdAt: new Date(),
       updatedAt: new Date(),
