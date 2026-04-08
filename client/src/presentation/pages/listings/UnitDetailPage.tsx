@@ -197,7 +197,7 @@ export default function UnitDetailPage() {
                             borderRadius: 2,
                             bgcolor: 'action.hover',
                             textDecoration: 'none',
-                            color: 'primary.main',
+                            color: '#fff',
                             transition: 'all 0.2s',
                             '&:hover': {
                               bgcolor: 'primary.main',
@@ -229,7 +229,7 @@ export default function UnitDetailPage() {
                             borderRadius: 2,
                             bgcolor: 'action.hover',
                             textDecoration: 'none',
-                            color: 'primary.main',
+                            color: '#fff',
                             transition: 'all 0.2s',
                             '&:hover': {
                               bgcolor: 'primary.main',
@@ -263,7 +263,7 @@ export default function UnitDetailPage() {
                             borderRadius: 2,
                             bgcolor: 'action.hover',
                             textDecoration: 'none',
-                            color: 'primary.main',
+                            color: '#fff',
                             transition: 'all 0.2s',
                             '&:hover': {
                               bgcolor: 'primary.main',
@@ -297,7 +297,7 @@ export default function UnitDetailPage() {
                             borderRadius: 2,
                             bgcolor: 'action.hover',
                             textDecoration: 'none',
-                            color: 'primary.main',
+                            color: '#fff',
                             transition: 'all 0.2s',
                             '&:hover': {
                               bgcolor: 'primary.main',
