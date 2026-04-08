@@ -1,11 +1,10 @@
 export type PropertyStatus = 'Active' | 'Disabled' | 'Maintenance' | 'Archived';
 export type PropertyType = 'Boarding House' | 'Apartment' | 'Commercial' | 'Parking' | 'Land' | 'Mixed Use';
-export type PropertyCategory = 'Review Centers' | 'Schools and Universities' | 'Commercial Establishments';
 
-export interface NearbyCategory {
-  category: PropertyCategory;
-  distance?: string;
-  name?: string;
+export interface Venue {
+  name: string;
+  walking: string;
+  commute: string;
 }
 
 export interface Property {
@@ -20,14 +19,18 @@ export interface Property {
   address: {
     street: string;
     city: string;
+    province: string;
     state: string;
     zipCode: string;
     country: string;
   };
 
   inclusions: string[];
-  otherDetails: string[];
-  nearbyCategories: NearbyCategory[];
+  
+  // Categorized venues with transportation times
+  reviewCenters: Venue[];
+  schools: Venue[];
+  commercialEstablishments: Venue[];
 
   // Aggregated metadata mapped specifically for the dashboard stats
   metrics: {
