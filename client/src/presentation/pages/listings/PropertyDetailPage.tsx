@@ -18,7 +18,6 @@ import {
   ArrowBack,
   LocationOnOutlined,
   CheckCircleOutline,
-  InfoOutlined,
   GroupOutlined,
   MeetingRoomOutlined,
 } from '@mui/icons-material';
@@ -127,17 +126,38 @@ export default function PropertyDetailPage() {
                 <Grid size={{ xs: 12, sm: 6 }}>
                   <Card variant="outlined" sx={{ borderRadius: 3, height: '100%', border: 'none', bgcolor: 'background.default' }}>
                     <CardContent>
-                      <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>Other Details</Typography>
+                      <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>Nearby Categories</Typography>
                       <List dense disablePadding>
-                        {property.otherDetails.map((item, i) => (
-                          <ListItem key={i} disablePadding sx={{ mb: 1 }}>
-                            <ListItemIcon sx={{ minWidth: 32 }}>
-                              <InfoOutlined color="primary" fontSize="small" />
-                            </ListItemIcon>
-                            <ListItemText primary={item} primaryTypographyProps={{ variant: 'body2' }} />
+                        {property.reviewCenters.length > 0 && (
+                          <ListItem disablePadding sx={{ mb: 1 }}>
+                            <ListItemText 
+                              primary={`📚 Review Centers (${property.reviewCenters.length})`}
+                              primaryTypographyProps={{ variant: 'body2', fontWeight: 600 }}
+                            />
                           </ListItem>
-                        ))}
+                        )}
+                        {property.schools.length > 0 && (
+                          <ListItem disablePadding sx={{ mb: 1 }}>
+                            <ListItemText 
+                              primary={`🎓 Schools & Universities (${property.schools.length})`}
+                              primaryTypographyProps={{ variant: 'body2', fontWeight: 600 }}
+                            />
+                          </ListItem>
+                        )}
+                        {property.commercialEstablishments.length > 0 && (
+                          <ListItem disablePadding sx={{ mb: 1 }}>
+                            <ListItemText 
+                              primary={`🏢 Commercial Establishments (${property.commercialEstablishments.length})`}
+                              primaryTypographyProps={{ variant: 'body2', fontWeight: 600 }}
+                            />
+                          </ListItem>
+                        )}
                       </List>
+                      {property.reviewCenters.length === 0 && property.schools.length === 0 && property.commercialEstablishments.length === 0 && (
+                        <Typography variant="body2" color="text.secondary">
+                          No nearby categories available
+                        </Typography>
+                      )}
                     </CardContent>
                   </Card>
                 </Grid>
