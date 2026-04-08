@@ -23,6 +23,12 @@ import rm6Img1 from '../../assets/properties/white_dorm/units/room6/room6_img1.j
 import rm6Img2 from '../../assets/properties/white_dorm/units/room6/room6_img2.jpg';
 import rm6Img3 from '../../assets/properties/white_dorm/units/room6/room6_img3.jpg';
 
+// Room 7
+import rm7Img1 from '../../assets/properties/white_dorm/units/room7/room7_img1.jpg';
+import rm7Img2 from '../../assets/properties/white_dorm/units/room7/room7_img2.jpg';
+import rm7Img3 from '../../assets/properties/white_dorm/units/room7/room7_img3.jpg';
+import rm7Img4 from '../../assets/properties/white_dorm/units/room7/room7_img4.jpg';
+import rm7Img5 from '../../assets/properties/white_dorm/units/room7/room7_img5.jpg';
 //==============================================================================
 
 
@@ -71,7 +77,7 @@ const MOCK_UNITS: Unit[] = [
       'Vacant as a room or for Bedspace',
     ],
   },
-      {
+  {
     id: 'unit-white-dorm-room4',
     propertyId: 'prop-white-dorm',
     name: 'Room 4',
@@ -89,8 +95,7 @@ const MOCK_UNITS: Unit[] = [
       'Vacant as a room or for Bedspace',
     ],
   },
-
-      {
+  {
     id: 'unit-white-dorm-room6',
     propertyId: 'prop-white-dorm',
     name: 'Room 6',
@@ -102,6 +107,24 @@ const MOCK_UNITS: Unit[] = [
     capacity: 4,
     currentOccupants: 0,
     vacancies: 4,
+    status: 'Available',
+    features: ['Foam', 'Pillow', 'WiFi', 'Clip Fan', 'Table', 'Chair'],
+    otherDetails: [
+      'Vacant as a room or for Bedspace',
+    ],
+  },
+    {
+    id: 'unit-white-dorm-room7',
+    propertyId: 'prop-white-dorm',
+    name: 'Room 2',
+    accommodationType: 'Bedspace',
+    images: [
+      rm7Img1, rm7Img2, rm7Img3, rm7Img4, rm7Img5
+    ],
+    monthlyRent: 2500,
+    capacity: 8,
+    currentOccupants: 0,
+    vacancies: 8,
     status: 'Available',
     features: ['Foam', 'Pillow', 'WiFi', 'Clip Fan', 'Table', 'Chair'],
     otherDetails: [
