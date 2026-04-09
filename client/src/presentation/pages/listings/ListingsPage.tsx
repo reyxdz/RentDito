@@ -54,14 +54,15 @@ const PROPERTY_CATEGORIES: { type: CategoryType; label: string }[] = [
 export default function ListingsPage() {
   const navigate = useNavigate();
   const { properties, loading, error } = useListings();
-  const { getUniqueVenuesByCategory, propertyMatchesSelectedVenues, getSelectedVenuesByCategory } =
-    useVenueFiltering(properties, selectedVenues);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [typeFilter, setTypeFilter] = useState<PropertyType | 'All'>('All');
   const [selectedVenues, setSelectedVenues] = useState<SelectedVenue[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<CategoryType | null>(null);
+
+  const { getUniqueVenuesByCategory, propertyMatchesSelectedVenues, getSelectedVenuesByCategory } =
+    useVenueFiltering(properties, selectedVenues);
 
   const handleCategoryClick = (categoryType: CategoryType) => {
     setSelectedCategory(categoryType);

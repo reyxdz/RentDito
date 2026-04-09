@@ -1,4 +1,3 @@
-import { useMemo } from 'react';
 import type { Property } from '../../domain/entities/Property';
 import type { SelectedVenue } from '../../domain/entities/VenueFilter';
 
