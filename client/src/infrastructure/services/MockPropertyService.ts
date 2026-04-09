@@ -46,8 +46,12 @@ const MOCK_PROPERTIES: Property[] = [
     },
     inclusions: ['WiFi', 'Foam', 'Pillow', 'Table', 'Chair', 'Clip Fan', 'Electric Rice Cooker', 'Can Cook', 'Can Wash Clothes', 'No Curfew'],
     reviewCenters: [
-      { name: 'Mega Review Center', walking: '9 minutes', commute: '15 minutes' },
-      { name: 'Top Review Academy', walking: '12 minutes', commute: '18 minutes' },
+      { name: 'Ecel Review Center', walking: '6 minutes', commute: ' ' },
+      { name: 'Manor Review Center', walking: '8 minutes', commute: ' ' },
+      { name: 'Powerdev Review Center', walking: '8 minutes', commute: ' ' },
+      { name: 'Padilla Review Center', walking: '8 minutes', commute: ' ' },
+      { name: 'Prime Review Center', walking: '8 minutes', commute: ' ' },
+      { name: 'Alcoron Review Center', walking: '20 minutes', commute: '16 minutes' },
     ],
     schools: [
       { name: 'University of Cebu', walking: '10 minutes', commute: '20 minutes' },
