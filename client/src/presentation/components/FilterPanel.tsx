@@ -29,6 +29,8 @@ interface FilterPanelProps {
   onClearAllVenues: () => void;
   getUniqueVenuesByCategory: (categoryType: CategoryType) => { name: string; count: number }[];
   getSelectedVenuesByCategory: (categoryType: CategoryType) => SelectedVenue[];
+  variant?: 'card' | 'plain';
+  hideSearch?: boolean;
 }
 
 export default function FilterPanel({
@@ -43,6 +45,8 @@ export default function FilterPanel({
   onClearAllVenues,
   getUniqueVenuesByCategory,
   getSelectedVenuesByCategory,
+  variant = 'card',
+  hideSearch = false,
 }: FilterPanelProps) {
   // Menu anchor refs for each category
   const anchorRefs = useRef<Record<string, HTMLButtonElement | null>>({});
@@ -57,7 +61,8 @@ export default function FilterPanel({
     setOpenMenu(null);
   };
 
-  const handleVenueSelect = (venueName: string, category: CategoryType) => {
+  const handleVenueSelect = (e: React.MouseEvent, venueName: string, category: CategoryType) => {
+    e.stopPropagation();
     onVenueToggle(venueName, category);
   };
   const inputSx = {
@@ -74,41 +79,56 @@ export default function FilterPanel({
     display: 'flex',
     flexDirection: 'column' as const,
     gap: 2,
+    mb: 3,
   };
 
   return (
     <>
-      <Card
-        sx={{
-          p: 3,
-          bgcolor: 'background.paper',
-          borderRadius: 3,
-          border: '1px solid',
-          borderColor: 'divider',
-          boxShadow: 'none',
-        }}
-      >
+      {variant === 'card' ? (
+        <Card
+          sx={{
+            p: 3,
+            bgcolor: 'background.paper',
+            borderRadius: 3,
+            border: '1px solid',
+            borderColor: 'divider',
+            boxShadow: 'none',
+          }}
+        >
+          <FilterContent />
+        </Card>
+      ) : (
+        <FilterContent />
+      )}
+    </>
+  );
+
+  function FilterContent() {
+    return (
+      <>
         {/* Section 1: Search */}
-        <Box sx={sectionSx}>
-          <Typography variant="subtitle2" sx={{ fontWeight: 700, fontSize: '0.75rem', letterSpacing: 0.5, textTransform: 'uppercase', color: 'text.secondary' }}>
-            Search
-          </Typography>
-          <TextField
-            fullWidth
-            placeholder="Search by property name or city..."
-            value={filters.searchTerm}
-            onChange={(e) => onSearchChange(e.target.value)}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <Search sx={{ color: 'text.secondary', fontSize: 20 }} />
-                </InputAdornment>
-              ),
-            }}
-            size="small"
-            sx={inputSx}
-          />
-        </Box>
+        {!hideSearch && (
+          <Box sx={sectionSx}>
+            <Typography variant="subtitle2" sx={{ fontWeight: 700, fontSize: '0.75rem', letterSpacing: 0.5, textTransform: 'uppercase', color: 'text.secondary' }}>
+              Search
+            </Typography>
+            <TextField
+              fullWidth
+              placeholder="Search by property name or city..."
+              value={filters.searchTerm}
+              onChange={(e) => onSearchChange(e.target.value)}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Search sx={{ color: 'text.secondary', fontSize: 20 }} />
+                  </InputAdornment>
+                ),
+              }}
+              size="small"
+              sx={inputSx}
+            />
+          </Box>
+        )}
 
         {/* Section 2: Location & Type */}
         <Box sx={sectionSx}>
@@ -229,8 +249,9 @@ export default function FilterPanel({
                         return (
                           <MenuItem
                             key={venue.name}
-                            onClick={() => handleVenueSelect(venue.name, categoryType)}
+                            onClick={(e) => handleVenueSelect(e, venue.name, categoryType)}
                             sx={{ py: 1 }}
+                            disableRipple
                           >
                             <FormControlLabel
                               control={<Checkbox checked={isVenueSelected} size="small" />}
@@ -305,7 +326,7 @@ export default function FilterPanel({
             </Box>
           )}
         </Box>
-      </Card>
-    </>
-  );
+      </>
+    );
+  }
 }

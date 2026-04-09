@@ -8,8 +8,16 @@ import {
   Grid,
   Skeleton,
   Chip,
+  IconButton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  TextField,
+  InputAdornment,
 } from '@mui/material';
-import { MeetingRoomOutlined, LocationOnOutlined } from '@mui/icons-material';
+import { MeetingRoomOutlined, LocationOnOutlined, TuneOutlined, Search } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useListings } from '../../../application/hooks/useListings';
 import { useVenueFiltering } from '../../../application/hooks/useVenueFiltering';
@@ -25,6 +33,7 @@ export default function ListingsPage() {
   const navigate = useNavigate();
   const { properties, loading, error } = useListings();
   const filterOptions = useFilterOptions(properties);
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
 
   const [filters, setFilters] = useState<ListingFilters>({
     searchTerm: '',
@@ -111,40 +120,112 @@ export default function ListingsPage() {
         }}
       >
         <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
-          <Typography
-            variant="h3"
-            sx={{
-              fontWeight: 800,
-              mb: 1,
-              fontSize: { xs: '1.8rem', md: '2.5rem' },
-            }}
-          >
-            Browse{' '}
-            <Box component="span" sx={{ color: 'primary.main' }}>
-              Properties
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 4 }}>
+            <Box sx={{ flex: 1 }}>
+              <Typography
+                variant="h3"
+                sx={{
+                  fontWeight: 800,
+                  mb: 1,
+                  fontSize: { xs: '1.8rem', md: '2.5rem' },
+                }}
+              >
+                Browse{' '}
+                <Box component="span" sx={{ color: 'primary.main' }}>
+                  Properties
+                </Box>
+              </Typography>
+              <Typography variant="body1" color="text.secondary" sx={{ maxWidth: 600 }}>
+                Discover your next home from our curated selection of rental properties across the
+                Philippines.
+              </Typography>
             </Box>
-          </Typography>
-          <Typography variant="body1" color="text.secondary" sx={{ mb: 4, maxWidth: 600 }}>
-            Discover your next home from our curated selection of rental properties across the
-            Philippines.
-          </Typography>
+            <IconButton
+              onClick={() => setIsFilterModalOpen(true)}
+              sx={{
+                bgcolor: 'primary.main',
+                color: 'white',
+                '&:hover': {
+                  bgcolor: 'primary.dark',
+                },
+                mt: 1,
+              }}
+            >
+              <TuneOutlined />
+            </IconButton>
+          </Box>
 
-          {/* Unified Filter Panel */}
-          <FilterPanel
-            filters={filters}
-            filterOptions={filterOptions}
-            onSearchChange={handleSearchChange}
-            onPropertyTypeChange={handlePropertyTypeChange}
-            onProvinceChange={handleProvinceChange}
-            onCityChange={handleCityChange}
-            onVenueToggle={handleVenueToggle}
-            onVenueRemove={handleVenueRemove}
-            onClearAllVenues={handleClearAllVenues}
-            getUniqueVenuesByCategory={getUniqueVenuesByCategory}
-            getSelectedVenuesByCategory={getSelectedVenuesByCategory}
+          {/* Search Bar */}
+          <TextField
+            fullWidth
+            placeholder="Search by property name or city..."
+            value={filters.searchTerm}
+            onChange={(e) => handleSearchChange(e.target.value)}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Search sx={{ color: 'text.secondary', fontSize: 20 }} />
+                </InputAdornment>
+              ),
+            }}
+            size="small"
+            sx={{
+              '& .MuiOutlinedInput-root': {
+                borderRadius: 2,
+                fontSize: '0.875rem',
+              },
+              '& .MuiInputBase-input': {
+                padding: '10px 12px',
+              },
+            }}
           />
         </Container>
       </Box>
+
+      {/* ── Filter Modal Dialog ────────────────────────────────────────── */}
+      <Dialog
+        open={isFilterModalOpen}
+        onClose={() => setIsFilterModalOpen(false)}
+        maxWidth="sm"
+        fullWidth
+        PaperProps={{
+          sx: {
+            borderRadius: 3,
+          },
+        }}
+      >
+        <DialogTitle
+          sx={{
+            fontWeight: 700,
+            fontSize: '1.25rem',
+            pb: 1,
+          }}
+        >
+          Filters
+        </DialogTitle>
+        <DialogContent>
+          <Box sx={{ pt: 2 }}>
+            <FilterPanel
+              filters={filters}
+              filterOptions={filterOptions}
+              onSearchChange={handleSearchChange}
+              onPropertyTypeChange={handlePropertyTypeChange}
+              onProvinceChange={handleProvinceChange}
+              onCityChange={handleCityChange}
+              onVenueToggle={handleVenueToggle}
+              onVenueRemove={handleVenueRemove}
+              onClearAllVenues={handleClearAllVenues}
+              getUniqueVenuesByCategory={getUniqueVenuesByCategory}
+              getSelectedVenuesByCategory={getSelectedVenuesByCategory}
+              variant="plain"
+              hideSearch={true}
+            />
+          </Box>
+        </DialogContent>
+        <DialogActions sx={{ p: 2, pt: 0 }}>
+          <Button onClick={() => setIsFilterModalOpen(false)}>Close</Button>
+        </DialogActions>
+      </Dialog>
 
       {/* ── Property Cards Grid ────────────────────────────────────────── */}
       <Box sx={{ flexGrow: 1, pb: 8 }}>

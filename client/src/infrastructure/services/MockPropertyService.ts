@@ -11,6 +11,7 @@ import wdImg7 from '../../assets/properties/white_dorm/images/image7.jpg';
 import wdImg8 from '../../assets/properties/white_dorm/images/image8.jpg';
 import wdImg9 from '../../assets/properties/white_dorm/images/image9.jpg';
 import wdImg10 from '../../assets/properties/white_dorm/images/image10.jpg';
+
 // Uytengso Boarding House Property
 import uyImg1 from '../../assets/properties/uytengso/images/u.jpg';
 import uyImg2 from '../../assets/properties/uytengso/images/y.jpg';
