@@ -1,5 +1,5 @@
 export type PropertyStatus = 'Active' | 'Disabled' | 'Maintenance' | 'Archived';
-export type PropertyType = 'Boarding House' | 'Apartment' | 'Studio' | 'Dormitory';
+export type PropertyType = 'Boarding House' | 'Apartment' | 'Studio' | 'Dormitory' | 'Commercial' | 'Parking' | 'Land' | 'Mixed Use';
 
 export interface Venue {
   name: string;
