@@ -26,7 +26,6 @@ export default function ListingsPage() {
   const { properties, loading, error } = useListings();
   const filterOptions = useFilterOptions(properties);
 
-  // Consolidated filter state
   const [filters, setFilters] = useState<ListingFilters>({
     searchTerm: '',
     propertyType: 'All',
@@ -35,13 +34,9 @@ export default function ListingsPage() {
     selectedVenues: [],
   });
 
-  const [modalOpen, setModalOpen] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<CategoryType | null>(null);
-
   const { getUniqueVenuesByCategory, propertyMatchesSelectedVenues, getSelectedVenuesByCategory } =
     useVenueFiltering(properties, filters.selectedVenues);
 
-  // Handler functions
   const handleSearchChange = (value: string) => {
     setFilters((prev) => ({ ...prev, searchTerm: value }));
   };
@@ -58,22 +53,17 @@ export default function ListingsPage() {
     setFilters((prev) => ({ ...prev, city: value }));
   };
 
-  const handleCategoryClick = (categoryType: CategoryType) => {
-    setSelectedCategory(categoryType);
-    setModalOpen(true);
-  };
-
-  const handleVenueToggle = (venueName: string) => {
+  const handleVenueToggle = (venueName: string, category: CategoryType) => {
     setFilters((prev) => {
       const venueAlreadySelected = prev.selectedVenues.some(
-        (v) => v.name === venueName && v.category === selectedCategory
+        (v) => v.name === venueName && v.category === category
       );
 
       if (venueAlreadySelected) {
         return {
           ...prev,
           selectedVenues: prev.selectedVenues.filter(
-            (v) => !(v.name === venueName && v.category === selectedCategory)
+            (v) => !(v.name === venueName && v.category === category)
           ),
         };
       } else {
@@ -81,7 +71,7 @@ export default function ListingsPage() {
           ...prev,
           selectedVenues: [
             ...prev.selectedVenues,
-            { name: venueName, category: selectedCategory! },
+            { name: venueName, category },
           ],
         };
       }
@@ -152,10 +142,6 @@ export default function ListingsPage() {
             onClearAllVenues={handleClearAllVenues}
             getUniqueVenuesByCategory={getUniqueVenuesByCategory}
             getSelectedVenuesByCategory={getSelectedVenuesByCategory}
-            modalOpen={modalOpen}
-            selectedCategory={selectedCategory}
-            onModalOpen={handleCategoryClick}
-            onModalClose={() => setModalOpen(false)}
           />
         </Container>
       </Box>
