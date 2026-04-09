@@ -6,7 +6,6 @@ import {
   MenuItem,
   Chip,
   Card,
-  CardContent,
   Divider,
   Dialog,
   DialogTitle,
@@ -31,7 +30,6 @@ interface FilterPanelProps {
   onPropertyTypeChange: (value: PropertyType | 'All') => void;
   onProvinceChange: (value: string | 'All') => void;
   onCityChange: (value: string | 'All') => void;
-  onCategoryClick: (categoryType: CategoryType) => void;
   onVenueToggle: (venueName: string) => void;
   onVenueRemove: (venue: SelectedVenue) => void;
   onClearAllVenues: () => void;
@@ -50,7 +48,6 @@ export default function FilterPanel({
   onPropertyTypeChange,
   onProvinceChange,
   onCityChange,
-  onCategoryClick,
   onVenueToggle,
   onVenueRemove,
   onClearAllVenues,

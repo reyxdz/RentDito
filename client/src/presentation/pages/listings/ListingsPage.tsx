@@ -7,6 +7,7 @@ import {
   CardContent,
   Grid,
   Skeleton,
+  Chip,
 } from '@mui/material';
 import { MeetingRoomOutlined, LocationOnOutlined } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
@@ -19,12 +20,6 @@ import FilterPanel from '../../components/FilterPanel';
 import type { PropertyType } from '../../../domain/entities/Property';
 import type { ListingFilters } from '../../../domain/entities/ListingFilters';
 import type { CategoryType, SelectedVenue } from '../../../domain/entities/VenueFilter';
-
-const PROPERTY_CATEGORIES: { type: CategoryType; label: string }[] = [
-  { type: 'reviewCenters', label: 'Review Centers' },
-  { type: 'schools', label: 'Schools and Universities' },
-  { type: 'commercialEstablishments', label: 'Commercial Establishments' },
-];
 
 export default function ListingsPage() {
   const navigate = useNavigate();
@@ -152,7 +147,6 @@ export default function ListingsPage() {
             onPropertyTypeChange={handlePropertyTypeChange}
             onProvinceChange={handleProvinceChange}
             onCityChange={handleCityChange}
-            onCategoryClick={handleCategoryClick}
             onVenueToggle={handleVenueToggle}
             onVenueRemove={handleVenueRemove}
             onClearAllVenues={handleClearAllVenues}
