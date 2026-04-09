@@ -59,7 +59,9 @@ export default function ListingsPage() {
 
   const [searchTerm, setSearchTerm] = useState('');
   const [typeFilter, setTypeFilter] = useState<PropertyType | 'All'>('All');
-  const [categoryFilters, setCategoryFilters] = useState<CategoryType[]>([]);
+  const [selectedVenue, setSelectedVenue] = useState<string | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<CategoryType | null>(null);
 
   const filteredProperties = useMemo(() => {
     return properties.filter((p) => {
