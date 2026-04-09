@@ -63,6 +63,42 @@ export default function ListingsPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<CategoryType | null>(null);
 
+  // Extract all unique venues from a category
+  const getUniqueVenues = (categoryType: CategoryType) => {
+    const venues: { name: string; count: number }[] = [];
+    const venueNames = new Set<string>();
+    
+    properties.forEach((p) => {
+      const categoryVenues = p[categoryType];
+      categoryVenues.forEach((venue) => {
+        venueNames.add(venue.name);
+      });
+    });
+
+    venueNames.forEach((name) => {
+      const count = properties.filter((p) => 
+        p[categoryType].some((v) => v.name === name)
+      ).length;
+      venues.push({ name, count });
+    });
+
+    return venues.sort((a, b) => b.count - a.count);
+  };
+
+  const handleCategoryClick = (categoryType: CategoryType) => {
+    setSelectedCategory(categoryType);
+    setModalOpen(true);
+  };
+
+  const handleVenueSelect = (venueName: string) => {
+    setSelectedVenue(venueName);
+    setModalOpen(false);
+  };
+
+  const handleClearVenueFilter = () => {
+    setSelectedVenue(null);
+  };
+
   const filteredProperties = useMemo(() => {
     return properties.filter((p) => {
       const q = searchTerm.toLowerCase();
