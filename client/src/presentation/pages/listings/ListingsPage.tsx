@@ -112,20 +112,18 @@ export default function ListingsPage() {
       }
       if (typeFilter !== 'All' && p.propertyType !== typeFilter) return false;
       
-      // Category filter: if categories are selected, property must have at least one matching category
-      if (categoryFilters.length > 0) {
-        const hasMatchingCategory = categoryFilters.some((cat) => {
-          if (cat === 'reviewCenters') return p.reviewCenters.length > 0;
-          if (cat === 'schools') return p.schools.length > 0;
-          if (cat === 'commercialEstablishments') return p.commercialEstablishments.length > 0;
-          return false;
-        });
-        if (!hasMatchingCategory) return false;
+      // Venue filter: if a venue is selected, check if property has this venue in any category
+      if (selectedVenue) {
+        const hasVenue = 
+          p.reviewCenters.some((v) => v.name === selectedVenue) ||
+          p.schools.some((v) => v.name === selectedVenue) ||
+          p.commercialEstablishments.some((v) => v.name === selectedVenue);
+        if (!hasVenue) return false;
       }
       
       return true;
     });
-  }, [properties, searchTerm, typeFilter, categoryFilters]);
+  }, [properties, searchTerm, typeFilter, selectedVenue]);
 
   const formatPrice = (amount: number) =>
     new Intl.NumberFormat('en-PH').format(amount);
