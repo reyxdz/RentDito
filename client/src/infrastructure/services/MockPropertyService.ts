@@ -32,14 +32,14 @@ const MOCK_PROPERTIES: Property[] = [
     name: 'White Dorm Property',
     description:
       'A beautiful and well-maintained property. Ideal for students and young professionals seeking affordable and comfortable accommodation.',
-    propertyType: 'Boarding House',
+    propertyType: 'Mixed Use',
     status: 'Active',
     images: [
       wdImg1, wdImg2, wdImg3, wdImg4, wdImg5, wdImg6, wdImg7, wdImg8, wdImg9, wdImg10
     ],
     address: {
       street: 'Sikatuna Street',
-      city: 'Cebu city',
+      city: 'Cebu City',
       state: 'Cebu',
       zipCode: '6543',
       country: 'Philippines',
@@ -71,7 +71,7 @@ const MOCK_PROPERTIES: Property[] = [
     landlordId: 'usr_landlord_2',
     name: 'Uytengso Boardings House',
     description:
-      'A beautiful and well-maintained property. Ideal for students and young professionals seeking affordable and comfortable accommodation.',
+      'A beautiful and well-maintained property. Ideal for students, young professionals, and reviewees seeking affordable and comfortable accommodation.',
     propertyType: 'Boarding House',
     status: 'Active',
     images: [
@@ -87,16 +87,26 @@ const MOCK_PROPERTIES: Property[] = [
     },
     inclusions: ['WiFi', 'Foam', 'Pillow', 'Table', 'Chair', 'Clip Fan', 'Electric Rice Cooker', 'Can Cook', 'Can Wash Clothes', 'No Curfew'],
     reviewCenters: [
-      { name: 'Mega Review Center', walking: '9 minutes', commute: '15 minutes' },
-      { name: 'Top Review Academy', walking: '12 minutes', commute: '18 minutes' },
+      { name: 'Mega Review Center', walking: '4 minutes', commute: '15 minutes' },
+      { name: 'Gold Rank Review Center', walking: '4 minutes', commute: '18 minutes' },
+      { name: 'Alcorcon Review Center', walking: '12 minutes', commute: '12 minutes' },
+      { name: 'Falcon Review Center', walking: '8 minutes', commute: '18 minutes' },
+      { name: 'Top Rank Review Center', walking: '', commute: '5 minutes' },
+      { name: 'Gillesania Review Center', walking: '', commute: '20 minutes' },
+      { name: 'Rojas Review Center', walking: '', commute: '20 minutes' },
+      { name: 'Review Innovation', walking: '', commute: '15 minutes' },
     ],
     schools: [
-      { name: 'University of Cebu', walking: '10 minutes', commute: '20 minutes' },
-      { name: 'Cebu Tech University', walking: '14 minutes', commute: '25 minutes' },
+      { name: 'ACT', walking: '10 minutes', commute: '5 minutes' },
+      { name: 'Cebu Normal University', walking: '5 minutes', commute: '' },
+      { name: 'South Western University', walking: '3 minutes', commute: '' },
+      { name: 'University of Cebu', walking: '', commute: '12 minutes' },
+      { name: 'UC Main', walking: '', commute: '12 minutes' },
     ],
     commercialEstablishments: [
-      { name: 'Carbon Dioxide Public Market', walking: '5 minutes', commute: '12 minutes' },
-      { name: 'SM Mall', walking: '20 minutes', commute: '30 minutes' },
+      { name: 'Robinson Fuente', walking: '', commute: '5 minutes' },
+      { name: 'Robinson Cybergate', walking: '', commute: '8 minutes' },
+      
     ],
     metrics: {
       totalUnits: 10,
