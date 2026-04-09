@@ -19,7 +19,6 @@ export interface Property {
   address: {
     street: string;
     city: string;
-    province: string;
     state: string;
     zipCode: string;
     country: string;
