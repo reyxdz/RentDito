@@ -400,6 +400,45 @@ export default function ListingsPage() {
           © {new Date().getFullYear()} RentDito. All rights reserved.
         </Typography>
       </Box>
+
+      {/* ── Venue Selection Modal ──────────────────────────────────────── */}
+      <Dialog open={modalOpen} onClose={() => setModalOpen(false)} maxWidth="sm" fullWidth>
+        <DialogTitle>
+          {selectedCategory && PROPERTY_CATEGORIES.find((c) => c.type === selectedCategory)?.label}
+        </DialogTitle>
+        <Divider />
+        <DialogContent sx={{ p: 0 }}>
+          {selectedCategory && getUniqueVenues(selectedCategory).length > 0 ? (
+            <List>
+              {getUniqueVenues(selectedCategory).map((venue, index) => (
+                <ListItem key={index} disablePadding>
+                  <ListItemButton
+                    onClick={() => handleVenueSelect(venue.name)}
+                    sx={{
+                      '&:hover': {
+                        backgroundColor: 'action.hover',
+                      },
+                    }}
+                  >
+                    <ListItemText
+                      primary={venue.name}
+                      secondary={`${venue.count} propert${venue.count === 1 ? 'y' : 'ies'}`}
+                    />
+                  </ListItemButton>
+                </ListItem>
+              ))}
+            </List>
+          ) : (
+            <Box sx={{ p: 2, textAlign: 'center' }}>
+              <Typography color="text.secondary">No venues available</Typography>
+            </Box>
+          )}
+        </DialogContent>
+        <Divider />
+        <DialogActions>
+          <Button onClick={() => setModalOpen(false)}>Close</Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }
