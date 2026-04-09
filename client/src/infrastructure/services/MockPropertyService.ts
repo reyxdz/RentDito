@@ -48,7 +48,7 @@ const MOCK_PROPERTIES: Property[] = [
       { name: 'Cebu Tech University', walking: '14 minutes', commute: '25 minutes' },
     ],
     commercialEstablishments: [
-      { name: 'Naval Town Market', walking: '5 minutes', commute: '12 minutes' },
+      { name: 'Carbon Dioxide Public Market', walking: '5 minutes', commute: '12 minutes' },
       { name: 'SM Mall', walking: '20 minutes', commute: '30 minutes' },
     ],
     metrics: {

@@ -1,5 +1,5 @@
 export type PropertyStatus = 'Active' | 'Disabled' | 'Maintenance' | 'Archived';
-export type PropertyType = 'Boarding House' | 'Apartment' | 'Commercial' | 'Parking' | 'Land' | 'Mixed Use';
+export type PropertyType = 'Boarding House' | 'Apartment' | 'Studio' | 'Dormitory';
 
 export interface Venue {
   name: string;
@@ -26,7 +26,7 @@ export interface Property {
   };
 
   inclusions: string[];
-  
+
   // Categorized venues with transportation times
   reviewCenters: Venue[];
   schools: Venue[];

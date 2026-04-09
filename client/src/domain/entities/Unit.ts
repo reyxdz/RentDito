@@ -1,9 +1,6 @@
 export type AccommodationType =
   | 'Bedspace'
   | 'Room for Rent'
-  | 'Apartment'
-  | 'Dormitory'
-  | 'Studio';
 
 export type UnitStatus = 'Available' | 'Occupied' | 'Maintenance';
 
