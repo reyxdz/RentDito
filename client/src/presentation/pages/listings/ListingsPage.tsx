@@ -212,31 +212,37 @@ export default function ListingsPage() {
               <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 2 }}>
                 Filter by Nearby Categories
               </Typography>
-              <FormGroup row sx={{ gap: 3 }}>
+              <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
                 {PROPERTY_CATEGORIES.map((category) => (
-                  <FormControlLabel
+                  <Chip
                     key={category.type}
-                    control={
-                      <Checkbox
-                        checked={categoryFilters.includes(category.type)}
-                        onChange={(e) => {
-                          if (e.target.checked) {
-                            setCategoryFilters([...categoryFilters, category.type]);
-                          } else {
-                            setCategoryFilters(categoryFilters.filter((c) => c !== category.type));
-                          }
-                        }}
-                        size="small"
-                      />
-                    }
-                    label={
-                      <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                        {category.label}
-                      </Typography>
-                    }
+                    label={category.label}
+                    onClick={() => handleCategoryClick(category.type)}
+                    variant={selectedVenue && selectedCategory === category.type ? 'filled' : 'outlined'}
+                    sx={{
+                      cursor: 'pointer',
+                      fontWeight: 500,
+                      '&:hover': {
+                        backgroundColor: 'action.hover',
+                      },
+                    }}
                   />
                 ))}
-              </FormGroup>
+              </Box>
+              {selectedVenue && (
+                <Box sx={{ mt: 2, display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                  <Typography variant="caption" color="text.secondary">
+                    Selected:
+                  </Typography>
+                  <Chip
+                    label={selectedVenue}
+                    onDelete={handleClearVenueFilter}
+                    size="small"
+                    color="primary"
+                    variant="filled"
+                  />
+                </Box>
+              )}
             </Box>
           </Card>
         </Container>
