@@ -21,6 +21,7 @@ import {
   ListItemButton,
   ListItemText,
   Divider,
+  Checkbox,
 } from '@mui/material';
 import {
   Search,
@@ -29,9 +30,11 @@ import {
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useListings } from '../../../application/hooks/useListings';
+import { useVenueFiltering } from '../../../application/hooks/useVenueFiltering';
 import ImageCarousel from '../../components/ImageCarousel';
 import Navbar from '../../components/Navbar';
 import type { PropertyType } from '../../../domain/entities/Property';
+import type { CategoryType, SelectedVenue } from '../../../domain/entities/VenueFilter';
 
 const PROPERTY_TYPES: PropertyType[] = [
   'Boarding House',
@@ -42,8 +45,6 @@ const PROPERTY_TYPES: PropertyType[] = [
   'Mixed Use',
 ];
 
-type CategoryType = 'reviewCenters' | 'schools' | 'commercialEstablishments';
-
 const PROPERTY_CATEGORIES: { type: CategoryType; label: string }[] = [
   { type: 'reviewCenters', label: 'Review Centers' },
   { type: 'schools', label: 'Schools and Universities' },
@@ -53,47 +54,46 @@ const PROPERTY_CATEGORIES: { type: CategoryType; label: string }[] = [
 export default function ListingsPage() {
   const navigate = useNavigate();
   const { properties, loading, error } = useListings();
+  const { getUniqueVenuesByCategory, propertyMatchesSelectedVenues, getSelectedVenuesByCategory } =
+    useVenueFiltering(properties, selectedVenues);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [typeFilter, setTypeFilter] = useState<PropertyType | 'All'>('All');
-  const [selectedVenue, setSelectedVenue] = useState<string | null>(null);
+  const [selectedVenues, setSelectedVenues] = useState<SelectedVenue[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<CategoryType | null>(null);
-
-  // Extract all unique venues from a category
-  const getUniqueVenues = (categoryType: CategoryType) => {
-    const venues: { name: string; count: number }[] = [];
-    const venueNames = new Set<string>();
-    
-    properties.forEach((p) => {
-      const categoryVenues = p[categoryType];
-      categoryVenues.forEach((venue) => {
-        venueNames.add(venue.name);
-      });
-    });
-
-    venueNames.forEach((name) => {
-      const count = properties.filter((p) => 
-        p[categoryType].some((v) => v.name === name)
-      ).length;
-      venues.push({ name, count });
-    });
-
-    return venues.sort((a, b) => b.count - a.count);
-  };
 
   const handleCategoryClick = (categoryType: CategoryType) => {
     setSelectedCategory(categoryType);
     setModalOpen(true);
   };
 
-  const handleVenueSelect = (venueName: string) => {
-    setSelectedVenue(venueName);
-    setModalOpen(false);
+  const handleVenueToggle = (venueName: string) => {
+    setSelectedVenues((prev) => {
+      const venueAlreadySelected = prev.some(
+        (v) => v.name === venueName && v.category === selectedCategory
+      );
+
+      if (venueAlreadySelected) {
+        return prev.filter(
+          (v) => !(v.name === venueName && v.category === selectedCategory)
+        );
+      } else {
+        return [...prev, { name: venueName, category: selectedCategory! }];
+      }
+    });
   };
 
-  const handleClearVenueFilter = () => {
-    setSelectedVenue(null);
+  const handleClearVenueFilter = (venueToRemove: SelectedVenue) => {
+    setSelectedVenues((prev) =>
+      prev.filter(
+        (v) => !(v.name === venueToRemove.name && v.category === venueToRemove.category)
+      )
+    );
+  };
+
+  const handleClearAllVenues = () => {
+    setSelectedVenues([]);
   };
 
   const filteredProperties = useMemo(() => {
@@ -108,19 +108,13 @@ export default function ListingsPage() {
         return false;
       }
       if (typeFilter !== 'All' && p.propertyType !== typeFilter) return false;
-      
-      // Venue filter: if a venue is selected, check if property has this venue in any category
-      if (selectedVenue) {
-        const hasVenue = 
-          p.reviewCenters.some((v) => v.name === selectedVenue) ||
-          p.schools.some((v) => v.name === selectedVenue) ||
-          p.commercialEstablishments.some((v) => v.name === selectedVenue);
-        if (!hasVenue) return false;
-      }
-      
+
+      // Venue filter: property must match at least one of the selected venues
+      if (!propertyMatchesSelectedVenues(p)) return false;
+
       return true;
     });
-  }, [properties, searchTerm, typeFilter, selectedVenue]);
+  }, [properties, searchTerm, typeFilter, selectedVenues, propertyMatchesSelectedVenues]);
 
   const formatPrice = (amount: number) =>
     new Intl.NumberFormat('en-PH').format(amount);
@@ -215,7 +209,7 @@ export default function ListingsPage() {
                     key={category.type}
                     label={category.label}
                     onClick={() => handleCategoryClick(category.type)}
-                    variant={selectedVenue && selectedCategory === category.type ? 'filled' : 'outlined'}
+                    variant={getSelectedVenuesByCategory(category.type).length > 0 ? 'filled' : 'outlined'}
                     sx={{
                       cursor: 'pointer',
                       fontWeight: 500,
@@ -226,18 +220,30 @@ export default function ListingsPage() {
                   />
                 ))}
               </Box>
-              {selectedVenue && (
-                <Box sx={{ mt: 2, display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                  <Typography variant="caption" color="text.secondary">
-                    Selected:
-                  </Typography>
-                  <Chip
-                    label={selectedVenue}
-                    onDelete={handleClearVenueFilter}
-                    size="small"
-                    color="primary"
-                    variant="filled"
-                  />
+
+              {/* Selected Venues */}
+              {selectedVenues.length > 0 && (
+                <Box sx={{ mt: 3 }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                    <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600 }}>
+                      SELECTED ({selectedVenues.length})
+                    </Typography>
+                    <Button size="small" onClick={handleClearAllVenues} sx={{ textTransform: 'none' }}>
+                      Clear All
+                    </Button>
+                  </Box>
+                  <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                    {selectedVenues.map((venue, index) => (
+                      <Chip
+                        key={index}
+                        label={venue.name}
+                        onDelete={() => handleClearVenueFilter(venue)}
+                        size="small"
+                        color="primary"
+                        variant="filled"
+                      />
+                    ))}
+                  </Box>
                 </Box>
               )}
             </Box>
@@ -405,25 +411,35 @@ export default function ListingsPage() {
         </DialogTitle>
         <Divider />
         <DialogContent sx={{ p: 0 }}>
-          {selectedCategory && getUniqueVenues(selectedCategory).length > 0 ? (
+          {selectedCategory && getUniqueVenuesByCategory(selectedCategory).length > 0 ? (
             <List>
-              {getUniqueVenues(selectedCategory).map((venue, index) => (
-                <ListItem key={index} disablePadding>
-                  <ListItemButton
-                    onClick={() => handleVenueSelect(venue.name)}
-                    sx={{
-                      '&:hover': {
-                        backgroundColor: 'action.hover',
-                      },
-                    }}
-                  >
-                    <ListItemText
-                      primary={venue.name}
-                      secondary={`${venue.count} propert${venue.count === 1 ? 'y' : 'ies'}`}
-                    />
-                  </ListItemButton>
-                </ListItem>
-              ))}
+              {getUniqueVenuesByCategory(selectedCategory).map((venue, index) => {
+                const isSelected = getSelectedVenuesByCategory(selectedCategory).some(
+                  (v) => v.name === venue.name
+                );
+                return (
+                  <ListItem key={index} disablePadding>
+                    <ListItemButton
+                      onClick={() => handleVenueToggle(venue.name)}
+                      sx={{
+                        '&:hover': {
+                          backgroundColor: 'action.hover',
+                        },
+                      }}
+                    >
+                      <Checkbox
+                        checked={isSelected}
+                        size="small"
+                        sx={{ mr: 1 }}
+                      />
+                      <ListItemText
+                        primary={venue.name}
+                        secondary={`${venue.count} propert${venue.count === 1 ? 'y' : 'ies'}`}
+                      />
+                    </ListItemButton>
+                  </ListItem>
+                );
+              })}
             </List>
           ) : (
             <Box sx={{ p: 2, textAlign: 'center' }}>
@@ -433,7 +449,7 @@ export default function ListingsPage() {
         </DialogContent>
         <Divider />
         <DialogActions>
-          <Button onClick={() => setModalOpen(false)}>Close</Button>
+          <Button onClick={() => setModalOpen(false)}>Done</Button>
         </DialogActions>
       </Dialog>
     </Box>
