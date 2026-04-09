@@ -6,44 +6,19 @@ import {
   Card,
   CardContent,
   Grid,
-  TextField,
-  InputAdornment,
-  Chip,
-  MenuItem,
   Skeleton,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemText,
-  Divider,
-  Checkbox,
 } from '@mui/material';
-import {
-  Search,
-  LocationOnOutlined,
-  MeetingRoomOutlined,
-} from '@mui/icons-material';
+import { MeetingRoomOutlined, LocationOnOutlined } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useListings } from '../../../application/hooks/useListings';
 import { useVenueFiltering } from '../../../application/hooks/useVenueFiltering';
+import { useFilterOptions, applyListingFilters } from '../../../application/services/ListingFilterService';
 import ImageCarousel from '../../components/ImageCarousel';
 import Navbar from '../../components/Navbar';
+import FilterPanel from '../../components/FilterPanel';
 import type { PropertyType } from '../../../domain/entities/Property';
+import type { ListingFilters } from '../../../domain/entities/ListingFilters';
 import type { CategoryType, SelectedVenue } from '../../../domain/entities/VenueFilter';
-
-const PROPERTY_TYPES: PropertyType[] = [
-  'Boarding House',
-  'Apartment',
-  'Commercial',
-  'Parking',
-  'Land',
-  'Mixed Use',
-];
 
 const PROPERTY_CATEGORIES: { type: CategoryType; label: string }[] = [
   { type: 'reviewCenters', label: 'Review Centers' },
@@ -54,15 +29,39 @@ const PROPERTY_CATEGORIES: { type: CategoryType; label: string }[] = [
 export default function ListingsPage() {
   const navigate = useNavigate();
   const { properties, loading, error } = useListings();
+  const filterOptions = useFilterOptions(properties);
 
-  const [searchTerm, setSearchTerm] = useState('');
-  const [typeFilter, setTypeFilter] = useState<PropertyType | 'All'>('All');
-  const [selectedVenues, setSelectedVenues] = useState<SelectedVenue[]>([]);
+  // Consolidated filter state
+  const [filters, setFilters] = useState<ListingFilters>({
+    searchTerm: '',
+    propertyType: 'All',
+    province: 'All',
+    city: 'All',
+    selectedVenues: [],
+  });
+
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<CategoryType | null>(null);
 
   const { getUniqueVenuesByCategory, propertyMatchesSelectedVenues, getSelectedVenuesByCategory } =
-    useVenueFiltering(properties, selectedVenues);
+    useVenueFiltering(properties, filters.selectedVenues);
+
+  // Handler functions
+  const handleSearchChange = (value: string) => {
+    setFilters((prev) => ({ ...prev, searchTerm: value }));
+  };
+
+  const handlePropertyTypeChange = (value: PropertyType | 'All') => {
+    setFilters((prev) => ({ ...prev, propertyType: value }));
+  };
+
+  const handleProvinceChange = (value: string | 'All') => {
+    setFilters((prev) => ({ ...prev, province: value }));
+  };
+
+  const handleCityChange = (value: string | 'All') => {
+    setFilters((prev) => ({ ...prev, city: value }));
+  };
 
   const handleCategoryClick = (categoryType: CategoryType) => {
     setSelectedCategory(categoryType);
@@ -70,52 +69,46 @@ export default function ListingsPage() {
   };
 
   const handleVenueToggle = (venueName: string) => {
-    setSelectedVenues((prev) => {
-      const venueAlreadySelected = prev.some(
+    setFilters((prev) => {
+      const venueAlreadySelected = prev.selectedVenues.some(
         (v) => v.name === venueName && v.category === selectedCategory
       );
 
       if (venueAlreadySelected) {
-        return prev.filter(
-          (v) => !(v.name === venueName && v.category === selectedCategory)
-        );
+        return {
+          ...prev,
+          selectedVenues: prev.selectedVenues.filter(
+            (v) => !(v.name === venueName && v.category === selectedCategory)
+          ),
+        };
       } else {
-        return [...prev, { name: venueName, category: selectedCategory! }];
+        return {
+          ...prev,
+          selectedVenues: [
+            ...prev.selectedVenues,
+            { name: venueName, category: selectedCategory! },
+          ],
+        };
       }
     });
   };
 
-  const handleClearVenueFilter = (venueToRemove: SelectedVenue) => {
-    setSelectedVenues((prev) =>
-      prev.filter(
+  const handleVenueRemove = (venueToRemove: SelectedVenue) => {
+    setFilters((prev) => ({
+      ...prev,
+      selectedVenues: prev.selectedVenues.filter(
         (v) => !(v.name === venueToRemove.name && v.category === venueToRemove.category)
-      )
-    );
+      ),
+    }));
   };
 
   const handleClearAllVenues = () => {
-    setSelectedVenues([]);
+    setFilters((prev) => ({ ...prev, selectedVenues: [] }));
   };
 
   const filteredProperties = useMemo(() => {
-    return properties.filter((p) => {
-      const q = searchTerm.toLowerCase();
-      if (
-        q &&
-        !p.name.toLowerCase().includes(q) &&
-        !p.address.city.toLowerCase().includes(q) &&
-        !p.address.state.toLowerCase().includes(q)
-      ) {
-        return false;
-      }
-      if (typeFilter !== 'All' && p.propertyType !== typeFilter) return false;
-
-      // Venue filter: property must match at least one of the selected venues
-      if (!propertyMatchesSelectedVenues(p)) return false;
-
-      return true;
-    });
-  }, [properties, searchTerm, typeFilter, selectedVenues, propertyMatchesSelectedVenues]);
+    return applyListingFilters(properties, filters, propertyMatchesSelectedVenues);
+  }, [properties, filters, propertyMatchesSelectedVenues]);
 
   const formatPrice = (amount: number) =>
     new Intl.NumberFormat('en-PH').format(amount);
@@ -151,104 +144,25 @@ export default function ListingsPage() {
             Philippines.
           </Typography>
 
-          {/* Search + Filter bar */}
-          <Card
-            sx={{
-              p: 2,
-              bgcolor: 'background.paper',
-              borderRadius: 3,
-              border: '1px solid',
-              borderColor: 'divider',
-              boxShadow: 'none',
-            }}
-          >
-            <Grid container spacing={2} alignItems="center">
-              <Grid size={{ xs: 12, md: 8 }}>
-                <TextField
-                  fullWidth
-                  placeholder="Search by property name or city..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <Search sx={{ color: 'text.secondary' }} />
-                      </InputAdornment>
-                    ),
-                  }}
-                  size="small"
-                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
-                />
-              </Grid>
-              <Grid size={{ xs: 12, md: 4 }}>
-                <TextField
-                  select
-                  fullWidth
-                  value={typeFilter}
-                  onChange={(e) => setTypeFilter(e.target.value as PropertyType | 'All')}
-                  size="small"
-                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
-                >
-                  <MenuItem value="All">All Types</MenuItem>
-                  {PROPERTY_TYPES.map((type) => (
-                    <MenuItem key={type} value={type}>
-                      {type}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
-            </Grid>
-
-            {/* Category Filter */}
-            <Box sx={{ mt: 3, pt: 3, borderTop: '1px solid', borderColor: 'divider' }}>
-              <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 2 }}>
-                Filter by Nearby Categories
-              </Typography>
-              <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-                {PROPERTY_CATEGORIES.map((category) => (
-                  <Chip
-                    key={category.type}
-                    label={category.label}
-                    onClick={() => handleCategoryClick(category.type)}
-                    variant={getSelectedVenuesByCategory(category.type).length > 0 ? 'filled' : 'outlined'}
-                    sx={{
-                      cursor: 'pointer',
-                      fontWeight: 500,
-                      '&:hover': {
-                        backgroundColor: 'action.hover',
-                      },
-                    }}
-                  />
-                ))}
-              </Box>
-
-              {/* Selected Venues */}
-              {selectedVenues.length > 0 && (
-                <Box sx={{ mt: 3 }}>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                    <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600 }}>
-                      SELECTED ({selectedVenues.length})
-                    </Typography>
-                    <Button size="small" onClick={handleClearAllVenues} sx={{ textTransform: 'none' }}>
-                      Clear All
-                    </Button>
-                  </Box>
-                  <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                    {selectedVenues.map((venue, index) => (
-                      <Chip
-                        key={index}
-                        label={venue.name}
-                        onDelete={() => handleClearVenueFilter(venue)}
-                        size="small"
-                        color="primary"
-                        variant="filled"
-                      />
-                    ))}
-                  </Box>
-                </Box>
-              )}
-            </Box>
-          </Card>
+          {/* Unified Filter Panel */}
+          <FilterPanel
+            filters={filters}
+            filterOptions={filterOptions}
+            onSearchChange={handleSearchChange}
+            onPropertyTypeChange={handlePropertyTypeChange}
+            onProvinceChange={handleProvinceChange}
+            onCityChange={handleCityChange}
+            onCategoryClick={handleCategoryClick}
+            onVenueToggle={handleVenueToggle}
+            onVenueRemove={handleVenueRemove}
+            onClearAllVenues={handleClearAllVenues}
+            getUniqueVenuesByCategory={getUniqueVenuesByCategory}
+            getSelectedVenuesByCategory={getSelectedVenuesByCategory}
+            modalOpen={modalOpen}
+            selectedCategory={selectedCategory}
+            onModalOpen={handleCategoryClick}
+            onModalClose={() => setModalOpen(false)}
+          />
         </Container>
       </Box>
 
@@ -404,55 +318,6 @@ export default function ListingsPage() {
           © {new Date().getFullYear()} RentDito. All rights reserved.
         </Typography>
       </Box>
-
-      {/* ── Venue Selection Modal ──────────────────────────────────────── */}
-      <Dialog open={modalOpen} onClose={() => setModalOpen(false)} maxWidth="sm" fullWidth>
-        <DialogTitle>
-          {selectedCategory && PROPERTY_CATEGORIES.find((c) => c.type === selectedCategory)?.label}
-        </DialogTitle>
-        <Divider />
-        <DialogContent sx={{ p: 0 }}>
-          {selectedCategory && getUniqueVenuesByCategory(selectedCategory).length > 0 ? (
-            <List>
-              {getUniqueVenuesByCategory(selectedCategory).map((venue, index) => {
-                const isSelected = getSelectedVenuesByCategory(selectedCategory).some(
-                  (v) => v.name === venue.name
-                );
-                return (
-                  <ListItem key={index} disablePadding>
-                    <ListItemButton
-                      onClick={() => handleVenueToggle(venue.name)}
-                      sx={{
-                        '&:hover': {
-                          backgroundColor: 'action.hover',
-                        },
-                      }}
-                    >
-                      <Checkbox
-                        checked={isSelected}
-                        size="small"
-                        sx={{ mr: 1 }}
-                      />
-                      <ListItemText
-                        primary={venue.name}
-                        secondary={`${venue.count} propert${venue.count === 1 ? 'y' : 'ies'}`}
-                      />
-                    </ListItemButton>
-                  </ListItem>
-                );
-              })}
-            </List>
-          ) : (
-            <Box sx={{ p: 2, textAlign: 'center' }}>
-              <Typography color="text.secondary">No venues available</Typography>
-            </Box>
-          )}
-        </DialogContent>
-        <Divider />
-        <DialogActions>
-          <Button onClick={() => setModalOpen(false)}>Done</Button>
-        </DialogActions>
-      </Dialog>
     </Box>
   );
 }
