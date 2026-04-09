@@ -54,8 +54,12 @@ const MOCK_PROPERTIES: Property[] = [
       { name: 'Alcoron Review Center', walking: '20 minutes', commute: '16 minutes' },
     ],
     schools: [
-      { name: 'University of Cebu', walking: '10 minutes', commute: '20 minutes' },
-      { name: 'Cebu Tech University', walking: '14 minutes', commute: '25 minutes' },
+      { name: 'Velez College of Nursing', walking: '10 minutes', commute: '4 minutes' },
+      { name: 'Cebu Normal University', walking: '10 minutes', commute: '5 minutes' },
+      { name: 'University of San Carlos', walking: '16 minutes', commute: '15 minutes' },
+      { name: 'University of Visayas Main', walking: '10 minutes', commute: ' ' },
+      { name: 'University of Cebu Main', walking: '14 minutes', commute: '13 minutes' },
+      { name: 'Asian College of Technology', walking: '12 minutes', commute: ' ' },
     ],
     commercialEstablishments: [
       { name: 'Naval Town Market', walking: '5 minutes', commute: '12 minutes' },
