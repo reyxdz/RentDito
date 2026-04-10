@@ -180,6 +180,25 @@ export default function ListingsPage() {
               },
             }}
           />
+
+          {/* Inline Filters */}
+          <Box sx={{ mt: 4, display: { xs: 'none', md: 'block' } }}>
+            <FilterPanel
+              filters={filters}
+              filterOptions={filterOptions}
+              onSearchChange={handleSearchChange}
+              onPropertyTypeChange={handlePropertyTypeChange}
+              onProvinceChange={handleProvinceChange}
+              onCityChange={handleCityChange}
+              onVenueToggle={handleVenueToggle}
+              onVenueRemove={handleVenueRemove}
+              onClearAllVenues={handleClearAllVenues}
+              getUniqueVenuesByCategory={getUniqueVenuesByCategory}
+              getSelectedVenuesByCategory={getSelectedVenuesByCategory}
+              variant="plain"
+              hideSearch={true}
+            />
+          </Box>
         </Container>
       </Box>
 
@@ -229,40 +248,13 @@ export default function ListingsPage() {
         </DialogActions>
       </Dialog>
 
-      {/* ── Main Layout: Filters & Properties Grid ──────────────────────── */}
+      {/* ── Property Cards Grid ────────────────────────────────────────── */}
       <Box sx={{ flexGrow: 1, pb: 8 }}>
-        <Container maxWidth="xl">
-          <Grid container spacing={4}>
-            {/* Filters Sidebar (Hidden on xs, shown on md+) */}
-            <Grid size={{ xs: 12, md: 3, lg: 3 }} sx={{ display: { xs: 'none', md: 'block' } }}>
-              <Box sx={{ position: 'sticky', top: 100 }}>
-                <Typography variant="subtitle1" sx={{ fontWeight: 800, mb: 2 }}>
-                  Advanced Filters
-                </Typography>
-                <FilterPanel
-                  filters={filters}
-                  filterOptions={filterOptions}
-                  onSearchChange={handleSearchChange}
-                  onPropertyTypeChange={handlePropertyTypeChange}
-                  onProvinceChange={handleProvinceChange}
-                  onCityChange={handleCityChange}
-                  onVenueToggle={handleVenueToggle}
-                  onVenueRemove={handleVenueRemove}
-                  onClearAllVenues={handleClearAllVenues}
-                  getUniqueVenuesByCategory={getUniqueVenuesByCategory}
-                  getSelectedVenuesByCategory={getSelectedVenuesByCategory}
-                  variant="card"
-                  hideSearch={true}
-                />
-              </Box>
-            </Grid>
-
-            {/* Properties List */}
-            <Grid size={{ xs: 12, md: 9, lg: 9 }}>
-              {loading ? (
-                <Grid container spacing={3}>
-                  {[1, 2, 3].map((i) => (
-                    <Grid size={{ xs: 12, sm: 6, lg: 4 }} key={i}>
+        <Container maxWidth="lg">
+          {loading ? (
+            <Grid container spacing={3}>
+              {[1, 2, 3].map((i) => (
+                <Grid size={{ xs: 12, sm: 6, lg: 4 }} key={i}>
                   <Card sx={{ borderRadius: 4, overflow: 'hidden' }}>
                     <Skeleton variant="rectangular" height={220} />
                     <CardContent>
@@ -407,8 +399,6 @@ export default function ListingsPage() {
               </Grid>
             </>
           )}
-            </Grid>
-          </Grid>
         </Container>
       </Box>
 
