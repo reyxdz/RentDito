@@ -8,10 +8,6 @@ import rm2Img4 from '../../assets/properties/white_dorm/units/room2/room2_img4.j
 import rm2Img5 from '../../assets/properties/white_dorm/units/room2/room2_img5.jpg';
 import rm2Img6 from '../../assets/properties/white_dorm/units/room2/room2_img6.jpg';
 import rm2Img7 from '../../assets/properties/white_dorm/units/room2/room2_img7.jpg';
-// Uytengso Boarding House Unit
-import uyRm1Img1 from '../../assets/properties/uytengso/units/room1/room1_t.jpg';
-import uyRm1Img2 from '../../assets/properties/uytengso/units/room1/room1_u.jpg';
-import uyRm1Img3 from '../../assets/properties/uytengso/units/room1/room1_y.jpg';
 // Room 3 
 import rm3Img1 from '../../assets/properties/white_dorm/units/room3/room3_img1.jpg';
 import rm3Img2 from '../../assets/properties/white_dorm/units/room3/room3_img2.jpg';
@@ -45,6 +41,10 @@ import rm16Img4 from '../../assets/properties/white_dorm/units/room16/room16_img
 import rm16Img5 from '../../assets/properties/white_dorm/units/room16/room16_img5.jpg';
 //==============================================================================
 
+// Uytengso Boarding House Unit
+import uyRm1Img1 from '../../assets/properties/uytengso/units/room1/room1_t.jpg';
+import uyRm1Img2 from '../../assets/properties/uytengso/units/room1/room1_u.jpg';
+import uyRm1Img3 from '../../assets/properties/uytengso/units/room1/room1_y.jpg';
 
 
 // =============================================================================
