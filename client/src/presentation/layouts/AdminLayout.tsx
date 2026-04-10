@@ -179,8 +179,8 @@ export default function AdminLayout() {
       <AppBar
         position="fixed"
         sx={{
-          width: { md: 'calc(100% - ' + collapsedDrawerWidth + 'px)' },
-          ml: { md: collapsedDrawerWidth + 'px' },
+          width: { md: `calc(100% - ${activeDrawerWidth}px)` },
+          ml: { md: `${activeDrawerWidth}px` },
           bgcolor: 'background.paper',
           borderBottom: 1,
           borderColor: mode === 'light' ? 'rgba(0,0,0,0.08)' : 'rgba(255,255,255,0.08)',
@@ -212,7 +212,7 @@ export default function AdminLayout() {
       <Box
         component="nav"
         sx={{ 
-          width: { md: collapsedDrawerWidth }, 
+          width: { md: activeDrawerWidth }, 
           flexShrink: { md: 0 },
           transition: 'width 0.3s ease'
         }}
@@ -263,7 +263,7 @@ export default function AdminLayout() {
         component="main"
         sx={{ 
           flexGrow: 1, p: 3, 
-          width: { md: 'calc(100% - ' + collapsedDrawerWidth + 'px)' }, 
+          width: { md: `calc(100% - ${activeDrawerWidth}px)` }, 
           pt: 10,
           transition: 'width 0.3s ease',
         }}
