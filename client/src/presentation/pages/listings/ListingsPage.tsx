@@ -293,19 +293,36 @@ export default function ListingsPage() {
 
                       <CardContent sx={{ p: 2.5 }}>
                         {/* Name */}
-                        <Typography
-                          variant="h6"
+                        <Box
+                          component="a"
+                          href={`https://www.google.com/maps/search/${encodeURIComponent(property.address.street + ' ' + property.address.city + ' ' + property.address.state)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
                           sx={{
-                            fontWeight: 800,
-                            mb: 0.5,
-                            lineHeight: 1.3,
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                            whiteSpace: 'nowrap',
+                            display: 'block',
+                            textDecoration: 'none',
+                            color: 'inherit',
+                            '&:hover h6': {
+                              color: 'primary.main',
+                            },
                           }}
                         >
-                          {property.name}
-                        </Typography>
+                          <Typography
+                            variant="h6"
+                            sx={{
+                              fontWeight: 800,
+                              mb: 0.5,
+                              lineHeight: 1.3,
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              whiteSpace: 'nowrap',
+                              cursor: 'pointer',
+                              transition: 'color 0.2s ease',
+                            }}
+                          >
+                            {property.name}
+                          </Typography>
+                        </Box>
 
                         {/* Location */}
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 2 }}>

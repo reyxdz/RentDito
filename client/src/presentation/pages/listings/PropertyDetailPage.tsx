@@ -82,16 +82,23 @@ export default function PropertyDetailPage() {
             {/* Property Details */}
             <Box sx={{ mb: 4 }}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
-                <Box>
-                  <Typography variant="h3" sx={{ fontWeight: 800, mb: 1 }}>
+                <Box
+                  component="a"
+                  href={`https://www.google.com/maps/search/${encodeURIComponent(property.address.street + ' ' + property.address.city)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  sx={{
+                    textDecoration: 'none',
+                    color: 'inherit',
+                    cursor: 'pointer',
+                    '&:hover h3': {
+                      color: 'primary.main',
+                    },
+                  }}
+                >
+                  <Typography variant="h3" sx={{ fontWeight: 800, mb: 1, transition: 'color 0.2s ease' }}>
                     {property.name}
                   </Typography>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, color: 'text.secondary' }}>
-                    <LocationOnOutlined fontSize="small" />
-                    <Typography variant="body1">
-                      {property.address.street}, {property.address.city},
-                    </Typography>
-                  </Box>
                 </Box>
                 <Box sx={{ textAlign: 'right' }}>
                   <Typography variant="h4" color="primary.main" sx={{ fontWeight: 800 }}>
@@ -99,6 +106,13 @@ export default function PropertyDetailPage() {
                   </Typography>
                   <Typography variant="caption" color="text.secondary">per month</Typography>
                 </Box>
+              </Box>
+
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 3, color: 'text.secondary' }}>
+                <LocationOnOutlined fontSize="small" />
+                <Typography variant="body1">
+                  {property.address.street}, {property.address.city},
+                </Typography>
               </Box>
 
               <Divider sx={{ my: 3 }} />
