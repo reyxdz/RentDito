@@ -76,12 +76,12 @@ export default function PropertyDetailPage() {
           <Grid size={{ xs: 12 }}>
             {/* Property Images */}
             <Box sx={{ mb: 4, maxWidth: 1000, mx: 'auto' }}>
-              <ImageCarousel images={property.images} height={500} borderRadius={16} arrowPosition="outside" />
+              <ImageCarousel images={property.images} height={{ xs: 300, sm: 400, md: 500 }} borderRadius={16} arrowPosition="outside" />
             </Box>
 
             {/* Property Details */}
             <Box sx={{ mb: 4 }}>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+              <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', alignItems: { xs: 'flex-start', sm: 'flex-start' }, gap: { xs: 1.5, sm: 0 }, mb: 2 }}>
                 <Box
                   component="a"
                   href={`https://www.google.com/maps/search/${encodeURIComponent(property.address.street + ' ' + property.address.city)}`}
@@ -100,7 +100,7 @@ export default function PropertyDetailPage() {
                     {property.name}
                   </Typography>
                 </Box>
-                <Box sx={{ textAlign: 'right' }}>
+                <Box sx={{ textAlign: { xs: 'left', sm: 'right' } }}>
                   <Typography variant="h4" color="primary.main" sx={{ fontWeight: 800 }}>
                     ₱{formatPrice(property.metrics.priceRange.min)} – ₱{formatPrice(property.metrics.priceRange.max)}
                   </Typography>
@@ -124,7 +124,7 @@ export default function PropertyDetailPage() {
 
               <Grid container spacing={4} sx={{ mt: 2 }}>
                 <Grid size={{ xs: 12, sm: 6 }}>
-                  <Card variant="outlined" sx={{ borderRadius: 3, height: 500, border: 'none', bgcolor: 'background.default', display: 'flex', flexDirection: 'column' }}>
+                  <Card variant="outlined" sx={{ borderRadius: 3, height: { xs: 300, md: 500 }, border: 'none', bgcolor: 'background.default', display: 'flex', flexDirection: 'column' }}>
                     <CardContent sx={{ pb: 1, flexGrow: 0 }}>
                       <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>Inclusions</Typography>
                     </CardContent>
@@ -162,7 +162,7 @@ export default function PropertyDetailPage() {
                   </Card>
                 </Grid>
                 <Grid size={{ xs: 12, sm: 6 }}>
-                  <Card variant="outlined" sx={{ borderRadius: 3, height: 500, border: 'none', bgcolor: 'background.default', display: 'flex', flexDirection: 'column' }}>
+                  <Card variant="outlined" sx={{ borderRadius: 3, height: { xs: 350, md: 500 }, border: 'none', bgcolor: 'background.default', display: 'flex', flexDirection: 'column' }}>
                     <CardContent sx={{ pb: 1, flexGrow: 0 }}>
                       <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>Nearby Categories</Typography>
                     </CardContent>
