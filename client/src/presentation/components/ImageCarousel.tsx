@@ -273,8 +273,9 @@ if (arrowPosition === 'outside') {
             sx={{
               display: 'flex',
               transition: 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-              transform: `translateX(-${currentIndex * 100}%)`,
+              transform: `translateX(-${currentIndex * (100 / images.length)}%)`,
               height: '100%',
+              width: `${images.length * 100}%`,
             }}
           >
             {images.map((src, i) => (
@@ -285,7 +286,7 @@ if (arrowPosition === 'outside') {
                 alt={`Slide ${i + 1}`}
                 loading="lazy"
                 sx={{
-                  minWidth: '100%',
+                  width: `${100 / images.length}%`,
                   height: '100%',
                   objectFit: 'cover',
                   flexShrink: 0,
@@ -387,8 +388,9 @@ if (arrowPosition === 'outside') {
         sx={{
           display: 'flex',
           transition: 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-          transform: `translateX(-${currentIndex * 100}%)`,
+          transform: `translateX(-${currentIndex * (100 / images.length)}%)`,
           height: '100%',
+          width: `${images.length * 100}%`,
         }}
       >
         {images.map((src, i) => (
@@ -399,7 +401,7 @@ if (arrowPosition === 'outside') {
             alt={`Slide ${i + 1}`}
             loading="lazy"
             sx={{
-              minWidth: '100%',
+              width: `${100 / images.length}%`,
               height: '100%',
               objectFit: 'cover',
               flexShrink: 0,
