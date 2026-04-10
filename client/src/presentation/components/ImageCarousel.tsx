@@ -2,11 +2,9 @@ import { useState, useCallback } from 'react';
 import { Box, IconButton, Dialog, Typography } from '@mui/material';
 import { ChevronLeft, ChevronRight, Fullscreen, Close } from '@mui/icons-material';
 
-import { SystemStyleObject, Theme } from '@mui/system';
-
 interface ImageCarouselProps {
   images: string[];
-  height?: number | string | SystemStyleObject<Theme>['height'];
+  height?: number | string | Partial<Record<'xs' | 'sm' | 'md' | 'lg' | 'xl', number | string>>;
   borderRadius?: number;
   arrowPosition?: 'inside' | 'outside';
 }
