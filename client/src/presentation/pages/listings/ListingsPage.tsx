@@ -121,7 +121,7 @@ export default function ListingsPage() {
       >
         <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 4 }}>
-            <Box sx={{ flex: 1 }}>
+            <Box sx={{ flex: 1, mr: { xs: 2, md: 0 } }}>
               <Typography
                 variant="h3"
                 sx={{
@@ -199,12 +199,13 @@ export default function ListingsPage() {
             fontWeight: 700,
             fontSize: '1.25rem',
             pb: 1,
+            pt: { xs: 3, sm: 2 },
           }}
         >
           Filters
         </DialogTitle>
-        <DialogContent>
-          <Box sx={{ pt: 2 }}>
+        <DialogContent sx={{ p: { xs: 2, sm: 3 } }}>
+          <Box sx={{ pt: { xs: 0, sm: 2 } }}>
             <FilterPanel
               filters={filters}
               filterOptions={filterOptions}
