@@ -17,8 +17,8 @@ export default function Navbar() {
             sx={{ display: 'flex', alignItems: 'center', gap: 1, cursor: 'pointer' }}
             onClick={() => navigate('/')}
           >
-            <Box component="img" src={logoPng} alt="RentDito Logo" sx={{ height: 40, objectFit: 'contain' }} />
-            <Typography variant="h5" sx={{ fontWeight: 800, color: 'primary.main', ml: 1, letterSpacing: -0.5 }}>
+            <Box component="img" src={logoPng} alt="RentDito Logo" sx={{ height: { xs: 32, sm: 40 }, objectFit: 'contain' }} />
+            <Typography variant="h5" sx={{ fontWeight: 800, color: 'primary.main', ml: { xs: 0, sm: 1 }, fontSize: { xs: '1.25rem', sm: '1.5rem' }, letterSpacing: -0.5 }}>
               RentDito
             </Typography>
           </Box>
