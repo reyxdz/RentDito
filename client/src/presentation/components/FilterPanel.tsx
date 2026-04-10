@@ -12,7 +12,7 @@ import {
   FormControlLabel,
 } from '@mui/material';
 import { Search } from '@mui/icons-material';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import type { PropertyType } from '../../domain/entities/Property';
 import type { ListingFilters, FilterOptions } from '../../domain/entities/ListingFilters';
 import type { CategoryType, SelectedVenue } from '../../domain/entities/VenueFilter';
@@ -48,17 +48,18 @@ export default function FilterPanel({
   variant = 'card',
   hideSearch = false,
 }: FilterPanelProps) {
-  // Menu anchor refs for each category
-  const anchorRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+  // State for controlling the active category popup
   const [openMenu, setOpenMenu] = useState<CategoryType | null>(null);
+  const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLButtonElement | null>(null);
 
   const handleMenuOpen = (categoryType: CategoryType, event: React.MouseEvent<HTMLButtonElement>) => {
-    anchorRefs.current[categoryType] = event.currentTarget;
     setOpenMenu(categoryType);
+    setMenuAnchorEl(event.currentTarget);
   };
 
   const handleMenuClose = () => {
     setOpenMenu(null);
+    setMenuAnchorEl(null);
   };
 
   const handleVenueSelect = (e: React.MouseEvent, venueName: string, category: CategoryType) => {
@@ -82,31 +83,10 @@ export default function FilterPanel({
     mb: 3,
   };
 
-  return (
-    <>
-      {variant === 'card' ? (
-        <Card
-          sx={{
-            p: 3,
-            bgcolor: 'background.paper',
-            borderRadius: 3,
-            border: '1px solid',
-            borderColor: 'divider',
-            boxShadow: 'none',
-          }}
-        >
-          <FilterContent />
-        </Card>
-      ) : (
-        <FilterContent />
-      )}
-    </>
-  );
 
-  function FilterContent() {
-    return (
-      <>
-        {/* Section 1: Search */}
+  const content = (
+    <>
+      {/* Section 1: Search */}
         {!hideSearch && (
           <Box sx={sectionSx}>
             <Typography variant="subtitle2" sx={{ fontWeight: 700, fontSize: '0.75rem', letterSpacing: 0.5, textTransform: 'uppercase', color: 'text.secondary' }}>
@@ -200,9 +180,6 @@ export default function FilterPanel({
               return (
                 <Box key={category.type} sx={{ position: 'relative' }}>
                   <Button
-                    ref={(el) => {
-                      if (el) anchorRefs.current[category.type] = el;
-                    }}
                     onClick={(e) => handleMenuOpen(categoryType, e)}
                     variant={isSelected ? 'contained' : 'outlined'}
                     size="small"
@@ -228,7 +205,7 @@ export default function FilterPanel({
                     {category.label}
                   </Button>
                   <Menu
-                    anchorEl={anchorRefs.current[category.type]}
+                    anchorEl={menuAnchorEl}
                     open={openMenu === categoryType}
                     onClose={handleMenuClose}
                     slotProps={{
@@ -327,6 +304,26 @@ export default function FilterPanel({
           )}
         </Box>
       </>
-    );
-  }
+  );
+
+  return (
+    <>
+      {variant === 'card' ? (
+        <Card
+          sx={{
+            p: 3,
+            bgcolor: 'background.paper',
+            borderRadius: 3,
+            border: '1px solid',
+            borderColor: 'divider',
+            boxShadow: 'none',
+          }}
+        >
+          {content}
+        </Card>
+      ) : (
+        content
+      )}
+    </>
+  );
 }

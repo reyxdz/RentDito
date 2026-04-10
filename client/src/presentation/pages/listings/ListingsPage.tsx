@@ -8,13 +8,12 @@ import {
   Grid,
   Skeleton,
   Chip,
-  IconButton,
   Button,
   TextField,
   InputAdornment,
   Collapse,
 } from '@mui/material';
-import { MeetingRoomOutlined, LocationOnOutlined, TuneOutlined, Search, ExpandMore, ExpandLess } from '@mui/icons-material';
+import { MeetingRoomOutlined, LocationOnOutlined, Search, ExpandMore, ExpandLess } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useListings } from '../../../application/hooks/useListings';
 import { useVenueFiltering } from '../../../application/hooks/useVenueFiltering';
