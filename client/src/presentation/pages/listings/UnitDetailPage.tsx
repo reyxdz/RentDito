@@ -78,7 +78,7 @@ export default function UnitDetailPage() {
             <Box sx={{ mb: 4, maxWidth: 1000, mx: 'auto' }}>
               <ImageCarousel 
                 images={unit.images} 
-                height={500} 
+                height={{ xs: 300, sm: 400, md: 500 }}
                 borderRadius={16}
                 arrowPosition="outside"
               />
