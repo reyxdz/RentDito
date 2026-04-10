@@ -9,10 +9,6 @@ import {
   Skeleton,
   Chip,
   IconButton,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
   Button,
   TextField,
   InputAdornment,
@@ -34,7 +30,6 @@ export default function ListingsPage() {
   const navigate = useNavigate();
   const { properties, loading, error } = useListings();
   const filterOptions = useFilterOptions(properties);
-  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [isFiltersExpanded, setIsFiltersExpanded] = useState(false);
 
   const [filters, setFilters] = useState<ListingFilters>({
@@ -142,20 +137,6 @@ export default function ListingsPage() {
                 Philippines.
               </Typography>
             </Box>
-              <IconButton
-                onClick={() => setIsFilterModalOpen(true)}
-                sx={{
-                  bgcolor: 'primary.main',
-                  color: 'white',
-                  display: { xs: 'flex', md: 'none' }, // Only show on mobile
-                  '&:hover': {
-                    bgcolor: 'primary.dark',
-                  },
-                  mt: 1,
-                }}
-              >
-              <TuneOutlined />
-            </IconButton>
           </Box>
 
           {/* Search Bar */}
@@ -183,8 +164,8 @@ export default function ListingsPage() {
             }}
           />
 
-          {/* Filters Toggle Button (Desktop) */}
-          <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'flex-end', mt: 1 }}>
+          {/* Filters Toggle Button */}
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 1 }}>
             <Button
               onClick={() => setIsFiltersExpanded(!isFiltersExpanded)}
               endIcon={isFiltersExpanded ? <ExpandLess /> : <ExpandMore />}
@@ -202,7 +183,7 @@ export default function ListingsPage() {
 
           {/* Inline Filters */}
           <Collapse in={isFiltersExpanded} timeout="auto" unmountOnExit>
-            <Box sx={{ mt: 2, display: { xs: 'none', md: 'block' } }}>
+            <Box sx={{ mt: 2 }}>
               <FilterPanel
                 filters={filters}
                 filterOptions={filterOptions}
@@ -222,52 +203,6 @@ export default function ListingsPage() {
           </Collapse>
         </Container>
       </Box>
-
-      {/* ── Filter Modal Dialog ────────────────────────────────────────── */}
-      <Dialog
-        open={isFilterModalOpen}
-        onClose={() => setIsFilterModalOpen(false)}
-        maxWidth="sm"
-        fullWidth
-        PaperProps={{
-          sx: {
-            borderRadius: 3,
-          },
-        }}
-      >
-        <DialogTitle
-          sx={{
-            fontWeight: 700,
-            fontSize: '1.25rem',
-            pb: 1,
-            pt: { xs: 3, sm: 2 },
-          }}
-        >
-          Filters
-        </DialogTitle>
-        <DialogContent sx={{ p: { xs: 2, sm: 3 } }}>
-          <Box sx={{ pt: { xs: 0, sm: 2 } }}>
-            <FilterPanel
-              filters={filters}
-              filterOptions={filterOptions}
-              onSearchChange={handleSearchChange}
-              onPropertyTypeChange={handlePropertyTypeChange}
-              onProvinceChange={handleProvinceChange}
-              onCityChange={handleCityChange}
-              onVenueToggle={handleVenueToggle}
-              onVenueRemove={handleVenueRemove}
-              onClearAllVenues={handleClearAllVenues}
-              getUniqueVenuesByCategory={getUniqueVenuesByCategory}
-              getSelectedVenuesByCategory={getSelectedVenuesByCategory}
-              variant="plain"
-              hideSearch={true}
-            />
-          </Box>
-        </DialogContent>
-        <DialogActions sx={{ p: 2, pt: 0 }}>
-          <Button onClick={() => setIsFilterModalOpen(false)}>Close</Button>
-        </DialogActions>
-      </Dialog>
 
       {/* ── Property Cards Grid ────────────────────────────────────────── */}
       <Box sx={{ flexGrow: 1, pb: 8 }}>
