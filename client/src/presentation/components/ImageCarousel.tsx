@@ -17,18 +17,42 @@ export default function ImageCarousel({
 }: ImageCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+
+  const minSwipeDistance = 50;
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const onTouchMove = (e: React.TouchEvent) => setTouchEnd(e.targetTouches[0].clientX);
+
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+    if (isLeftSwipe) {
+      handleNext();
+    }
+    if (isRightSwipe) {
+      handlePrev();
+    }
+  };
 
   const handlePrev = useCallback(
-    (e: React.MouseEvent) => {
-      e.stopPropagation();
+    (e?: React.MouseEvent) => {
+      if (e) e.stopPropagation();
       setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
     },
     [images.length]
   );
 
   const handleNext = useCallback(
-    (e: React.MouseEvent) => {
-      e.stopPropagation();
+    (e?: React.MouseEvent) => {
+      if (e) e.stopPropagation();
       setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
     },
     [images.length]
@@ -97,6 +121,7 @@ export default function ImageCarousel({
                 width: 50,
                 height: 50,
                 zIndex: 10,
+                display: { xs: 'none', sm: 'inline-flex' },
                 '&:hover': { bgcolor: 'rgba(0,0,0,0.8)' },
               }}
             >
@@ -104,11 +129,13 @@ export default function ImageCarousel({
             </IconButton>
           )}
 
-          {/* Main Image */}
           <Box
             component="img"
             src={images[currentIndex]}
             alt={`Slide ${currentIndex + 1}`}
+            onTouchStart={onTouchStart}
+            onTouchMove={onTouchMove}
+            onTouchEnd={onTouchEnd}
             sx={{
               maxWidth: '100%',
               maxHeight: '100%',
@@ -130,6 +157,7 @@ export default function ImageCarousel({
                 width: 50,
                 height: 50,
                 zIndex: 10,
+                display: { xs: 'none', sm: 'inline-flex' },
                 '&:hover': { bgcolor: 'rgba(0,0,0,0.8)' },
               }}
             >
@@ -219,6 +247,7 @@ if (arrowPosition === 'outside') {
             width: 40,
             height: 40,
             flexShrink: 0,
+            display: { xs: 'none', sm: 'inline-flex' },
             '&:hover': { bgcolor: 'primary.main', color: '#fff' },
           }}
         >
@@ -238,6 +267,9 @@ if (arrowPosition === 'outside') {
         >
           {/* Image slides */}
           <Box
+            onTouchStart={onTouchStart}
+            onTouchMove={onTouchMove}
+            onTouchEnd={onTouchEnd}
             sx={{
               display: 'flex',
               transition: 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -325,6 +357,7 @@ if (arrowPosition === 'outside') {
             width: 40,
             height: 40,
             flexShrink: 0,
+            display: { xs: 'none', sm: 'inline-flex' },
             '&:hover': { bgcolor: 'primary.main', color: '#fff' },
           }}
         >
@@ -348,6 +381,9 @@ if (arrowPosition === 'outside') {
     >
       {/* Image slides */}
       <Box
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
         sx={{
           display: 'flex',
           transition: 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -403,7 +439,7 @@ if (arrowPosition === 'outside') {
             transition: 'opacity 0.25s ease',
             position: 'absolute',
             inset: 0,
-            display: 'flex',
+            display: { xs: 'none', sm: 'flex' },
             alignItems: 'center',
             justifyContent: 'space-between',
             px: 0.5,

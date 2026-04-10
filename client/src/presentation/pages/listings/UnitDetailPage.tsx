@@ -88,7 +88,7 @@ export default function UnitDetailPage() {
             <Box sx={{ mb: 4 }}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2, flexWrap: 'wrap', gap: 2 }}>
                 <Box>
-                  <Typography variant="h3" sx={{ fontWeight: 800, mb: 2 }}>
+                  <Typography variant="h3" sx={{ fontWeight: 800, mb: 2, fontSize: { xs: '2rem', sm: '3rem' } }}>
                     {unit.name}
                   </Typography>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
@@ -116,7 +116,7 @@ export default function UnitDetailPage() {
                   </Box>
                 </Box>
                 <Box sx={{ textAlign: { xs: 'left', sm: 'right' } }}>
-                  <Typography variant="h4" color="primary.main" sx={{ fontWeight: 800 }}>
+                  <Typography variant="h4" color="primary.main" sx={{ fontWeight: 800, fontSize: { xs: '1.5rem', sm: '2.125rem' } }}>
                     ₱{formatPrice(unit.monthlyRent)}
                   </Typography>
                   <Typography variant="caption" color="text.secondary">per month</Typography>

@@ -96,12 +96,12 @@ export default function PropertyDetailPage() {
                     },
                   }}
                 >
-                  <Typography variant="h3" sx={{ fontWeight: 800, mb: 1, transition: 'color 0.2s ease' }}>
+                  <Typography variant="h3" sx={{ fontWeight: 800, mb: 1, transition: 'color 0.2s ease', fontSize: { xs: '2rem', sm: '3rem' } }}>
                     {property.name}
                   </Typography>
                 </Box>
                 <Box sx={{ textAlign: { xs: 'left', sm: 'right' } }}>
-                  <Typography variant="h4" color="primary.main" sx={{ fontWeight: 800 }}>
+                  <Typography variant="h4" color="primary.main" sx={{ fontWeight: 800, fontSize: { xs: '1.5rem', sm: '2.125rem' } }}>
                     ₱{formatPrice(property.metrics.priceRange.min)} – ₱{formatPrice(property.metrics.priceRange.max)}
                   </Typography>
                   <Typography variant="caption" color="text.secondary">per month</Typography>
