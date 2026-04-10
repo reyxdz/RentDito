@@ -64,7 +64,7 @@ export default function LandingPage() {
         </Container>
       </AppBar>
 
-      <Box sx={{ flexGrow: 1, py: { xs: 8, md: 12 }, position: 'relative', overflow: 'hidden' }}>
+      <Box sx={{ flexGrow: 1, py: { xs: 6, md: 12 }, position: 'relative', overflow: 'hidden' }}>
         {/* Decorative background blobs for a modern feel */}
         <Box sx={{
           position: 'absolute', top: '-10%', right: '-5%', width: '40%', height: '50%',
@@ -85,24 +85,24 @@ export default function LandingPage() {
                 variant="outlined"
                 sx={{ mb: 3, fontWeight: 600, px: 1, borderColor: 'secondary.main', color: 'secondary.dark' }} 
               />
-              <Typography variant="h1" sx={{ mb: 2, fontSize: { xs: '3rem', md: '4.5rem' }, lineHeight: 1.1 }}>
+              <Typography variant="h1" sx={{ mb: 2, fontSize: { xs: '2.5rem', sm: '3.5rem', md: '4.5rem' }, lineHeight: 1.1 }}>
                 Find Your Next <Box component="span" sx={{ color: 'primary.main' }}>Perfect</Box> Home
               </Typography>
               <Typography variant="h6" color="text.secondary" sx={{ mb: 4, fontWeight: 400, maxWidth: '90%', lineHeight: 1.6 }}>
                 Discover premium rentals with a seamless, beautifully designed platform built for the modern tenant and landlord.
               </Typography>
               
-              <Box sx={{ display: 'flex', gap: 2 }}>
-                <Button variant="contained" color="primary" size="large" startIcon={<Search />} onClick={() => navigate('/listings')} sx={{ px: 4, py: 1.5, fontSize: '1.1rem' }}>
+              <Box sx={{ display: 'flex', gap: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
+                <Button variant="contained" color="primary" size="large" startIcon={<Search />} onClick={() => navigate('/listings')} sx={{ px: 4, py: 1.5, fontSize: '1.1rem', width: { xs: '100%', sm: 'auto' } }}>
                   Start Browsing
                 </Button>
-                <Button variant="outlined" color="primary" size="large" sx={{ px: 4, py: 1.5, fontSize: '1.1rem', backgroundColor: 'white' }}>
+                <Button variant="outlined" color="primary" size="large" sx={{ px: 4, py: 1.5, fontSize: '1.1rem', backgroundColor: 'transparent', width: { xs: '100%', sm: 'auto' } }}>
                   How it works
                 </Button>
               </Box>
             </Grid>
             
-            <Grid size={{ xs: 12, md: 6 }}>
+            <Grid size={{ xs: 12, md: 6 }} sx={{ display: { xs: 'none', md: 'block' } }}>
               <Box sx={{ position: 'relative' }}>
                  <Card sx={{ 
                     position: 'absolute', top: -30, right: -20, zIndex: 2,
