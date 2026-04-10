@@ -10,6 +10,7 @@ import {
   Button,
   Checkbox,
   FormControlLabel,
+  Divider,
 } from '@mui/material';
 import { Search } from '@mui/icons-material';
 import { useState } from 'react';
@@ -51,15 +52,18 @@ export default function FilterPanel({
   // State for controlling the active category popup
   const [openMenu, setOpenMenu] = useState<CategoryType | null>(null);
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const [venueSearchTerm, setVenueSearchTerm] = useState('');
 
   const handleMenuOpen = (categoryType: CategoryType, event: React.MouseEvent<HTMLButtonElement>) => {
     setOpenMenu(categoryType);
     setMenuAnchorEl(event.currentTarget);
+    setVenueSearchTerm('');
   };
 
   const handleMenuClose = () => {
     setOpenMenu(null);
     setMenuAnchorEl(null);
+    setVenueSearchTerm('');
   };
 
   const handleVenueSelect = (e: React.MouseEvent, venueName: string, category: CategoryType) => {
@@ -233,42 +237,69 @@ export default function FilterPanel({
                       },
                     }}
                   >
-                    {getUniqueVenuesByCategory(categoryType).length > 0 ? (
-                      getUniqueVenuesByCategory(categoryType).map((venue) => {
-                        const isVenueSelected = getSelectedVenuesByCategory(categoryType).some(
-                          (v) => v.name === venue.name
-                        );
+                    <Box sx={{ px: 2, pt: 1, pb: 1 }} onKeyDown={(e) => e.stopPropagation()}>
+                      <TextField
+                        fullWidth
+                        size="small"
+                        autoFocus
+                        placeholder={`Search ${category.label.toLowerCase()}...`}
+                        value={venueSearchTerm}
+                        onChange={(e) => setVenueSearchTerm(e.target.value)}
+                        slotProps={{
+                          input: {
+                            startAdornment: <Search fontSize="small" sx={{ color: 'text.secondary', mr: 1 }} />,
+                            sx: {
+                              borderRadius: 1.5,
+                              fontSize: '0.85rem',
+                            }
+                          }
+                        }}
+                      />
+                    </Box>
+                    <Divider sx={{ mb: 1 }} />
+                    {(() => {
+                      const allVenues = getUniqueVenuesByCategory(categoryType);
+                      const filteredVenues = allVenues.filter(v => v.name.toLowerCase().includes(venueSearchTerm.toLowerCase()));
+
+                      if (filteredVenues.length > 0) {
+                        return filteredVenues.map((venue) => {
+                          const isVenueSelected = getSelectedVenuesByCategory(categoryType).some(
+                            (v) => v.name === venue.name
+                          );
+                          return (
+                            <MenuItem
+                              key={venue.name}
+                              onClick={(e) => handleVenueSelect(e, venue.name, categoryType)}
+                              sx={{ py: 1 }}
+                              disableRipple
+                            >
+                              <FormControlLabel
+                                control={<Checkbox checked={isVenueSelected} size="small" />}
+                                label={
+                                  <Box sx={{ ml: 0.5 }}>
+                                    <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                                      {venue.name}
+                                    </Typography>
+                                    <Typography variant="caption" color="text.secondary">
+                                      {venue.count} propert{venue.count === 1 ? 'y' : 'ies'}
+                                    </Typography>
+                                  </Box>
+                                }
+                                sx={{ m: 0, width: '100%' }}
+                              />
+                            </MenuItem>
+                          );
+                        });
+                      } else {
                         return (
-                          <MenuItem
-                            key={venue.name}
-                            onClick={(e) => handleVenueSelect(e, venue.name, categoryType)}
-                            sx={{ py: 1 }}
-                            disableRipple
-                          >
-                            <FormControlLabel
-                              control={<Checkbox checked={isVenueSelected} size="small" />}
-                              label={
-                                <Box sx={{ ml: 0.5 }}>
-                                  <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                                    {venue.name}
-                                  </Typography>
-                                  <Typography variant="caption" color="text.secondary">
-                                    {venue.count} propert{venue.count === 1 ? 'y' : 'ies'}
-                                  </Typography>
-                                </Box>
-                              }
-                              sx={{ m: 0, width: '100%' }}
-                            />
+                          <MenuItem disabled>
+                            <Typography variant="body2" color="text.secondary">
+                              {allVenues.length === 0 ? 'No venues available' : 'No matching venues found'}
+                            </Typography>
                           </MenuItem>
                         );
-                      })
-                    ) : (
-                      <MenuItem disabled>
-                        <Typography variant="body2" color="text.secondary">
-                          No venues available
-                        </Typography>
-                      </MenuItem>
-                    )}
+                      }
+                    })()}
                   </Menu>
                 </Box>
               );
