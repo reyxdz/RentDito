@@ -16,8 +16,9 @@ import {
   Button,
   TextField,
   InputAdornment,
+  Collapse,
 } from '@mui/material';
-import { MeetingRoomOutlined, LocationOnOutlined, TuneOutlined, Search } from '@mui/icons-material';
+import { MeetingRoomOutlined, LocationOnOutlined, TuneOutlined, Search, ExpandMore, ExpandLess } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useListings } from '../../../application/hooks/useListings';
 import { useVenueFiltering } from '../../../application/hooks/useVenueFiltering';
@@ -34,6 +35,7 @@ export default function ListingsPage() {
   const { properties, loading, error } = useListings();
   const filterOptions = useFilterOptions(properties);
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  const [isFiltersExpanded, setIsFiltersExpanded] = useState(false);
 
   const [filters, setFilters] = useState<ListingFilters>({
     searchTerm: '',
@@ -181,24 +183,43 @@ export default function ListingsPage() {
             }}
           />
 
-          {/* Inline Filters */}
-          <Box sx={{ mt: 4, display: { xs: 'none', md: 'block' } }}>
-            <FilterPanel
-              filters={filters}
-              filterOptions={filterOptions}
-              onSearchChange={handleSearchChange}
-              onPropertyTypeChange={handlePropertyTypeChange}
-              onProvinceChange={handleProvinceChange}
-              onCityChange={handleCityChange}
-              onVenueToggle={handleVenueToggle}
-              onVenueRemove={handleVenueRemove}
-              onClearAllVenues={handleClearAllVenues}
-              getUniqueVenuesByCategory={getUniqueVenuesByCategory}
-              getSelectedVenuesByCategory={getSelectedVenuesByCategory}
-              variant="plain"
-              hideSearch={true}
-            />
+          {/* Filters Toggle Button (Desktop) */}
+          <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'flex-end', mt: 1 }}>
+            <Button
+              onClick={() => setIsFiltersExpanded(!isFiltersExpanded)}
+              endIcon={isFiltersExpanded ? <ExpandLess /> : <ExpandMore />}
+              sx={{
+                textTransform: 'none',
+                fontWeight: 600,
+                color: 'text.secondary',
+                '&:hover': { bgcolor: 'transparent', color: 'primary.main' },
+              }}
+              disableRipple
+            >
+              {isFiltersExpanded ? 'Hide Advanced Filters' : 'Advanced Filters'}
+            </Button>
           </Box>
+
+          {/* Inline Filters */}
+          <Collapse in={isFiltersExpanded} timeout="auto" unmountOnExit>
+            <Box sx={{ mt: 2, display: { xs: 'none', md: 'block' } }}>
+              <FilterPanel
+                filters={filters}
+                filterOptions={filterOptions}
+                onSearchChange={handleSearchChange}
+                onPropertyTypeChange={handlePropertyTypeChange}
+                onProvinceChange={handleProvinceChange}
+                onCityChange={handleCityChange}
+                onVenueToggle={handleVenueToggle}
+                onVenueRemove={handleVenueRemove}
+                onClearAllVenues={handleClearAllVenues}
+                getUniqueVenuesByCategory={getUniqueVenuesByCategory}
+                getSelectedVenuesByCategory={getSelectedVenuesByCategory}
+                variant="plain"
+                hideSearch={true}
+              />
+            </Box>
+          </Collapse>
         </Container>
       </Box>
 
