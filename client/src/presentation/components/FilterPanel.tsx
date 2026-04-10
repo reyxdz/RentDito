@@ -214,6 +214,21 @@ export default function FilterPanel({
                           maxHeight: 300,
                           width: 280,
                           mt: 1,
+                          '&::-webkit-scrollbar': {
+                            width: '8px',
+                          },
+                          '&::-webkit-scrollbar-track': {
+                            background: 'transparent',
+                          },
+                          '&::-webkit-scrollbar-thumb': {
+                            backgroundColor: 'primary.main',
+                            borderRadius: '4px',
+                            border: '2px solid transparent',
+                            backgroundClip: 'content-box',
+                            '&:hover': {
+                              backgroundColor: 'primary.light',
+                            },
+                          },
                         },
                       },
                     }}
