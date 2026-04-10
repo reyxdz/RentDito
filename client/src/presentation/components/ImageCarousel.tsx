@@ -71,6 +71,7 @@ export default function ImageCarousel({
         onClose={() => setIsFullscreen(false)}
         maxWidth={false}
         fullWidth
+        fullScreen
         PaperProps={{
           sx: {
             bgcolor: 'rgb(0, 0, 0)',
@@ -81,9 +82,12 @@ export default function ImageCarousel({
         }}
       >
         <Box
+          onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
+          onTouchEnd={onTouchEnd}
           sx={{
-            width: '100vw',
-            height: '100vh',
+            width: '100%',
+            height: '100%',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -133,9 +137,6 @@ export default function ImageCarousel({
             component="img"
             src={images[currentIndex]}
             alt={`Slide ${currentIndex + 1}`}
-            onTouchStart={onTouchStart}
-            onTouchMove={onTouchMove}
-            onTouchEnd={onTouchEnd}
             sx={{
               maxWidth: '100%',
               maxHeight: '100%',
