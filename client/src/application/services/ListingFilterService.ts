@@ -9,13 +9,17 @@ const PROPERTY_CATEGORIES = [
   { type: 'commercialEstablishments', label: 'Commercial Establishments' },
 ];
 
-export function useFilterOptions(properties: Property[]): FilterOptions {
+export function useFilterOptions(properties: Property[], selectedProvince: string | 'All' = 'All'): FilterOptions {
   // Extract unique provinces and cities from properties
   const provinces = Array.from(new Set(properties.map((p) => p.address.state)))
     .filter(Boolean)
     .sort();
 
-  const cities = Array.from(new Set(properties.map((p) => p.address.city)))
+  const propertiesForCities = selectedProvince !== 'All' 
+    ? properties.filter(p => p.address.state === selectedProvince) 
+    : properties;
+
+  const cities = Array.from(new Set(propertiesForCities.map((p) => p.address.city)))
     .filter(Boolean)
     .sort();
 

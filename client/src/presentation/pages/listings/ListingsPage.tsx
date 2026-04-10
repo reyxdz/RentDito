@@ -28,9 +28,6 @@ import type { CategoryType, SelectedVenue } from '../../../domain/entities/Venue
 export default function ListingsPage() {
   const navigate = useNavigate();
   const { properties, loading, error } = useListings();
-  const filterOptions = useFilterOptions(properties);
-  const [isFiltersExpanded, setIsFiltersExpanded] = useState(false);
-
   const [filters, setFilters] = useState<ListingFilters>({
     searchTerm: '',
     propertyType: 'All',
@@ -38,6 +35,11 @@ export default function ListingsPage() {
     city: 'All',
     selectedVenues: [],
   });
+
+  const filterOptions = useFilterOptions(properties, filters.province);
+  const [isFiltersExpanded, setIsFiltersExpanded] = useState(false);
+
+
 
   const { getUniqueVenuesByCategory, propertyMatchesSelectedVenues, getSelectedVenuesByCategory } =
     useVenueFiltering(properties, filters.selectedVenues);
@@ -51,7 +53,7 @@ export default function ListingsPage() {
   };
 
   const handleProvinceChange = (value: string | 'All') => {
-    setFilters((prev) => ({ ...prev, province: value }));
+    setFilters((prev) => ({ ...prev, province: value, city: 'All' }));
   };
 
   const handleCityChange = (value: string | 'All') => {
