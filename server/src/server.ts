@@ -5,6 +5,9 @@ import morgan from 'morgan';
 import dotenv from 'dotenv';
 import connectDB from './config/db';
 import authRoutes from './routes/auth.routes';
+import userRoutes from './routes/user.routes';
+import landlordApplicationRoutes from './routes/landlord-application.routes';
+import teamRoutes from './routes/team.routes';
 
 dotenv.config();
 
@@ -27,7 +30,9 @@ app.get('/api/health', (req, res) => {
 
 // Route mounts
 app.use('/api/auth', authRoutes);
-// app.use('/api/users', userRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/landlord-applications', landlordApplicationRoutes);
+app.use('/api/team', teamRoutes);
 // app.use('/api/properties', propertyRoutes);
 
 const server = app.listen(PORT, () => {
