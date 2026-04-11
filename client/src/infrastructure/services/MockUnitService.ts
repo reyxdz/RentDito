@@ -42,9 +42,17 @@ import rm16Img5 from '../../assets/properties/white_dorm/units/room16/room16_img
 //==============================================================================
 
 // Uytengso Boarding House Unit
+//room1
 import uyRm1Img1 from '../../assets/properties/uytengso/units/room1/room1_t.jpg';
 import uyRm1Img2 from '../../assets/properties/uytengso/units/room1/room1_u.jpg';
-import uyRm1Img3 from '../../assets/properties/uytengso/units/room1/room1_y.jpg';
+import uyRm1Img3 from '../../assets/properties/uytengso/units/room1/room1_y.jpg';    
+//Door5 Room2
+import uyRm2Img1 from '../../assets/properties/uytengso/units/Door_5/room2/dr5r4.jpg';
+import uyRm2Img2 from '../../assets/properties/uytengso/units/Door_5/room2/dr5r3.jpg';
+import uyRm2Img3 from '../../assets/properties/uytengso/units/Door_5/room2/dr5r2.jpg';
+import uyRm2Img4 from '../../assets/properties/uytengso/units/Door_5/room2/d5r1.jpg';   
+
+
 
 
 // =============================================================================
@@ -71,9 +79,6 @@ const MOCK_UNITS: Unit[] = [
     vacancies: 8,
     status: 'Available',
     features: ['Foam', 'Pillow', 'WiFi', 'Clip Fan', 'Table', 'Chair'],
-    otherDetails: [
-      'Room for Rent or for Bedspace',
-    ],
   },
   {
     id: 'unit-white-dorm-room3',
@@ -89,9 +94,6 @@ const MOCK_UNITS: Unit[] = [
     vacancies: 4,
     status: 'Available',
     features: ['Foam', 'Pillow', 'WiFi', 'Clip Fan', 'Table', 'Chair'],
-    otherDetails: [
-      'Room for Rent or for Bedspace',
-    ],
   },
   {
     id: 'unit-white-dorm-room4',
@@ -107,9 +109,6 @@ const MOCK_UNITS: Unit[] = [
     vacancies: 2,
     status: 'Available',
     features: ['Foam', 'Pillow', 'WiFi', 'Clip Fan', 'Table', 'Chair'],
-    otherDetails: [
-      'Room for Rent or for Bedspace',
-    ],
   },
   {
     id: 'unit-white-dorm-room6',
@@ -125,9 +124,6 @@ const MOCK_UNITS: Unit[] = [
     vacancies: 4,
     status: 'Available',
     features: ['Foam', 'Pillow', 'WiFi', 'Clip Fan', 'Table', 'Chair'],
-    otherDetails: [
-      'Room for Rent or for Bedspace',
-    ],
   },
   {
     id: 'unit-white-dorm-room7',
@@ -143,9 +139,6 @@ const MOCK_UNITS: Unit[] = [
     vacancies: 4,
     status: 'Available',
     features: ['Foam', 'Pillow', 'WiFi', 'Clip Fan', 'Table', 'Chair'],
-    otherDetails: [
-      'Room for Rent or for Bedspace',
-    ],
   },
   {
     id: 'unit-white-dorm-room15',
@@ -161,9 +154,6 @@ const MOCK_UNITS: Unit[] = [
     vacancies: 4,
     status: 'Available',
     features: ['Foam', 'Pillow', 'WiFi', 'Clip Fan', 'Table', 'Chair'],
-    otherDetails: [
-      'Room for Rent or for Bedspace',
-    ],
   },
   {
     id: 'unit-white-dorm-room16',
@@ -179,9 +169,6 @@ const MOCK_UNITS: Unit[] = [
     vacancies: 4,
     status: 'Available',
     features: ['Foam', 'Pillow', 'WiFi', 'Clip Fan', 'Table', 'Chair'],
-    otherDetails: [
-      'Room for Rent or for Bedspace',
-    ],
   },
 
 
@@ -199,9 +186,22 @@ const MOCK_UNITS: Unit[] = [
     vacancies: 8,
     status: 'Available',
     features: ['Foam', 'Pillow', 'WiFi', 'Clip Fan', 'Table', 'Chair'],
-    otherDetails: [
-      'Room for Rent or for Bedspace',
+  },
+  {
+    id: 'unit-uytengso_door5_room2',
+    propertyId: 'prop-uytengson-boardings',
+    name: 'Door 5 - Room 2',
+    accommodationType: ['Room for Rent'],
+    images: [
+      uyRm2Img1, uyRm2Img2, uyRm2Img3, uyRm2Img4
     ],
+    monthlyRent: 2500,
+    capacity: 4,
+    currentOccupants: 0,
+    vacancies: 4,
+    status: 'Available',
+    features: ['Foam', 'Pillow', 'WiFi', 'Clip Fan', 'Table', 'Chair'],
+
   },
 
 
