@@ -20,9 +20,8 @@ import {
   GroupOutlined,
   MeetingRoomOutlined,
   Phone,
-  Email,
   Facebook,
-  Send,
+  WarningAmberOutlined,
 } from '@mui/icons-material';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useUnitDetail } from '../../../application/hooks/useUnitDetail';
@@ -92,12 +91,15 @@ export default function UnitDetailPage() {
                     {unit.name}
                   </Typography>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
-                    <Chip 
-                      label={unit.accommodationType} 
-                      size="small"
-                      variant="outlined"
-                      sx={{ fontWeight: 700, borderRadius: 1 }} 
-                    />
+                    {unit.accommodationType.map((type) => (
+                      <Chip 
+                        key={type}
+                        label={type} 
+                        size="small"
+                        variant="outlined"
+                        sx={{ fontWeight: 700, borderRadius: 1 }} 
+                      />
+                    ))}
                     {unit.vacancies > 0 ? (
                       <Chip 
                         label={`${unit.vacancies} vacancies`} 
@@ -164,7 +166,7 @@ export default function UnitDetailPage() {
                 <Grid size={{ xs: 12, md: 6 }}>
                   <Card variant="outlined" sx={{ borderRadius: 3, height: '100%', border: 'none', bgcolor: 'background.default' }}>
                     <CardContent>
-                      <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>Features & Inclusions</Typography>
+                      <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>Additional Information</Typography>
                       <List dense disablePadding>
                         {unit.features.map((item, i) => (
                           <ListItem key={i} disablePadding sx={{ mb: 1 }}>
@@ -217,72 +219,6 @@ export default function UnitDetailPage() {
                           </Box>
                         </Box>
 
-                        {/* Email */}
-                        <Box
-                          component="a"
-                          href="mailto:inquire@rentdito.com"
-                          sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 2,
-                            p: 1.5,
-                            borderRadius: 2,
-                            bgcolor: 'action.hover',
-                            textDecoration: 'none',
-                            color: '#fff',
-                            transition: 'all 0.2s',
-                            '&:hover': {
-                              bgcolor: 'primary.main',
-                              color: '#fff',
-                              transform: 'translateX(4px)',
-                            },
-                          }}
-                        >
-                          <Email sx={{ fontSize: 24, color: 'inherit', flexShrink: 0 }} />
-                          <Box sx={{ minWidth: 0 }}>
-                            <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
-                              Email Us
-                            </Typography>
-                            <Typography variant="caption">
-                              inquire@rentdito.com
-                            </Typography>
-                          </Box>
-                        </Box>
-
-                        {/* Telegram */}
-                        <Box
-                          component="a"
-                          href="https://t.me/rentdito"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 2,
-                            p: 1.5,
-                            borderRadius: 2,
-                            bgcolor: 'action.hover',
-                            textDecoration: 'none',
-                            color: '#fff',
-                            transition: 'all 0.2s',
-                            '&:hover': {
-                              bgcolor: 'primary.main',
-                              color: '#fff',
-                              transform: 'translateX(4px)',
-                            },
-                          }}
-                        >
-                          <Send sx={{ fontSize: 24, color: 'inherit', flexShrink: 0 }} />
-                          <Box sx={{ minWidth: 0 }}>
-                            <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
-                              Message on Telegram
-                            </Typography>
-                            <Typography variant="caption">
-                              @rentdito
-                            </Typography>
-                          </Box>
-                        </Box>
-
                         {/* Facebook */}
                         <Box
                           component="a"
@@ -314,8 +250,21 @@ export default function UnitDetailPage() {
                             <Typography variant="caption">
                               RentDito
                             </Typography>
+                           </Box>
+                        </Box>
+                        {/* Safety Reminder */}
+                        <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'flex-start', p: 2, borderRadius: 2, border: '1px solid', borderColor: 'warning.dark', bgcolor: 'rgba(255, 152, 0, 0.05)', mt: 1 }}>
+                          <WarningAmberOutlined sx={{ color: 'warning.main', mt: 0.25 }} />
+                          <Box>
+                            <Typography variant="subtitle1" sx={{ fontWeight: 700, color: 'warning.main', mb: 0.5, lineHeight: 1.2 }}>
+                              Safety Reminder
+                            </Typography>
+                            <Typography variant="body2" color="warning.light">
+                              For your safety, never send any advance payments or deposits before personally inspecting the property and verifying details with the landlord.
+                            </Typography>
                           </Box>
                         </Box>
+
                       </Box>
                     </CardContent>
                   </Card>

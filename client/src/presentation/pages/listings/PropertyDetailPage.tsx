@@ -308,7 +308,7 @@ export default function PropertyDetailPage() {
               <Grid size={{ xs: 12, sm: 6, md: 4 }} key={unit.id}>
                 <Card 
                   sx={{ 
-                    borderRadius: 4, 
+                    borderRadius: 2, 
                     overflow: 'hidden', 
                     height: '100%', 
                     display: 'flex', 
@@ -327,12 +327,17 @@ export default function PropertyDetailPage() {
                   
                   <CardContent sx={{ flexGrow: 1, p: 2.5, display: 'flex', flexDirection: 'column' }}>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1.5 }}>
-                       <Chip 
-                         label={unit.accommodationType} 
-                         size="small" 
-                         variant="outlined"
-                         sx={{ fontWeight: 600, borderRadius: 1 }} 
-                       />
+                       <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
+                         {unit.accommodationType.map((type) => (
+                           <Chip 
+                             key={type}
+                             label={type} 
+                             size="small" 
+                             variant="outlined"
+                             sx={{ fontWeight: 600, borderRadius: 1 }} 
+                           />
+                         ))}
+                       </Box>
                        {unit.vacancies > 0 ? (
                          <Chip 
                            label={`${unit.vacancies} vacancies`} 
@@ -356,13 +361,6 @@ export default function PropertyDetailPage() {
                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1, color: 'text.secondary' }}>
                          <GroupOutlined fontSize="small" />
                          <Typography variant="body2">Capacity: {unit.capacity} person{unit.capacity > 1 ? 's' : ''}</Typography>
-                       </Box>
-                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, color: 'text.secondary' }}>
-                         <MeetingRoomOutlined fontSize="small" />
-                         <Typography variant="body2" noWrap sx={{ textOverflow: 'ellipsis' }}>
-                           {unit.features.slice(0, 3).join(', ')}
-                           {unit.features.length > 3 ? '...' : ''}
-                         </Typography>
                        </Box>
                     </Box>
 

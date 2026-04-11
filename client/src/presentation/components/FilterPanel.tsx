@@ -15,6 +15,7 @@ import {
 import { Search } from '@mui/icons-material';
 import { useState } from 'react';
 import type { PropertyType } from '../../domain/entities/Property';
+import type { AccommodationType } from '../../domain/entities/Unit';
 import type { ListingFilters, FilterOptions } from '../../domain/entities/ListingFilters';
 import type { CategoryType, SelectedVenue } from '../../domain/entities/VenueFilter';
 
@@ -23,6 +24,7 @@ interface FilterPanelProps {
   filterOptions: FilterOptions;
   onSearchChange: (value: string) => void;
   onPropertyTypeChange: (value: PropertyType | 'All') => void;
+  onAccommodationTypeChange: (value: AccommodationType | 'All') => void;
   onProvinceChange: (value: string | 'All') => void;
   onCityChange: (value: string | 'All') => void;
   onVenueToggle: (venueName: string, category: CategoryType) => void;
@@ -39,6 +41,7 @@ export default function FilterPanel({
   filterOptions,
   onSearchChange,
   onPropertyTypeChange,
+  onAccommodationTypeChange,
   onProvinceChange,
   onCityChange,
   onVenueToggle,
@@ -91,265 +94,281 @@ export default function FilterPanel({
   const content = (
     <>
       {/* Section 1: Search */}
-        {!hideSearch && (
-          <Box sx={sectionSx}>
-            <Typography variant="subtitle2" sx={{ fontWeight: 700, fontSize: '0.75rem', letterSpacing: 0.5, textTransform: 'uppercase', color: 'text.secondary' }}>
-              Search
-            </Typography>
-            <TextField
-              fullWidth
-              placeholder="Search by property name or city..."
-              value={filters.searchTerm}
-              onChange={(e) => onSearchChange(e.target.value)}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Search sx={{ color: 'text.secondary', fontSize: 20 }} />
-                  </InputAdornment>
-                ),
-              }}
-              size="small"
-              sx={inputSx}
-            />
-          </Box>
-        )}
-
-        {/* Section 2: Location & Type */}
+      {!hideSearch && (
         <Box sx={sectionSx}>
           <Typography variant="subtitle2" sx={{ fontWeight: 700, fontSize: '0.75rem', letterSpacing: 0.5, textTransform: 'uppercase', color: 'text.secondary' }}>
-            Location & Type
+            Search
           </Typography>
-          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr 1fr' }, gap: 2 }}>
-            <TextField
-              select
-              label="Property Type"
-              value={filters.propertyType}
-              onChange={(e) => onPropertyTypeChange(e.target.value as PropertyType | 'All')}
-              size="small"
-              sx={inputSx}
-            >
-              <MenuItem value="All">All Types</MenuItem>
-              {filterOptions.propertyTypes.map((type) => (
-                <MenuItem key={type} value={type}>
-                  {type}
-                </MenuItem>
-              ))}
-            </TextField>
-
-            <TextField
-              select
-              label="Province"
-              value={filters.province}
-              onChange={(e) => onProvinceChange(e.target.value)}
-              size="small"
-              sx={inputSx}
-            >
-              <MenuItem value="All">All Provinces</MenuItem>
-              {filterOptions.provinces.map((province) => (
-                <MenuItem key={province} value={province}>
-                  {province}
-                </MenuItem>
-              ))}
-            </TextField>
-
-            <TextField
-              select
-              label="City"
-              value={filters.city}
-              onChange={(e) => onCityChange(e.target.value)}
-              size="small"
-              sx={inputSx}
-            >
-              <MenuItem value="All">All Cities</MenuItem>
-              {filterOptions.cities.map((city) => (
-                <MenuItem key={city} value={city}>
-                  {city}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Box>
+          <TextField
+            fullWidth
+            placeholder="Search by property name or city..."
+            value={filters.searchTerm}
+            onChange={(e) => onSearchChange(e.target.value)}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Search sx={{ color: 'text.secondary', fontSize: 20 }} />
+                </InputAdornment>
+              ),
+            }}
+            size="small"
+            sx={inputSx}
+          />
         </Box>
+      )}
 
-        {/* Section 3: Nearby Categories */}
-        <Box sx={sectionSx}>
-          <Typography variant="subtitle2" sx={{ fontWeight: 700, fontSize: '0.75rem', letterSpacing: 0.5, textTransform: 'uppercase', color: 'text.secondary' }}>
-            Nearby Categories
-          </Typography>
+      {/* Section 2: Location & Type */}
+      <Box sx={sectionSx}>
+        <Typography variant="subtitle2" sx={{ fontWeight: 700, fontSize: '0.75rem', letterSpacing: 0.5, textTransform: 'uppercase', color: 'text.secondary' }}>
+          Location & Type
+        </Typography>
+        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(4, 1fr)' }, gap: 2 }}>
+          <TextField
+            select
+            label="Property Type"
+            value={filters.propertyType}
+            onChange={(e) => onPropertyTypeChange(e.target.value as PropertyType | 'All')}
+            size="small"
+            sx={inputSx}
+          >
+            <MenuItem value="All">All Property Types</MenuItem>
+            {filterOptions.propertyTypes.map((type) => (
+              <MenuItem key={type} value={type}>
+                {type}
+              </MenuItem>
+            ))}
+          </TextField>
 
-          {/* Category Dropdowns */}
-          <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap' }}>
-            {filterOptions.categories.map((category) => {
-              const isSelected = getSelectedVenuesByCategory(category.type as CategoryType).length > 0;
-              const categoryType = category.type as CategoryType;
-              return (
-                <Box key={category.type} sx={{ position: 'relative' }}>
-                  <Button
-                    onClick={(e) => handleMenuOpen(categoryType, e)}
-                    variant={isSelected ? 'contained' : 'outlined'}
-                    size="small"
-                    sx={{
-                      textTransform: 'none',
-                      fontWeight: 500,
-                      fontSize: '0.875rem',
-                      borderRadius: 1.5,
-                      color: isSelected ? 'white' : 'text.primary',
-                      bgcolor: isSelected ? 'primary.main' : 'transparent',
-                      border: '1px solid',
-                      borderColor: isSelected ? 'primary.main' : 'divider',
-                      transition: 'all 0.2s ease',
-                      '&:hover': {
-                        transform: 'translateY(-2px)',
-                        boxShadow: (theme) =>
-                          theme.palette.mode === 'light'
-                            ? '0 4px 12px rgba(0, 0, 0, 0.1)'
-                            : '0 4px 12px rgba(126, 92, 245, 0.2)',
-                      },
-                    }}
-                  >
-                    {category.label}
-                  </Button>
-                  <Menu
-                    anchorEl={menuAnchorEl}
-                    open={openMenu === categoryType}
-                    onClose={handleMenuClose}
-                    slotProps={{
-                      paper: {
-                        sx: {
-                          maxHeight: 300,
-                          width: 280,
-                          mt: 1,
-                          '&::-webkit-scrollbar': {
-                            width: '8px',
-                          },
-                          '&::-webkit-scrollbar-track': {
-                            background: 'transparent',
-                          },
-                          '&::-webkit-scrollbar-thumb': {
-                            backgroundColor: 'primary.main',
-                            borderRadius: '4px',
-                            border: '2px solid transparent',
-                            backgroundClip: 'content-box',
-                            '&:hover': {
-                              backgroundColor: 'primary.light',
-                            },
-                          },
-                        },
-                      },
-                    }}
-                  >
-                    <Box sx={{ px: 2, pt: 1, pb: 1 }} onKeyDown={(e) => e.stopPropagation()}>
-                      <TextField
-                        fullWidth
-                        size="small"
-                        autoFocus
-                        placeholder={`Search ${category.label.toLowerCase()}...`}
-                        value={venueSearchTerm}
-                        onChange={(e) => setVenueSearchTerm(e.target.value)}
-                        slotProps={{
-                          input: {
-                            startAdornment: <Search fontSize="small" sx={{ color: 'text.secondary', mr: 1 }} />,
-                            sx: {
-                              borderRadius: 1.5,
-                              fontSize: '0.85rem',
-                            }
-                          }
-                        }}
-                      />
-                    </Box>
-                    <Divider sx={{ mb: 1 }} />
-                    {(() => {
-                      const allVenues = getUniqueVenuesByCategory(categoryType);
-                      const filteredVenues = allVenues.filter(v => v.name.toLowerCase().includes(venueSearchTerm.toLowerCase()));
+          <TextField
+            select
+            label="Unit Type"
+            value={filters.accommodationType}
+            onChange={(e) => onAccommodationTypeChange(e.target.value as AccommodationType | 'All')}
+            size="small"
+            sx={inputSx}
+          >
+            <MenuItem value="All">All Unit Types</MenuItem>
+            {filterOptions.accommodationTypes.map((type) => (
+              <MenuItem key={type} value={type}>
+                {type}
+              </MenuItem>
+            ))}
+          </TextField>
 
-                      if (filteredVenues.length > 0) {
-                        return filteredVenues.map((venue) => {
-                          const isVenueSelected = getSelectedVenuesByCategory(categoryType).some(
-                            (v) => v.name === venue.name
-                          );
-                          return (
-                            <MenuItem
-                              key={venue.name}
-                              onClick={(e) => handleVenueSelect(e, venue.name, categoryType)}
-                              sx={{ py: 1 }}
-                              disableRipple
-                            >
-                              <FormControlLabel
-                                control={<Checkbox checked={isVenueSelected} size="small" />}
-                                label={
-                                  <Box sx={{ ml: 0.5 }}>
-                                    <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                                      {venue.name}
-                                    </Typography>
-                                    <Typography variant="caption" color="text.secondary">
-                                      {venue.count} propert{venue.count === 1 ? 'y' : 'ies'}
-                                    </Typography>
-                                  </Box>
-                                }
-                                sx={{ m: 0, width: '100%' }}
-                              />
-                            </MenuItem>
-                          );
-                        });
-                      } else {
-                        return (
-                          <MenuItem disabled>
-                            <Typography variant="body2" color="text.secondary">
-                              {allVenues.length === 0 ? 'No venues available' : 'No matching venues found'}
-                            </Typography>
-                          </MenuItem>
-                        );
-                      }
-                    })()}
-                  </Menu>
-                </Box>
-              );
-            })}
-          </Box>
+          <TextField
+            select
+            label="Province"
+            value={filters.province}
+            onChange={(e) => onProvinceChange(e.target.value)}
+            size="small"
+            sx={inputSx}
+          >
+            <MenuItem value="All">All Provinces</MenuItem>
+            {filterOptions.provinces.map((province) => (
+              <MenuItem key={province} value={province}>
+                {province}
+              </MenuItem>
+            ))}
+          </TextField>
 
-          {/* Selected Venues Display */}
-          {filters.selectedVenues.length > 0 && (
-            <Box sx={{ pt: 2, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Typography variant="caption" sx={{ fontWeight: 700, fontSize: '0.7rem', letterSpacing: 0.5, textTransform: 'uppercase', color: 'text.secondary' }}>
-                  Selected Venues ({filters.selectedVenues.length})
-                </Typography>
+          <TextField
+            select
+            label="City"
+            value={filters.city}
+            onChange={(e) => onCityChange(e.target.value)}
+            size="small"
+            sx={inputSx}
+          >
+            <MenuItem value="All">All Cities</MenuItem>
+            {filterOptions.cities.map((city) => (
+              <MenuItem key={city} value={city}>
+                {city}
+              </MenuItem>
+            ))}
+          </TextField>
+        </Box>
+      </Box>
+
+      {/* Section 3: Nearby Categories */}
+      <Box sx={sectionSx}>
+        <Typography variant="subtitle2" sx={{ fontWeight: 700, fontSize: '0.75rem', letterSpacing: 0.5, textTransform: 'uppercase', color: 'text.secondary' }}>
+          Nearby Categories
+        </Typography>
+
+        {/* Category Dropdowns */}
+        <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap' }}>
+          {filterOptions.categories.map((category) => {
+            const isSelected = getSelectedVenuesByCategory(category.type as CategoryType).length > 0;
+            const categoryType = category.type as CategoryType;
+            return (
+              <Box key={category.type} sx={{ position: 'relative' }}>
                 <Button
+                  onClick={(e) => handleMenuOpen(categoryType, e)}
+                  variant={isSelected ? 'contained' : 'outlined'}
                   size="small"
-                  onClick={onClearAllVenues}
                   sx={{
                     textTransform: 'none',
-                    fontSize: '0.8rem',
-                    padding: '4px 8px',
-                    color: 'primary.main',
+                    fontWeight: 500,
+                    fontSize: '0.875rem',
+                    borderRadius: 1.5,
+                    color: isSelected ? 'white' : 'text.primary',
+                    bgcolor: isSelected ? 'primary.main' : 'transparent',
+                    border: '1px solid',
+                    borderColor: isSelected ? 'primary.main' : 'divider',
+                    transition: 'all 0.2s ease',
                     '&:hover': {
-                      bgcolor: 'rgba(126, 92, 245, 0.08)',
+                      transform: 'translateY(-2px)',
+                      boxShadow: (theme) =>
+                        theme.palette.mode === 'light'
+                          ? '0 4px 12px rgba(0, 0, 0, 0.1)'
+                          : '0 4px 12px rgba(126, 92, 245, 0.2)',
                     },
                   }}
                 >
-                  Clear All
+                  {category.label}
                 </Button>
+                <Menu
+                  anchorEl={menuAnchorEl}
+                  open={openMenu === categoryType}
+                  onClose={handleMenuClose}
+                  slotProps={{
+                    paper: {
+                      sx: {
+                        maxHeight: 300,
+                        width: 280,
+                        mt: 1,
+                        '&::-webkit-scrollbar': {
+                          width: '8px',
+                        },
+                        '&::-webkit-scrollbar-track': {
+                          background: 'transparent',
+                        },
+                        '&::-webkit-scrollbar-thumb': {
+                          backgroundColor: 'primary.main',
+                          borderRadius: '4px',
+                          border: '2px solid transparent',
+                          backgroundClip: 'content-box',
+                          '&:hover': {
+                            backgroundColor: 'primary.light',
+                          },
+                        },
+                      },
+                    },
+                  }}
+                >
+                  <Box sx={{ px: 2, pt: 1, pb: 1 }} onKeyDown={(e) => e.stopPropagation()}>
+                    <TextField
+                      fullWidth
+                      size="small"
+                      autoFocus
+                      placeholder={`Search ${category.label.toLowerCase()}...`}
+                      value={venueSearchTerm}
+                      onChange={(e) => setVenueSearchTerm(e.target.value)}
+                      slotProps={{
+                        input: {
+                          startAdornment: <Search fontSize="small" sx={{ color: 'text.secondary', mr: 1 }} />,
+                          sx: {
+                            borderRadius: 1.5,
+                            fontSize: '0.85rem',
+                          }
+                        }
+                      }}
+                    />
+                  </Box>
+                  <Divider sx={{ mb: 1 }} />
+                  {(() => {
+                    const allVenues = getUniqueVenuesByCategory(categoryType);
+                    const filteredVenues = allVenues.filter(v => v.name.toLowerCase().includes(venueSearchTerm.toLowerCase()));
+
+                    if (filteredVenues.length > 0) {
+                      return filteredVenues.map((venue) => {
+                        const isVenueSelected = getSelectedVenuesByCategory(categoryType).some(
+                          (v) => v.name === venue.name
+                        );
+                        return (
+                          <MenuItem
+                            key={venue.name}
+                            onClick={(e) => handleVenueSelect(e, venue.name, categoryType)}
+                            sx={{ py: 1 }}
+                            disableRipple
+                          >
+                            <FormControlLabel
+                              control={<Checkbox checked={isVenueSelected} size="small" />}
+                              label={
+                                <Box sx={{ ml: 0.5 }}>
+                                  <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                                    {venue.name}
+                                  </Typography>
+                                  <Typography variant="caption" color="text.secondary">
+                                    {venue.count} propert{venue.count === 1 ? 'y' : 'ies'}
+                                  </Typography>
+                                </Box>
+                              }
+                              sx={{ m: 0, width: '100%' }}
+                            />
+                          </MenuItem>
+                        );
+                      });
+                    } else {
+                      return (
+                        <MenuItem disabled>
+                          <Typography variant="body2" color="text.secondary">
+                            {allVenues.length === 0 ? 'No venues available' : 'No matching venues found'}
+                          </Typography>
+                        </MenuItem>
+                      );
+                    }
+                  })()}
+                </Menu>
               </Box>
-              <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                {filters.selectedVenues.map((venue, index) => (
-                  <Chip
-                    key={index}
-                    label={venue.name}
-                    onDelete={() => onVenueRemove(venue)}
-                    size="small"
-                    color="primary"
-                    variant="filled"
-                    sx={{
-                      fontSize: '0.8rem',
-                      height: 28,
-                      borderRadius: 1,
-                    }}
-                  />
-                ))}
-              </Box>
-            </Box>
-          )}
+            );
+          })}
         </Box>
-      </>
+
+        {/* Selected Venues Display */}
+        {filters.selectedVenues.length > 0 && (
+          <Box sx={{ pt: 2, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Typography variant="caption" sx={{ fontWeight: 700, fontSize: '0.7rem', letterSpacing: 0.5, textTransform: 'uppercase', color: 'text.secondary' }}>
+                Selected Venues ({filters.selectedVenues.length})
+              </Typography>
+              <Button
+                size="small"
+                onClick={onClearAllVenues}
+                sx={{
+                  textTransform: 'none',
+                  fontSize: '0.8rem',
+                  padding: '4px 8px',
+                  color: 'primary.main',
+                  '&:hover': {
+                    bgcolor: 'rgba(126, 92, 245, 0.08)',
+                  },
+                }}
+              >
+                Clear All
+              </Button>
+            </Box>
+            <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+              {filters.selectedVenues.map((venue, index) => (
+                <Chip
+                  key={index}
+                  label={venue.name}
+                  onDelete={() => onVenueRemove(venue)}
+                  size="small"
+                  color="primary"
+                  variant="filled"
+                  sx={{
+                    fontSize: '0.8rem',
+                    height: 28,
+                    borderRadius: 1,
+                  }}
+                />
+              ))}
+            </Box>
+          </Box>
+        )}
+      </Box>
+    </>
   );
 
   return (
