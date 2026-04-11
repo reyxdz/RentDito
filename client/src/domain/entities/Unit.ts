@@ -8,9 +8,13 @@ export interface Unit {
   id: string;
   propertyId: string;
   name: string;
-  accommodationType: AccommodationType;
+  accommodationType: AccommodationType[];
   images: string[];
   monthlyRent: number;
+  rentPricing?: {
+    bedspace?: number;
+    room?: number;
+  };
   capacity: number;
   currentOccupants: number;
   vacancies: number;

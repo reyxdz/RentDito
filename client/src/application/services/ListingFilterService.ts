@@ -1,7 +1,9 @@
 import type { Property } from '../../domain/entities/Property';
 import type { ListingFilters, FilterOptions } from '../../domain/entities/ListingFilters';
+import type { AccommodationType } from '../../domain/entities/Unit';
 
-const PROPERTY_TYPES = ['Boarding House', 'Apartment', 'Studio', 'Dormitory', 'Commercial', 'Parking', 'Land', 'Mixed Use'] as const;
+const PROPERTY_TYPES = ['Boarding House', 'House for Rent', 'Apartment', 'Dormitory', 'Studio', 'Mixed Use'] as const;
+const ACCOMMODATION_TYPES: AccommodationType[] = ['Bedspace', 'Room for Rent'];
 
 const PROPERTY_CATEGORIES = [
   { type: 'reviewCenters', label: 'Review Centers' },
@@ -15,8 +17,8 @@ export function useFilterOptions(properties: Property[], selectedProvince: strin
     .filter(Boolean)
     .sort();
 
-  const propertiesForCities = selectedProvince !== 'All' 
-    ? properties.filter(p => p.address.state === selectedProvince) 
+  const propertiesForCities = selectedProvince !== 'All'
+    ? properties.filter(p => p.address.state === selectedProvince)
     : properties;
 
   const cities = Array.from(new Set(propertiesForCities.map((p) => p.address.city)))
@@ -25,6 +27,7 @@ export function useFilterOptions(properties: Property[], selectedProvince: strin
 
   return {
     propertyTypes: PROPERTY_TYPES as any,
+    accommodationTypes: ACCOMMODATION_TYPES,
     provinces,
     cities,
     categories: PROPERTY_CATEGORIES,
@@ -51,6 +54,13 @@ export function applyListingFilters(
     // Property type filter
     if (filters.propertyType !== 'All' && p.propertyType !== filters.propertyType) {
       return false;
+    }
+
+    // Accommodation type filter
+    if (filters.accommodationType !== 'All') {
+      if (!p.metrics.accommodationTypes || !p.metrics.accommodationTypes.includes(filters.accommodationType)) {
+         return false;
+      }
     }
 
     // Province filter

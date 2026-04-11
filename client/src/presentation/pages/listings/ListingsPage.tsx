@@ -22,6 +22,7 @@ import ImageCarousel from '../../components/ImageCarousel';
 import Navbar from '../../components/Navbar';
 import FilterPanel from '../../components/FilterPanel';
 import type { PropertyType } from '../../../domain/entities/Property';
+import type { AccommodationType } from '../../../domain/entities/Unit';
 import type { ListingFilters } from '../../../domain/entities/ListingFilters';
 import type { CategoryType, SelectedVenue } from '../../../domain/entities/VenueFilter';
 
@@ -31,6 +32,7 @@ export default function ListingsPage() {
   const [filters, setFilters] = useState<ListingFilters>({
     searchTerm: '',
     propertyType: 'All',
+    accommodationType: 'All',
     province: 'All',
     city: 'All',
     selectedVenues: [],
@@ -50,6 +52,10 @@ export default function ListingsPage() {
 
   const handlePropertyTypeChange = (value: PropertyType | 'All') => {
     setFilters((prev) => ({ ...prev, propertyType: value }));
+  };
+
+  const handleAccommodationTypeChange = (value: AccommodationType | 'All') => {
+    setFilters((prev) => ({ ...prev, accommodationType: value }));
   };
 
   const handleProvinceChange = (value: string | 'All') => {
@@ -190,6 +196,7 @@ export default function ListingsPage() {
                 filterOptions={filterOptions}
                 onSearchChange={handleSearchChange}
                 onPropertyTypeChange={handlePropertyTypeChange}
+                onAccommodationTypeChange={handleAccommodationTypeChange}
                 onProvinceChange={handleProvinceChange}
                 onCityChange={handleCityChange}
                 onVenueToggle={handleVenueToggle}
@@ -212,7 +219,7 @@ export default function ListingsPage() {
             <Grid container spacing={3}>
               {[1, 2, 3].map((i) => (
                 <Grid size={{ xs: 12, sm: 6, lg: 4 }} key={i}>
-                  <Card sx={{ borderRadius: 4, overflow: 'hidden' }}>
+                  <Card sx={{ borderRadius: 2, overflow: 'hidden' }}>
                     <Skeleton variant="rectangular" height={220} />
                     <CardContent>
                       <Skeleton width="70%" height={28} />
@@ -255,7 +262,7 @@ export default function ListingsPage() {
                       sx={{
                         cursor: 'pointer',
                         WebkitTapHighlightColor: 'transparent',
-                        borderRadius: 4,
+                        borderRadius: 2,
                         overflow: 'hidden',
                         transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                         '&:hover': {
@@ -273,17 +280,9 @@ export default function ListingsPage() {
                       <CardContent sx={{ p: 2.5 }}>
                         {/* Name */}
                         <Box
-                          component="a"
-                          href={`https://www.google.com/maps/search/${encodeURIComponent(property.address.street + ' ' + property.address.city + ' ' + property.address.state)}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
                           sx={{
                             display: 'block',
-                            textDecoration: 'none',
                             color: 'inherit',
-                            '&:hover h6': {
-                              color: 'primary.main',
-                            },
                           }}
                         >
                           <Typography
@@ -295,8 +294,6 @@ export default function ListingsPage() {
                               overflow: 'hidden',
                               textOverflow: 'ellipsis',
                               whiteSpace: 'nowrap',
-                              cursor: 'pointer',
-                              transition: 'color 0.2s ease',
                             }}
                           >
                             {property.name}

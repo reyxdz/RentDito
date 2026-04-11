@@ -1,5 +1,6 @@
 export type PropertyStatus = 'Active' | 'Disabled' | 'Maintenance' | 'Archived';
 export type PropertyType = 'Boarding House' | 'Apartment' | 'Studio' | 'Dormitory' | 'Commercial' | 'Parking' | 'Land' | 'Mixed Use';
+import type { AccommodationType } from './Unit';
 
 export interface Venue {
   name: string;
@@ -40,6 +41,7 @@ export interface Property {
       min: number;
       max: number;
     };
+    accommodationTypes?: AccommodationType[];
   };
 
   createdAt: Date;
