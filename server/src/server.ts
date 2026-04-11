@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
 import connectDB from './config/db';
+import authRoutes from './routes/auth.routes';
 
 dotenv.config();
 
@@ -24,8 +25,8 @@ app.get('/api/health', (req, res) => {
   res.status(200).json({ status: 'success', message: 'RentDito API is active' });
 });
 
-// Route mount placeholders
-// app.use('/api/auth', authRoutes);
+// Route mounts
+app.use('/api/auth', authRoutes);
 // app.use('/api/users', userRoutes);
 // app.use('/api/properties', propertyRoutes);
 

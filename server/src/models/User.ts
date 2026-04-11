@@ -14,6 +14,10 @@ export interface IUser extends Document {
   verificationStatus: VerificationStatus;
   idPhotos?: string[];
   avatar?: string;
+  // Auth tokens
+  refreshToken?: string;
+  resetPasswordToken?: string;
+  resetPasswordExpires?: Date;
   // Staff-specific
   landlordId?: mongoose.Types.ObjectId;
   assignedPropertyIds?: mongoose.Types.ObjectId[];
@@ -34,6 +38,10 @@ const UserSchema = new Schema<IUser>(
     verificationStatus: { type: String, enum: ['unverified', 'pending', 'verified'], default: 'unverified' },
     idPhotos: [{ type: String }],
     avatar: { type: String },
+    // Auth tokens
+    refreshToken: { type: String, select: false },
+    resetPasswordToken: { type: String, select: false },
+    resetPasswordExpires: { type: Date, select: false },
     // Staff-specific
     landlordId: { type: Schema.Types.ObjectId, ref: 'User' },
     assignedPropertyIds: [{ type: Schema.Types.ObjectId, ref: 'Property' }],
