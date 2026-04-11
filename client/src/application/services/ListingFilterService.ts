@@ -1,7 +1,7 @@
 import type { Property } from '../../domain/entities/Property';
 import type { ListingFilters, FilterOptions } from '../../domain/entities/ListingFilters';
 
-const PROPERTY_TYPES = ['Boarding House', 'Apartment', 'Studio', 'Dormitory', 'Commercial', 'Parking', 'Land', 'Mixed Use'] as const;
+const PROPERTY_TYPES = ['Boarding House', 'House for Rent', 'Apartment', 'Dormitory', 'Studio', 'Mixed Use'] as const;
 
 const PROPERTY_CATEGORIES = [
   { type: 'reviewCenters', label: 'Review Centers' },
@@ -15,8 +15,8 @@ export function useFilterOptions(properties: Property[], selectedProvince: strin
     .filter(Boolean)
     .sort();
 
-  const propertiesForCities = selectedProvince !== 'All' 
-    ? properties.filter(p => p.address.state === selectedProvince) 
+  const propertiesForCities = selectedProvince !== 'All'
+    ? properties.filter(p => p.address.state === selectedProvince)
     : properties;
 
   const cities = Array.from(new Set(propertiesForCities.map((p) => p.address.city)))
