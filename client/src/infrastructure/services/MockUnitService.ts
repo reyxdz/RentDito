@@ -79,9 +79,7 @@ const MOCK_UNITS: Unit[] = [
     vacancies: 8,
     status: 'Available',
     features: ['Foam', 'Pillow', 'WiFi', 'Clip Fan', 'Table', 'Chair'],
-    otherDetails: [
-      'Vacant as a room or for Bedspace',
-    ],
+   
   },
     {
     id: 'unit-white-dorm-room3',
@@ -97,9 +95,7 @@ const MOCK_UNITS: Unit[] = [
     vacancies: 4,
     status: 'Available',
     features: ['Foam', 'Pillow', 'WiFi', 'Clip Fan', 'Table', 'Chair'],
-    otherDetails: [
-      'Vacant as a room or for Bedspace',
-    ],
+    
   },
   {
     id: 'unit-white-dorm-room4',
@@ -115,9 +111,7 @@ const MOCK_UNITS: Unit[] = [
     vacancies: 2,
     status: 'Available',
     features: ['Foam', 'Pillow', 'WiFi', 'Clip Fan', 'Table', 'Chair'],
-    otherDetails: [
-      'Vacant as a room or for Bedspace',
-    ],
+    
   },
   {
     id: 'unit-white-dorm-room6',
@@ -133,9 +127,7 @@ const MOCK_UNITS: Unit[] = [
     vacancies: 4,
     status: 'Available',
     features: ['Foam', 'Pillow', 'WiFi', 'Clip Fan', 'Table', 'Chair'],
-    otherDetails: [
-      'Vacant as a room or for Bedspace',
-    ],
+   
   },
     {
     id: 'unit-white-dorm-room7',
@@ -151,9 +143,7 @@ const MOCK_UNITS: Unit[] = [
     vacancies: 4,
     status: 'Available',
     features: ['Foam', 'Pillow', 'WiFi', 'Clip Fan', 'Table', 'Chair'],
-    otherDetails: [
-      'Vacant as a room or for Bedspace',
-    ],
+    
   },
     {
     id: 'unit-white-dorm-room15',
@@ -169,9 +159,7 @@ const MOCK_UNITS: Unit[] = [
     vacancies: 4,
     status: 'Available',
     features: ['Foam', 'Pillow', 'WiFi', 'Clip Fan', 'Table', 'Chair'],
-    otherDetails: [
-      'Vacant as a room or for Bedspace',
-    ],
+   
   },
     {
     id: 'unit-white-dorm-room16',
@@ -187,9 +175,7 @@ const MOCK_UNITS: Unit[] = [
     vacancies: 4,
     status: 'Available',
     features: ['Foam', 'Pillow', 'WiFi', 'Clip Fan', 'Table', 'Chair'],
-    otherDetails: [
-      'Vacant as a room or for Bedspace',
-    ],
+    
   },
 
 
@@ -207,9 +193,7 @@ const MOCK_UNITS: Unit[] = [
     vacancies: 8,
     status: 'Available',
     features: ['Foam', 'Pillow', 'WiFi', 'Clip Fan', 'Table', 'Chair'],
-    otherDetails: [
-      'Vacant as a room or for Bedspace',
-    ],
+    
   },
 
    {
@@ -221,14 +205,12 @@ const MOCK_UNITS: Unit[] = [
       uyRm2Img1, uyRm2Img2, uyRm2Img3, uyRm2Img4
     ],
     monthlyRent: 2500,
-    capacity: 8,
+    capacity: 4,
     currentOccupants: 0,
-    vacancies: 8,
+    vacancies: 4,
     status: 'Available',
     features: ['Foam', 'Pillow', 'WiFi', 'Clip Fan', 'Table', 'Chair'],
-    otherDetails: [
-      'Vacant as a room or for Bedspace',
-    ],
+
   },
 
 
