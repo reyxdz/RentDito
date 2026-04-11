@@ -75,6 +75,7 @@ const MOCK_PROPERTIES: Property[] = [
     createdAt: new Date('2026-01-01'),
     updatedAt: new Date(),
   },
+  
   {
     id: 'prop-uytengson-boardings',
     landlordId: 'usr_landlord_2',
@@ -125,8 +126,6 @@ const MOCK_PROPERTIES: Property[] = [
     },
     createdAt: new Date('2026-01-01'),
     updatedAt: new Date(),
-
-    
   },
 
   // Santiangco Boarding House Property

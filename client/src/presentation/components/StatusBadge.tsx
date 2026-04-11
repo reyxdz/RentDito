@@ -1,4 +1,5 @@
-import { Chip, ChipProps } from '@mui/material';
+import { Chip } from '@mui/material';
+import type { ChipProps } from '@mui/material';
 
 interface StatusBadgeProps extends Omit<ChipProps, 'color'> {
   status: string;
