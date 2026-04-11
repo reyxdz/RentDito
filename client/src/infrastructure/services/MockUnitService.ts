@@ -42,7 +42,7 @@ import rm16Img5 from '../../assets/properties/white_dorm/units/room16/room16_img
 //==============================================================================
 
 // Uytengso Boarding House Unit
-//room1
+//Door room1
 import uyRm1Img1 from '../../assets/properties/uytengso/units/room1/room1_t.jpg';
 import uyRm1Img2 from '../../assets/properties/uytengso/units/room1/room1_u.jpg';
 import uyRm1Img3 from '../../assets/properties/uytengso/units/room1/room1_y.jpg';    
@@ -51,8 +51,12 @@ import uyRm2Img1 from '../../assets/properties/uytengso/units/Door_5/room2/dr5r4
 import uyRm2Img2 from '../../assets/properties/uytengso/units/Door_5/room2/dr5r3.jpg';
 import uyRm2Img3 from '../../assets/properties/uytengso/units/Door_5/room2/dr5r2.jpg';
 import uyRm2Img4 from '../../assets/properties/uytengso/units/Door_5/room2/d5r1.jpg';   
-
-
+//Door5 Room4
+import uyRm4Img1 from '../../assets/properties/uytengso/units/Door_5/room4/d5a.jpg';
+import uyRm4Img2 from '../../assets/properties/uytengso/units/Door_5/room4/d5b.jpg';
+import uyRm4Img3 from '../../assets/properties/uytengso/units/Door_5/room4/d5c.jpg';
+import uyRm4Img4 from '../../assets/properties/uytengso/units/Door_5/room4/d5d.jpg';
+import uyRm4Img5 from '../../assets/properties/uytengso/units/Door_5/room4/d5e.jpg';
 
 
 // =============================================================================
@@ -212,6 +216,41 @@ const MOCK_UNITS: Unit[] = [
     features: ['Foam', 'Pillow', 'WiFi', 'Clip Fan', 'Table', 'Chair'],
 
   },
+  {
+    id: 'unit-uytengso_door5_room4',
+    propertyId: 'prop-uytengson-boardings',
+    name: 'Door5 Room 4',
+    accommodationType: 'Room for Rent',
+    images: [
+      uyRm4Img1, uyRm4Img2, uyRm4Img3, uyRm4Img4, uyRm4Img5
+    ],
+    monthlyRent: 2500,
+    capacity: 4,
+    currentOccupants: 0,
+    vacancies: 4,
+    status: 'Available',
+    features: ['Foam', 'Pillow', 'WiFi', 'Clip Fan', 'Table', 'Chair'],
+  },
+  // {
+  //   id: 'unit-uytengso_door5_room2',
+  //   propertyId: 'prop-uytengson-boardings',
+  //   name: 'Door5 Room 3',
+  //   accommodationType: 'Room for Rent',
+  //   images: [
+  //     uyRm2Img1, uyRm2Img2, uyRm2Img3, uyRm2Img4
+  //   ],
+  //   monthlyRent: 2500,
+  //   capacity: 4,
+  //   currentOccupants: 0,
+  //   vacancies: 4,
+  //   status: 'Available',
+  //   features: ['Foam', 'Pillow', 'WiFi', 'Clip Fan', 'Table', 'Chair'],
+
+  // },
+   
+  //Door6 
+  
+  
 
 
 ];
