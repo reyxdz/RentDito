@@ -389,6 +389,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 
 > **Goal:** Every developer has the folder structure, shared types, and tooling ready. No features yet, just the bones.
 
+**________________________________________ D O N E ________________________________________**
 #### 👑 Rey — Server Infrastructure
 **🤖 Gemini**
 
@@ -404,6 +405,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 8 | Update `server.ts` — use db.ts, middleware chain (helmet, cors, morgan, json), route mount placeholders | `server/src/server.ts` |
 
 **✅ Verify:** `npm run dev` in `/server` → connects to MongoDB → prints success log. Check MongoDB Compass → `rentdito` DB exists.
+**________________________________________ D O N E ________________________________________**
 
 ---
 
@@ -449,6 +451,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 
 > **Goal:** Complete working auth system. Anyone can register, login, and get JWT tokens. Frontend login/register pages connected to real API.
 
+**________________________________________ D O N E ________________________________________**
 #### 👑 Rey — Auth Backend
 **🤖 Claude Opus** ⚡ (security-critical: JWT rotation, password hashing, refresh token storage)
 
@@ -468,6 +471,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 - POST `/api/auth/refresh` → new token pair
 - Invalid token → 401
 - Check Compass → user exists, password is hashed (NOT plain text)
+**________________________________________ D O N E ________________________________________**
 
 ---
 
@@ -515,6 +519,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 
 > **Goal:** Permission system works. Users can apply to become landlords. Landlords can invite staff with custom permissions.
 
+**________________________________________ D O N E ________________________________________**
 #### 👑 Rey — RBAC Middleware + Landlord Application + Staff API
 **🤖 Claude Opus** ⚡ (security-critical: 3-layer RBAC + role promotion logic)
 
@@ -536,6 +541,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 - Landlord → POST invite staff → staff user created
 - Staff → access permitted endpoint → 200
 - Staff → access non-permitted endpoint → 403
+**________________________________________ D O N E ________________________________________**
 
 ---
 
@@ -587,6 +593,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 
 > **Goal:** Complete app routing. Every sidebar item leads to a real page (placeholder is fine). All 3 portals navigable.
 
+**________________________________________ D O N E ________________________________________**
 #### 👑 Rey — API Route Mounting + Profile API
 **🤖 Gemini**
 
@@ -598,6 +605,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 4 | Create `presentation/pages/hub/overview/Overview.tsx` — placeholder with stat cards (hardcoded 0 values for now), welcome banner | `client/src/presentation/pages/hub/overview/Overview.tsx` |
 
 **✅ Verify:** All mounted routes return proper responses. GET /me returns user with activeTenancy: null for users without tenancy.
+**________________________________________ D O N E ________________________________________**
 
 ---
 
