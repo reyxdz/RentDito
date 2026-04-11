@@ -199,7 +199,7 @@ const MOCK_UNITS: Unit[] = [
    {
     id: 'unit-uytengso_door5_room2',
     propertyId: 'prop-uytengson-boardings',
-    name: 'Door5 Room 2',
+    name: 'Door 5 - Room 2',
     accommodationType: 'Room for Rent',
     images: [
       uyRm2Img1, uyRm2Img2, uyRm2Img3, uyRm2Img4
