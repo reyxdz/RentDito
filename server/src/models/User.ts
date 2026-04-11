@@ -1,7 +1,8 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
-export type UserRole = 'super_admin' | 'landlord' | 'staff' | 'tenant';
-export type UserStatus = 'active' | 'pending' | 'suspended';
+export type UserRole = 'user' | 'landlord' | 'staff' | 'super_admin';
+export type UserStatus = 'active' | 'suspended';
+export type VerificationStatus = 'unverified' | 'pending' | 'verified';
 
 export interface IUser extends Document {
   name: string;
@@ -10,26 +11,14 @@ export interface IUser extends Document {
   passwordHash: string;
   role: UserRole;
   status: UserStatus;
-  isVerified: boolean;
+  verificationStatus: VerificationStatus;
+  idPhotos?: string[];
   avatar?: string;
-  
-  // For staff role
-  positionName?: string;
+  // Staff-specific
   landlordId?: mongoose.Types.ObjectId;
   assignedPropertyIds?: mongoose.Types.ObjectId[];
   permissions?: string[];
-  
-  // For tenant role
-  currentUnitId?: mongoose.Types.ObjectId;
-  emergencyContact?: {
-    name: string;
-    phone: string;
-    relation: string;
-  };
-  
-  // Auth
-  refreshToken?: string;
-  
+  positionName?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -40,26 +29,16 @@ const UserSchema = new Schema<IUser>(
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
     phone: { type: String, trim: true },
     passwordHash: { type: String, required: true },
-    role: { type: String, enum: ['super_admin', 'landlord', 'staff', 'tenant'], required: true },
-    status: { type: String, enum: ['active', 'pending', 'suspended'], default: 'pending' },
-    isVerified: { type: Boolean, default: false },
+    role: { type: String, enum: ['user', 'landlord', 'staff', 'super_admin'], default: 'user' },
+    status: { type: String, enum: ['active', 'suspended'], default: 'active' },
+    verificationStatus: { type: String, enum: ['unverified', 'pending', 'verified'], default: 'unverified' },
+    idPhotos: [{ type: String }],
     avatar: { type: String },
-    
-    // Staff specific
-    positionName: { type: String },
+    // Staff-specific
     landlordId: { type: Schema.Types.ObjectId, ref: 'User' },
     assignedPropertyIds: [{ type: Schema.Types.ObjectId, ref: 'Property' }],
     permissions: [{ type: String }],
-    
-    // Tenant specific
-    currentUnitId: { type: Schema.Types.ObjectId, ref: 'Unit' },
-    emergencyContact: {
-      name: { type: String },
-      phone: { type: String },
-      relation: { type: String },
-    },
-    
-    refreshToken: { type: String },
+    positionName: { type: String },
   },
   { timestamps: true }
 );
