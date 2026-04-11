@@ -1,19 +1,17 @@
-import { Box, Typography, Button } from '@mui/material';
 import type { ReactNode } from 'react';
+import { Box, Typography } from '@mui/material';
 
-interface PageHeaderProps {
+export interface PageHeaderProps {
   title: string;
   subtitle?: string;
-  actionText?: string;
-  onAction?: () => void;
-  actionIcon?: ReactNode;
+  action?: ReactNode;
 }
 
-export default function PageHeader({ title, subtitle, actionText, onAction, actionIcon }: PageHeaderProps) {
+export default function PageHeader({ title, subtitle, action }: PageHeaderProps) {
   return (
-    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 4 }}>
+    <Box sx={{ mb: 4, display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, alignItems: { xs: 'flex-start', sm: 'center' }, justifyContent: 'space-between', gap: 2 }}>
       <Box>
-        <Typography variant="h4" sx={{ fontWeight: 700, mb: 0.5, color: 'text.primary' }}>
+        <Typography variant="h4" component="h1" fontWeight="bold" gutterBottom={!!subtitle} sx={{ color: 'text.primary', letterSpacing: '-0.02em' }}>
           {title}
         </Typography>
         {subtitle && (
@@ -22,17 +20,7 @@ export default function PageHeader({ title, subtitle, actionText, onAction, acti
           </Typography>
         )}
       </Box>
-      {actionText && onAction && (
-        <Button 
-          variant="contained" 
-          color="primary" 
-          onClick={onAction}
-          startIcon={actionIcon}
-          sx={{ fontWeight: 600, px: 3, py: 1 }}
-        >
-          {actionText}
-        </Button>
-      )}
+      {action && <Box>{action}</Box>}
     </Box>
   );
 }

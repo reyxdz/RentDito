@@ -1,46 +1,43 @@
-import { Box, Typography } from '@mui/material';
 import type { ReactNode } from 'react';
+import { Box, Typography } from '@mui/material';
+import { Inbox as InboxIcon } from '@mui/icons-material';
 
-interface EmptyStateProps {
+export interface EmptyStateProps {
   title: string;
-  description: string;
+  description?: string;
   icon?: ReactNode;
   action?: ReactNode;
 }
 
 export default function EmptyState({ title, description, icon, action }: EmptyStateProps) {
   return (
-    <Box 
-      sx={{ 
-        display: 'flex', 
-        flexDirection: 'column', 
-        alignItems: 'center', 
-        justifyContent: 'center', 
-        py: 8, 
-        px: 3,
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
         textAlign: 'center',
+        py: 8,
+        px: 4,
         bgcolor: 'background.paper',
         borderRadius: 3,
         border: '1px dashed',
-        borderColor: 'divider'
+        borderColor: 'divider',
       }}
     >
-      {icon && (
-        <Box sx={{ mb: 2, color: 'text.disabled', '& > svg': { fontSize: 64 } }}>
-          {icon}
-        </Box>
-      )}
-      <Typography variant="h6" sx={{ fontWeight: 600, mb: 1, color: 'text.primary' }}>
+      <Box sx={{ color: 'text.disabled', mb: 2, '& svg': { fontSize: 72 } }}>
+        {icon || <InboxIcon />}
+      </Box>
+      <Typography variant="h6" color="text.primary" fontWeight="bold" gutterBottom>
         {title}
       </Typography>
-      <Typography variant="body2" color="text.secondary" sx={{ maxWidth: 400, mb: 3 }}>
-        {description}
-      </Typography>
-      {action && (
-        <Box>
-          {action}
-        </Box>
+      {description && (
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 3, maxWidth: 400 }}>
+          {description}
+        </Typography>
       )}
+      {action && <Box>{action}</Box>}
     </Box>
   );
 }

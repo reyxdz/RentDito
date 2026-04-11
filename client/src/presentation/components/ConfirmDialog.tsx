@@ -1,6 +1,6 @@
 import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button } from '@mui/material';
 
-interface ConfirmDialogProps {
+export interface ConfirmDialogProps {
   open: boolean;
   title: string;
   message: string;
@@ -8,48 +8,30 @@ interface ConfirmDialogProps {
   cancelText?: string;
   onConfirm: () => void;
   onCancel: () => void;
-  isDestructive?: boolean;
+  color?: 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning';
 }
 
-export default function ConfirmDialog({ 
-  open, 
-  title, 
-  message, 
-  confirmText = 'Confirm', 
-  cancelText = 'Cancel', 
-  onConfirm, 
+export default function ConfirmDialog({
+  open,
+  title,
+  message,
+  confirmText = 'Confirm',
+  cancelText = 'Cancel',
+  onConfirm,
   onCancel,
-  isDestructive = false
+  color = 'primary'
 }: ConfirmDialogProps) {
   return (
-    <Dialog
-      open={open}
-      onClose={onCancel}
-      aria-labelledby="confirm-dialog-title"
-      aria-describedby="confirm-dialog-description"
-      PaperProps={{
-          sx: { borderRadius: 2, minWidth: { xs: '90%', sm: '400px' } }
-      }}
-    >
-      <DialogTitle id="confirm-dialog-title" sx={{ fontWeight: 700 }}>
-        {title}
-      </DialogTitle>
+    <Dialog open={open} onClose={onCancel} maxWidth="sm" fullWidth>
+      <DialogTitle sx={{ fontWeight: 'bold' }}>{title}</DialogTitle>
       <DialogContent>
-        <DialogContentText id="confirm-dialog-description">
-          {message}
-        </DialogContentText>
+        <DialogContentText>{message}</DialogContentText>
       </DialogContent>
-      <DialogActions sx={{ px: 3, py: 2 }}>
-        <Button onClick={onCancel} color="inherit" sx={{ fontWeight: 600 }}>
+      <DialogActions sx={{ p: 2, pt: 0 }}>
+        <Button onClick={onCancel} color="inherit" sx={{ fontWeight: 'medium' }}>
           {cancelText}
         </Button>
-        <Button 
-          onClick={onConfirm} 
-          color={isDestructive ? 'error' : 'primary'} 
-          variant="contained" 
-          autoFocus={!isDestructive}
-          sx={{ fontWeight: 600, boxShadow: 2 }}
-        >
+        <Button onClick={onConfirm} variant="contained" color={color} autoFocus disableElevation sx={{ fontWeight: 'bold' }}>
           {confirmText}
         </Button>
       </DialogActions>

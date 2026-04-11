@@ -1,42 +1,23 @@
-import { Chip } from '@mui/material';
-import type { ChipProps } from '@mui/material';
+import { Chip, type ChipProps } from '@mui/material';
 
-interface StatusBadgeProps extends Omit<ChipProps, 'color'> {
+export interface StatusBadgeProps extends Omit<ChipProps, 'color'> {
   status: string;
 }
 
 export default function StatusBadge({ status, ...props }: StatusBadgeProps) {
-  const getStatusColor = (statusText: string): ChipProps['color'] => {
-    switch (statusText.toLowerCase()) {
-      case 'active':
-      case 'completed':
-      case 'success':
-      case 'approved':
-      case 'paid':
-        return 'success';
-      case 'pending':
-      case 'in progress':
-      case 'warning':
-        return 'warning';
-      case 'error':
-      case 'failed':
-      case 'cancelled':
-      case 'overdue':
-        return 'error';
-      case 'inactive':
-      case 'draft':
-      default:
-        return 'default';
-    }
-  };
+  let color: ChipProps['color'] = 'default';
+  
+  const normalizedStatus = status.toLowerCase();
+  
+  if (['active', 'approved', 'completed', 'success', 'paid'].includes(normalizedStatus)) {
+    color = 'success';
+  } else if (['pending', 'reviewing', 'processing', 'in progress'].includes(normalizedStatus)) {
+    color = 'warning';
+  } else if (['rejected', 'cancelled', 'failed', 'error', 'inactive'].includes(normalizedStatus)) {
+    color = 'error';
+  } else if (['info', 'new', 'draft'].includes(normalizedStatus)) {
+    color = 'info';
+  }
 
-  return (
-    <Chip 
-      label={status} 
-      color={getStatusColor(status)} 
-      size="small" 
-      sx={{ fontWeight: 600, textTransform: 'capitalize' }}
-      {...props} 
-    />
-  );
+  return <Chip label={status} color={color} size="small" sx={{ fontWeight: 600, textTransform: 'capitalize' }} {...props} />;
 }
