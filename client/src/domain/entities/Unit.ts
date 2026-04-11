@@ -11,6 +11,10 @@ export interface Unit {
   accommodationType: AccommodationType[];
   images: string[];
   monthlyRent: number;
+  rentPricing?: {
+    bedspace?: number;
+    room?: number;
+  };
   capacity: number;
   currentOccupants: number;
   vacancies: number;

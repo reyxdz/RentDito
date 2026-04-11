@@ -45,12 +45,12 @@ import rm16Img5 from '../../assets/properties/white_dorm/units/room16/room16_img
 //room1
 import uyRm1Img1 from '../../assets/properties/uytengso/units/room1/room1_t.jpg';
 import uyRm1Img2 from '../../assets/properties/uytengso/units/room1/room1_u.jpg';
-import uyRm1Img3 from '../../assets/properties/uytengso/units/room1/room1_y.jpg';    
+import uyRm1Img3 from '../../assets/properties/uytengso/units/room1/room1_y.jpg';
 //Door5 Room2
 import uyRm2Img1 from '../../assets/properties/uytengso/units/Door_5/room2/dr5r4.jpg';
 import uyRm2Img2 from '../../assets/properties/uytengso/units/Door_5/room2/dr5r3.jpg';
 import uyRm2Img3 from '../../assets/properties/uytengso/units/Door_5/room2/dr5r2.jpg';
-import uyRm2Img4 from '../../assets/properties/uytengso/units/Door_5/room2/d5r1.jpg';   
+import uyRm2Img4 from '../../assets/properties/uytengso/units/Door_5/room2/d5r1.jpg';
 
 
 
@@ -74,6 +74,10 @@ const MOCK_UNITS: Unit[] = [
       rm2Img1, rm2Img2, rm2Img3, rm2Img4, rm2Img5, rm2Img6, rm2Img7
     ],
     monthlyRent: 2500,
+    rentPricing: {
+      bedspace: 2500,
+      room: 18000,
+    },
     capacity: 8,
     currentOccupants: 0,
     vacancies: 8,
@@ -89,6 +93,10 @@ const MOCK_UNITS: Unit[] = [
       rm3Img1, rm3Img2, rm3Img3, rm3Img4
     ],
     monthlyRent: 2500,
+    rentPricing: {
+      bedspace: 2500,
+      room: 10000,
+    },
     capacity: 4,
     currentOccupants: 0,
     vacancies: 4,
@@ -104,6 +112,10 @@ const MOCK_UNITS: Unit[] = [
       rm4Img1, rm4Img2, rm4Img3
     ],
     monthlyRent: 2500,
+    rentPricing: {
+      bedspace: 2500,
+      room: 5000,
+    },
     capacity: 2,
     currentOccupants: 0,
     vacancies: 2,
@@ -119,6 +131,10 @@ const MOCK_UNITS: Unit[] = [
       rm6Img1, rm6Img2, rm6Img3
     ],
     monthlyRent: 2500,
+    rentPricing: {
+      bedspace: 2500,
+      room: 10000,
+    },
     capacity: 4,
     currentOccupants: 0,
     vacancies: 4,
@@ -134,6 +150,10 @@ const MOCK_UNITS: Unit[] = [
       rm7Img1, rm7Img2, rm7Img3, rm7Img4, rm7Img5
     ],
     monthlyRent: 2500,
+    rentPricing: {
+      bedspace: 2500,
+      room: 10000,
+    },
     capacity: 4,
     currentOccupants: 0,
     vacancies: 4,
@@ -149,6 +169,10 @@ const MOCK_UNITS: Unit[] = [
       rm15Img1, rm15Img2, rm15Img3, rm15Img4, rm15Img5
     ],
     monthlyRent: 2500,
+    rentPricing: {
+      bedspace: 2500,
+      room: 10000,
+    },
     capacity: 4,
     currentOccupants: 0,
     vacancies: 4,
@@ -164,6 +188,10 @@ const MOCK_UNITS: Unit[] = [
       rm16Img1, rm16Img2, rm16Img3, rm16Img4, rm16Img5
     ],
     monthlyRent: 2500,
+    rentPricing: {
+      bedspace: 2500,
+      room: 10000,
+    },
     capacity: 4,
     currentOccupants: 0,
     vacancies: 4,
@@ -181,6 +209,10 @@ const MOCK_UNITS: Unit[] = [
       uyRm1Img1, uyRm1Img2, uyRm1Img3
     ],
     monthlyRent: 2500,
+    rentPricing: {
+      bedspace: 2500,
+      room: 20000,
+    },
     capacity: 8,
     currentOccupants: 0,
     vacancies: 8,

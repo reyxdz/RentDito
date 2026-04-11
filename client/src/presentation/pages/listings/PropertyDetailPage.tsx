@@ -19,7 +19,6 @@ import {
   LocationOnOutlined,
   CheckCircleOutline,
   GroupOutlined,
-  MeetingRoomOutlined,
   InfoOutlined,
   SchoolOutlined,
   StorefrontOutlined,
@@ -128,9 +127,9 @@ export default function PropertyDetailPage() {
                     <CardContent sx={{ pb: 1, flexGrow: 0 }}>
                       <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>Inclusions</Typography>
                     </CardContent>
-                    <CardContent sx={{ 
-                      overflow: 'auto', 
-                      flexGrow: 1, 
+                    <CardContent sx={{
+                      overflow: 'auto',
+                      flexGrow: 1,
                       pt: 0,
                       '&::-webkit-scrollbar': {
                         width: '8px',
@@ -166,9 +165,9 @@ export default function PropertyDetailPage() {
                     <CardContent sx={{ pb: 1, flexGrow: 0 }}>
                       <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>Nearby Categories</Typography>
                     </CardContent>
-                    <CardContent sx={{ 
-                      overflow: 'auto', 
-                      flexGrow: 1, 
+                    <CardContent sx={{
+                      overflow: 'auto',
+                      flexGrow: 1,
                       pt: 0,
                       '&::-webkit-scrollbar': {
                         width: '8px',
@@ -306,12 +305,12 @@ export default function PropertyDetailPage() {
           <Grid container spacing={3}>
             {units.map((unit) => (
               <Grid size={{ xs: 12, sm: 6, md: 4 }} key={unit.id}>
-                <Card 
-                  sx={{ 
-                    borderRadius: 2, 
-                    overflow: 'hidden', 
-                    height: '100%', 
-                    display: 'flex', 
+                <Card
+                  sx={{
+                    borderRadius: 2,
+                    overflow: 'hidden',
+                    height: '100%',
+                    display: 'flex',
                     flexDirection: 'column',
                     cursor: 'pointer',
                     WebkitTapHighlightColor: 'transparent',
@@ -324,64 +323,80 @@ export default function PropertyDetailPage() {
                   onClick={() => navigate(`/listings/unit/${unit.id}`)}
                 >
                   <ImageCarousel images={unit.images} height={180} borderRadius={0} />
-                  
+
                   <CardContent sx={{ flexGrow: 1, p: 2.5, display: 'flex', flexDirection: 'column' }}>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1.5 }}>
-                       <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
-                         {unit.accommodationType.map((type) => (
-                           <Chip 
-                             key={type}
-                             label={type} 
-                             size="small" 
-                             variant="outlined"
-                             sx={{ fontWeight: 600, borderRadius: 1 }} 
-                           />
-                         ))}
-                       </Box>
-                       {unit.vacancies > 0 ? (
-                         <Chip 
-                           label={`${unit.vacancies} vacancies`} 
-                           size="small" 
-                           color="success"
-                           sx={{ fontWeight: 700, borderRadius: 1 }} 
-                         />
-                       ) : (
-                         <Chip 
-                           label="Full" 
-                           size="small" 
-                           color="error"
-                           sx={{ fontWeight: 700, borderRadius: 1 }} 
-                         />
-                       )}
+                      <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
+                        {unit.accommodationType.map((type) => (
+                          <Chip
+                            key={type}
+                            label={type}
+                            size="small"
+                            variant="outlined"
+                            sx={{ fontWeight: 600, borderRadius: 1 }}
+                          />
+                        ))}
+                      </Box>
+                      {unit.vacancies > 0 ? (
+                        <Chip
+                          label={`${unit.vacancies} vacancies`}
+                          size="small"
+                          color="success"
+                          sx={{ fontWeight: 700, borderRadius: 1 }}
+                        />
+                      ) : (
+                        <Chip
+                          label="Full"
+                          size="small"
+                          color="error"
+                          sx={{ fontWeight: 700, borderRadius: 1 }}
+                        />
+                      )}
                     </Box>
 
-                    <Typography variant="h6" sx={{ fontWeight: 800, mb: 2 }}>{unit.name}</Typography>
+                    <Typography variant="h6" sx={{ fontWeight: 800, mb: 2, flexGrow: 1 }}>{unit.name}</Typography>
 
-                    <Box sx={{ mb: 2, flexGrow: 1 }}>
-                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1, color: 'text.secondary' }}>
-                         <GroupOutlined fontSize="small" />
-                         <Typography variant="body2">Capacity: {unit.capacity} person{unit.capacity > 1 ? 's' : ''}</Typography>
-                       </Box>
-                    </Box>
-
-                    <Divider sx={{ my: 2 }} />
-
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 'auto' }}>
-                      <Typography variant="h6" color="primary.main" sx={{ fontWeight: 800 }}>
-                        ₱{formatPrice(unit.monthlyRent)}<Typography component="span" variant="caption" color="text.secondary">/mo</Typography>
-                      </Typography>
-                      <Button 
-                        variant="contained" 
-                        size="small" 
-                        sx={{ borderRadius: 2 }}
-                        disabled={unit.vacancies === 0}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          navigate(`/listings/unit/${unit.id}`);
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', mt: 'auto' }}>
+                      <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                        <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 700, mb: 0.5, letterSpacing: 0.5 }}>
+                          Monthly
+                        </Typography>
+                        {unit.rentPricing ? (
+                          <>
+                            {unit.rentPricing.bedspace && (
+                              <Typography variant="h6" color="primary.main" sx={{ fontWeight: 800, lineHeight: 1.1, mb: unit.rentPricing.room ? 0.25 : 0 }}>
+                                ₱{formatPrice(unit.rentPricing.bedspace)}<Typography component="span" variant="caption" color="text.secondary"> per head</Typography>
+                              </Typography>
+                            )}
+                            {unit.rentPricing.room && (
+                              <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 600, lineHeight: 1 }}>
+                                {unit.rentPricing.bedspace && 'or '}
+                                ₱{formatPrice(unit.rentPricing.room)}<Typography component="span" variant="caption"> per room</Typography>
+                              </Typography>
+                            )}
+                          </>
+                        ) : (
+                          <Typography variant="h6" color="primary.main" sx={{ fontWeight: 800 }}>
+                            ₱{formatPrice(unit.monthlyRent)}
+                          </Typography>
+                        )}
+                      </Box>
+                      <Box 
+                        sx={{ 
+                          display: 'flex', 
+                          alignItems: 'center', 
+                          gap: 0.5, 
+                          px: 1.5, 
+                          py: 0.5, 
+                          borderRadius: 2, 
+                          border: '1px solid', 
+                          borderColor: 'divider',
+                          bgcolor: 'background.default'
                         }}
                       >
-                        View
-                      </Button>
+                        <GroupOutlined color="primary" sx={{ fontSize: '1.2rem' }} />
+                        <Typography variant="body2" sx={{ fontWeight: 600 }}>{unit.capacity} {unit.capacity > 1 ? 'persons' : 'person'}</Typography>
+                      </Box>
                     </Box>
                   </CardContent>
                 </Card>
@@ -391,7 +406,7 @@ export default function PropertyDetailPage() {
         </Box>
 
       </Container>
-      
+
       {/* ── Footer ─────────────────────────────────────────────────────── */}
       <Box component="footer" sx={{ py: 3, textAlign: 'center', borderTop: '1px solid', borderColor: 'divider', bgcolor: 'background.paper', mt: 'auto' }}>
         <Typography variant="caption" color="text.secondary">

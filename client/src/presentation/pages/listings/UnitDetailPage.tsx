@@ -68,15 +68,15 @@ export default function UnitDetailPage() {
           onClick={() => navigate(-1)}
           sx={{ mb: 3, color: 'text.secondary', '&:hover': { bgcolor: 'transparent', color: 'primary.main' } }}
         >
-          Back
+          Back to Property
         </Button>
 
         <Grid container spacing={4}>
           <Grid size={{ xs: 12 }}>
             {/* Unit Images with External Arrows */}
             <Box sx={{ mb: 4, maxWidth: 1000, mx: 'auto' }}>
-              <ImageCarousel 
-                images={unit.images} 
+              <ImageCarousel
+                images={unit.images}
                 height={{ xs: 300, sm: 400, md: 500 }}
                 borderRadius={16}
                 arrowPosition="outside"
@@ -92,36 +92,62 @@ export default function UnitDetailPage() {
                   </Typography>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
                     {unit.accommodationType.map((type) => (
-                      <Chip 
+                      <Chip
                         key={type}
-                        label={type} 
+                        label={type}
                         size="small"
                         variant="outlined"
-                        sx={{ fontWeight: 700, borderRadius: 1 }} 
+                        sx={{ fontWeight: 700, borderRadius: 1 }}
                       />
                     ))}
                     {unit.vacancies > 0 ? (
-                      <Chip 
-                        label={`${unit.vacancies} vacancies`} 
-                        size="small" 
+                      <Chip
+                        label={`${unit.vacancies} vacancies`}
+                        size="small"
                         color="success"
-                        sx={{ fontWeight: 700, borderRadius: 1 }} 
+                        sx={{ fontWeight: 700, borderRadius: 1 }}
                       />
                     ) : (
-                      <Chip 
-                        label="Full" 
-                        size="small" 
+                      <Chip
+                        label="Full"
+                        size="small"
                         color="error"
-                        sx={{ fontWeight: 700, borderRadius: 1 }} 
+                        sx={{ fontWeight: 700, borderRadius: 1 }}
                       />
                     )}
                   </Box>
                 </Box>
-                <Box sx={{ textAlign: { xs: 'left', sm: 'right' } }}>
-                  <Typography variant="h4" color="primary.main" sx={{ fontWeight: 800, fontSize: { xs: '1.5rem', sm: '2.125rem' } }}>
-                    ₱{formatPrice(unit.monthlyRent)}
+                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: { xs: 'flex-start', sm: 'flex-end' } }}>
+                  <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 700, mb: 1, letterSpacing: 0.5, textTransform: 'uppercase' }}>
+                    Monthly
                   </Typography>
-                  <Typography variant="caption" color="text.secondary">per month</Typography>
+                  {unit.rentPricing ? (
+                    <>
+                      {unit.rentPricing.bedspace && (
+                        <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1 }}>
+                          <Typography variant="h4" color="primary.main" sx={{ fontWeight: 800, fontSize: { xs: '1.5rem', sm: '2.125rem' }, lineHeight: 1 }}>
+                            ₱{formatPrice(unit.rentPricing.bedspace)}
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600 }}> per head</Typography>
+                        </Box>
+                      )}
+                      {unit.rentPricing.room && (
+                        <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1, mt: unit.rentPricing.bedspace ? 1 : 0 }}>
+                          {unit.rentPricing.bedspace && (
+                            <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 600, mr: 0.5 }}>or</Typography>
+                          )}
+                          <Typography variant={unit.rentPricing.bedspace ? "h6" : "h4"} color={unit.rentPricing.bedspace ? "text.primary" : "primary.main"} sx={{ fontWeight: 800, lineHeight: 1 }}>
+                            ₱{formatPrice(unit.rentPricing.room)}
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 500 }}> per room</Typography>
+                        </Box>
+                      )}
+                    </>
+                  ) : (
+                    <Typography variant="h4" color="primary.main" sx={{ fontWeight: 800, fontSize: { xs: '1.5rem', sm: '2.125rem' } }}>
+                      ₱{formatPrice(unit.monthlyRent)}
+                    </Typography>
+                  )}
                 </Box>
               </Box>
 
@@ -250,7 +276,7 @@ export default function UnitDetailPage() {
                             <Typography variant="caption">
                               RentDito
                             </Typography>
-                           </Box>
+                          </Box>
                         </Box>
                         {/* Safety Reminder */}
                         <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'flex-start', p: 2, borderRadius: 2, border: '1px solid', borderColor: 'warning.dark', bgcolor: 'rgba(255, 152, 0, 0.05)', mt: 1 }}>
