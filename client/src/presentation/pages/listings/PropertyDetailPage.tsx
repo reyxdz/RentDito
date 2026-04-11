@@ -314,6 +314,7 @@ export default function PropertyDetailPage() {
                     display: 'flex', 
                     flexDirection: 'column',
                     cursor: 'pointer',
+                    WebkitTapHighlightColor: 'transparent',
                     transition: 'transform 0.2s, box-shadow 0.2s',
                     '&:hover': {
                       transform: 'translateY(-4px)',
