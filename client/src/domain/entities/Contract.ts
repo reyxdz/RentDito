@@ -1,5 +1,5 @@
-import { Tenancy } from './Tenancy';
-import { RentalApplication } from './RentalApplication';
+import type { Tenancy } from './Tenancy';
+import type { RentalApplication } from './RentalApplication';
 
 export type ContractRateType = 'fixed' | 'submetered';
 export type ContractStatus = 'draft' | 'pending_review' | 'pending_signature' | 'signed' | 'active' | 'expired' | 'terminated';

@@ -22,7 +22,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const isAuthenticated = !!user;
 
   const login = async (email: string, password: string) => {
-    const domainUser = await authService.login(email, password);
+    const response = await authService.login(email, password);
+    const domainUser = response.user;
     setUser(domainUser);
     localStorage.setItem('mockUserSession', JSON.stringify(domainUser));
     return domainUser;

@@ -1,4 +1,5 @@
-import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
+import axios, { AxiosError } from 'axios';
+import type { InternalAxiosRequestConfig } from 'axios';
 
 // Get base URL from environment or fallback
 const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
