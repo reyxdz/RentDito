@@ -1,6 +1,6 @@
-import { Tenancy } from './Tenancy';
-import { User } from './User';
-import { Unit } from './Unit';
+import type { Tenancy } from './Tenancy';
+import type { User } from './User';
+import type { Unit } from './Unit';
 
 export type TransferRequestStatus = 'pending' | 'approved' | 'rejected' | 'completed';
 

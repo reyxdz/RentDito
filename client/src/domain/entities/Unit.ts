@@ -1,4 +1,4 @@
-import { Tenancy } from './Tenancy';
+import type { Tenancy } from './Tenancy';
 
 export type AccommodationType = 'room' | 'bedspace';
 export type UnitStatus = 'vacant' | 'occupied' | 'reserved' | 'maintenance';

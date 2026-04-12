@@ -10,6 +10,14 @@ import Register from './presentation/pages/auth/Register';
 import ForgotPassword from './presentation/pages/auth/ForgotPassword';
 import ResetPassword from './presentation/pages/auth/ResetPassword';
 
+// User / Onboarding Pages
+import VerifyAccount from './presentation/pages/user/VerifyAccount';
+import BecomeLandlord from './presentation/pages/user/BecomeLandlord';
+
+// Admin / Hub Pages
+import LandlordApplications from './presentation/pages/admin/LandlordApplications';
+import TeamManagement from './presentation/pages/hub/team/TeamManagement';
+
 function App() {
   return (
     <Router>
@@ -26,6 +34,12 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+
+        {/* Phase 1 Day 3 - Direct routes prior to Paul's full Layout config */}
+        <Route path="/u/verify" element={<VerifyAccount />} />
+        <Route path="/u/become-landlord" element={<BecomeLandlord />} />
+        <Route path="/admin/applications" element={<LandlordApplications />} />
+        <Route path="/hub/team" element={<TeamManagement />} />
 
         {/* Catch-all: redirect unknown routes to listings */}
         <Route path="*" element={<Navigate to="/listings" replace />} />

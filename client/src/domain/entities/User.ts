@@ -1,4 +1,4 @@
-import { Tenancy } from './Tenancy';
+import type { Tenancy } from './Tenancy';
 
 export type Role = 'user' | 'landlord' | 'staff' | 'super_admin';
 export type UserStatus = 'active' | 'suspended';

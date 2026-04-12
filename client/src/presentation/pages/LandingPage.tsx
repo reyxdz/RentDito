@@ -48,7 +48,7 @@ export default function LandingPage() {
               ) : (
                 <>
                   <Button variant="outlined" color="primary" onClick={() => {
-                    if (user?.role === 'admin') navigate('/admin');
+                    if (user?.role === 'super_admin') navigate('/admin');
                     else if (user?.role === 'landlord') navigate('/landlord');
                     else navigate('/tenant');
                   }}>

@@ -1,5 +1,5 @@
-import { Bill } from './Bill';
-import { User } from './User';
+import type { Bill } from './Bill';
+import type { User } from './User';
 
 export type PaymentMethod = 'cash' | 'gcash' | 'bank_transfer' | 'other';
 

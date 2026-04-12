@@ -26,7 +26,7 @@ export default function Login() {
       const origin = (location.state as { from?: { pathname: string } })?.from?.pathname;
       
       let baseTarget = '/';
-      if (domainUser.role === 'admin') baseTarget = '/admin';
+      if (domainUser.role === 'super_admin') baseTarget = '/admin';
       else if (domainUser.role === 'landlord') baseTarget = '/landlord';
       
       // Prevent stale redirect bugs by validating origin ownership
