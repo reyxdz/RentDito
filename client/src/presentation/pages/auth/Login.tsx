@@ -1,9 +1,24 @@
-import { Box, Button, Card, Typography, Container, TextField, Alert, CircularProgress } from '@mui/material';
+import { Box, Button, Card, Typography, Container, TextField, CircularProgress, Snackbar, Alert } from '@mui/material';
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../../application/context/AuthContext';
 import logoPng from '../../../assets/logo.png';
 import { Lock } from '@mui/icons-material';
+import type { Role } from '../../../domain/entities/User';
+
+/** Map a user role to the correct post-login landing route */
+const getRoleRedirect = (role: Role): string => {
+  switch (role) {
+    case 'super_admin':
+      return '/admin';
+    case 'landlord':
+    case 'staff':
+      return '/hub';
+    case 'user':
+    default:
+      return '/u';
+  }
+};
 
 export default function Login() {
   const { login } = useAuth();
@@ -13,22 +28,19 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [errorToast, setErrorToast] = useState<string | null>(null);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setError(null);
+    setErrorToast(null);
     
     try {
       const domainUser = await login(email, password);
       
       const origin = (location.state as { from?: { pathname: string } })?.from?.pathname;
-      
-      let baseTarget = '/';
-      if (domainUser.role === 'admin') baseTarget = '/admin';
-      else if (domainUser.role === 'landlord') baseTarget = '/landlord';
-      
+      const baseTarget = getRoleRedirect(domainUser.role);
+
       // Prevent stale redirect bugs by validating origin ownership
       if (origin && origin.startsWith(baseTarget)) {
            navigate(origin, { replace: true });
@@ -36,7 +48,7 @@ export default function Login() {
            navigate(baseTarget, { replace: true });
       }
     } catch (err: any) {
-      setError(err.message || 'An unexpected error occurred during authentication.');
+      setErrorToast(err.message || 'An unexpected error occurred during authentication.');
     } finally {
       setIsLoading(false);
     }
@@ -57,14 +69,9 @@ export default function Login() {
 
         <Card sx={{ p: 4, borderRadius: 3, boxShadow: '0 12px 24px -10px rgba(0,0,0,0.1)' }}>
           <form onSubmit={handleLogin}>
-            {error && (
-              <Alert severity="error" sx={{ mb: 3 }}>
-                {error}
-              </Alert>
-            )}
-
             <TextField
               fullWidth
+              id="login-email"
               label="Email Address"
               variant="outlined"
               type="email"
@@ -77,6 +84,7 @@ export default function Login() {
             
             <TextField
               fullWidth
+              id="login-password"
               label="Password"
               variant="outlined"
               type="password"
@@ -107,16 +115,33 @@ export default function Login() {
              Development Test Accounts
            </Typography>
            <Typography variant="caption" sx={{ display: 'block', color: 'text.secondary', '& code': { bgcolor: 'background.paper', px: 1, borderRadius: 1 } }}>
-             <strong>Admin:</strong> <code>admin@rentdito.com</code>
+             <strong>Super Admin:</strong> <code>admin@rentdito.com</code>
            </Typography>
            <Typography variant="caption" sx={{ display: 'block', color: 'text.secondary', mt: 0.5, '& code': { bgcolor: 'background.paper', px: 1, borderRadius: 1 } }}>
              <strong>Landlord:</strong> <code>landlord@rentdito.com</code>
            </Typography>
            <Typography variant="caption" sx={{ display: 'block', color: 'text.secondary', mt: 0.5, '& code': { bgcolor: 'background.paper', px: 1, borderRadius: 1 } }}>
-             <strong>Password:</strong> Any characters 
+             <strong>Password:</strong> <code>Password123!</code>
            </Typography>
         </Box>
       </Container>
+
+      {/* Error Toast */}
+      <Snackbar
+        open={!!errorToast}
+        autoHideDuration={5000}
+        onClose={() => setErrorToast(null)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert
+          onClose={() => setErrorToast(null)}
+          severity="error"
+          variant="filled"
+          sx={{ width: '100%' }}
+        >
+          {errorToast}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }
