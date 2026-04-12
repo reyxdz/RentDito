@@ -620,8 +620,9 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 **________________________________________ D O N E ________________________________________**
 
 ---
+**________________________________________ D O N E ________________________________________**
 
-#### 🔧 Paul — Complete App.tsx Routing
+<!-- #### 🔧 Paul — Complete App.tsx Routing
 **🤖 Gemini**
 
 | # | Task | Files |
@@ -632,8 +633,9 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 4 | `presentation/pages/common/Unauthorized.tsx` — 403 page | `client/src/presentation/pages/common/Unauthorized.tsx` |
 | 5 | `presentation/pages/common/NotFound.tsx` — 404 page | `client/src/presentation/pages/common/NotFound.tsx` |
 
-**✅ Verify:** Every sidebar item for every layout (hub/user/admin) → navigates to a page. Non-permitted routes → 403. Unknown routes → 404. Role mismatch → redirect.
+**✅ Verify:** Every sidebar item for every layout (hub/user/admin) → navigates to a page. Non-permitted routes → 403. Unknown routes → 404. Role mismatch → redirect. -->
 
+**________________________________________ D O N E ________________________________________**
 ---
 
 #### 🔧 Emanuel — User Dashboard + Notification Bell
