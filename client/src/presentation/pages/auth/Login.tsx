@@ -27,7 +27,7 @@ export default function Login() {
       
       let baseTarget = '/';
       if (domainUser.role === 'super_admin') baseTarget = '/admin';
-      else if (domainUser.role === 'landlord') baseTarget = '/landlord';
+      else if (domainUser.role === 'landlord') baseTarget = '/hub';
       
       // Prevent stale redirect bugs by validating origin ownership
       if (origin && origin.startsWith(baseTarget)) {
