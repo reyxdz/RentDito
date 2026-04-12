@@ -75,6 +75,7 @@ const MOCK_PROPERTIES: Property[] = [
     createdAt: new Date('2026-01-01'),
     updatedAt: new Date(),
   },
+  
   {
     id: 'prop-uytengson-boardings',
     landlordId: 'usr_landlord_2',
@@ -122,6 +123,105 @@ const MOCK_PROPERTIES: Property[] = [
       vacantUnits: 1,
       priceRange: { min: 2500, max: 5000 },
       accommodationTypes: ['Bedspace'],
+    },
+    createdAt: new Date('2026-01-01'),
+    updatedAt: new Date(),
+  },
+
+  // Santiangco Boarding House Property
+  {
+    id: 'prop-santiangco-bh',
+    landlordId: 'usr_landlord_2',
+    name: 'Santiangco Boarding House',
+    description:
+      'A beautiful and well-maintained property. Ideal for students and young professionals seeking affordable and comfortable accommodation.',
+    propertyType: 'Mixed Use',
+    status: 'Active',
+    images: [
+      wdImg1, wdImg2, wdImg3, wdImg4, wdImg5, wdImg6, wdImg7, wdImg8, wdImg9, wdImg10
+    ],
+    address: {
+      street: 'Sikatuna Street',
+      city: 'Cebu City',
+      state: 'Cebu',
+      zipCode: '6543',
+      country: 'Philippines',
+    },
+    inclusions: ['WiFi', 'Foam', 'Pillow', 'Table', 'Chair', 'Clip Fan', 'Electric Rice Cooker', 'Can Cook', 'Can Wash Clothes', 'No Curfew'],
+    reviewCenters: [
+      { name: 'Ecel Review Center', walking: '6 minutes', commute: ' ' },
+      { name: 'Manor Review Center', walking: '8 minutes', commute: ' ' },
+      { name: 'Powerdev Review Center', walking: '8 minutes', commute: ' ' },
+      { name: 'Padilla Review Center', walking: '8 minutes', commute: ' ' },
+      { name: 'Prime Review Center', walking: '8 minutes', commute: ' ' },
+      { name: 'Alcorcon Review Center', walking: '20 minutes', commute: '16 minutes' },
+    ],
+    schools: [
+      { name: 'Velez College of Nursing', walking: '10 minutes', commute: '4 minutes' },
+      { name: 'Cebu Normal University', walking: '10 minutes', commute: '5 minutes' },
+      { name: 'University of San Carlos', walking: '16 minutes', commute: '15 minutes' },
+      { name: 'University of Visayas Main', walking: '10 minutes', commute: ' ' },
+      { name: 'UC Main', walking: '14 minutes', commute: '13 minutes' },
+      { name: 'ACT', walking: '12 minutes', commute: ' ' },
+    ],
+    commercialEstablishments: [
+      { name: 'Ayala Cebu Business Park', walking: '28 minutes', commute: '19 minutes' },
+      { name: 'SM Cebu City', walking: '36 minutes', commute: '20 minutes' },
+    ],
+    metrics: {
+      totalUnits: 7,
+      activeUnits: 7,
+      vacantUnits: 7,
+      priceRange: { min: 2500, max: 5000 },
+    },
+    createdAt: new Date('2026-01-01'),
+    updatedAt: new Date(),
+  },
+
+  {
+    id: 'prop-kings-apartment',
+    landlordId: 'usr_landlord_2',
+    name: 'Kings Apartment',
+    description:
+      'A beautiful and well-maintained property. Ideal for students and young professionals seeking affordable and comfortable accommodation.',
+    propertyType: 'Mixed Use',
+    status: 'Active',
+    images: [
+      wdImg1, wdImg2, wdImg3, wdImg4, wdImg5, wdImg6, wdImg7, wdImg8, wdImg9, wdImg10
+    ],
+    address: {
+      street: 'Jakosalem Street',
+      city: 'Cebu City',
+      state: 'Cebu',
+      zipCode: '6543',
+      country: 'Philippines',
+    },
+    inclusions: ['WiFi', 'Foam', 'Pillow', 'Table', 'Chair', 'Clip Fan', 'Electric Rice Cooker', 'Can Cook', 'Can Wash Clothes', 'No Curfew'],
+    reviewCenters: [
+      { name: 'Ecel Review Center', walking: '6 minutes', commute: ' ' },
+      { name: 'Manor Review Center', walking: '8 minutes', commute: ' ' },
+      { name: 'Powerdev Review Center', walking: '8 minutes', commute: ' ' },
+      { name: 'Padilla Review Center', walking: '8 minutes', commute: ' ' },
+      { name: 'Prime Review Center', walking: '8 minutes', commute: ' ' },
+      { name: 'Alcorcon Review Center', walking: '20 minutes', commute: '16 minutes' },
+    ],
+    schools: [
+      { name: 'Velez College of Nursing', walking: '10 minutes', commute: '4 minutes' },
+      { name: 'Cebu Normal University', walking: '10 minutes', commute: '5 minutes' },
+      { name: 'University of San Carlos', walking: '16 minutes', commute: '15 minutes' },
+      { name: 'University of Visayas Main', walking: '10 minutes', commute: ' ' },
+      { name: 'UC Main', walking: '14 minutes', commute: '13 minutes' },
+      { name: 'ACT', walking: '12 minutes', commute: ' ' },
+    ],
+    commercialEstablishments: [
+      { name: 'Ayala Cebu Business Park', walking: '28 minutes', commute: '19 minutes' },
+      { name: 'SM Cebu City', walking: '36 minutes', commute: '20 minutes' },
+    ],
+    metrics: {
+      totalUnits: 7,
+      activeUnits: 7,
+      vacantUnits: 7,
+      priceRange: { min: 2500, max: 5000 },
     },
     createdAt: new Date('2026-01-01'),
     updatedAt: new Date(),
