@@ -409,6 +409,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 
 ---
 
+**________________________________________ D O N E ________________________________________**
 #### 🔧 Paul — Client Types & API Client
 **🤖 Gemini**
 
@@ -420,9 +421,10 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 4 | Update `domain/repositories/AuthRepository.ts` — full interface | `client/src/domain/repositories/AuthRepository.ts` |
 
 **✅ Verify:** `npx tsc --noEmit` → zero type errors. All entity files importable. ApiClient instantiates without error.
+**________________________________________ D O N E ________________________________________**
 
 ---
-
+**________________________________________ D O N E ________________________________________**
 #### 🔧 Emanuel — Component Library & Seed Script Shell
 **🤖 Gemini**
 
@@ -439,6 +441,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 9 | Create seed script shell `seeds/seed.ts` — structure with clear sections per model, placeholder functions | `server/src/seeds/seed.ts` |
 
 **✅ Verify:** Import each component into a test page → renders. Seed script runs without error (no data yet, just structure).
+**________________________________________ D O N E ________________________________________**
 
 ---
 
@@ -492,7 +495,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 - DevTools > Application > localStorage → tokens present
 
 ---
-
+**________________________________________ D O N E ________________________________________**
 #### 🔧 Emanuel — Auth Pages & Seed Data
 **🤖 Gemini**
 
@@ -507,7 +510,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 - Visit `/register` → fill form → submit → redirected to `/u` (user dashboard)
 - Run seed script → check Compass → all accounts exist with hashed passwords
 - Login with each seeded account → successful
-
+**________________________________________ D O N E ________________________________________**
 ---
 
 #### 🏁 Day 2 Standup Checkpoint

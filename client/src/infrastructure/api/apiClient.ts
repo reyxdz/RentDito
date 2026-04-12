@@ -1,0 +1,123 @@
+import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
+
+// Get base URL from environment or fallback
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+
+export const apiClient = axios.create({
+  baseURL: BASE_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+export interface ApiError {
+  message: string;
+  statusCode: number;
+  errors?: Record<string, string[]>;
+}
+
+// Interceptor for attaching auth token
+apiClient.interceptors.request.use(
+  (config: InternalAxiosRequestConfig) => {
+    const token = localStorage.getItem('accessToken');
+    if (token) {
+      config.headers['Authorization'] = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+// Define a queue for refresh token requests
+let isRefreshing = false;
+let failedQueue: { resolve: (value?: unknown) => void; reject: (reason?: any) => void }[] = [];
+
+const processQueue = (error: any, token: string | null = null) => {
+  failedQueue.forEach(prom => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
+    }
+  });
+
+  failedQueue = [];
+};
+
+// Interceptor for error handling and token refresh
+apiClient.interceptors.response.use(
+  (response) => response,
+  async (error: AxiosError) => {
+    const originalRequest = error.config as any;
+
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        })
+          .then((token) => {
+            originalRequest.headers['Authorization'] = `Bearer ${token}`;
+            return apiClient(originalRequest);
+          })
+          .catch((err) => Promise.reject(err));
+      }
+
+      originalRequest._retry = true;
+      isRefreshing = true;
+
+      try {
+        const refreshToken = localStorage.getItem('refreshToken');
+        if (!refreshToken) {
+          throw new Error('No refresh token available');
+        }
+
+        // Must use basic axios to avoid interceptor loop
+        const { data } = await axios.post(`${BASE_URL}/api/auth/refresh`, {
+          refreshToken,
+        });
+
+        localStorage.setItem('accessToken', data.accessToken);
+        if (data.refreshToken) {
+          localStorage.setItem('refreshToken', data.refreshToken);
+        }
+
+        apiClient.defaults.headers.common['Authorization'] = `Bearer ${data.accessToken}`;
+        originalRequest.headers['Authorization'] = `Bearer ${data.accessToken}`;
+
+        processQueue(null, data.accessToken);
+        return apiClient(originalRequest);
+      } catch (refreshError) {
+        processQueue(refreshError, null);
+        
+        // Clear tokens and redirect to login if refresh fails
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        window.location.href = '/login';
+        
+        return Promise.reject(refreshError);
+      } finally {
+        isRefreshing = false;
+      }
+    }
+
+    // Error normalization
+    const customError: ApiError = {
+      message: 'An unexpected error occurred',
+      statusCode: error.response?.status || 500,
+    };
+
+    if (error.response && error.response.data) {
+      const data = error.response.data as any;
+      if (data.message) {
+        customError.message = data.message;
+      }
+      if (data.errors) {
+        customError.errors = data.errors;
+      }
+    } else if (error.message) {
+      customError.message = error.message;
+    }
+
+    return Promise.reject(customError);
+  }
+);
