@@ -91,16 +91,13 @@ export default function UnitDetailPage() {
                     {unit.name}
                   </Typography>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
-                    {unit.accommodationType.map((type) => (
                       <Chip
-                        key={type}
-                        label={type}
+                        label={unit.accommodationType === 'bedspace' ? 'Bedspace' : 'Room for Rent'}
                         size="small"
                         variant="outlined"
                         sx={{ fontWeight: 700, borderRadius: 1 }}
                       />
-                    ))}
-                    {unit.vacancies > 0 ? (
+                    {(unit.vacancies != null && unit.vacancies > 0) ? (
                       <Chip
                         label={`${unit.vacancies} vacancies`}
                         size="small"
@@ -145,7 +142,7 @@ export default function UnitDetailPage() {
                     </>
                   ) : (
                     <Typography variant="h4" color="primary.main" sx={{ fontWeight: 800, fontSize: { xs: '1.5rem', sm: '2.125rem' } }}>
-                      ₱{formatPrice(unit.monthlyRent)}
+                      ₱{formatPrice(unit.monthlyRent || 0)}
                     </Typography>
                   )}
                 </Box>
@@ -179,7 +176,7 @@ export default function UnitDetailPage() {
                           Occupants
                         </Typography>
                         <Typography variant="h6" sx={{ fontWeight: 700 }}>
-                          {unit.currentOccupants}
+                          {unit.currentOccupants || 0}
                         </Typography>
                       </Box>
                     </Box>

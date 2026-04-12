@@ -69,7 +69,7 @@ const MOCK_UNITS: Unit[] = [
     id: 'unit-white-dorm-room2',
     propertyId: 'prop-white-dorm',
     name: 'Room 2',
-    accommodationType: ['Bedspace', 'Room for Rent'],
+    accommodationType: 'bedspace',
     images: [
       rm2Img1, rm2Img2, rm2Img3, rm2Img4, rm2Img5, rm2Img6, rm2Img7
     ],
@@ -81,14 +81,14 @@ const MOCK_UNITS: Unit[] = [
     capacity: 8,
     currentOccupants: 0,
     vacancies: 8,
-    status: 'Available',
+    status: 'vacant',
     features: ['Foam', 'Pillow', 'WiFi', 'Clip Fan', 'Table', 'Chair'],
   },
   {
     id: 'unit-white-dorm-room3',
     propertyId: 'prop-white-dorm',
     name: 'Room 3',
-    accommodationType: ['Bedspace', 'Room for Rent'],
+    accommodationType: 'bedspace',
     images: [
       rm3Img1, rm3Img2, rm3Img3, rm3Img4
     ],
@@ -100,14 +100,14 @@ const MOCK_UNITS: Unit[] = [
     capacity: 4,
     currentOccupants: 0,
     vacancies: 4,
-    status: 'Available',
+    status: 'vacant',
     features: ['Foam', 'Pillow', 'WiFi', 'Clip Fan', 'Table', 'Chair'],
   },
   {
     id: 'unit-white-dorm-room4',
     propertyId: 'prop-white-dorm',
     name: 'Room 4',
-    accommodationType: ['Bedspace', 'Room for Rent'],
+    accommodationType: 'bedspace',
     images: [
       rm4Img1, rm4Img2, rm4Img3
     ],
@@ -119,14 +119,14 @@ const MOCK_UNITS: Unit[] = [
     capacity: 2,
     currentOccupants: 0,
     vacancies: 2,
-    status: 'Available',
+    status: 'vacant',
     features: ['Foam', 'Pillow', 'WiFi', 'Clip Fan', 'Table', 'Chair'],
   },
   {
     id: 'unit-white-dorm-room6',
     propertyId: 'prop-white-dorm',
     name: 'Room 6',
-    accommodationType: ['Bedspace', 'Room for Rent'],
+    accommodationType: 'bedspace',
     images: [
       rm6Img1, rm6Img2, rm6Img3
     ],
@@ -138,14 +138,14 @@ const MOCK_UNITS: Unit[] = [
     capacity: 4,
     currentOccupants: 0,
     vacancies: 4,
-    status: 'Available',
+    status: 'vacant',
     features: ['Foam', 'Pillow', 'WiFi', 'Clip Fan', 'Table', 'Chair'],
   },
   {
     id: 'unit-white-dorm-room7',
     propertyId: 'prop-white-dorm',
     name: 'Room 7',
-    accommodationType: ['Bedspace', 'Room for Rent'],
+    accommodationType: 'bedspace',
     images: [
       rm7Img1, rm7Img2, rm7Img3, rm7Img4, rm7Img5
     ],
@@ -157,14 +157,14 @@ const MOCK_UNITS: Unit[] = [
     capacity: 4,
     currentOccupants: 0,
     vacancies: 4,
-    status: 'Available',
+    status: 'vacant',
     features: ['Foam', 'Pillow', 'WiFi', 'Clip Fan', 'Table', 'Chair'],
   },
   {
     id: 'unit-white-dorm-room15',
     propertyId: 'prop-white-dorm',
     name: 'Room 15',
-    accommodationType: ['Bedspace', 'Room for Rent'],
+    accommodationType: 'bedspace',
     images: [
       rm15Img1, rm15Img2, rm15Img3, rm15Img4, rm15Img5
     ],
@@ -176,14 +176,14 @@ const MOCK_UNITS: Unit[] = [
     capacity: 4,
     currentOccupants: 0,
     vacancies: 4,
-    status: 'Available',
+    status: 'vacant',
     features: ['Foam', 'Pillow', 'WiFi', 'Clip Fan', 'Table', 'Chair'],
   },
   {
     id: 'unit-white-dorm-room16',
     propertyId: 'prop-white-dorm',
     name: 'Room 16',
-    accommodationType: ['Bedspace', 'Room for Rent'],
+    accommodationType: 'bedspace',
     images: [
       rm16Img1, rm16Img2, rm16Img3, rm16Img4, rm16Img5
     ],
@@ -195,7 +195,7 @@ const MOCK_UNITS: Unit[] = [
     capacity: 4,
     currentOccupants: 0,
     vacancies: 4,
-    status: 'Available',
+    status: 'vacant',
     features: ['Foam', 'Pillow', 'WiFi', 'Clip Fan', 'Table', 'Chair'],
   },
 
@@ -204,7 +204,7 @@ const MOCK_UNITS: Unit[] = [
     id: 'unit-uytengso',
     propertyId: 'prop-uytengson-boardings',
     name: 'Room 1',
-    accommodationType: ['Bedspace', 'Room for Rent'],
+    accommodationType: 'bedspace',
     images: [
       uyRm1Img1, uyRm1Img2, uyRm1Img3
     ],
@@ -216,14 +216,14 @@ const MOCK_UNITS: Unit[] = [
     capacity: 8,
     currentOccupants: 0,
     vacancies: 8,
-    status: 'Available',
+    status: 'vacant',
     features: ['Foam', 'Pillow', 'WiFi', 'Clip Fan', 'Table', 'Chair'],
   },
   {
     id: 'unit-uytengso_door5_room2',
     propertyId: 'prop-uytengson-boardings',
     name: 'Door 5 - Room 2',
-    accommodationType: ['Room for Rent'],
+    accommodationType: 'room',
     images: [
       uyRm2Img1, uyRm2Img2, uyRm2Img3, uyRm2Img4
     ],
@@ -231,7 +231,7 @@ const MOCK_UNITS: Unit[] = [
     capacity: 4,
     currentOccupants: 0,
     vacancies: 4,
-    status: 'Available',
+    status: 'vacant',
     features: ['Foam', 'Pillow', 'WiFi', 'Clip Fan', 'Table', 'Chair'],
 
   },

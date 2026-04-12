@@ -1,4 +1,4 @@
-import { Property } from './Property';
+import type {  Property  } from './Property';
 
 export type InventoryCondition = 'new' | 'good' | 'fair' | 'poor' | 'damaged';
 export type InventoryStatus = 'available' | 'issued' | 'maintenance' | 'retired';

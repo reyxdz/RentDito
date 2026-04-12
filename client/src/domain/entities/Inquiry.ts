@@ -1,6 +1,6 @@
-import { User } from './User';
-import { Property } from './Property';
-import { Unit } from './Unit';
+import type {  User  } from './User';
+import type {  Property  } from './Property';
+import type {  Unit  } from './Unit';
 
 export type InquiryStatus = 'open' | 'in_progress' | 'closed' | 'converted';
 

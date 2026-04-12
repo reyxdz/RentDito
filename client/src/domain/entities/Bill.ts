@@ -1,4 +1,4 @@
-import { Tenancy } from './Tenancy';
+import type {  Tenancy  } from './Tenancy';
 
 export type BillType = 'rent' | 'utility' | 'penalty' | 'combined';
 export type BillStatus = 'unpaid' | 'partial' | 'paid' | 'overdue';

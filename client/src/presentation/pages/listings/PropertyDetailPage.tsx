@@ -327,17 +327,14 @@ export default function PropertyDetailPage() {
                   <CardContent sx={{ flexGrow: 1, p: 2.5, display: 'flex', flexDirection: 'column' }}>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1.5 }}>
                       <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
-                        {unit.accommodationType.map((type) => (
-                          <Chip
-                            key={type}
-                            label={type}
-                            size="small"
-                            variant="outlined"
-                            sx={{ fontWeight: 600, borderRadius: 1 }}
-                          />
-                        ))}
+                        <Chip
+                          label={unit.accommodationType === 'bedspace' ? 'Bedspace' : 'Room for Rent'}
+                          size="small"
+                          variant="outlined"
+                          sx={{ fontWeight: 600, borderRadius: 1 }}
+                        />
                       </Box>
-                      {unit.vacancies > 0 ? (
+                      {(unit.vacancies && unit.vacancies > 0) ? (
                         <Chip
                           label={`${unit.vacancies} vacancies`}
                           size="small"
@@ -377,7 +374,7 @@ export default function PropertyDetailPage() {
                           </>
                         ) : (
                           <Typography variant="h6" color="primary.main" sx={{ fontWeight: 800 }}>
-                            ₱{formatPrice(unit.monthlyRent)}
+                            ₱{formatPrice(unit.monthlyRent || 0)}
                           </Typography>
                         )}
                       </Box>
