@@ -6,7 +6,7 @@ import logoPng from '../../../assets/logo.png';
 import { PersonAdd } from '@mui/icons-material';
 
 export default function Register() {
-  const { login } = useAuth();
+  const { register } = useAuth();
   const navigate = useNavigate();
 
   const [firstName, setFirstName] = useState('');
@@ -33,15 +33,21 @@ export default function Register() {
     }
 
     try {
-      // Mock API call to register
-      await new Promise(resolve => setTimeout(resolve, 800));
-      
-      // Auto-login with mock user
-      await login('tenant@rentdito.com', password); 
+      await register({
+        name: `${firstName} ${lastName}`.trim(),
+        email,
+        phone,
+        password,
+        confirmPassword,
+      });
       
       navigate('/u', { replace: true });
-    } catch (err: any) {
-      setError(err.message || 'An error occurred during registration.');
+    } catch (err: unknown) {
+      const message =
+        err && typeof err === 'object' && 'message' in err
+          ? (err as { message: string }).message
+          : 'An error occurred during registration.';
+      setError(message);
     } finally {
       setIsLoading(false);
     }
