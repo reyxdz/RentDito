@@ -12,6 +12,11 @@ import Register from './presentation/pages/auth/Register';
 import ForgotPassword from './presentation/pages/auth/ForgotPassword';
 import ResetPassword from './presentation/pages/auth/ResetPassword';
 
+// Common pages & Components
+import ProtectedRoute from './presentation/components/ProtectedRoute';
+import Unauthorized from './presentation/pages/common/Unauthorized';
+import NotFound from './presentation/pages/common/NotFound';
+
 // ─── Layouts ─────────────────────────────────────────────────────────
 import AdminLayout from './presentation/layouts/AdminLayout';
 import HubLayout from './presentation/layouts/HubLayout';
@@ -81,7 +86,7 @@ function App() {
         <Route path="/reset-password" element={<ResetPassword />} />
 
         {/* ────── Admin Layout (super_admin) ────────────────────────── */}
-        <Route path="/admin" element={<AdminLayout />}>
+        <Route path="/admin" element={<ProtectedRoute allowedRoles={['super_admin']}><AdminLayout /></ProtectedRoute>}>
           <Route index element={<AdminOverview />} />
           <Route path="users" element={<AdminUsers />} />
           <Route path="applications" element={<LandlordApplications />} />
@@ -95,27 +100,27 @@ function App() {
         </Route>
 
         {/* ────── Hub Layout (landlord + staff) ─────────────────────── */}
-        <Route path="/hub" element={<HubLayout />}>
-          <Route index element={<HubOverview />} />
-          <Route path="properties" element={<HubPropertiesPlaceholder />} />
-          <Route path="units" element={<HubUnitsPlaceholder />} />
-          <Route path="tenants" element={<HubTenantsPlaceholder />} />
-          <Route path="pipeline" element={<HubPipelinePlaceholder />} />
-          <Route path="bookings" element={<HubBookingsPlaceholder />} />
-          <Route path="billing" element={<HubBillingPlaceholder />} />
-          <Route path="contracts" element={<HubContractsPlaceholder />} />
-          <Route path="utilities" element={<HubUtilitiesPlaceholder />} />
-          <Route path="financials" element={<HubFinancialsPlaceholder />} />
-          <Route path="inventory" element={<HubInventoryPlaceholder />} />
-          <Route path="maintenance" element={<HubMaintenancePlaceholder />} />
-          <Route path="documents" element={<HubDocumentsPlaceholder />} />
-          <Route path="reports" element={<HubReportsPlaceholder />} />
-          <Route path="security" element={<HubSecurityPlaceholder />} />
-          <Route path="team" element={<TeamManagement />} />
+        <Route path="/hub" element={<ProtectedRoute allowedRoles={['landlord', 'staff']}><HubLayout /></ProtectedRoute>}>
+          <Route index element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="dashboard"><HubOverview /></ProtectedRoute>} />
+          <Route path="properties" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="properties"><HubPropertiesPlaceholder /></ProtectedRoute>} />
+          <Route path="units" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="units"><HubUnitsPlaceholder /></ProtectedRoute>} />
+          <Route path="tenants" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="tenants"><HubTenantsPlaceholder /></ProtectedRoute>} />
+          <Route path="pipeline" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="pipeline"><HubPipelinePlaceholder /></ProtectedRoute>} />
+          <Route path="bookings" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="bookings"><HubBookingsPlaceholder /></ProtectedRoute>} />
+          <Route path="billing" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="billing"><HubBillingPlaceholder /></ProtectedRoute>} />
+          <Route path="contracts" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="contracts"><HubContractsPlaceholder /></ProtectedRoute>} />
+          <Route path="utilities" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="utilities"><HubUtilitiesPlaceholder /></ProtectedRoute>} />
+          <Route path="financials" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="financials"><HubFinancialsPlaceholder /></ProtectedRoute>} />
+          <Route path="inventory" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="inventory"><HubInventoryPlaceholder /></ProtectedRoute>} />
+          <Route path="maintenance" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="maintenance"><HubMaintenancePlaceholder /></ProtectedRoute>} />
+          <Route path="documents" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="documents"><HubDocumentsPlaceholder /></ProtectedRoute>} />
+          <Route path="reports" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="reports"><HubReportsPlaceholder /></ProtectedRoute>} />
+          <Route path="security" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="security"><HubSecurityPlaceholder /></ProtectedRoute>} />
+          <Route path="team" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="team"><TeamManagement /></ProtectedRoute>} />
         </Route>
 
         {/* ────── User Layout (regular user) ────────────────────────── */}
-        <Route path="/u" element={<UserLayout />}>
+        <Route path="/u" element={<ProtectedRoute><UserLayout /></ProtectedRoute>}>
           <Route index element={<UserDashboard />} />
           <Route path="inquiries" element={<UserInquiries />} />
           <Route path="bookings" element={<UserBookings />} />
@@ -130,8 +135,11 @@ function App() {
         {/* ────── Legacy redirect: /landlord → /hub ─────────────────── */}
         <Route path="/landlord/*" element={<Navigate to="/hub" replace />} />
 
+        {/* ────── Error routes ──────────────────────────────────────── */}
+        <Route path="/unauthorized" element={<Unauthorized />} />
+
         {/* ────── Catch-all ─────────────────────────────────────────── */}
-        <Route path="*" element={<Navigate to="/listings" replace />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
   )

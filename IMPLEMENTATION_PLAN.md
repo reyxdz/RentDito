@@ -390,7 +390,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 > **Goal:** Every developer has the folder structure, shared types, and tooling ready. No features yet, just the bones.
 
 **________________________________________ D O N E ________________________________________**
-#### 👑 Rey — Server Infrastructure
+<!-- #### 👑 Rey — Server Infrastructure
 **🤖 Gemini**
 
 | # | Task | Files |
@@ -404,13 +404,13 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 7 | `models/User.ts` — full schema with all 4 roles, verification fields, staff fields | `server/src/models/User.ts` |
 | 8 | Update `server.ts` — use db.ts, middleware chain (helmet, cors, morgan, json), route mount placeholders | `server/src/server.ts` |
 
-**✅ Verify:** `npm run dev` in `/server` → connects to MongoDB → prints success log. Check MongoDB Compass → `rentdito` DB exists.
+**✅ Verify:** `npm run dev` in `/server` → connects to MongoDB → prints success log. Check MongoDB Compass → `rentdito` DB exists. -->
 **________________________________________ D O N E ________________________________________**
 
 ---
 
 **________________________________________ D O N E ________________________________________**
-#### 🔧 Paul — Client Types & API Client
+<!-- #### 🔧 Paul — Client Types & API Client
 **🤖 Gemini**
 
 | # | Task | Files |
@@ -420,12 +420,12 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 3 | `infrastructure/api/endpoints.ts` — all endpoint constants by feature group | `client/src/infrastructure/api/endpoints.ts` |
 | 4 | Update `domain/repositories/AuthRepository.ts` — full interface | `client/src/domain/repositories/AuthRepository.ts` |
 
-**✅ Verify:** `npx tsc --noEmit` → zero type errors. All entity files importable. ApiClient instantiates without error.
+**✅ Verify:** `npx tsc --noEmit` → zero type errors. All entity files importable. ApiClient instantiates without error. -->
 **________________________________________ D O N E ________________________________________**
 
 ---
 **________________________________________ D O N E ________________________________________**
-#### 🔧 Emanuel — Component Library & Seed Script Shell
+<!-- #### 🔧 Emanuel — Component Library & Seed Script Shell
 **🤖 Gemini**
 
 | # | Task | Files |
@@ -440,7 +440,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 8 | `FormDialog.tsx` — dialog wrapper for forms (title, body slot, cancel/save) | `client/src/presentation/components/FormDialog.tsx` |
 | 9 | Create seed script shell `seeds/seed.ts` — structure with clear sections per model, placeholder functions | `server/src/seeds/seed.ts` |
 
-**✅ Verify:** Import each component into a test page → renders. Seed script runs without error (no data yet, just structure).
+**✅ Verify:** Import each component into a test page → renders. Seed script runs without error (no data yet, just structure). -->
 **________________________________________ D O N E ________________________________________**
 
 ---
@@ -455,7 +455,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 > **Goal:** Complete working auth system. Anyone can register, login, and get JWT tokens. Frontend login/register pages connected to real API.
 
 **________________________________________ D O N E ________________________________________**
-#### 👑 Rey — Auth Backend
+<!-- #### 👑 Rey — Auth Backend
 **🤖 Claude Opus** ⚡ (security-critical: JWT rotation, password hashing, refresh token storage)
 
 | # | Task | Files |
@@ -473,12 +473,13 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 - POST `/api/auth/login` → 200 + tokens
 - POST `/api/auth/refresh` → new token pair
 - Invalid token → 401
-- Check Compass → user exists, password is hashed (NOT plain text)
+- Check Compass → user exists, password is hashed (NOT plain text) -->
 **________________________________________ D O N E ________________________________________**
 
 ---
+**________________________________________ D O N E ________________________________________**
 
-#### 🔧 Paul — Frontend Auth Integration
+<!-- #### 🔧 Paul — Frontend Auth Integration
 **🤖 Claude Opus** ⚡ (complex state: token rotation, persistent session hydration, role-based redirects)
 
 | # | Task | Files |
@@ -492,11 +493,13 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 - Register new user → token stored in localStorage
 - Refresh page → still logged in (session hydrated)
 - Login with wrong password → error shown
-- DevTools > Application > localStorage → tokens present
+- DevTools > Application > localStorage → tokens present -->
 
+**________________________________________ D O N E ________________________________________**
 ---
 **________________________________________ D O N E ________________________________________**
-#### 🔧 Emanuel — Auth Pages & Seed Data
+
+<!-- #### 🔧 Emanuel — Auth Pages & Seed Data
 **🤖 Gemini**
 
 | # | Task | Files |
@@ -509,7 +512,8 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 **✅ Verify:**
 - Visit `/register` → fill form → submit → redirected to `/u` (user dashboard)
 - Run seed script → check Compass → all accounts exist with hashed passwords
-- Login with each seeded account → successful
+
+- Login with each seeded account → successful -->
 **________________________________________ D O N E ________________________________________**
 ---
 
@@ -523,7 +527,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 > **Goal:** Permission system works. Users can apply to become landlords. Landlords can invite staff with custom permissions.
 
 **________________________________________ D O N E ________________________________________**
-#### 👑 Rey — RBAC Middleware + Landlord Application + Staff API
+<!-- #### 👑 Rey — RBAC Middleware + Landlord Application + Staff API
 **🤖 Claude Opus** ⚡ (security-critical: 3-layer RBAC + role promotion logic)
 
 | # | Task | Files |
@@ -543,14 +547,14 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 - Super admin → PATCH approve → user.role becomes `landlord`
 - Landlord → POST invite staff → staff user created
 - Staff → access permitted endpoint → 200
-- Staff → access non-permitted endpoint → 403
+- Staff → access non-permitted endpoint → 403 -->
 **________________________________________ D O N E ________________________________________**
 
 ---
 **________________________________________ D O N E ________________________________________**
 
 
-#### 🔧 Paul — Layouts & Dynamic Sidebar
+<!-- #### 🔧 Paul — Layouts & Dynamic Sidebar
 **🤖 Claude Opus** ⚡ (complex conditional rendering: 3 layouts with permission-filtered sidebar, tenancy-aware sections)
 
 | # | Task | Files |
@@ -566,12 +570,13 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 - Login as landlord → sidebar shows ALL 16 items
 - Login as staff (permissions: [dashboard, units, bookings]) → sidebar shows only those 3
 - Login as user with no tenancy → sidebar shows Inquiries, Visits, Applications, Profile, Become a Landlord
-- Login as user WITH active tenancy → sidebar additionally shows My Room, My Bills, etc.
+- Login as user WITH active tenancy → sidebar additionally shows My Room, My Bills, etc. -->
 
+**________________________________________ D O N E ________________________________________**
 ---
 **________________________________________ D O N E ________________________________________**
 
-#### 🔧 Emanuel — Landlord Onboarding UI + Team Management UI
+<!-- #### 🔧 Emanuel — Landlord Onboarding UI + Team Management UI
 **🤖 Gemini**
 
 | # | Task | Files |
@@ -586,7 +591,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 - Login as user → Profile area → "Become a Landlord" → shows verification requirement
 - Verify account (upload ID) → submit landlord application
 - Login as super_admin → see application → approve → user is now a landlord
-- Login as new landlord → Hub dashboard → Team Management → invite staff → staff appears in list
+- Login as new landlord → Hub dashboard → Team Management → invite staff → staff appears in list -->
 **________________________________________ D O N E ________________________________________**
 
 ---
@@ -601,7 +606,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 > **Goal:** Complete app routing. Every sidebar item leads to a real page (placeholder is fine). All 3 portals navigable.
 
 **________________________________________ D O N E ________________________________________**
-#### 👑 Rey — API Route Mounting + Profile API
+<!-- #### 👑 Rey — API Route Mounting + Profile API
 **🤖 Gemini**
 
 | # | Task | Files |
@@ -611,12 +616,13 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 3 | `models/AuditLog.ts` — userId, action, resourceType, resourceId, details, ip, timestamp | `server/src/models/AuditLog.ts` |
 | 4 | Create `presentation/pages/hub/overview/Overview.tsx` — placeholder with stat cards (hardcoded 0 values for now), welcome banner | `client/src/presentation/pages/hub/overview/Overview.tsx` |
 
-**✅ Verify:** All mounted routes return proper responses. GET /me returns user with activeTenancy: null for users without tenancy.
+**✅ Verify:** All mounted routes return proper responses. GET /me returns user with activeTenancy: null for users without tenancy. -->
 **________________________________________ D O N E ________________________________________**
 
 ---
+**________________________________________ D O N E ________________________________________**
 
-#### 🔧 Paul — Complete App.tsx Routing
+<!-- #### 🔧 Paul — Complete App.tsx Routing
 **🤖 Gemini**
 
 | # | Task | Files |
@@ -627,8 +633,9 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 4 | `presentation/pages/common/Unauthorized.tsx` — 403 page | `client/src/presentation/pages/common/Unauthorized.tsx` |
 | 5 | `presentation/pages/common/NotFound.tsx` — 404 page | `client/src/presentation/pages/common/NotFound.tsx` |
 
-**✅ Verify:** Every sidebar item for every layout (hub/user/admin) → navigates to a page. Non-permitted routes → 403. Unknown routes → 404. Role mismatch → redirect.
+**✅ Verify:** Every sidebar item for every layout (hub/user/admin) → navigates to a page. Non-permitted routes → 403. Unknown routes → 404. Role mismatch → redirect. -->
 
+**________________________________________ D O N E ________________________________________**
 ---
 
 #### 🔧 Emanuel — User Dashboard + Notification Bell
