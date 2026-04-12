@@ -1,11 +1,25 @@
 export type PropertyStatus = 'Active' | 'Disabled' | 'Maintenance' | 'Archived';
 export type PropertyType = 'Boarding House' | 'Apartment' | 'Studio' | 'Dormitory' | 'Commercial' | 'Parking' | 'Land' | 'Mixed Use';
+
 import type { AccommodationType } from './Unit';
 
 export interface Venue {
   name: string;
   walking: string;
   commute: string;
+}
+
+export interface EmergencyContact {
+  name: string;
+  phone: string;
+  role: string;
+}
+
+export interface BillingSettings {
+  billingDay: number;
+  dueDay: number;
+  lateFeePercent: number;
+  utilityDefault: number;
 }
 
 export interface Property {
@@ -27,12 +41,18 @@ export interface Property {
 
   inclusions: string[];
 
-  // Categorized venues with transportation times
   reviewCenters: Venue[];
   schools: Venue[];
   commercialEstablishments: Venue[];
 
-  // Aggregated metadata mapped specifically for the dashboard stats
+  geoCoords?: {
+    lat: number;
+    lng: number;
+  };
+
+  billingSettings?: BillingSettings;
+  emergencyContacts?: EmergencyContact[];
+
   metrics: {
     totalUnits: number;
     activeUnits: number;
@@ -44,6 +64,6 @@ export interface Property {
     accommodationTypes?: AccommodationType[];
   };
 
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string | Date;
+  updatedAt: string | Date;
 }
