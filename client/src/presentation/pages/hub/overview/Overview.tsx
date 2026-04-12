@@ -9,7 +9,7 @@ const Overview = () => {
       <Typography variant="body1" color="text.secondary" paragraph>
         Here's what's happening with your properties today.
       </Typography>
-      
+
       <Grid container spacing={3}>
         {/* Placeholder Stat Cards */}
         {['Total Properties', 'Active Units', 'Total Tenants', 'Pending Inquiries'].map((label, index) => (

@@ -409,6 +409,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 
 ---
 
+**________________________________________ D O N E ________________________________________**
 #### 🔧 Paul — Client Types & API Client
 **🤖 Gemini**
 
@@ -420,6 +421,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 4 | Update `domain/repositories/AuthRepository.ts` — full interface | `client/src/domain/repositories/AuthRepository.ts` |
 
 **✅ Verify:** `npx tsc --noEmit` → zero type errors. All entity files importable. ApiClient instantiates without error.
+**________________________________________ D O N E ________________________________________**
 
 ---
 **________________________________________ D O N E ________________________________________**
