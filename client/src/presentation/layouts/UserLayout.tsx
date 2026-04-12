@@ -4,6 +4,7 @@ import {
   Box, Drawer, AppBar, Toolbar, List, Typography, Divider,
   IconButton, ListItem, ListItemButton, ListItemIcon, ListItemText,
   useTheme, useMediaQuery, Avatar, Card, Button, Tooltip, Menu, MenuItem,
+  Chip,
 } from '@mui/material';
 import {
   Menu as MenuIcon, Brightness4, Brightness7, Logout,
@@ -11,13 +12,14 @@ import {
 } from '@mui/icons-material';
 import { useColorMode } from '../context/ThemeContext';
 import { useAuth } from '../../application/context/AuthContext';
-import { ADMIN_MENU_ITEMS, renderIcon } from '../../application/config/menuConfig';
+import { USER_MENU_ITEMS, renderIcon } from '../../application/config/menuConfig';
+import type { MenuItem as MenuItemType } from '../../application/config/menuConfig';
 import logoPng from '../../assets/logo.png';
 
 const drawerWidth = 280;
 const collapsedDrawerWidth = 88;
 
-export default function AdminLayout() {
+export default function UserLayout() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -28,6 +30,12 @@ export default function AdminLayout() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+
+  // Filter items by tenancy
+  const visibleItems = USER_MENU_ITEMS.filter((item) => {
+    if (item.requiresTenancy && !user?.activeTenancy) return false;
+    return true;
+  });
 
   const handleDrawerToggle = () => {
     if (isMdUp) {
@@ -48,6 +56,86 @@ export default function AdminLayout() {
   const activeDrawerWidth = (isMdUp && isCollapsed) ? collapsedDrawerWidth : drawerWidth;
   const borderColor = mode === 'light' ? 'rgba(0,0,0,0.08)' : 'rgba(255,255,255,0.08)';
 
+  const hasTenancy = !!user?.activeTenancy;
+
+  // ─── Sidebar nav item renderer ─────────────────────────────────────
+  const renderNavItem = (item: MenuItemType, idx: number) => {
+    const isActive =
+      location.pathname === item.path ||
+      (item.path !== '/u' && location.pathname.startsWith(item.path));
+
+    const showSectionLabel = item.sectionLabel && !(isCollapsed && isMdUp);
+
+    const buttonContent = (
+      <ListItemButton
+        onClick={() => {
+          navigate(item.path);
+          if (!isMdUp) setMobileOpen(false);
+        }}
+        sx={{
+          borderRadius: 2,
+          justifyContent: isCollapsed && isMdUp ? 'center' : 'flex-start',
+          px: isCollapsed && isMdUp ? 0 : 2,
+          bgcolor: isActive ? 'primary.main' : 'transparent',
+          color: isActive ? 'white' : 'text.primary',
+          '&:hover': {
+            bgcolor: isActive
+              ? 'primary.dark'
+              : mode === 'light'
+                ? 'rgba(90, 49, 232, 0.08)'
+                : 'rgba(255,255,255,0.08)',
+          },
+        }}
+      >
+        <ListItemIcon sx={{
+          minWidth: isCollapsed && isMdUp ? 0 : 40,
+          mr: isCollapsed && isMdUp ? 0 : 2,
+          justifyContent: 'center',
+          color: isActive ? 'white' : 'inherit',
+        }}>
+          {renderIcon(item.icon)}
+        </ListItemIcon>
+        <ListItemText
+          primary={item.text}
+          sx={{
+            opacity: isCollapsed && isMdUp ? 0 : 1,
+            transition: 'all 0.3s ease',
+            whiteSpace: 'nowrap',
+            maxWidth: isCollapsed && isMdUp ? 0 : 200,
+            overflow: 'hidden',
+          }}
+          primaryTypographyProps={{ fontWeight: isActive ? 600 : 500, fontSize: '0.95rem' }}
+        />
+      </ListItemButton>
+    );
+
+    return (
+      <Box key={item.path}>
+        {showSectionLabel && (
+          <Typography
+            variant="overline"
+            sx={{
+              display: 'block', px: 2, pt: idx === 0 ? 0 : 2.5, pb: 0.5,
+              color: 'text.secondary', fontSize: '0.7rem', letterSpacing: 1.5, fontWeight: 700,
+            }}
+          >
+            {item.sectionLabel}
+          </Typography>
+        )}
+        <ListItem disablePadding sx={{ mb: 0.5 }}>
+          {isCollapsed && isMdUp ? (
+            <Tooltip title={item.text} placement="right" arrow>
+              {buttonContent}
+            </Tooltip>
+          ) : (
+            buttonContent
+          )}
+        </ListItem>
+      </Box>
+    );
+  };
+
+  // ─── Drawer ─────────────────────────────────────────────────────────
   const drawer = (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', overflowX: 'hidden' }}>
       <Toolbar sx={{
@@ -67,75 +155,17 @@ export default function AdminLayout() {
           maxWidth: isCollapsed && isMdUp ? 0 : 200,
           overflow: 'hidden',
         }}>
-          Admin Panel
+          My Account
         </Typography>
       </Toolbar>
 
       <Divider sx={{ borderColor }} />
 
       <List sx={{ px: isCollapsed && isMdUp ? 1 : 2, pt: 2, flexGrow: 1 }}>
-        {ADMIN_MENU_ITEMS.map((item) => {
-          const isActive =
-            location.pathname === item.path ||
-            (item.path !== '/admin' && location.pathname.startsWith(item.path));
-
-          const buttonContent = (
-            <ListItemButton
-              onClick={() => {
-                navigate(item.path);
-                if (!isMdUp) setMobileOpen(false);
-              }}
-              sx={{
-                borderRadius: 2,
-                justifyContent: isCollapsed && isMdUp ? 'center' : 'flex-start',
-                px: isCollapsed && isMdUp ? 0 : 2,
-                bgcolor: isActive ? 'primary.main' : 'transparent',
-                color: isActive ? 'white' : 'text.primary',
-                '&:hover': {
-                  bgcolor: isActive
-                    ? 'primary.dark'
-                    : mode === 'light'
-                      ? 'rgba(90, 49, 232, 0.08)'
-                      : 'rgba(255,255,255,0.08)',
-                },
-              }}
-            >
-              <ListItemIcon sx={{
-                minWidth: isCollapsed && isMdUp ? 0 : 40,
-                mr: isCollapsed && isMdUp ? 0 : 2,
-                justifyContent: 'center',
-                color: isActive ? 'white' : 'inherit',
-              }}>
-                {renderIcon(item.icon)}
-              </ListItemIcon>
-              <ListItemText
-                primary={item.text}
-                sx={{
-                  opacity: isCollapsed && isMdUp ? 0 : 1,
-                  transition: 'all 0.3s ease',
-                  whiteSpace: 'nowrap',
-                  maxWidth: isCollapsed && isMdUp ? 0 : 200,
-                  overflow: 'hidden',
-                }}
-                primaryTypographyProps={{ fontWeight: isActive ? 600 : 500, fontSize: '0.95rem' }}
-              />
-            </ListItemButton>
-          );
-
-          return (
-            <ListItem key={item.path} disablePadding sx={{ mb: 0.5 }}>
-              {isCollapsed && isMdUp ? (
-                <Tooltip title={item.text} placement="right" arrow>
-                  {buttonContent}
-                </Tooltip>
-              ) : (
-                buttonContent
-              )}
-            </ListItem>
-          );
-        })}
+        {visibleItems.map((item, idx) => renderNavItem(item, idx))}
       </List>
 
+      {/* Profile footer */}
       <Box sx={{ p: isCollapsed && isMdUp ? 1 : 2 }}>
         <Card
           variant={isCollapsed && isMdUp ? 'elevation' : 'outlined'}
@@ -167,9 +197,16 @@ export default function AdminLayout() {
               <Typography variant="subtitle2" sx={{ fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis' }}>
                 {user?.name}
               </Typography>
-              <Typography variant="caption" color="text.secondary" sx={{ display: 'block', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                {user?.email}
-              </Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mt: 0.25 }}>
+                {hasTenancy && (
+                  <Chip
+                    label="Active Tenant"
+                    size="small"
+                    color="success"
+                    sx={{ height: 20, fontSize: '0.65rem', fontWeight: 700 }}
+                  />
+                )}
+              </Box>
             </Box>
           </Box>
           <Button
@@ -212,6 +249,7 @@ export default function AdminLayout() {
     </Box>
   );
 
+  // ─── Shell ─────────────────────────────────────────────────────────
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: 'background.default' }}>
       <AppBar
@@ -234,7 +272,7 @@ export default function AdminLayout() {
           </IconButton>
 
           <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1, color: 'text.primary', fontWeight: 600 }}>
-            {ADMIN_MENU_ITEMS.find(m => m.path === location.pathname)?.text || 'Dashboard'}
+            {visibleItems.find(m => m.path === location.pathname)?.text || 'My Account'}
           </Typography>
 
           <IconButton onClick={toggleColorMode} sx={{ color: 'text.secondary' }}>

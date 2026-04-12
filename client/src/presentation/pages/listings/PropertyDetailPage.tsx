@@ -328,53 +328,53 @@ export default function PropertyDetailPage() {
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1.5 }}>
                       <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
                         <Chip
-                          label={unit.accommodationType === 'bedspace' ? 'Bedspace' : 'Room for Rent'}
+                          label={unit.accommodationType === 'room' ? 'Room for Rent' : 'Bedspace'}
                           size="small"
                           variant="outlined"
                           sx={{ fontWeight: 600, borderRadius: 1 }}
                         />
                       </Box>
-                      {(unit.vacancies && unit.vacancies > 0) ? (
+                      {unit.status === 'vacant' ? (
                         <Chip
-                          label={`${unit.vacancies} vacancies`}
+                          label={`${unit.capacity} capacity`}
                           size="small"
                           color="success"
                           sx={{ fontWeight: 700, borderRadius: 1 }}
                         />
                       ) : (
                         <Chip
-                          label="Full"
+                          label={unit.status}
                           size="small"
                           color="error"
-                          sx={{ fontWeight: 700, borderRadius: 1 }}
+                          sx={{ fontWeight: 700, borderRadius: 1, textTransform: 'capitalize' }}
                         />
                       )}
                     </Box>
 
-                    <Typography variant="h6" sx={{ fontWeight: 800, mb: 2, flexGrow: 1 }}>{unit.name}</Typography>
+                    <Typography variant="h6" sx={{ fontWeight: 800, mb: 2, flexGrow: 1 }}>{unit.unitIdentifier}</Typography>
 
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', mt: 'auto' }}>
                       <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                         <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 700, mb: 0.5, letterSpacing: 0.5 }}>
                           Monthly
                         </Typography>
-                        {unit.rentPricing ? (
+                        {unit.bedspaceRent || unit.roomRent ? (
                           <>
-                            {unit.rentPricing.bedspace && (
-                              <Typography variant="h6" color="primary.main" sx={{ fontWeight: 800, lineHeight: 1.1, mb: unit.rentPricing.room ? 0.25 : 0 }}>
-                                ₱{formatPrice(unit.rentPricing.bedspace)}<Typography component="span" variant="caption" color="text.secondary"> per head</Typography>
+                            {unit.bedspaceRent && (
+                              <Typography variant="h6" color="primary.main" sx={{ fontWeight: 800, lineHeight: 1.1, mb: unit.roomRent ? 0.25 : 0 }}>
+                                ₱{formatPrice(unit.bedspaceRent)}<Typography component="span" variant="caption" color="text.secondary"> per head</Typography>
                               </Typography>
                             )}
-                            {unit.rentPricing.room && (
+                            {unit.roomRent && (
                               <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 600, lineHeight: 1 }}>
-                                {unit.rentPricing.bedspace && 'or '}
-                                ₱{formatPrice(unit.rentPricing.room)}<Typography component="span" variant="caption"> per room</Typography>
+                                {unit.bedspaceRent && 'or '}
+                                ₱{formatPrice(unit.roomRent)}<Typography component="span" variant="caption"> per room</Typography>
                               </Typography>
                             )}
                           </>
                         ) : (
                           <Typography variant="h6" color="primary.main" sx={{ fontWeight: 800 }}>
-                            ₱{formatPrice(unit.monthlyRent || 0)}
+                            ₱0
                           </Typography>
                         )}
                       </Box>

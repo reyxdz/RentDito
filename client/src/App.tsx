@@ -1,5 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
+// Public pages
+import LandingPage from './presentation/pages/LandingPage';
 import ListingsPage from './presentation/pages/listings/ListingsPage';
 import PropertyDetailPage from './presentation/pages/listings/PropertyDetailPage';
 import UnitDetailPage from './presentation/pages/listings/UnitDetailPage';
@@ -10,24 +12,125 @@ import Register from './presentation/pages/auth/Register';
 import ForgotPassword from './presentation/pages/auth/ForgotPassword';
 import ResetPassword from './presentation/pages/auth/ResetPassword';
 
+// ─── Layouts ─────────────────────────────────────────────────────────
+import AdminLayout from './presentation/layouts/AdminLayout';
+import HubLayout from './presentation/layouts/HubLayout';
+import UserLayout from './presentation/layouts/UserLayout';
+
+// ─── Admin pages ─────────────────────────────────────────────────────
+import AdminOverview from './presentation/pages/admin/Overview';
+import AdminUsers from './presentation/pages/admin/Users';
+import LandlordApplications from './presentation/pages/admin/LandlordApplications';
+import {
+  PropertiesPlaceholder as AdminProperties,
+  FinancialsPlaceholder as AdminFinancials,
+  ReportsPlaceholder as AdminReports,
+  ModerationPlaceholder as AdminModeration,
+  CommunicationsPlaceholder as AdminComms,
+  SystemPlaceholder as AdminSystem,
+  SecurityPlaceholder as AdminSecurity,
+} from './presentation/pages/admin/Placeholders';
+
+// ─── Hub pages (Landlord + Staff) ────────────────────────────────────
+import HubOverview from './presentation/pages/hub/overview/Overview';
+import TeamManagement from './presentation/pages/hub/team/TeamManagement';
+import {
+  HubPropertiesPlaceholder,
+  HubUnitsPlaceholder,
+  HubTenantsPlaceholder,
+  HubPipelinePlaceholder,
+  HubBookingsPlaceholder,
+  HubBillingPlaceholder,
+  HubContractsPlaceholder,
+  HubUtilitiesPlaceholder,
+  HubFinancialsPlaceholder,
+  HubInventoryPlaceholder,
+  HubMaintenancePlaceholder,
+  HubDocumentsPlaceholder,
+  HubReportsPlaceholder,
+  HubSecurityPlaceholder,
+} from './presentation/pages/hub/Placeholders';
+
+// ─── User pages ──────────────────────────────────────────────────────
+import VerifyAccount from './presentation/pages/user/VerifyAccount';
+import BecomeLandlord from './presentation/pages/user/BecomeLandlord';
+import {
+  UserDashboard,
+  UserInquiries,
+  UserBookings,
+  UserMyUnit,
+  UserBills,
+  UserContract,
+  UserMaintenance,
+} from './presentation/pages/user/Placeholders';
+
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Navigate to="/listings" replace />} />
-        
-        {/* PUBLIC LISTINGS */}
+        {/* ────── Public ────────────────────────────────────────────── */}
+        <Route path="/" element={<LandingPage />} />
         <Route path="/listings" element={<ListingsPage />} />
         <Route path="/listings/:propertyId" element={<PropertyDetailPage />} />
         <Route path="/listings/unit/:unitId" element={<UnitDetailPage />} />
 
-        {/* AUTH */}
+        {/* ────── Auth ──────────────────────────────────────────────── */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
 
-        {/* Catch-all: redirect unknown routes to listings */}
+        {/* ────── Admin Layout (super_admin) ────────────────────────── */}
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<AdminOverview />} />
+          <Route path="users" element={<AdminUsers />} />
+          <Route path="applications" element={<LandlordApplications />} />
+          <Route path="properties" element={<AdminProperties />} />
+          <Route path="financials" element={<AdminFinancials />} />
+          <Route path="reports" element={<AdminReports />} />
+          <Route path="moderation" element={<AdminModeration />} />
+          <Route path="communications" element={<AdminComms />} />
+          <Route path="system" element={<AdminSystem />} />
+          <Route path="security" element={<AdminSecurity />} />
+        </Route>
+
+        {/* ────── Hub Layout (landlord + staff) ─────────────────────── */}
+        <Route path="/hub" element={<HubLayout />}>
+          <Route index element={<HubOverview />} />
+          <Route path="properties" element={<HubPropertiesPlaceholder />} />
+          <Route path="units" element={<HubUnitsPlaceholder />} />
+          <Route path="tenants" element={<HubTenantsPlaceholder />} />
+          <Route path="pipeline" element={<HubPipelinePlaceholder />} />
+          <Route path="bookings" element={<HubBookingsPlaceholder />} />
+          <Route path="billing" element={<HubBillingPlaceholder />} />
+          <Route path="contracts" element={<HubContractsPlaceholder />} />
+          <Route path="utilities" element={<HubUtilitiesPlaceholder />} />
+          <Route path="financials" element={<HubFinancialsPlaceholder />} />
+          <Route path="inventory" element={<HubInventoryPlaceholder />} />
+          <Route path="maintenance" element={<HubMaintenancePlaceholder />} />
+          <Route path="documents" element={<HubDocumentsPlaceholder />} />
+          <Route path="reports" element={<HubReportsPlaceholder />} />
+          <Route path="security" element={<HubSecurityPlaceholder />} />
+          <Route path="team" element={<TeamManagement />} />
+        </Route>
+
+        {/* ────── User Layout (regular user) ────────────────────────── */}
+        <Route path="/u" element={<UserLayout />}>
+          <Route index element={<UserDashboard />} />
+          <Route path="inquiries" element={<UserInquiries />} />
+          <Route path="bookings" element={<UserBookings />} />
+          <Route path="verify" element={<VerifyAccount />} />
+          <Route path="become-landlord" element={<BecomeLandlord />} />
+          <Route path="my-unit" element={<UserMyUnit />} />
+          <Route path="bills" element={<UserBills />} />
+          <Route path="contract" element={<UserContract />} />
+          <Route path="maintenance" element={<UserMaintenance />} />
+        </Route>
+
+        {/* ────── Legacy redirect: /landlord → /hub ─────────────────── */}
+        <Route path="/landlord/*" element={<Navigate to="/hub" replace />} />
+
+        {/* ────── Catch-all ─────────────────────────────────────────── */}
         <Route path="*" element={<Navigate to="/listings" replace />} />
       </Routes>
     </Router>

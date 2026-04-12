@@ -1,5 +1,5 @@
-import type {  Tenancy  } from './Tenancy';
-import type {  User  } from './User';
+import type { Tenancy } from './Tenancy';
+import type { User } from './User';
 
 export type TicketStatus = 'open' | 'assigned' | 'in_progress' | 'resolved' | 'closed';
 export type TicketPriority = 'low' | 'medium' | 'high' | 'urgent';

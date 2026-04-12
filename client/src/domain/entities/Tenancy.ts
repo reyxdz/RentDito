@@ -1,7 +1,7 @@
-import type {  User  } from './User';
-import type {  Property  } from './Property';
-import type {  Unit  } from './Unit';
-import type {  Contract  } from './Contract';
+import type { User } from './User';
+import type { Property } from './Property';
+import type { Unit } from './Unit';
+import type { Contract } from './Contract';
 
 export type TenancyStatus = 'pending' | 'checked_in' | 'checked_out';
 

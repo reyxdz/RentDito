@@ -1,6 +1,6 @@
-import type {  Inventory, InventoryCondition  } from './Inventory';
-import type {  Tenancy  } from './Tenancy';
-import type {  User  } from './User';
+import type { Inventory, InventoryCondition } from './Inventory';
+import type { Tenancy } from './Tenancy';
+import type { User } from './User';
 
 export type InventoryRecordStatus = 'active' | 'returned' | 'damaged' | 'lost';
 

@@ -1,5 +1,5 @@
-import type {  Inquiry  } from './Inquiry';
-import type {  User  } from './User';
+import type { Inquiry } from './Inquiry';
+import type { User } from './User';
 
 export interface Conversation {
   id: string;

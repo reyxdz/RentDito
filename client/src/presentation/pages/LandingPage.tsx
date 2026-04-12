@@ -16,11 +16,11 @@ export default function LandingPage() {
           <Toolbar disableGutters sx={{ justifyContent: 'space-between' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               {/* Logo Placeholder that represents the custom colored icon */}
-              <Box 
+              <Box
                 component="img"
                 src={logoPng}
                 alt="RentDito Logo"
-                sx={{ 
+                sx={{
                   height: 40,
                   objectFit: 'contain'
                 }}
@@ -29,18 +29,18 @@ export default function LandingPage() {
                 RentDito
               </Typography>
             </Box>
-            
+
             <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 3, alignItems: 'center' }}>
               <Typography variant="body2" onClick={() => navigate('/listings')} sx={{ fontWeight: 500, cursor: 'pointer', '&:hover': { color: 'primary.main' } }}>Properties</Typography>
               <Typography variant="body2" sx={{ fontWeight: 500, cursor: 'pointer', '&:hover': { color: 'primary.main' } }}>Landlords</Typography>
               <Typography variant="body2" sx={{ fontWeight: 500, cursor: 'pointer', '&:hover': { color: 'primary.main' } }}>About</Typography>
             </Box>
-            
+
             <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
               <IconButton onClick={toggleColorMode} sx={{ color: 'text.secondary' }}>
                 {mode === 'dark' ? <Brightness7 /> : <Brightness4 />}
               </IconButton>
-              
+
               {!isAuthenticated ? (
                 <Button variant="contained" color="primary" onClick={() => navigate('/login')}>
                   Sign In
@@ -49,8 +49,8 @@ export default function LandingPage() {
                 <>
                   <Button variant="outlined" color="primary" onClick={() => {
                     if (user?.role === 'super_admin') navigate('/admin');
-                    else if (user?.role === 'landlord') navigate('/hub');
-                    else navigate('/tenant');
+                    else if (user?.role === 'landlord' || user?.role === 'staff') navigate('/hub');
+                    else navigate('/u');
                   }}>
                     Dashboard
                   </Button>
@@ -78,12 +78,12 @@ export default function LandingPage() {
         <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
           <Grid container spacing={6} alignItems="center">
             <Grid size={{ xs: 12, md: 6 }}>
-              <Chip 
-                icon={<AutoAwesome sx={{ fontSize: 16 }} />} 
-                label="The modern way to rent" 
-                color="secondary" 
+              <Chip
+                icon={<AutoAwesome sx={{ fontSize: 16 }} />}
+                label="The modern way to rent"
+                color="secondary"
                 variant="outlined"
-                sx={{ mb: 3, fontWeight: 600, px: 1, borderColor: 'secondary.main', color: 'secondary.dark' }} 
+                sx={{ mb: 3, fontWeight: 600, px: 1, borderColor: 'secondary.main', color: 'secondary.dark' }}
               />
               <Typography variant="h1" sx={{ mb: 2, fontSize: { xs: '2.5rem', sm: '3.5rem', md: '4.5rem' }, lineHeight: 1.1 }}>
                 Find Your Next <Box component="span" sx={{ color: 'primary.main' }}>Perfect</Box> Home
@@ -91,7 +91,7 @@ export default function LandingPage() {
               <Typography variant="h6" color="text.secondary" sx={{ mb: 4, fontWeight: 400, maxWidth: '90%', lineHeight: 1.6 }}>
                 Discover premium rentals with a seamless, beautifully designed platform built for the modern tenant and landlord.
               </Typography>
-              
+
               <Box sx={{ display: 'flex', gap: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
                 <Button variant="contained" color="primary" size="large" startIcon={<Search />} onClick={() => navigate('/listings')} sx={{ px: 4, py: 1.5, fontSize: '1.1rem', width: { xs: '100%', sm: 'auto' } }}>
                   Start Browsing
@@ -101,44 +101,44 @@ export default function LandingPage() {
                 </Button>
               </Box>
             </Grid>
-            
+
             <Grid size={{ xs: 12, md: 6 }} sx={{ display: { xs: 'none', md: 'block' } }}>
               <Box sx={{ position: 'relative' }}>
-                 <Card sx={{ 
-                    position: 'absolute', top: -30, right: -20, zIndex: 2,
-                    p: 2, display: 'flex', alignItems: 'center', gap: 2,
-                    animation: 'float 3s ease-in-out infinite'
-                  }}>
-                    <Box sx={{ width: 48, height: 48, borderRadius: '50%', bgcolor: 'success.light', display: 'flex', justifyContent: 'center', alignItems: 'center', color: 'success.main' }}>
-                      <Home />
-                    </Box>
-                    <Box>
-                      <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>10k+ Properties</Typography>
-                      <Typography variant="caption" color="text.secondary">Ready to move in</Typography>
-                    </Box>
-                 </Card>
+                <Card sx={{
+                  position: 'absolute', top: -30, right: -20, zIndex: 2,
+                  p: 2, display: 'flex', alignItems: 'center', gap: 2,
+                  animation: 'float 3s ease-in-out infinite'
+                }}>
+                  <Box sx={{ width: 48, height: 48, borderRadius: '50%', bgcolor: 'success.light', display: 'flex', justifyContent: 'center', alignItems: 'center', color: 'success.main' }}>
+                    <Home />
+                  </Box>
+                  <Box>
+                    <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>10k+ Properties</Typography>
+                    <Typography variant="caption" color="text.secondary">Ready to move in</Typography>
+                  </Box>
+                </Card>
 
-                 {/* Stylized UI presentation simulating the app using primary color aesthetics */}
-                 <Box sx={{ 
-                    bgcolor: 'white', borderRadius: 4, p: 2, 
-                    boxShadow: '0 24px 48px -12px rgba(18, 11, 41, 0.15)',
-                    border: '1px solid rgba(220, 224, 234, 0.8)',
-                    height: 480, width: '100%',
-                    background: 'linear-gradient(180deg, #ffffff 0%, #f4f6fa 100%)',
-                    overflow: 'hidden', position: 'relative'
-                 }}>
-                    <Box sx={{ height: 220, bgcolor: 'primary.light', borderRadius: 3, mb: 3, background: 'url("https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80") center/cover' }} />
-                    <Box sx={{ px: 2 }}>
-                      <Chip label="Featured" color="secondary" size="small" sx={{ mb: 2, fontWeight: 600, borderRadius: 1 }} />
-                      <Typography variant="h5" sx={{ fontWeight: 700, mb: 1 }}>Modern Penthouse Villa</Typography>
-                      <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>Makati City, Metro Manila</Typography>
-                      
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 'auto' }}>
-                        <Typography variant="h4" color="primary.main" sx={{ fontWeight: 800 }}>₱45k<Typography component="span" variant="body1" color="text.secondary">/mo</Typography></Typography>
-                        <Button variant="contained" size="small" sx={{ borderRadius: 6, fontWeight: 600 }}>View Details</Button>
-                      </Box>
+                {/* Stylized UI presentation simulating the app using primary color aesthetics */}
+                <Box sx={{
+                  bgcolor: 'white', borderRadius: 4, p: 2,
+                  boxShadow: '0 24px 48px -12px rgba(18, 11, 41, 0.15)',
+                  border: '1px solid rgba(220, 224, 234, 0.8)',
+                  height: 480, width: '100%',
+                  background: 'linear-gradient(180deg, #ffffff 0%, #f4f6fa 100%)',
+                  overflow: 'hidden', position: 'relative'
+                }}>
+                  <Box sx={{ height: 220, bgcolor: 'primary.light', borderRadius: 3, mb: 3, background: 'url("https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80") center/cover' }} />
+                  <Box sx={{ px: 2 }}>
+                    <Chip label="Featured" color="secondary" size="small" sx={{ mb: 2, fontWeight: 600, borderRadius: 1 }} />
+                    <Typography variant="h5" sx={{ fontWeight: 700, mb: 1 }}>Modern Penthouse Villa</Typography>
+                    <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>Makati City, Metro Manila</Typography>
+
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 'auto' }}>
+                      <Typography variant="h4" color="primary.main" sx={{ fontWeight: 800 }}>₱45k<Typography component="span" variant="body1" color="text.secondary">/mo</Typography></Typography>
+                      <Button variant="contained" size="small" sx={{ borderRadius: 6, fontWeight: 600 }}>View Details</Button>
                     </Box>
-                 </Box>
+                  </Box>
+                </Box>
               </Box>
             </Grid>
           </Grid>
