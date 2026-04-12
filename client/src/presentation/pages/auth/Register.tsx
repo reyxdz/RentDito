@@ -9,9 +9,13 @@ export default function Register() {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const [name, setName] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
+  const [barangay, setBarangay] = useState('');
+  const [municipality, setMunicipality] = useState('');
+  const [province, setProvince] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -64,9 +68,17 @@ export default function Register() {
               </Alert>
             )}
 
-            <TextField fullWidth label="Full Name" variant="outlined" value={name} onChange={(e) => setName(e.target.value)} sx={{ mb: 2 }} required disabled={isLoading} />
+            <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
+              <TextField fullWidth label="First Name" variant="outlined" value={firstName} onChange={(e) => setFirstName(e.target.value)} required disabled={isLoading} />
+              <TextField fullWidth label="Last Name" variant="outlined" value={lastName} onChange={(e) => setLastName(e.target.value)} required disabled={isLoading} />
+            </Box>
             <TextField fullWidth label="Email Address" variant="outlined" type="email" value={email} onChange={(e) => setEmail(e.target.value)} sx={{ mb: 2 }} required disabled={isLoading} />
             <TextField fullWidth label="Phone Number" variant="outlined" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} sx={{ mb: 2 }} disabled={isLoading} />
+            <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
+              <TextField fullWidth label="Barangay" variant="outlined" value={barangay} onChange={(e) => setBarangay(e.target.value)} required disabled={isLoading} />
+              <TextField fullWidth label="Municipality / City" variant="outlined" value={municipality} onChange={(e) => setMunicipality(e.target.value)} required disabled={isLoading} />
+            </Box>
+            <TextField fullWidth label="Province" variant="outlined" value={province} onChange={(e) => setProvince(e.target.value)} sx={{ mb: 2 }} required disabled={isLoading} />
             <TextField fullWidth label="Password" variant="outlined" type="password" value={password} onChange={(e) => setPassword(e.target.value)} sx={{ mb: 2 }} required disabled={isLoading} />
             <TextField fullWidth label="Confirm Password" variant="outlined" type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} sx={{ mb: 4 }} required disabled={isLoading} />
 
