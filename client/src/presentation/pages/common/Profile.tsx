@@ -314,7 +314,8 @@ export default function Profile() {
         open={snackbar.open}
         autoHideDuration={6000}
         onClose={() => setSnackbar({ ...snackbar, open: false })}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        sx={{ mt: 8 }}
       >
         <Alert
           onClose={() => setSnackbar({ ...snackbar, open: false })}
