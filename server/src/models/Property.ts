@@ -51,6 +51,7 @@ export interface IProperty extends Document {
   // Computed metrics (virtual fields)
   totalUnits?: number;
   occupiedUnits?: number;
+  vacantUnits?: number;
   occupancyRate?: number;
   
   createdAt: Date;
