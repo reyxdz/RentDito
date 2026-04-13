@@ -73,7 +73,7 @@ export const getContracts = async (req: AuthRequest, res: Response): Promise<voi
  */
 export const getContractById = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const contract = await contractService.getContractById(req.user!.id, req.params.id);
+    const contract = await contractService.getContractById(req.user!.id, req.params.id as string);
 
     res.status(200).json({
       status: 'success',
@@ -92,7 +92,7 @@ export const getContractById = async (req: AuthRequest, res: Response): Promise<
  */
 export const updateContract = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const contract = await contractService.updateContract(req.user!.id, req.params.id, req.body);
+    const contract = await contractService.updateContract(req.user!.id, req.params.id as string, req.body);
 
     res.status(200).json({
       status: 'success',
@@ -115,7 +115,7 @@ export const signContract = async (req: AuthRequest, res: Response): Promise<voi
     const { signatureData, role } = req.body;
     const contract = await contractService.addSignature(
       req.user!.id,
-      req.params.id,
+      req.params.id as string,
       signatureData,
       role
     );
@@ -140,7 +140,7 @@ export const updateStatus = async (req: AuthRequest, res: Response): Promise<voi
   try {
     const contract = await contractService.updateStatus(
       req.user!.id,
-      req.params.id,
+      req.params.id as string,
       req.body.status
     );
 
@@ -162,7 +162,7 @@ export const updateStatus = async (req: AuthRequest, res: Response): Promise<voi
  */
 export const generatePDF = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const result = await contractService.generatePDF(req.user!.id, req.params.id);
+    const result = await contractService.generatePDF(req.user!.id, req.params.id as string);
 
     res.status(200).json({
       status: 'success',
@@ -182,7 +182,7 @@ export const generatePDF = async (req: AuthRequest, res: Response): Promise<void
  */
 export const getDownloadUrl = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const result = await contractService.getDownloadUrl(req.user!.id, req.params.id);
+    const result = await contractService.getDownloadUrl(req.user!.id, req.params.id as string);
 
     res.status(200).json({
       status: 'success',

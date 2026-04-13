@@ -52,7 +52,7 @@ export const getPropertyVisits = async (req: AuthRequest, res: Response): Promis
 
     const visits = await visitService.getPropertyVisits(
       req.user!.id,
-      req.params.propertyId,
+      req.params.propertyId as string,
       filters
     );
 
@@ -73,7 +73,7 @@ export const getPropertyVisits = async (req: AuthRequest, res: Response): Promis
  */
 export const approveVisit = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const visit = await visitService.approveVisit(req.user!.id, req.params.id);
+    const visit = await visitService.approveVisit(req.user!.id, req.params.id as string);
 
     res.status(200).json({
       status: 'success',
@@ -93,7 +93,7 @@ export const approveVisit = async (req: AuthRequest, res: Response): Promise<voi
  */
 export const scheduleVisit = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const visit = await visitService.scheduleVisit(req.user!.id, req.params.id, req.body);
+    const visit = await visitService.scheduleVisit(req.user!.id, req.params.id as string, req.body);
 
     res.status(200).json({
       status: 'success',
@@ -113,7 +113,7 @@ export const scheduleVisit = async (req: AuthRequest, res: Response): Promise<vo
  */
 export const assignStaff = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const visit = await visitService.assignStaff(req.user!.id, req.params.id, req.body.staffId);
+    const visit = await visitService.assignStaff(req.user!.id, req.params.id as string, req.body.staffId);
 
     res.status(200).json({
       status: 'success',
@@ -133,7 +133,7 @@ export const assignStaff = async (req: AuthRequest, res: Response): Promise<void
  */
 export const completeVisit = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const visit = await visitService.completeVisit(req.user!.id, req.params.id);
+    const visit = await visitService.completeVisit(req.user!.id, req.params.id as string);
 
     res.status(200).json({
       status: 'success',
@@ -153,7 +153,7 @@ export const completeVisit = async (req: AuthRequest, res: Response): Promise<vo
  */
 export const cancelVisit = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const visit = await visitService.cancelVisit(req.user!.id, req.params.id);
+    const visit = await visitService.cancelVisit(req.user!.id, req.params.id as string);
 
     res.status(200).json({
       status: 'success',
@@ -173,7 +173,7 @@ export const cancelVisit = async (req: AuthRequest, res: Response): Promise<void
  */
 export const markNoShow = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const visit = await visitService.markNoShow(req.user!.id, req.params.id);
+    const visit = await visitService.markNoShow(req.user!.id, req.params.id as string);
 
     res.status(200).json({
       status: 'success',

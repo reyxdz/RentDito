@@ -4,8 +4,16 @@ export const createUnitSchema = Joi.object({
   propertyId: Joi.string().required(),
   unitIdentifier: Joi.string().trim().required(),
   accommodationType: Joi.string().valid('room', 'bedspace').required(),
-  roomRent: Joi.number().min(0),
-  bedspaceRent: Joi.number().min(0),
+  roomRent: Joi.number().min(0).when('accommodationType', {
+    is: 'room',
+    then: Joi.number().min(0).required().messages({ 'any.required': 'Room rent is required for room units' }),
+    otherwise: Joi.number().min(0)
+  }),
+  bedspaceRent: Joi.number().min(0).when('accommodationType', {
+    is: 'bedspace',
+    then: Joi.number().min(0).required().messages({ 'any.required': 'Bedspace rent is required for bedspace units' }),
+    otherwise: Joi.number().min(0)
+  }),
   perHeadRate: Joi.number().min(0),
   deposit: Joi.number().min(0).required(),
   capacity: Joi.number().integer().min(1).required(),

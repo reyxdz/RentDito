@@ -142,12 +142,13 @@ export const deleteProperty = async (req: AuthRequest, res: Response): Promise<v
  */
 export const uploadPropertyImages = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const imageUrls = req.body.imageUrls || [];
+    // imageUrls is set by the uploadMultiple middleware after Cloudinary upload
+    const imageUrls: string[] = req.body.imageUrls;
     
     if (!imageUrls || imageUrls.length === 0) {
       res.status(400).json({
         status: 'error',
-        message: 'No images provided',
+        message: 'No images provided. Upload image files using multipart/form-data.',
       });
       return;
     }

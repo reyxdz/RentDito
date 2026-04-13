@@ -6,7 +6,11 @@ export const createFromApplicationSchema = Joi.object({
 
 export const updateContractSchema = Joi.object({
   startDate: Joi.date().iso(),
-  endDate: Joi.date().iso().greater(Joi.ref('startDate')),
+  endDate: Joi.date().iso().min('now').when('startDate', {
+    is: Joi.exist(),
+    then: Joi.date().greater(Joi.ref('startDate')),
+    otherwise: Joi.date()
+  }),
   lockInPeriod: Joi.number().min(0).max(60),
   monthlyRent: Joi.number().min(0),
   securityDeposit: Joi.number().min(0),

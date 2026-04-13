@@ -261,6 +261,14 @@ export const addSignature = async (
     throw Object.assign(new Error('Contract not found'), { statusCode: 404 });
   }
 
+  // Only allow signing when contract is in pending_signature status
+  if (contract.status !== 'pending_signature') {
+    throw Object.assign(
+      new Error(`Contract must be in 'pending_signature' status to sign. Current status: ${contract.status}`),
+      { statusCode: 400 }
+    );
+  }
+
   const property = contract.propertyId as any;
   const landlord = contract.landlordId as any;
   const tenant = contract.userId as any;
@@ -278,8 +286,8 @@ export const addSignature = async (
     contract.userSignature = signatureData;
   }
 
-  // If both signatures present, mark as signed
-  if (contract.landlordSignature && contract.userSignature && contract.status === 'pending_signature') {
+  // If both signatures present, auto-transition to signed
+  if (contract.landlordSignature && contract.userSignature) {
     contract.status = 'signed';
     contract.signedAt = new Date();
 
@@ -321,6 +329,19 @@ export const addSignature = async (
 /**
  * Update contract status
  */
+/**
+ * Valid contract status transitions (state machine)
+ */
+const VALID_STATUS_TRANSITIONS: Record<string, string[]> = {
+  draft: ['pending_review'],
+  pending_review: ['pending_signature', 'draft'],
+  pending_signature: ['signed'],          // auto-transition handled by addSignature
+  signed: ['active'],
+  active: ['expired', 'terminated'],
+  expired: [],                            // terminal state
+  terminated: [],                         // terminal state
+};
+
 export const updateStatus = async (userId: string, contractId: string, status: string) => {
   const contract = await Contract.findById(contractId).populate('propertyId landlordId userId');
   if (!contract) {
@@ -341,6 +362,17 @@ export const updateStatus = async (userId: string, contractId: string, status: s
 
   if (!isLandlord && !isStaff && !isAdmin) {
     throw Object.assign(new Error('Access denied'), { statusCode: 403 });
+  }
+
+  // Validate state transition
+  const currentStatus = contract.status;
+  const allowedNextStatuses = VALID_STATUS_TRANSITIONS[currentStatus];
+
+  if (!allowedNextStatuses || !allowedNextStatuses.includes(status)) {
+    throw Object.assign(
+      new Error(`Invalid status transition: '${currentStatus}' → '${status}'. Allowed: [${(allowedNextStatuses || []).join(', ')}]`),
+      { statusCode: 400 }
+    );
   }
 
   contract.status = status as any;
@@ -399,7 +431,13 @@ export const generatePDF = async (userId: string, contractId: string) => {
   const templateData: ContractTemplateData = {
     contractId: contract._id.toString(),
     propertyName: property.name,
-    propertyAddress: `${property.address.street}, ${property.address.barangay}, ${property.address.city}, ${property.address.province} ${property.address.zipCode}`,
+    propertyAddress: [
+      property.address.street,
+      property.address.barangay,
+      property.address.city,
+      property.address.province,
+      property.address.zipCode
+    ].filter(Boolean).join(', '),
     unitIdentifier: unit.unitIdentifier,
     landlordName: landlord.name,
     landlordAddress: undefined,

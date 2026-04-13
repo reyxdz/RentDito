@@ -20,19 +20,16 @@ export const getPublicListings = async (filters: {
   if (city) filter['address.city'] = new RegExp(city, 'i');
   if (propertyType) filter.propertyType = propertyType;
 
-  const skip = (page - 1) * limit;
-  const properties = await Property.find(filter)
+  // Fetch ALL matching properties first (without pagination)
+  // so we can apply price filter before paginating
+  const allProperties = await Property.find(filter)
     .populate('landlordId', 'name')
     .sort({ createdAt: -1 })
-    .skip(skip)
-    .limit(limit)
     .lean();
 
-  const total = await Property.countDocuments(filter);
-
-  // Compute metrics and price ranges for each property
+  // Compute metrics and price ranges, then apply price filter
   const propertiesWithDetails = await Promise.all(
-    properties.map(async (property) => {
+    allProperties.map(async (property) => {
       const units = await Unit.find({ 
         propertyId: property._id,
         status: { $in: ['vacant', 'occupied', 'reserved'] } // Exclude maintenance
@@ -75,13 +72,18 @@ export const getPublicListings = async (filters: {
   // Filter out null entries (properties that didn't match price filter)
   const filteredProperties = propertiesWithDetails.filter(p => p !== null);
 
+  // Apply pagination AFTER price filtering for correct counts
+  const total = filteredProperties.length;
+  const skip = (page - 1) * limit;
+  const paginatedProperties = filteredProperties.slice(skip, skip + limit);
+
   return {
-    properties: filteredProperties,
+    properties: paginatedProperties,
     pagination: {
       page,
       limit,
-      total: filteredProperties.length,
-      pages: Math.ceil(filteredProperties.length / limit),
+      total,
+      pages: Math.ceil(total / limit),
     },
   };
 };

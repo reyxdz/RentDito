@@ -8,10 +8,10 @@ const router = Router();
 // GET /api/public/listings - Get all active properties
 router.get('/listings', publicController.getPublicListings);
 
+// GET /api/public/listings/unit/:id - Get single unit detail (must be before /listings/:id)
+router.get('/listings/unit/:id', publicController.getPublicUnitById);
+
 // GET /api/public/listings/:id - Get single property with units
 router.get('/listings/:id', publicController.getPublicPropertyById);
-
-// GET /api/public/listings/unit/:id - Get single unit detail
-router.get('/listings/unit/:id', publicController.getPublicUnitById);
 
 export default router;

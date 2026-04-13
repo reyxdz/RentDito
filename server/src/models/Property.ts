@@ -9,6 +9,7 @@ export interface IProperty extends Document {
   description: string;
   address: {
     street: string;
+    barangay?: string;
     city: string;
     province: string;
     zipCode: string;
@@ -48,11 +49,11 @@ export interface IProperty extends Document {
     longitude: number;
   };
   
-  // Computed metrics (virtual fields)
-  totalUnits?: number;
-  occupiedUnits?: number;
-  vacantUnits?: number;
-  occupancyRate?: number;
+  // Persisted metrics (updated by Unit post-hooks)
+  totalUnits: number;
+  occupiedUnits: number;
+  vacantUnits: number;
+  occupancyRate: number;
   
   createdAt: Date;
   updatedAt: Date;
@@ -69,6 +70,7 @@ const PropertySchema = new Schema<IProperty>(
     description: { type: String, required: true },
     address: {
       street: { type: String, required: true },
+      barangay: { type: String },
       city: { type: String, required: true },
       province: { type: String, required: true },
       zipCode: { type: String, required: true },
@@ -87,6 +89,12 @@ const PropertySchema = new Schema<IProperty>(
       default: 'Inactive' 
     },
     images: [{ type: String }],
+    
+    // Persisted metrics (auto-updated by Unit model hooks)
+    totalUnits: { type: Number, default: 0 },
+    occupiedUnits: { type: Number, default: 0 },
+    vacantUnits: { type: Number, default: 0 },
+    occupancyRate: { type: Number, default: 0 },
     
     venues: {
       reviewCenters: [{
@@ -127,22 +135,6 @@ const PropertySchema = new Schema<IProperty>(
   },
   { timestamps: true }
 );
-
-// Virtual field for computed metrics
-PropertySchema.virtual('metrics').get(async function() {
-  const Unit = mongoose.model('Unit');
-  const totalUnits = await Unit.countDocuments({ propertyId: this._id });
-  const occupiedUnits = await Unit.countDocuments({ 
-    propertyId: this._id, 
-    status: 'Occupied' 
-  });
-  
-  return {
-    totalUnits,
-    occupiedUnits,
-    occupancyRate: totalUnits > 0 ? (occupiedUnits / totalUnits) * 100 : 0
-  };
-});
 
 // Indexing for quick filtering
 PropertySchema.index({ landlordId: 1 });

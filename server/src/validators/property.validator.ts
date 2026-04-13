@@ -13,6 +13,7 @@ export const createPropertySchema = Joi.object({
     }),
   address: Joi.object({
     street: Joi.string().required().messages({ 'any.required': 'Street address is required' }),
+    barangay: Joi.string().trim().allow(''),
     city: Joi.string().required().messages({ 'any.required': 'City is required' }),
     province: Joi.string().required().messages({ 'any.required': 'Province is required' }),
     zipCode: Joi.string().required().messages({ 'any.required': 'Zip code is required' }),
@@ -71,6 +72,7 @@ export const updatePropertySchema = Joi.object({
   description: Joi.string().trim().min(10).max(2000).optional(),
   address: Joi.object({
     street: Joi.string().optional(),
+    barangay: Joi.string().trim().allow('').optional(),
     city: Joi.string().optional(),
     province: Joi.string().optional(),
     zipCode: Joi.string().optional(),

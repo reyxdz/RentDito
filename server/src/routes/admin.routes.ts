@@ -1,11 +1,13 @@
 import { Router } from 'express';
 import auth from '../middleware/auth';
+import { requireRole } from '../middleware/rbac';
 import * as adminController from '../controllers/admin.controller';
 
 const router = Router();
 
-// All routes require authentication
+// All routes require authentication + super_admin role
 router.use(auth);
+router.use(requireRole('super_admin'));
 
 // GET /api/admin/verifications - Get pending verifications
 router.get('/verifications', adminController.getPendingVerifications);

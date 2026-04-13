@@ -70,7 +70,7 @@ export const getApplications = async (req: AuthRequest, res: Response): Promise<
  */
 export const getApplicationById = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const application = await applicationService.getApplicationById(req.user!.id, req.params.id);
+    const application = await applicationService.getApplicationById(req.user!.id, req.params.id as string);
 
     res.status(200).json({
       status: 'success',
@@ -91,7 +91,7 @@ export const reviewApplication = async (req: AuthRequest, res: Response): Promis
   try {
     const application = await applicationService.reviewApplication(
       req.user!.id,
-      req.params.id,
+      req.params.id as string,
       req.body.reviewNotes
     );
 
@@ -115,7 +115,7 @@ export const approveApplication = async (req: AuthRequest, res: Response): Promi
   try {
     const application = await applicationService.approveApplication(
       req.user!.id,
-      req.params.id,
+      req.params.id as string,
       req.body.reviewNotes
     );
 
@@ -139,7 +139,7 @@ export const rejectApplication = async (req: AuthRequest, res: Response): Promis
   try {
     const application = await applicationService.rejectApplication(
       req.user!.id,
-      req.params.id,
+      req.params.id as string,
       req.body.reviewNotes
     );
 

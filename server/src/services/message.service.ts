@@ -109,12 +109,19 @@ export const sendMessage = async (
   const inquiry = conversation.inquiryId as any;
 
   for (const participantId of otherParticipants) {
+    // Determine correct link based on participant role
+    const participant = await User.findById(participantId).select('role').lean();
+    const isHubUser = participant && (participant.role === 'landlord' || participant.role === 'staff' || participant.role === 'super_admin');
+    const link = isHubUser
+      ? `/hub/pipeline/inquiries/${inquiry._id}`
+      : `/u/inquiries/${inquiry._id}`;
+
     await Notification.create({
       userId: participantId,
       type: 'message',
       title: 'New Message',
       message: `${sender?.name} sent you a message`,
-      link: `/hub/pipeline/inquiries/${inquiry._id}`,
+      link,
       metadata: {
         conversationId: conversation._id.toString(),
         inquiryId: inquiry._id.toString()

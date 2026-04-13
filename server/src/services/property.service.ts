@@ -75,7 +75,11 @@ export const getProperties = async (
       const totalUnits = await Unit.countDocuments({ propertyId: property._id });
       const occupiedUnits = await Unit.countDocuments({ 
         propertyId: property._id, 
-        status: 'Occupied' 
+        status: 'occupied' 
+      });
+      const vacantUnits = await Unit.countDocuments({ 
+        propertyId: property._id, 
+        status: 'vacant' 
       });
 
       return {
@@ -83,6 +87,7 @@ export const getProperties = async (
         metrics: {
           totalUnits,
           occupiedUnits,
+          vacantUnits,
           occupancyRate: totalUnits > 0 ? (occupiedUnits / totalUnits) * 100 : 0,
         },
       };
@@ -120,7 +125,11 @@ export const getPropertyById = async (userId: string, propertyId: string) => {
   const totalUnits = await Unit.countDocuments({ propertyId: property._id });
   const occupiedUnits = await Unit.countDocuments({ 
     propertyId: property._id, 
-    status: 'Occupied' 
+    status: 'occupied' 
+  });
+  const vacantUnits = await Unit.countDocuments({ 
+    propertyId: property._id, 
+    status: 'vacant' 
   });
 
   return {
@@ -128,6 +137,7 @@ export const getPropertyById = async (userId: string, propertyId: string) => {
     metrics: {
       totalUnits,
       occupiedUnits,
+      vacantUnits,
       occupancyRate: totalUnits > 0 ? (occupiedUnits / totalUnits) * 100 : 0,
     },
   };

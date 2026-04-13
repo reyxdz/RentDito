@@ -122,6 +122,15 @@ export const createUnit = async (userId: string, data: Partial<IUnit>) => {
     throw Object.assign(new Error('Property not found or access denied'), { statusCode: 404 });
   }
 
+  // Auto-generate slots for bedspace units if not provided
+  if (data.accommodationType === 'bedspace' && (!data.slots || data.slots.length === 0)) {
+    const capacity = data.capacity || 1;
+    data.slots = Array.from({ length: capacity }, (_, i) => ({
+      slotNumber: i + 1,
+      status: 'vacant' as const,
+    }));
+  }
+
   const unit = await Unit.create(data);
   return unit.populate('propertyId', 'name address');
 };
