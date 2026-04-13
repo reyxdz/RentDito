@@ -35,7 +35,7 @@ export const getProperties = async (req: AuthRequest, res: Response): Promise<vo
  */
 export const getPropertyById = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const property = await propertyService.getPropertyById(req.user!.id, req.params.id);
+    const property = await propertyService.getPropertyById(req.user!.id, req.params.id as string);
 
     res.status(200).json({
       status: 'success',
@@ -76,7 +76,7 @@ export const updateProperty = async (req: AuthRequest, res: Response): Promise<v
   try {
     const property = await propertyService.updateProperty(
       req.user!.id,
-      req.params.id,
+      req.params.id as string,
       req.body
     );
 
@@ -101,7 +101,7 @@ export const updatePropertyStatus = async (req: AuthRequest, res: Response): Pro
     const { status } = req.body;
     const property = await propertyService.updatePropertyStatus(
       req.user!.id,
-      req.params.id,
+      req.params.id as string,
       status
     );
 
@@ -123,7 +123,7 @@ export const updatePropertyStatus = async (req: AuthRequest, res: Response): Pro
  */
 export const deleteProperty = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    await propertyService.deleteProperty(req.user!.id, req.params.id);
+    await propertyService.deleteProperty(req.user!.id, req.params.id as string);
 
     res.status(200).json({
       status: 'success',
@@ -154,7 +154,7 @@ export const uploadPropertyImages = async (req: AuthRequest, res: Response): Pro
 
     const property = await propertyService.uploadPropertyImages(
       req.user!.id,
-      req.params.id,
+      req.params.id as string,
       imageUrls
     );
 
