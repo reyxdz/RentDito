@@ -30,22 +30,24 @@ const seedUsers = async () => {
   console.log('Seeding users...');
   const defaultPassword = await hash('password123');
   
-  const superAdmin = await User.create({ name: 'Super Admin', email: 'admin@rentdito.com', passwordHash: defaultPassword, role: 'super_admin', verificationStatus: 'verified' });
+  const superAdmin = await User.create({ name: 'System Admin', email: 'admin@rentdito.com', phone: '09171234567', passwordHash: defaultPassword, role: 'super_admin', verificationStatus: 'verified' });
   
-  const landlord1 = await User.create({ name: 'Primary Landlord', email: 'landlord@rentdito.com', passwordHash: defaultPassword, role: 'landlord', verificationStatus: 'verified' });
-  const landlord2 = await User.create({ name: 'Secondary Landlord', email: 'landlord2@rentdito.com', passwordHash: defaultPassword, role: 'landlord', verificationStatus: 'verified' });
+  const landlord1 = await User.create({ name: 'Juan Dela Cruz', email: 'landlord1@rentdito.com', phone: '09181234567', passwordHash: defaultPassword, role: 'landlord', verificationStatus: 'verified' });
+  const landlord2 = await User.create({ name: 'Maria Santos', email: 'landlord2@rentdito.com', phone: '09191234567', passwordHash: defaultPassword, role: 'landlord', verificationStatus: 'verified' });
   
-  const staff1 = await User.create({ name: 'Manager Staff', email: 'staff1@rentdito.com', passwordHash: defaultPassword, role: 'staff', positionName: 'Manager', permissions: ['manage_properties', 'manage_leases'], verificationStatus: 'verified', landlordId: landlord1._id });
-  const staff2 = await User.create({ name: 'Maintenance Staff', email: 'staff2@rentdito.com', passwordHash: defaultPassword, role: 'staff', positionName: 'Maintenance', permissions: ['manage_maintenance'], verificationStatus: 'verified', landlordId: landlord1._id });
-  const staff3 = await User.create({ name: 'Finance Staff', email: 'staff3@rentdito.com', passwordHash: defaultPassword, role: 'staff', positionName: 'Accountant', permissions: ['manage_payments'], verificationStatus: 'verified', landlordId: landlord2._id });
+  const staff1 = await User.create({ name: 'Pedro Penduko', email: 'manager@rentdito.com', phone: '09201234567', passwordHash: defaultPassword, role: 'staff', positionName: 'Manager', permissions: ['manage_properties', 'manage_leases', 'manage_maintenance', 'view_reports'], verificationStatus: 'verified', landlordId: landlord1._id });
+  const staff2 = await User.create({ name: 'Jose Rizal', email: 'maintenance@rentdito.com', phone: '09211234567', passwordHash: defaultPassword, role: 'staff', positionName: 'Maintenance Staff', permissions: ['manage_maintenance'], verificationStatus: 'verified', landlordId: landlord1._id });
+  const staff3 = await User.create({ name: 'Andres Bonifacio', email: 'finance@rentdito.com', phone: '09221234567', passwordHash: defaultPassword, role: 'staff', positionName: 'Accountant', permissions: ['process_payments', 'view_reports'], verificationStatus: 'verified', landlordId: landlord2._id });
+  const staff4 = await User.create({ name: 'Gabriela Silang', email: 'receptionist@rentdito.com', phone: '09231234567', passwordHash: defaultPassword, role: 'staff', positionName: 'Front Desk Receptionist', permissions: ['manage_tenants'], verificationStatus: 'verified', landlordId: landlord2._id });
 
-  const user1 = await User.create({ name: 'User One', email: 'user1@rentdito.com', passwordHash: defaultPassword, role: 'user', verificationStatus: 'verified' });
-  const user2 = await User.create({ name: 'User Two', email: 'user2@rentdito.com', passwordHash: defaultPassword, role: 'user', verificationStatus: 'verified' });
-  const user3 = await User.create({ name: 'User Three', email: 'user3@rentdito.com', passwordHash: defaultPassword, role: 'user', verificationStatus: 'pending' });
-  const user4 = await User.create({ name: 'User Four', email: 'user4@rentdito.com', passwordHash: defaultPassword, role: 'user', verificationStatus: 'unverified' });
-  const user5 = await User.create({ name: 'User Five', email: 'user5@rentdito.com', passwordHash: defaultPassword, role: 'user', verificationStatus: 'unverified' });
+  const user1 = await User.create({ name: 'Luzviminda Macaraeg', email: 'user1@rentdito.com', phone: '09991112222', passwordHash: defaultPassword, role: 'user', verificationStatus: 'verified' });
+  const user2 = await User.create({ name: 'Cardo Dalisay', email: 'user2@rentdito.com', phone: '09993334444', passwordHash: defaultPassword, role: 'user', verificationStatus: 'verified' });
+  const user3 = await User.create({ name: 'Nena Reyes', email: 'user3@rentdito.com', phone: '09995556666', passwordHash: defaultPassword, role: 'user', verificationStatus: 'verified' });
+  const user4 = await User.create({ name: 'Boyet Fernandez', email: 'user4@rentdito.com', phone: '09997778888', passwordHash: defaultPassword, role: 'user', verificationStatus: 'unverified' });
+  const user5 = await User.create({ name: 'Inday Bote', email: 'user5@rentdito.com', phone: '09999990000', passwordHash: defaultPassword, role: 'user', verificationStatus: 'unverified' });
+  const user6 = await User.create({ name: 'Ding Dantes', email: 'user6@rentdito.com', phone: '09881112222', passwordHash: defaultPassword, role: 'user', verificationStatus: 'pending' });
 
-  return [superAdmin, landlord1, landlord2, staff1, staff2, staff3, user1, user2, user3, user4, user5];
+  return [superAdmin, landlord1, landlord2, staff1, staff2, staff3, staff4, user1, user2, user3, user4, user5, user6];
 };
 
 const seedProperties = async (users: any[]) => {
