@@ -16,6 +16,10 @@ import ResetPassword from './presentation/pages/auth/ResetPassword';
 import ProtectedRoute from './presentation/components/ProtectedRoute';
 import Unauthorized from './presentation/pages/common/Unauthorized';
 import NotFound from './presentation/pages/common/NotFound';
+import Profile from './presentation/pages/common/Profile';
+
+// ─── Contexts ────────────────────────────────────────────────────────
+import { NotificationProvider } from './application/context/NotificationContext';
 
 // ─── Layouts ─────────────────────────────────────────────────────────
 import AdminLayout from './presentation/layouts/AdminLayout';
@@ -59,8 +63,8 @@ import {
 // ─── User pages ──────────────────────────────────────────────────────
 import VerifyAccount from './presentation/pages/user/VerifyAccount';
 import BecomeLandlord from './presentation/pages/user/BecomeLandlord';
+import Dashboard from './presentation/pages/user/Dashboard';
 import {
-  UserDashboard,
   UserInquiries,
   UserBookings,
   UserMyUnit,
@@ -71,7 +75,8 @@ import {
 
 function App() {
   return (
-    <Router>
+    <NotificationProvider>
+      <Router>
       <Routes>
         {/* ────── Public ────────────────────────────────────────────── */}
         <Route path="/" element={<LandingPage />} />
@@ -97,6 +102,7 @@ function App() {
           <Route path="communications" element={<AdminComms />} />
           <Route path="system" element={<AdminSystem />} />
           <Route path="security" element={<AdminSecurity />} />
+          <Route path="profile" element={<Profile />} />
         </Route>
 
         {/* ────── Hub Layout (landlord + staff) ─────────────────────── */}
@@ -117,11 +123,12 @@ function App() {
           <Route path="reports" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="reports"><HubReportsPlaceholder /></ProtectedRoute>} />
           <Route path="security" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="security"><HubSecurityPlaceholder /></ProtectedRoute>} />
           <Route path="team" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="team"><TeamManagement /></ProtectedRoute>} />
+          <Route path="profile" element={<Profile />} />
         </Route>
 
         {/* ────── User Layout (regular user) ────────────────────────── */}
         <Route path="/u" element={<ProtectedRoute><UserLayout /></ProtectedRoute>}>
-          <Route index element={<UserDashboard />} />
+          <Route index element={<Dashboard />} />
           <Route path="inquiries" element={<UserInquiries />} />
           <Route path="bookings" element={<UserBookings />} />
           <Route path="verify" element={<VerifyAccount />} />
@@ -130,6 +137,7 @@ function App() {
           <Route path="bills" element={<UserBills />} />
           <Route path="contract" element={<UserContract />} />
           <Route path="maintenance" element={<UserMaintenance />} />
+          <Route path="profile" element={<Profile />} />
         </Route>
 
         {/* ────── Legacy redirect: /landlord → /hub ─────────────────── */}
@@ -142,6 +150,7 @@ function App() {
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
+  </NotificationProvider>
   )
 }
 

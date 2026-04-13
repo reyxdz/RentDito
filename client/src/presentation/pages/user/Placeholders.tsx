@@ -16,7 +16,7 @@ const PlaceholderView = ({ title, description }: { title: string, description: s
   </Box>
 );
 
-export const UserDashboard = () => <PlaceholderView title="My Dashboard" description="Your personal RentDito dashboard — view activity, inquiries, and account status." />;
+
 export const UserInquiries = () => <PlaceholderView title="My Inquiries" description="Track your property inquiries and messages with landlords." />;
 export const UserBookings = () => <PlaceholderView title="My Bookings" description="View your pending and confirmed bookings." />;
 export const UserMyUnit = () => <PlaceholderView title="My Unit" description="View details about your currently rented unit." />;
