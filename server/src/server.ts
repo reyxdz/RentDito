@@ -10,6 +10,8 @@ import landlordApplicationRoutes from './routes/landlord-application.routes';
 import teamRoutes from './routes/team.routes';
 import propertyRoutes from './routes/property.routes';
 import unitRoutes from './routes/unit.routes';
+import publicRoutes from './routes/public.routes';
+import adminRoutes from './routes/admin.routes';
 
 dotenv.config();
 
@@ -37,6 +39,8 @@ app.use('/api/landlord-applications', landlordApplicationRoutes);
 app.use('/api/team', teamRoutes);
 app.use('/api/properties', propertyRoutes);
 app.use('/api/units', unitRoutes);
+app.use('/api/public', publicRoutes);
+app.use('/api/admin', adminRoutes);
 
 const server = app.listen(PORT, () => {
   console.log(`Server is running in development mode on port ${PORT}`);
