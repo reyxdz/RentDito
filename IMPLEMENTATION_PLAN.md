@@ -676,19 +676,21 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 7 | Fix all bugs found |
 
 ---
+**________________________________________ D O N E ________________________________________**
 
 #### 🔧 Paul — Frontend Auth Flow Polish
 **🤖 Gemini**
 
-| # | Task |
-|---|---|
-| 1 | Test login/register on desktop + mobile |
-| 2 | Add password visibility toggle to login/register |
-| 3 | Polish all layouts: responsive, dark mode consistent, transitions smooth |
-| 4 | Test sidebar collapse/expand on desktop, drawer on mobile |
-| 5 | Verify role-based redirects after login |
-| 6 | Fix all bugs found |
+| # | Task | Status |
+|---|---|---|
+| 1 | Test login/register on desktop + mobile | ✅ |
+| 2 | Add password visibility toggle to login/register | ✅ |
+| 3 | Polish all layouts: responsive, dark mode consistent, transitions smooth | ✅ |
+| 4 | Test sidebar collapse/expand on desktop(close by default), drawer on mobile | ✅ |
+| 5 | Verify role-based redirects after login | ✅ |
+| 6 | Fix all bugs found | ✅ |
 
+**________________________________________ D O N E ________________________________________**
 ---
 
 #### 🔧 Emanuel — E2E Seed & Component Polish
