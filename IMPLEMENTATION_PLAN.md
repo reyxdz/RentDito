@@ -638,7 +638,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 **________________________________________ D O N E ________________________________________**
 ---
 
-#### 🔧 Emanuel — User Dashboard + Notification Bell
+<!-- #### 🔧 Emanuel — User Dashboard + Notification Bell
 **🤖 Gemini**
 
 | # | Task | Files |
@@ -649,7 +649,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 4 | Add NotificationBell to all 3 layouts' AppBar (HubLayout, UserLayout, AdminLayout) | modify layout files |
 | 5 | `presentation/pages/common/Profile.tsx` — shared profile page: avatar, name, email, phone, change password. Link to verify account. | `client/src/presentation/pages/common/Profile.tsx` |
 
-**✅ Verify:** Login as user → see Dashboard with quick stats + "Browse Listings". Notification bell appears in all layouts. Profile page shows user data.
+**✅ Verify:** Login as user → see Dashboard with quick stats + "Browse Listings". Notification bell appears in all layouts. Profile page shows user data. -->
 
 ---
 
@@ -662,7 +662,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 
 > **Goal:** Shake out all bugs. Seed all roles. Verify every auth/RBAC scenario.
 
-#### 👑 Rey — Backend Integration Testing
+<!-- #### 👑 Rey — Backend Integration Testing
 **🤖 Gemini**
 
 | # | Task |
@@ -673,7 +673,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 4 | Test staff invite → login → permissions enforced |
 | 5 | Test edge cases: expired token, duplicate email, invalid JWT |
 | 6 | Create `server/API_REFERENCE.md` documenting all endpoints |
-| 7 | Fix all bugs found |
+| 7 | Fix all bugs found | -->
 
 ---
 
@@ -718,7 +718,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 
 > **Goal:** Landlords can create, edit, and manage properties from the Hub.
 
-#### 👑 Rey — Property Backend
+<!-- #### 👑 Rey — Property Backend
 **🤖 Gemini**
 
 | # | Task | Files |
@@ -728,7 +728,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 3 | `controllers/property.controller.ts`, `services/property.service.ts`, `validators/property.validator.ts` | matching files |
 | 4 | Auto-scope: queries filtered by landlordId for landlord, assignedPropertyIds for staff | inside service |
 
-**✅ Verify:** POST create property → GET returns it → PATCH update → DELETE removes. Staff only sees assigned.
+**✅ Verify:** POST create property → GET returns it → PATCH update → DELETE removes. Staff only sees assigned. -->
 
 ---
 
@@ -768,7 +768,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 
 > **Goal:** Units can be created within properties. Bedspace and room modes supported.
 
-#### 👑 Rey — Unit Backend
+<!-- #### 👑 Rey — Unit Backend
 **🤖 Gemini**
 
 | # | Task | Files |
@@ -777,7 +777,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 2 | `routes/unit.routes.ts` — full CRUD. GET list (filter by propertyId, status, type), GET /:id, POST, PATCH, DELETE, PATCH /:id/status, POST /:id/images, GET /property/:propertyId/units | routes + controller + service + validator |
 | 3 | Auto-update property metrics (totalUnits, vacantUnits, etc.) when unit is created/updated/deleted — use Mongoose post-save hooks or service logic | inside service/model |
 
-**✅ Verify:** Create unit under a property → GET returns it → property metrics update.
+**✅ Verify:** Create unit under a property → GET returns it → property metrics update. -->
 
 ---
 
@@ -816,7 +816,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 
 > **Goal:** Public listing pages use real data. Users can verify their identity.
 
-#### 👑 Rey — Public API + Verification Backend
+<!-- #### 👑 Rey — Public API + Verification Backend
 **🤖 Gemini**
 
 | # | Task | Files |
@@ -824,7 +824,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 1 | `routes/public.routes.ts` — NO auth required. GET /listings (active properties with metrics), GET /listings/:id (property + units), GET /listings/unit/:id (unit detail) | new routes/controller/service |
 | 2 | User verification: POST /users/me/verify → upload ID photos → set verificationStatus to 'pending'. Admin: GET /admin/verifications (pending list), PATCH /admin/verifications/:userId/approve, PATCH reject | add to user routes + admin routes |
 
-**✅ Verify:** Public GET `/api/public/listings` → returns only active properties with unit counts + price ranges. No auth token needed.
+**✅ Verify:** Public GET `/api/public/listings` → returns only active properties with unit counts + price ranges. No auth token needed. -->
 
 ---
 
@@ -869,7 +869,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 
 > **Goal:** Verified users can submit inquiries about properties. Landlords/staff can respond. Real-time-ish conversation.
 
-#### 👑 Rey — Inquiry + Conversation + Message Backend
+<!-- #### 👑 Rey — Inquiry + Conversation + Message Backend
 **🤖 Gemini**
 
 | # | Task | Files |
@@ -879,7 +879,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 3 | `routes/message.routes.ts` — GET /conversation/:id/messages (paginated), POST /conversation/:id/messages (send message, with optional attachment upload) | route + controller + service |
 | 4 | When inquiry is created → auto-create Conversation with participants = [userId, landlordId]. Create Notification for landlord. | inside service |
 
-**✅ Verify:** User POSTs inquiry → conversation auto-created → POST message → GET messages returns it. Landlord receives notification.
+**✅ Verify:** User POSTs inquiry → conversation auto-created → POST message → GET messages returns it. Landlord receives notification. -->
 
 ---
 
@@ -919,7 +919,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 
 > **Goal:** Users can request property viewings. Landlords schedule them, assign staff.
 
-#### 👑 Rey — Visit Backend
+<!-- #### 👑 Rey — Visit Backend
 **🤖 Gemini**
 
 | # | Task | Files |
@@ -929,7 +929,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 3 | Double-booking check: before approving, check no other visit scheduled for same unit at same time → 409 if conflict | inside service |
 | 4 | When visit approved/scheduled → create Notification for user. When 1 day before → create reminder notification for all parties (the function; actual cron in Phase 5). | inside service |
 
-**✅ Verify:** User requests visit → landlord approves → sets schedule → assigns caretaker staff → marks complete. Double-booking rejected.
+**✅ Verify:** User requests visit → landlord approves → sets schedule → assigns caretaker staff → marks complete. Double-booking rejected. -->
 
 ---
 
@@ -970,7 +970,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 
 > **Goal:** Interested users submit formal rental applications. Landlords review and approve.
 
-#### 👑 Rey — Application Backend
+<!-- #### 👑 Rey — Application Backend
 **🤖 Gemini**
 
 | # | Task | Files |
@@ -980,7 +980,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 3 | Validation: user cannot apply if unit is not vacant. User cannot have multiple pending applications for same unit. | inside service |
 | 4 | Notifications: on submit → notify landlord. On approve/reject → notify user. | inside service |
 
-**✅ Verify:** User applies → landlord sees it → approves → user notified. Rejected application → user sees rejection with notes.
+**✅ Verify:** User applies → landlord sees it → approves → user notified. Rejected application → user sees rejection with notes. -->
 
 ---
 
