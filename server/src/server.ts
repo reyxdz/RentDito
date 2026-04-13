@@ -12,6 +12,8 @@ import propertyRoutes from './routes/property.routes';
 import unitRoutes from './routes/unit.routes';
 import publicRoutes from './routes/public.routes';
 import adminRoutes from './routes/admin.routes';
+import inquiryRoutes from './routes/inquiry.routes';
+import messageRoutes from './routes/message.routes';
 
 dotenv.config();
 
@@ -41,6 +43,8 @@ app.use('/api/properties', propertyRoutes);
 app.use('/api/units', unitRoutes);
 app.use('/api/public', publicRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/inquiries', inquiryRoutes);
+app.use('/api/messages', messageRoutes);
 
 const server = app.listen(PORT, () => {
   console.log(`Server is running in development mode on port ${PORT}`);
