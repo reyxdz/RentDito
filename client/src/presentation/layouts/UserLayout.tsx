@@ -12,6 +12,7 @@ import {
 } from '@mui/icons-material';
 import { useColorMode } from '../context/ThemeContext';
 import { useAuth } from '../../application/context/AuthContext';
+import NotificationBell from '../components/NotificationBell';
 import { USER_MENU_ITEMS, renderIcon } from '../../application/config/menuConfig';
 import type { MenuItem as MenuItemType } from '../../application/config/menuConfig';
 import logoPng from '../../assets/logo.png';
@@ -179,11 +180,22 @@ export default function UserLayout() {
             sx={{
               display: 'flex', alignItems: 'center', gap: 1.5,
               p: isCollapsed && isMdUp ? 0.5 : 1, width: '100%',
-              cursor: isCollapsed && isMdUp ? 'pointer' : 'default',
+              cursor: 'pointer',
+              borderRadius: 2,
+              transition: 'all 0.2s ease',
+              '&:hover': {
+                bgcolor: mode === 'light' ? 'rgba(90, 49, 232, 0.04)' : 'rgba(255,255,255,0.04)',
+              },
             }}
-            onClick={handleProfileClick}
+            onClick={() => {
+              if (isCollapsed && isMdUp) {
+                handleProfileClick({ currentTarget: document.activeElement } as any);
+              } else {
+                navigate('profile');
+              }
+            }}
           >
-            <Tooltip title={isCollapsed && isMdUp ? 'Profile Options' : ''} placement="right">
+            <Tooltip title={isCollapsed && isMdUp ? 'My Profile' : ''} placement="right">
               <Avatar src={user?.avatar} sx={{ width: 40, height: 40, mx: 'auto' }} />
             </Tooltip>
             <Box sx={{
@@ -240,6 +252,11 @@ export default function UserLayout() {
             <Typography variant="caption" color="text.secondary">{user?.email}</Typography>
           </Box>
           <Divider />
+          <MenuItem onClick={() => { handleMenuClose(); navigate('profile'); }}>
+            <ListItemIcon><MenuIcon fontSize="small" /></ListItemIcon>
+            Profile
+          </MenuItem>
+          <Divider />
           <MenuItem onClick={() => { handleMenuClose(); logout(); }} sx={{ color: 'error.main' }}>
             <ListItemIcon sx={{ color: 'error.main' }}><Logout fontSize="small" /></ListItemIcon>
             Sign Out
@@ -274,6 +291,8 @@ export default function UserLayout() {
           <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1, color: 'text.primary', fontWeight: 600 }}>
             {visibleItems.find(m => m.path === location.pathname)?.text || 'My Account'}
           </Typography>
+
+          <NotificationBell />
 
           <IconButton onClick={toggleColorMode} sx={{ color: 'text.secondary' }}>
             {mode === 'dark' ? <Brightness7 /> : <Brightness4 />}

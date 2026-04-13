@@ -17,8 +17,8 @@ export default function ForgotPassword() {
     setSuccess(false);
     
     try {
-      // Mock API call
-      await new Promise(resolve => setTimeout(resolve, 800));
+      const { authService } = await import('../../../infrastructure/services/AuthService');
+      await authService.forgotPassword(email);
       setSuccess(true);
     } catch (err: any) {
       setError(err.message || 'An error occurred. Please try again.');
