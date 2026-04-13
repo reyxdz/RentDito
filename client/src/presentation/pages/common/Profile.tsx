@@ -10,7 +10,12 @@ import {
   Button,
   useTheme,
   Divider,
-  alpha,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Alert,
+  AlertTitle
 } from '@mui/material';
 import { useAuth } from '../../../application/context/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -21,6 +26,7 @@ export default function Profile() {
   const navigate = useNavigate();
 
   const [isEditing, setIsEditing] = useState(false);
+  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
 
   // Mock form state
   const [formData, setFormData] = useState({
@@ -48,8 +54,13 @@ export default function Profile() {
     // Submit update logic here
   };
 
+  const handleChangePassword = () => {
+    setIsPasswordModalOpen(false);
+    // Submit password update logic here
+  };
+
   return (
-    <Box sx={{ maxWidth: 900, mx: 'auto' }}>
+    <Box sx={{ maxWidth: 800, mx: 'auto' }}>
       <Typography variant="h4" fontWeight={800} gutterBottom>
         My Profile
       </Typography>
@@ -57,165 +68,185 @@ export default function Profile() {
         Manage your account settings and preferences.
       </Typography>
 
-      <Grid container spacing={4}>
-        {/* Personal Details Card */}
-        <Grid size={{ xs: 12, md: 8 }}>
-          <Card
-            elevation={0}
-            sx={{
-              borderRadius: 3,
-              border: `1px solid ${theme.palette.divider}`,
-              mb: 4,
+      <Card
+        elevation={0}
+        sx={{
+          borderRadius: 3,
+          border: `1px solid ${theme.palette.divider}`,
+          mb: 4,
+          overflow: 'visible'
+        }}
+      >
+        <CardContent sx={{ p: { xs: 3, sm: 4 } }}>
+          <Alert 
+            severity="info" 
+            sx={{ 
+              mb: 4, 
+              borderRadius: 2,
+              alignItems: 'center',
+              '& .MuiAlert-message': { 
+                width: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                flexWrap: 'wrap',
+                gap: 2
+              }
             }}
           >
-            <CardContent sx={{ p: 4 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
-                <Typography variant="h6" fontWeight={700}>
-                  Personal Information
-                </Typography>
-                <Button
-                  variant={isEditing ? 'contained' : 'outlined'}
-                  onClick={() => (isEditing ? handleSaveProfile() : setIsEditing(true))}
-                >
-                  {isEditing ? 'Save Changes' : 'Edit Profile'}
-                </Button>
-              </Box>
-              <Divider sx={{ mb: 3 }} />
+            <Box>
+              <AlertTitle sx={{ mb: 0.5 }}>Account Status: <strong>Basic</strong></AlertTitle>
+              <Typography variant="body2">Verifying your identity grants you broader access to listings and allows you to apply for tenancy seamlessly.</Typography>
+            </Box>
+            <Button
+              variant="outlined"
+              color="info"
+              onClick={() => navigate('/u/verify')}
+              sx={{ whiteSpace: 'nowrap', flexShrink: 0 }}
+            >
+              Verify Account
+            </Button>
+          </Alert>
 
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 3, mb: 4 }}>
-                <Avatar src={user?.avatar} sx={{ width: 80, height: 80 }} />
-                <Box>
-                  <Typography variant="subtitle1" fontWeight={600}>
-                    Profile Picture
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                    JPG, GIF or PNG. Max size of 800K
-                  </Typography>
-                  <Button size="small" variant="outlined">
-                    Upload new
-                  </Button>
-                </Box>
-              </Box>
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
+            <Typography variant="h6" fontWeight={700}>
+              Personal Information
+            </Typography>
+            <Button
+              variant={isEditing ? 'contained' : 'outlined'}
+              onClick={() => (isEditing ? handleSaveProfile() : setIsEditing(true))}
+            >
+              {isEditing ? 'Save Changes' : 'Edit Profile'}
+            </Button>
+          </Box>
+          <Divider sx={{ mb: 3 }} />
 
-              <Grid container spacing={3}>
-                <Grid size={{ xs: 12, sm: 6 }}>
-                  <TextField
-                    fullWidth
-                    label="Full Name"
-                    name="name"
-                    disabled={!isEditing}
-                    value={formData.name}
-                    onChange={handleChange}
-                  />
-                </Grid>
-                <Grid size={{ xs: 12, sm: 6 }}>
-                  <TextField
-                    fullWidth
-                    label="Email Address"
-                    name="email"
-                    disabled={!isEditing}
-                    value={formData.email}
-                    onChange={handleChange}
-                    type="email"
-                  />
-                </Grid>
-                <Grid size={{ xs: 12, sm: 6 }}>
-                  <TextField
-                    fullWidth
-                    label="Phone Number"
-                    name="phone"
-                    disabled={!isEditing}
-                    value={formData.phone}
-                    onChange={handleChange}
-                  />
-                </Grid>
-              </Grid>
-            </CardContent>
-          </Card>
-
-          {/* Change Password Card */}
-          <Card
-            elevation={0}
-            sx={{
-              borderRadius: 3,
-              border: `1px solid ${theme.palette.divider}`,
-            }}
-          >
-            <CardContent sx={{ p: 4 }}>
-              <Typography variant="h6" fontWeight={700} sx={{ mb: 3 }}>
-                Change Password
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 3, mb: 4 }}>
+            <Avatar src={user?.avatar} sx={{ width: 80, height: 80 }} />
+            <Box>
+              <Typography variant="subtitle1" fontWeight={600}>
+                Profile Picture
               </Typography>
-              <Divider sx={{ mb: 3 }} />
-
-              <Grid container spacing={3}>
-                <Grid size={{ xs: 12 }}>
-                  <TextField
-                    fullWidth
-                    label="Current Password"
-                    name="currentPassword"
-                    type="password"
-                    value={passwordData.currentPassword}
-                    onChange={handlePasswordChange}
-                  />
-                </Grid>
-                <Grid size={{ xs: 12, sm: 6 }}>
-                  <TextField
-                    fullWidth
-                    label="New Password"
-                    name="newPassword"
-                    type="password"
-                    value={passwordData.newPassword}
-                    onChange={handlePasswordChange}
-                  />
-                </Grid>
-                <Grid size={{ xs: 12, sm: 6 }}>
-                  <TextField
-                    fullWidth
-                    label="Confirm New Password"
-                    name="confirmPassword"
-                    type="password"
-                    value={passwordData.confirmPassword}
-                    onChange={handlePasswordChange}
-                  />
-                </Grid>
-              </Grid>
-              <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end' }}>
-                <Button variant="contained">Update Password</Button>
-              </Box>
-            </CardContent>
-          </Card>
-        </Grid>
-
-        {/* Action / Context Sidebar Grid Item */}
-        <Grid size={{ xs: 12, md: 4 }}>
-          <Card
-            elevation={0}
-            sx={{
-              borderRadius: 3,
-              bgcolor: alpha(theme.palette.primary.main, 0.04),
-              border: `1px solid ${theme.palette.primary.light}`,
-            }}
-          >
-            <CardContent sx={{ p: 3 }}>
-              <Typography variant="h6" fontWeight={700} color="primary.main" gutterBottom>
-                Account Status
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                JPG, GIF or PNG. Max size of 800K
               </Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-                Your account is currently basic. Verifying your identity grants you broader access to listings and allows you to apply for tenancy seamlessly.
-              </Typography>
-              <Button
-                variant="outlined"
-                color="primary"
-                fullWidth
-                sx={{ fontWeight: 600 }}
-                onClick={() => navigate('/u/verify')}
-              >
-                Verify Account
+              <Button size="small" variant="outlined">
+                Upload new
               </Button>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
+            </Box>
+          </Box>
+
+          <Grid container spacing={3}>
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <TextField
+                fullWidth
+                label="Full Name"
+                name="name"
+                disabled={!isEditing}
+                value={formData.name}
+                onChange={handleChange}
+              />
+            </Grid>
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <TextField
+                fullWidth
+                label="Email Address"
+                name="email"
+                disabled={!isEditing}
+                value={formData.email}
+                onChange={handleChange}
+                type="email"
+              />
+            </Grid>
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <TextField
+                fullWidth
+                label="Phone Number"
+                name="phone"
+                disabled={!isEditing}
+                value={formData.phone}
+                onChange={handleChange}
+              />
+            </Grid>
+          </Grid>
+          
+          <Box sx={{ mt: 4 }}>
+            <Divider sx={{ mb: 3 }} />
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
+               <Box>
+                 <Typography variant="subtitle1" fontWeight={600}>
+                   Security
+                 </Typography>
+                 <Typography variant="body2" color="text.secondary">
+                   Update your password to keep your account secure.
+                 </Typography>
+               </Box>
+               <Button 
+                 variant="outlined" 
+                 color="primary"
+                 onClick={() => setIsPasswordModalOpen(true)}
+               >
+                 Change Password
+               </Button>
+            </Box>
+          </Box>
+        </CardContent>
+      </Card>
+
+      {/* Change Password Dialog */}
+      <Dialog 
+        open={isPasswordModalOpen} 
+        onClose={() => setIsPasswordModalOpen(false)}
+        maxWidth="sm"
+        fullWidth
+        PaperProps={{
+          sx: { borderRadius: 3 }
+        }}
+      >
+        <DialogTitle sx={{ fontWeight: 700 }}>Change Password</DialogTitle>
+        <DialogContent dividers>
+          <Grid container spacing={3} sx={{ mt: 0.5 }}>
+            <Grid size={{ xs: 12 }}>
+              <TextField
+                fullWidth
+                label="Current Password"
+                name="currentPassword"
+                type="password"
+                value={passwordData.currentPassword}
+                onChange={handlePasswordChange}
+              />
+            </Grid>
+            <Grid size={{ xs: 12 }}>
+              <TextField
+                fullWidth
+                label="New Password"
+                name="newPassword"
+                type="password"
+                value={passwordData.newPassword}
+                onChange={handlePasswordChange}
+              />
+            </Grid>
+            <Grid size={{ xs: 12 }}>
+              <TextField
+                fullWidth
+                label="Confirm New Password"
+                name="confirmPassword"
+                type="password"
+                value={passwordData.confirmPassword}
+                onChange={handlePasswordChange}
+              />
+            </Grid>
+          </Grid>
+        </DialogContent>
+        <DialogActions sx={{ p: 2, px: 3 }}>
+          <Button onClick={() => setIsPasswordModalOpen(false)} color="inherit">
+            Cancel
+          </Button>
+          <Button onClick={handleChangePassword} variant="contained" color="primary">
+            Update Password
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }
