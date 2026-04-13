@@ -1019,7 +1019,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 
 > **Goal:** Approved applications generate contract drafts. Both parties sign digitally. PDF generated and downloadable.
 
-#### 👑 Rey — Contract Backend + PDF Generation
+<!-- #### 👑 Rey — Contract Backend + PDF Generation
 **🤖 Claude Opus** ⚡ (complex: PDF template with variable interpolation + multi-step state machine + signature handling)
 
 | # | Task | Files |
@@ -1030,7 +1030,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 4 | `services/templates/contractTemplate.ts` — professional lease agreement HTML. Variables: property name+address, unit, landlord name, tenant name, monthly rent, deposit, advance, dates, lock-in, utility config, terms, signatures. | new |
 | 5 | Install `puppeteer` for PDF generation | server/package.json |
 
-**✅ Verify:** Create contract from approved application → fields auto-populated. Sign (both sides) → generate PDF → download → PDF looks professional with signatures.
+**✅ Verify:** Create contract from approved application → fields auto-populated. Sign (both sides) → generate PDF → download → PDF looks professional with signatures. -->
 
 ---
 
