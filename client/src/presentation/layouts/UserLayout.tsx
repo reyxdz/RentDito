@@ -12,6 +12,7 @@ import {
 } from '@mui/icons-material';
 import { useColorMode } from '../context/ThemeContext';
 import { useAuth } from '../../application/context/AuthContext';
+import NotificationBell from '../components/NotificationBell';
 import { USER_MENU_ITEMS, renderIcon } from '../../application/config/menuConfig';
 import type { MenuItem as MenuItemType } from '../../application/config/menuConfig';
 import logoPng from '../../assets/logo.png';
@@ -240,6 +241,11 @@ export default function UserLayout() {
             <Typography variant="caption" color="text.secondary">{user?.email}</Typography>
           </Box>
           <Divider />
+          <MenuItem onClick={() => { handleMenuClose(); navigate('profile'); }}>
+            <ListItemIcon><MenuIcon fontSize="small" /></ListItemIcon>
+            Profile
+          </MenuItem>
+          <Divider />
           <MenuItem onClick={() => { handleMenuClose(); logout(); }} sx={{ color: 'error.main' }}>
             <ListItemIcon sx={{ color: 'error.main' }}><Logout fontSize="small" /></ListItemIcon>
             Sign Out
@@ -274,6 +280,8 @@ export default function UserLayout() {
           <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1, color: 'text.primary', fontWeight: 600 }}>
             {visibleItems.find(m => m.path === location.pathname)?.text || 'My Account'}
           </Typography>
+
+          <NotificationBell />
 
           <IconButton onClick={toggleColorMode} sx={{ color: 'text.secondary' }}>
             {mode === 'dark' ? <Brightness7 /> : <Brightness4 />}
