@@ -15,7 +15,9 @@ import {
   DialogContent,
   DialogActions,
   Alert,
-  AlertTitle
+  AlertTitle,
+  Snackbar,
+  CircularProgress
 } from '@mui/material';
 import { useAuth } from '../../../application/context/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -27,6 +29,12 @@ export default function Profile() {
 
   const [isEditing, setIsEditing] = useState(false);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [snackbar, setSnackbar] = useState<{
+    open: boolean;
+    message: string;
+    severity: 'success' | 'error';
+  }>({ open: false, message: '', severity: 'success' });
 
   // Mock form state
   const [formData, setFormData] = useState({
@@ -54,9 +62,56 @@ export default function Profile() {
     // Submit update logic here
   };
 
-  const handleChangePassword = () => {
-    setIsPasswordModalOpen(false);
-    // Submit password update logic here
+  const handleChangePassword = async () => {
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      setSnackbar({
+        open: true,
+        message: 'New passwords do not match',
+        severity: 'error'
+      });
+      return;
+    }
+
+    if (!passwordData.currentPassword || !passwordData.newPassword) {
+      setSnackbar({
+        open: true,
+        message: 'Please fill in all password fields',
+        severity: 'error'
+      });
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const { apiClient } = await import('../../../infrastructure/api/apiClient');
+      const { ENDPOINTS } = await import('../../../infrastructure/api/endpoints');
+      
+      await apiClient.patch(ENDPOINTS.USER.CHANGE_PASSWORD, {
+        currentPassword: passwordData.currentPassword,
+        newPassword: passwordData.newPassword
+      });
+
+      setSnackbar({
+        open: true,
+        message: 'Password changed successfully!',
+        severity: 'success'
+      });
+      
+      setIsPasswordModalOpen(false);
+      setPasswordData({
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: ''
+      });
+    } catch (error: any) {
+      setSnackbar({
+        open: true,
+        message: error.response?.data?.message || 'Failed to change password. Please try again.',
+        severity: 'error'
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -239,14 +294,37 @@ export default function Profile() {
           </Grid>
         </DialogContent>
         <DialogActions sx={{ p: 2, px: 3 }}>
-          <Button onClick={() => setIsPasswordModalOpen(false)} color="inherit">
+          <Button onClick={() => setIsPasswordModalOpen(false)} color="inherit" disabled={isLoading}>
             Cancel
           </Button>
-          <Button onClick={handleChangePassword} variant="contained" color="primary">
-            Update Password
+          <Button 
+            onClick={handleChangePassword} 
+            variant="contained" 
+            color="primary"
+            disabled={isLoading}
+            startIcon={isLoading ? <CircularProgress size={20} color="inherit" /> : null}
+          >
+            {isLoading ? 'Updating...' : 'Update Password'}
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* Success/Error Snackbar */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert
+          onClose={() => setSnackbar({ ...snackbar, open: false })}
+          severity={snackbar.severity}
+          variant="filled"
+          sx={{ width: '100%' }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }
