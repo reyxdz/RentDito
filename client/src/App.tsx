@@ -30,6 +30,7 @@ import UserLayout from './presentation/layouts/UserLayout';
 import AdminOverview from './presentation/pages/admin/Overview';
 import AdminUsers from './presentation/pages/admin/Users';
 import LandlordApplications from './presentation/pages/admin/LandlordApplications';
+import UserVerifications from './presentation/pages/admin/UserVerifications';
 import {
   PropertiesPlaceholder as AdminProperties,
   FinancialsPlaceholder as AdminFinancials,
@@ -61,6 +62,7 @@ import {
 
 import PropertyList from './presentation/pages/hub/properties/PropertyList';
 import PropertyForm from './presentation/pages/hub/properties/PropertyForm';
+import UnitForm from './presentation/pages/hub/units/UnitForm';
 
 // ─── User pages ──────────────────────────────────────────────────────
 import VerifyAccount from './presentation/pages/user/VerifyAccount';
@@ -97,6 +99,7 @@ function App() {
             <Route index element={<AdminOverview />} />
             <Route path="users" element={<AdminUsers />} />
             <Route path="applications" element={<LandlordApplications />} />
+            <Route path="verifications" element={<UserVerifications />} />
             <Route path="properties" element={<AdminProperties />} />
             <Route path="financials" element={<AdminFinancials />} />
             <Route path="reports" element={<AdminReports />} />
@@ -115,7 +118,11 @@ function App() {
               <Route path="new" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="properties"><PropertyForm /></ProtectedRoute>} />
               <Route path=":propertyId/edit" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="properties"><PropertyForm /></ProtectedRoute>} />
             </Route>
-            <Route path="units" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="units"><HubUnitsPlaceholder /></ProtectedRoute>} />
+            <Route path="units">
+              <Route index element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="units"><HubUnitsPlaceholder /></ProtectedRoute>} />
+              <Route path="new" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="units"><UnitForm /></ProtectedRoute>} />
+              <Route path=":unitId/edit" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="units"><UnitForm /></ProtectedRoute>} />
+            </Route>
             <Route path="tenants" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="tenants"><HubTenantsPlaceholder /></ProtectedRoute>} />
             <Route path="pipeline" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="pipeline"><HubPipelinePlaceholder /></ProtectedRoute>} />
             <Route path="bookings" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="bookings"><HubBookingsPlaceholder /></ProtectedRoute>} />

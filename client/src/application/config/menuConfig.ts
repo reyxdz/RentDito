@@ -91,6 +91,7 @@ export const ADMIN_MENU_ITEMS: MenuItem[] = [
   { text: 'Overview',             icon: Dashboard,             path: '/admin' },
   { text: 'User Management',      icon: People,                path: '/admin/users' },
   { text: 'Landlord Applications',icon: Storefront,            path: '/admin/applications' },
+  { text: 'User Verifications',   icon: VerifiedUser,          path: '/admin/verifications' },
   { text: 'Properties & Listings',icon: HomeWork,              path: '/admin/properties' },
   { text: 'Financials',           icon: AccountBalanceWallet,  path: '/admin/financials' },
   { text: 'Reporting & Analytics',icon: BarChart,              path: '/admin/reports' },
