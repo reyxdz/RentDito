@@ -48,6 +48,10 @@ export const ENDPOINTS = {
   INQUIRIES: {
     ROOT: '/api/inquiries',
     DETAILS: (id: string) => `/api/inquiries/${id}`,
+    PROPERTY: (propertyId: string) => `/api/inquiries/property/${propertyId}`,
+  },
+  MESSAGES: {
+    CONVERSATION: (conversationId: string) => `/api/messages/conversation/${conversationId}/messages`,
   },
   VISITS: {
     ROOT: '/api/visits',
