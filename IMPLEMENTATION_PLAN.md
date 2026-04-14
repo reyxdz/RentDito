@@ -988,7 +988,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 **________________________________________ D O N E ________________________________________**
 ---
 
-#### 🔧 Paul — Application Review (Landlord Side)
+<!-- #### 🔧 Paul — Application Review (Landlord Side)
 **🤖 Gemini**
 
 | # | Task | Files |
@@ -996,7 +996,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 1 | `hub/pipeline/ApplicationList.tsx` — DataTable: applicant name, property, unit, date, status, actions. Filter by status, property. | new |
 | 2 | `hub/pipeline/ApplicationDetail.tsx` — applicant profile card (name, phone, occupation, emergency contact), uploaded documents viewer, unit info card, Review Notes textarea, Approve/Reject buttons with confirmation dialog. | new |
 
-**✅ Verify:** Applications list loads. Click one → detail with full profile + documents. Approve → status changes. Reject with notes → status changes.
+**✅ Verify:** Applications list loads. Click one → detail with full profile + documents. Approve → status changes. Reject with notes → status changes. -->
 
 ---
 

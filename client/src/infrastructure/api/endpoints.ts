@@ -74,6 +74,11 @@ export const ENDPOINTS = {
   CONTRACTS: {
     ROOT: '/api/contracts',
     DETAILS: (id: string) => `/api/contracts/${id}`,
+    CREATE_FROM_APP: '/api/contracts/create-from-application',
+    SIGN: (id: string) => `/api/contracts/${id}/sign`,
+    STATUS: (id: string) => `/api/contracts/${id}/status`,
+    GENERATE_PDF: (id: string) => `/api/contracts/${id}/generate-pdf`,
+    DOWNLOAD: (id: string) => `/api/contracts/${id}/download`,
   },
   BILLS: {
     ROOT: '/api/bills',
