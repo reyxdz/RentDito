@@ -180,11 +180,22 @@ export default function UserLayout() {
             sx={{
               display: 'flex', alignItems: 'center', gap: 1.5,
               p: isCollapsed && isMdUp ? 0.5 : 1, width: '100%',
-              cursor: isCollapsed && isMdUp ? 'pointer' : 'default',
+              cursor: 'pointer',
+              borderRadius: 2,
+              transition: 'all 0.2s ease',
+              '&:hover': {
+                bgcolor: mode === 'light' ? 'rgba(90, 49, 232, 0.04)' : 'rgba(255,255,255,0.04)',
+              },
             }}
-            onClick={handleProfileClick}
+            onClick={() => {
+              if (isCollapsed && isMdUp) {
+                handleProfileClick({ currentTarget: document.activeElement } as any);
+              } else {
+                navigate('profile');
+              }
+            }}
           >
-            <Tooltip title={isCollapsed && isMdUp ? 'Profile Options' : ''} placement="right">
+            <Tooltip title={isCollapsed && isMdUp ? 'My Profile' : ''} placement="right">
               <Avatar src={user?.avatar} sx={{ width: 40, height: 40, mx: 'auto' }} />
             </Tooltip>
             <Box sx={{

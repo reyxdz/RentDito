@@ -1,13 +1,12 @@
 import { Box, Button, Card, Typography, Container, TextField, Alert, CircularProgress } from '@mui/material';
 import { useState } from 'react';
-import { useNavigate, useSearchParams, Link as RouterLink } from 'react-router-dom';
+import { useNavigate, useParams, Link as RouterLink } from 'react-router-dom';
 import logoPng from '../../../assets/logo.png';
 import { LockReset } from '@mui/icons-material';
 
 export default function ResetPassword() {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const token = searchParams.get('token');
+  const { token } = useParams<{ token: string }>();
 
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -43,8 +42,8 @@ export default function ResetPassword() {
     }
 
     try {
-      // Mock API call to reset password
-      await new Promise(resolve => setTimeout(resolve, 800));
+      const { authService } = await import('../../../infrastructure/services/AuthService');
+      await authService.resetPassword(token || '', password);
       setSuccess(true);
       setTimeout(() => {
         navigate('/login', { replace: true });
