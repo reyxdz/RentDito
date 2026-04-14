@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import type { Property } from '../../domain/entities/Property';
-import { mockPropertyService } from '../../infrastructure/services/MockPropertyService';
+import { propertyService } from '../../infrastructure/services/PropertyService';
 import { useAuth } from '../context/AuthContext';
 
 export function useProperties() {
@@ -9,20 +9,24 @@ export function useProperties() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!user) return;
+  const fetchProperties = useCallback(async () => {
+    if (!user?.id) return;
     
     setLoading(true);
-    mockPropertyService.getPropertiesByLandlord(user.id)
-      .then(data => {
-        setProperties(data);
-        setLoading(false);
-      })
-      .catch(err => {
-        setError(err.message || 'Failed to fetch properties');
-        setLoading(false);
-      });
-  }, [user]);
+    setError(null);
+    try {
+      const data = await propertyService.getPropertiesByLandlord(user.id);
+      setProperties(data);
+    } catch (err: any) {
+      setError(err.message || 'Failed to fetch properties');
+    } finally {
+      setLoading(false);
+    }
+  }, [user?.id]);
 
-  return { properties, loading, error };
+  useEffect(() => {
+    fetchProperties();
+  }, [fetchProperties]);
+
+  return { properties, loading, error, refresh: fetchProperties };
 }
