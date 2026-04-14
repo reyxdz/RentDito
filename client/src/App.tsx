@@ -45,7 +45,6 @@ import HubOverview from './presentation/pages/hub/overview/Overview';
 import TeamManagement from './presentation/pages/hub/team/TeamManagement';
 import {
   HubTenantsPlaceholder,
-  HubPipelinePlaceholder,
   HubBillingPlaceholder,
   HubUtilitiesPlaceholder,
   HubFinancialsPlaceholder,

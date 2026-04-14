@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
-  Box, Typography, Button, Paper, CircularProgress,
-  TextField, Divider, Card, CardContent, Grid, MenuItem,
+  Box, Typography, Button, CircularProgress,
+  TextField, Card, CardContent, Grid, MenuItem,
   Alert, Switch, FormControlLabel,
 } from '@mui/material';
 import {

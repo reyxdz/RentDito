@@ -1038,7 +1038,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 **________________________________________ D O N E ________________________________________**
 ---
 
-#### 🔧 Paul — Contract Management (Landlord Side) + SignaturePad
+<!-- #### 🔧 Paul — Contract Management (Landlord Side) + SignaturePad
 **🤖 Gemini**
 
 | # | Task | Files |
@@ -1049,7 +1049,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 4 | `presentation/components/SignaturePad.tsx` — HTML5 Canvas drawing, touch support, clear button, outputs base64 PNG. | new |
 | 5 | `infrastructure/services/ContractService.ts`, `hooks/useContracts.ts` | new |
 
-**✅ Verify:** Create contract from approved application → appears as Draft → edit terms → send for review → sign with canvas → both signed → generate PDF → download.
+**✅ Verify:** Create contract from approved application → appears as Draft → edit terms → send for review → sign with canvas → both signed → generate PDF → download. -->
 
 ---
 

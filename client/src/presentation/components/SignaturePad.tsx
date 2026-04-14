@@ -12,7 +12,6 @@ interface SignaturePadProps {
 
 export default function SignaturePad({
   onSignatureChange,
-  width = 500,
   height = 200,
   disabled = false,
   initialSignature,

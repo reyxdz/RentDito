@@ -1,9 +1,8 @@
 import { useEffect, useState, useMemo } from 'react';
-import { Box, Typography, MenuItem, Grid, TextField, IconButton, Tooltip, Button } from '@mui/material';
+import { Box, Typography, MenuItem, Grid, TextField, IconButton, Tooltip } from '@mui/material';
 import {
   Visibility as ViewIcon,
   Description as ContractIcon,
-  Add as AddIcon,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useContracts } from '../../../../application/hooks/useContracts';
@@ -62,8 +61,6 @@ function LockInBar({ startDate, lockInPeriod }: { startDate: string | Date; lock
   const now = new Date();
   const monthsElapsed = Math.max(0, (now.getFullYear() - start.getFullYear()) * 12 + now.getMonth() - start.getMonth());
   const progress = Math.min(100, (monthsElapsed / lockInPeriod) * 100);
-  const remaining = Math.max(0, lockInPeriod - monthsElapsed);
-
   const barColor = progress >= 90 ? '#ef4444' : progress >= 75 ? '#f59e0b' : '#10b981';
 
   return (
