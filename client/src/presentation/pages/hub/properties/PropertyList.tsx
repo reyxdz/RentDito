@@ -16,18 +16,18 @@ const propertyStatuses: PropertyStatus[] = ['Active', 'Disabled', 'Maintenance',
 export default function PropertyList() {
   const navigate = useNavigate();
   const { properties, loading, error } = useProperties();
-  
+
   const [searchTerm, setSearchTerm] = useState('');
   const [typeFilter, setTypeFilter] = useState<PropertyType | 'All'>('All');
   const [statusFilter, setStatusFilter] = useState<PropertyStatus | 'All'>('All');
-  
+
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const filteredData = useMemo(() => {
     return properties.filter((prop) => {
       const matchSearch = prop.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          prop.address.city.toLowerCase().includes(searchTerm.toLowerCase());
+        prop.address.city.toLowerCase().includes(searchTerm.toLowerCase());
       const matchType = typeFilter === 'All' || prop.propertyType === typeFilter;
       const matchStatus = statusFilter === 'All' || prop.status === statusFilter;
       return matchSearch && matchType && matchStatus;
