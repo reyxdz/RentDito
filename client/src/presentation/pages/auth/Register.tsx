@@ -1,9 +1,9 @@
-import { Box, Button, Card, Typography, Container, TextField, Alert, CircularProgress } from '@mui/material';
+import { Box, Button, Card, Typography, Container, TextField, Alert, CircularProgress, IconButton, InputAdornment } from '@mui/material';
 import { useState } from 'react';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import { useAuth } from '../../../application/context/AuthContext';
 import logoPng from '../../../assets/logo.png';
-import { PersonAdd } from '@mui/icons-material';
+import { PersonAdd, Visibility, VisibilityOff } from '@mui/icons-material';
 
 export default function Register() {
   const { register } = useAuth();
@@ -18,6 +18,8 @@ export default function Register() {
   const [province, setProvince] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -85,8 +87,56 @@ export default function Register() {
               <TextField fullWidth label="Municipality / City" variant="outlined" value={municipality} onChange={(e) => setMunicipality(e.target.value)} required disabled={isLoading} />
             </Box>
             <TextField fullWidth label="Province" variant="outlined" value={province} onChange={(e) => setProvince(e.target.value)} sx={{ mb: 2 }} required disabled={isLoading} />
-            <TextField fullWidth label="Password" variant="outlined" type="password" value={password} onChange={(e) => setPassword(e.target.value)} sx={{ mb: 2 }} required disabled={isLoading} />
-            <TextField fullWidth label="Confirm Password" variant="outlined" type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} sx={{ mb: 4 }} required disabled={isLoading} />
+            <TextField 
+              fullWidth 
+              label="Password" 
+              variant="outlined" 
+              type={showPassword ? 'text' : 'password'} 
+              value={password} 
+              onChange={(e) => setPassword(e.target.value)} 
+              sx={{ mb: 2 }} 
+              required 
+              disabled={isLoading} 
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={() => setShowPassword(!showPassword)}
+                      onMouseDown={(e) => e.preventDefault()}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+            <TextField 
+              fullWidth 
+              label="Confirm Password" 
+              variant="outlined" 
+              type={showConfirmPassword ? 'text' : 'password'} 
+              value={confirmPassword} 
+              onChange={(e) => setConfirmPassword(e.target.value)} 
+              sx={{ mb: 4 }} 
+              required 
+              disabled={isLoading} 
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle confirm password visibility"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      onMouseDown={(e) => e.preventDefault()}
+                      edge="end"
+                    >
+                      {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
 
             <Button 
               type="submit"

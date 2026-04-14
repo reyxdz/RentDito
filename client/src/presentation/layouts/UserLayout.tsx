@@ -3,16 +3,16 @@ import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import {
   Box, Drawer, AppBar, Toolbar, List, Typography, Divider,
   IconButton, ListItem, ListItemButton, ListItemIcon, ListItemText,
-  useTheme, useMediaQuery, Avatar, Card, Button, Tooltip, Menu, MenuItem,
-  Chip,
+  useTheme, useMediaQuery, Tooltip,
 } from '@mui/material';
 import {
-  Menu as MenuIcon, Brightness4, Brightness7, Logout,
+  Menu as MenuIcon, Brightness4, Brightness7,
   ChevronLeft, ChevronRight,
 } from '@mui/icons-material';
 import { useColorMode } from '../context/ThemeContext';
 import { useAuth } from '../../application/context/AuthContext';
 import NotificationBell from '../components/NotificationBell';
+import SidebarProfile from '../components/SidebarProfile';
 import { USER_MENU_ITEMS, renderIcon } from '../../application/config/menuConfig';
 import type { MenuItem as MenuItemType } from '../../application/config/menuConfig';
 import logoPng from '../../assets/logo.png';
@@ -22,13 +22,12 @@ const collapsedDrawerWidth = 88;
 
 export default function UserLayout() {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [isCollapsed, setIsCollapsed] = useState(false);
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [isCollapsed, setIsCollapsed] = useState(true);
 
   const theme = useTheme();
   const isMdUp = useMediaQuery(theme.breakpoints.up('md'));
   const { mode, toggleColorMode } = useColorMode();
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -45,14 +44,6 @@ export default function UserLayout() {
       setMobileOpen(!mobileOpen);
     }
   };
-
-  const handleProfileClick = (event: React.MouseEvent<HTMLElement>) => {
-    if (isCollapsed && isMdUp) {
-      setAnchorEl(event.currentTarget);
-    }
-  };
-
-  const handleMenuClose = () => setAnchorEl(null);
 
   const activeDrawerWidth = (isMdUp && isCollapsed) ? collapsedDrawerWidth : drawerWidth;
   const borderColor = mode === 'light' ? 'rgba(0,0,0,0.08)' : 'rgba(255,255,255,0.08)';
@@ -167,102 +158,13 @@ export default function UserLayout() {
       </List>
 
       {/* Profile footer */}
-      <Box sx={{ p: isCollapsed && isMdUp ? 1 : 2 }}>
-        <Card
-          variant={isCollapsed && isMdUp ? 'elevation' : 'outlined'}
-          sx={{
-            bgcolor: isCollapsed && isMdUp ? 'transparent' : 'background.default',
-            border: 'none', boxShadow: 'none',
-            display: 'flex', flexDirection: 'column', alignItems: 'center',
-          }}
-        >
-          <Box
-            sx={{
-              display: 'flex', alignItems: 'center', gap: 1.5,
-              p: isCollapsed && isMdUp ? 0.5 : 1, width: '100%',
-              cursor: 'pointer',
-              borderRadius: 2,
-              transition: 'all 0.2s ease',
-              '&:hover': {
-                bgcolor: mode === 'light' ? 'rgba(90, 49, 232, 0.04)' : 'rgba(255,255,255,0.04)',
-              },
-            }}
-            onClick={() => {
-              if (isCollapsed && isMdUp) {
-                handleProfileClick({ currentTarget: document.activeElement } as any);
-              } else {
-                navigate('profile');
-              }
-            }}
-          >
-            <Tooltip title={isCollapsed && isMdUp ? 'My Profile' : ''} placement="right">
-              <Avatar src={user?.avatar} sx={{ width: 40, height: 40, mx: 'auto' }} />
-            </Tooltip>
-            <Box sx={{
-              flexGrow: 1, minWidth: 0,
-              opacity: isCollapsed && isMdUp ? 0 : 1,
-              transition: 'all 0.3s ease',
-              whiteSpace: 'nowrap',
-              maxWidth: isCollapsed && isMdUp ? 0 : 200,
-              overflow: 'hidden',
-            }}>
-              <Typography variant="subtitle2" sx={{ fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                {user?.name}
-              </Typography>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mt: 0.25 }}>
-                {hasTenancy && (
-                  <Chip
-                    label="Active Tenant"
-                    size="small"
-                    color="success"
-                    sx={{ height: 20, fontSize: '0.65rem', fontWeight: 700 }}
-                  />
-                )}
-              </Box>
-            </Box>
-          </Box>
-          <Button
-            fullWidth variant="text" color="error" size="small"
-            onClick={() => logout()}
-            sx={{
-              mt: 1,
-              opacity: isCollapsed && isMdUp ? 0 : 1,
-              transition: 'all 0.3s ease',
-              whiteSpace: 'nowrap',
-              pointerEvents: isCollapsed && isMdUp ? 'none' : 'auto',
-              maxWidth: isCollapsed && isMdUp ? 0 : 200,
-              minWidth: isCollapsed && isMdUp ? 0 : 64,
-              overflow: 'hidden',
-              px: isCollapsed && isMdUp ? 0 : 2,
-              maxHeight: isCollapsed && isMdUp ? 0 : 40,
-              py: isCollapsed && isMdUp ? 0 : undefined,
-            }}
-          >
-            Sign Out
-          </Button>
-        </Card>
-
-        <Menu
-          anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}
-          transformOrigin={{ horizontal: 'left', vertical: 'bottom' }}
-          anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-        >
-          <Box sx={{ px: 2, py: 1 }}>
-            <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>{user?.name}</Typography>
-            <Typography variant="caption" color="text.secondary">{user?.email}</Typography>
-          </Box>
-          <Divider />
-          <MenuItem onClick={() => { handleMenuClose(); navigate('profile'); }}>
-            <ListItemIcon><MenuIcon fontSize="small" /></ListItemIcon>
-            Profile
-          </MenuItem>
-          <Divider />
-          <MenuItem onClick={() => { handleMenuClose(); logout(); }} sx={{ color: 'error.main' }}>
-            <ListItemIcon sx={{ color: 'error.main' }}><Logout fontSize="small" /></ListItemIcon>
-            Sign Out
-          </MenuItem>
-        </Menu>
-      </Box>
+      <SidebarProfile
+        isCollapsed={isCollapsed}
+        isMdUp={isMdUp}
+        subtitle={user?.email}
+        chipLabel={hasTenancy ? "Active Tenant" : undefined}
+        chipColor="success"
+      />
     </Box>
   );
 
