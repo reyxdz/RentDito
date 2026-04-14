@@ -46,7 +46,6 @@ import TeamManagement from './presentation/pages/hub/team/TeamManagement';
 import {
   HubTenantsPlaceholder,
   HubPipelinePlaceholder,
-  HubBookingsPlaceholder,
   HubBillingPlaceholder,
   HubContractsPlaceholder,
   HubUtilitiesPlaceholder,
@@ -66,6 +65,9 @@ import UnitDetail from './presentation/pages/hub/units/UnitDetail';
 
 import InquiryList from './presentation/pages/hub/pipeline/InquiryList';
 import InquiryDetail from './presentation/pages/hub/pipeline/InquiryDetail';
+
+import VisitList from './presentation/pages/hub/bookings/VisitList';
+import VisitDetail from './presentation/pages/hub/bookings/VisitDetail';
 
 // ─── User pages ──────────────────────────────────────────────────────
 import VerifyAccount from './presentation/pages/user/VerifyAccount';
@@ -130,7 +132,10 @@ function App() {
             <Route path="inquiries" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="pipeline"><InquiryList /></ProtectedRoute>} />
             <Route path="inquiries/:inquiryId" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="pipeline"><InquiryDetail /></ProtectedRoute>} />
           </Route>
-          <Route path="bookings" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="bookings"><HubBookingsPlaceholder /></ProtectedRoute>} />
+          <Route path="bookings">
+            <Route index element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="bookings"><VisitList /></ProtectedRoute>} />
+            <Route path=":visitId" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="bookings"><VisitDetail /></ProtectedRoute>} />
+          </Route>
           <Route path="billing" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="billing"><HubBillingPlaceholder /></ProtectedRoute>} />
           <Route path="contracts" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="contracts"><HubContractsPlaceholder /></ProtectedRoute>} />
           <Route path="utilities" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="utilities"><HubUtilitiesPlaceholder /></ProtectedRoute>} />

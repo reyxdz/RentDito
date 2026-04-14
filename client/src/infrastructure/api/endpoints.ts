@@ -56,6 +56,13 @@ export const ENDPOINTS = {
   VISITS: {
     ROOT: '/api/visits',
     DETAILS: (id: string) => `/api/visits/${id}`,
+    PROPERTY: (propertyId: string) => `/api/visits/property/${propertyId}`,
+    APPROVE: (id: string) => `/api/visits/${id}/approve`,
+    SCHEDULE: (id: string) => `/api/visits/${id}/schedule`,
+    ASSIGN: (id: string) => `/api/visits/${id}/assign`,
+    COMPLETE: (id: string) => `/api/visits/${id}/complete`,
+    CANCEL: (id: string) => `/api/visits/${id}/cancel`,
+    NO_SHOW: (id: string) => `/api/visits/${id}/no-show`,
   },
   APPLICATIONS: {
     ROOT: '/api/applications',
