@@ -734,7 +734,8 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 
 ---
 
-#### 🔧 Paul — Property Frontend (List + Detail)
+**________________________________________ D O N E ________________________________________**
+<!-- #### 🔧 Paul — Property Frontend (List + Detail)
 **🤖 Gemini**
 
 | # | Task | Files |
@@ -744,7 +745,8 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 3 | `hub/properties/PropertyList.tsx` — DataTable: thumbnail, name, type, location, units count, status badge, actions. Filters: type, status, search. "Add Property" button. | new |
 | 4 | `hub/properties/PropertyDetail.tsx` — header with name + status, tabs: Overview \| Units \| Documents \| Settings. Overview: description, address, inclusions, venues, image gallery. Settings tab: billing config, emergency contacts. | new |
 
-**✅ Verify:** Navigate to `/hub/properties` → see seeded properties. Click one → detail page loads with correct data.
+**✅ Verify:** Navigate to `/hub/properties` → see seeded properties. Click one → detail page loads with correct data. -->
+**________________________________________ D O N E ________________________________________**
 
 ---
 

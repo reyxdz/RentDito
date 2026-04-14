@@ -28,5 +28,42 @@ export function useProperties() {
     fetchProperties();
   }, [fetchProperties]);
 
-  return { properties, loading, error, refresh: fetchProperties };
+  const createProperty = async (propertyParams: Omit<Property, 'id' | 'createdAt' | 'updatedAt' | 'metrics'>) => {
+    try {
+      const newProperty = await propertyService.createProperty(propertyParams);
+      setProperties(prev => [...prev, newProperty]);
+      return newProperty;
+    } catch (err: any) {
+      throw new Error(err.message || 'Failed to create property');
+    }
+  };
+
+  const updateProperty = async (propertyId: string, updates: Partial<Property>) => {
+    try {
+      const updatedProperty = await propertyService.updateProperty(propertyId, updates);
+      setProperties(prev => prev.map(p => p.id === propertyId ? updatedProperty : p));
+      return updatedProperty;
+    } catch (err: any) {
+      throw new Error(err.message || 'Failed to update property');
+    }
+  };
+
+  const deleteProperty = async (propertyId: string) => {
+    try {
+      await propertyService.deleteProperty(propertyId);
+      setProperties(prev => prev.filter(p => p.id !== propertyId));
+    } catch (err: any) {
+      throw new Error(err.message || 'Failed to delete property');
+    }
+  };
+
+  return { 
+    properties, 
+    loading, 
+    error, 
+    refresh: fetchProperties,
+    createProperty,
+    updateProperty,
+    deleteProperty
+  };
 }
