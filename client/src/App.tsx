@@ -16,6 +16,10 @@ import ResetPassword from './presentation/pages/auth/ResetPassword';
 import ProtectedRoute from './presentation/components/ProtectedRoute';
 import Unauthorized from './presentation/pages/common/Unauthorized';
 import NotFound from './presentation/pages/common/NotFound';
+import Profile from './presentation/pages/common/Profile';
+
+// ─── Contexts ────────────────────────────────────────────────────────
+import { NotificationProvider } from './application/context/NotificationContext';
 
 // ─── Layouts ─────────────────────────────────────────────────────────
 import AdminLayout from './presentation/layouts/AdminLayout';
@@ -39,9 +43,8 @@ import {
 // ─── Hub pages (Landlord + Staff) ────────────────────────────────────
 import HubOverview from './presentation/pages/hub/overview/Overview';
 import TeamManagement from './presentation/pages/hub/team/TeamManagement';
-import PropertyList from './presentation/pages/hub/properties/PropertyList';
-import PropertyDetail from './presentation/pages/hub/properties/PropertyDetail';
 import {
+  HubPropertiesPlaceholder,
   HubUnitsPlaceholder,
   HubTenantsPlaceholder,
   HubPipelinePlaceholder,
@@ -60,7 +63,7 @@ import {
 // ─── User pages ──────────────────────────────────────────────────────
 import VerifyAccount from './presentation/pages/user/VerifyAccount';
 import BecomeLandlord from './presentation/pages/user/BecomeLandlord';
-import UserDashboard from './presentation/pages/user/Dashboard';
+import Dashboard from './presentation/pages/user/Dashboard';
 import {
   UserInquiries,
   UserBookings,
@@ -72,7 +75,8 @@ import {
 
 function App() {
   return (
-    <Router>
+    <NotificationProvider>
+      <Router>
       <Routes>
         {/* ────── Public ────────────────────────────────────────────── */}
         <Route path="/" element={<LandingPage />} />
@@ -98,13 +102,13 @@ function App() {
           <Route path="communications" element={<AdminComms />} />
           <Route path="system" element={<AdminSystem />} />
           <Route path="security" element={<AdminSecurity />} />
+          <Route path="profile" element={<Profile />} />
         </Route>
 
         {/* ────── Hub Layout (landlord + staff) ─────────────────────── */}
         <Route path="/hub" element={<ProtectedRoute allowedRoles={['landlord', 'staff']}><HubLayout /></ProtectedRoute>}>
           <Route index element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="dashboard"><HubOverview /></ProtectedRoute>} />
-          <Route path="properties" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="properties"><PropertyList /></ProtectedRoute>} />
-          <Route path="properties/:propertyId" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="properties"><PropertyDetail /></ProtectedRoute>} />
+          <Route path="properties" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="properties"><HubPropertiesPlaceholder /></ProtectedRoute>} />
           <Route path="units" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="units"><HubUnitsPlaceholder /></ProtectedRoute>} />
           <Route path="tenants" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="tenants"><HubTenantsPlaceholder /></ProtectedRoute>} />
           <Route path="pipeline" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="pipeline"><HubPipelinePlaceholder /></ProtectedRoute>} />
@@ -119,11 +123,12 @@ function App() {
           <Route path="reports" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="reports"><HubReportsPlaceholder /></ProtectedRoute>} />
           <Route path="security" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="security"><HubSecurityPlaceholder /></ProtectedRoute>} />
           <Route path="team" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="team"><TeamManagement /></ProtectedRoute>} />
+          <Route path="profile" element={<Profile />} />
         </Route>
 
         {/* ────── User Layout (regular user) ────────────────────────── */}
         <Route path="/u" element={<ProtectedRoute><UserLayout /></ProtectedRoute>}>
-          <Route index element={<UserDashboard />} />
+          <Route index element={<Dashboard />} />
           <Route path="inquiries" element={<UserInquiries />} />
           <Route path="bookings" element={<UserBookings />} />
           <Route path="verify" element={<VerifyAccount />} />
@@ -132,6 +137,7 @@ function App() {
           <Route path="bills" element={<UserBills />} />
           <Route path="contract" element={<UserContract />} />
           <Route path="maintenance" element={<UserMaintenance />} />
+          <Route path="profile" element={<Profile />} />
         </Route>
 
         {/* ────── Legacy redirect: /landlord → /hub ─────────────────── */}
@@ -144,6 +150,7 @@ function App() {
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
+  </NotificationProvider>
   )
 }
 
