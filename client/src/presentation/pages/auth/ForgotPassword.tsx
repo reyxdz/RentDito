@@ -15,10 +15,10 @@ export default function ForgotPassword() {
     setIsLoading(true);
     setError(null);
     setSuccess(false);
-    
+
     try {
-      // Mock API call
-      await new Promise(resolve => setTimeout(resolve, 800));
+      const { authService } = await import('../../../infrastructure/services/AuthService');
+      await authService.forgotPassword(email);
       setSuccess(true);
     } catch (err: any) {
       setError(err.message || 'An error occurred. Please try again.');
@@ -70,18 +70,18 @@ export default function ForgotPassword() {
                 disabled={isLoading}
               />
 
-              <Button 
+              <Button
                 type="submit"
-                fullWidth 
-                variant="contained" 
-                size="large" 
+                fullWidth
+                variant="contained"
+                size="large"
                 disabled={isLoading}
                 startIcon={isLoading ? <CircularProgress size={20} color="inherit" /> : <Email />}
                 sx={{ py: 1.5, fontWeight: 700, fontSize: '1.05rem', boxShadow: 4, mb: 3 }}
               >
                 {isLoading ? 'Sending...' : 'Send Reset Link'}
               </Button>
-              
+
               <Box sx={{ textAlign: 'center' }}>
                 <Typography variant="body2" color="text.secondary">
                   Remember your password? <RouterLink to="/login" style={{ color: '#5A31E8', textDecoration: 'none', fontWeight: 600 }}>Sign in</RouterLink>

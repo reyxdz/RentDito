@@ -3,7 +3,7 @@ import type { ListingFilters, FilterOptions } from '../../domain/entities/Listin
 import type { AccommodationType } from '../../domain/entities/Unit';
 
 const PROPERTY_TYPES = ['Boarding House', 'House for Rent', 'Apartment', 'Dormitory', 'Studio', 'Mixed Use'] as const;
-const ACCOMMODATION_TYPES: AccommodationType[] = ['Bedspace', 'Room for Rent'];
+const ACCOMMODATION_TYPES: AccommodationType[] = ['bedspace', 'room'];
 
 const PROPERTY_CATEGORIES = [
   { type: 'reviewCenters', label: 'Review Centers' },

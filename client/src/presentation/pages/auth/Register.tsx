@@ -1,19 +1,25 @@
-import { Box, Button, Card, Typography, Container, TextField, Alert, CircularProgress } from '@mui/material';
+import { Box, Button, Card, Typography, Container, TextField, Alert, CircularProgress, IconButton, InputAdornment } from '@mui/material';
 import { useState } from 'react';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import { useAuth } from '../../../application/context/AuthContext';
 import logoPng from '../../../assets/logo.png';
-import { PersonAdd } from '@mui/icons-material';
+import { PersonAdd, Visibility, VisibilityOff } from '@mui/icons-material';
 
 export default function Register() {
-  const { login } = useAuth();
+  const { register } = useAuth();
   const navigate = useNavigate();
 
-  const [name, setName] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
+  const [barangay, setBarangay] = useState('');
+  const [municipality, setMunicipality] = useState('');
+  const [province, setProvince] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -21,7 +27,7 @@ export default function Register() {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
-    
+
     if (password !== confirmPassword) {
       setError('Passwords do not match');
       setIsLoading(false);
@@ -29,15 +35,21 @@ export default function Register() {
     }
 
     try {
-      // Mock API call to register
-      await new Promise(resolve => setTimeout(resolve, 800));
-      
-      // Auto-login with mock user
-      await login('tenant@rentdito.com', password); 
-      
+      await register({
+        name: `${firstName} ${lastName}`.trim(),
+        email,
+        phone,
+        password,
+        confirmPassword,
+      });
+
       navigate('/u', { replace: true });
-    } catch (err: any) {
-      setError(err.message || 'An error occurred during registration.');
+    } catch (err: unknown) {
+      const message =
+        err && typeof err === 'object' && 'message' in err
+          ? (err as { message: string }).message
+          : 'An error occurred during registration.';
+      setError(message);
     } finally {
       setIsLoading(false);
     }
@@ -64,24 +76,80 @@ export default function Register() {
               </Alert>
             )}
 
-            <TextField fullWidth label="Full Name" variant="outlined" value={name} onChange={(e) => setName(e.target.value)} sx={{ mb: 2 }} required disabled={isLoading} />
+            <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
+              <TextField fullWidth label="First Name" variant="outlined" value={firstName} onChange={(e) => setFirstName(e.target.value)} required disabled={isLoading} />
+              <TextField fullWidth label="Last Name" variant="outlined" value={lastName} onChange={(e) => setLastName(e.target.value)} required disabled={isLoading} />
+            </Box>
             <TextField fullWidth label="Email Address" variant="outlined" type="email" value={email} onChange={(e) => setEmail(e.target.value)} sx={{ mb: 2 }} required disabled={isLoading} />
             <TextField fullWidth label="Phone Number" variant="outlined" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} sx={{ mb: 2 }} disabled={isLoading} />
-            <TextField fullWidth label="Password" variant="outlined" type="password" value={password} onChange={(e) => setPassword(e.target.value)} sx={{ mb: 2 }} required disabled={isLoading} />
-            <TextField fullWidth label="Confirm Password" variant="outlined" type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} sx={{ mb: 4 }} required disabled={isLoading} />
+            <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
+              <TextField fullWidth label="Barangay" variant="outlined" value={barangay} onChange={(e) => setBarangay(e.target.value)} required disabled={isLoading} />
+              <TextField fullWidth label="Municipality / City" variant="outlined" value={municipality} onChange={(e) => setMunicipality(e.target.value)} required disabled={isLoading} />
+            </Box>
+            <TextField fullWidth label="Province" variant="outlined" value={province} onChange={(e) => setProvince(e.target.value)} sx={{ mb: 2 }} required disabled={isLoading} />
+            <TextField
+              fullWidth
+              label="Password"
+              variant="outlined"
+              type={showPassword ? 'text' : 'password'}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              sx={{ mb: 2 }}
+              required
+              disabled={isLoading}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={() => setShowPassword(!showPassword)}
+                      onMouseDown={(e) => e.preventDefault()}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+            <TextField
+              fullWidth
+              label="Confirm Password"
+              variant="outlined"
+              type={showConfirmPassword ? 'text' : 'password'}
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              sx={{ mb: 4 }}
+              required
+              disabled={isLoading}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle confirm password visibility"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      onMouseDown={(e) => e.preventDefault()}
+                      edge="end"
+                    >
+                      {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
 
-            <Button 
+            <Button
               type="submit"
-              fullWidth 
-              variant="contained" 
-              size="large" 
+              fullWidth
+              variant="contained"
+              size="large"
               disabled={isLoading}
               startIcon={isLoading ? <CircularProgress size={20} color="inherit" /> : <PersonAdd />}
               sx={{ py: 1.5, fontWeight: 700, fontSize: '1.05rem', boxShadow: 4, mb: 2 }}
             >
               {isLoading ? 'Creating Account...' : 'Sign Up'}
             </Button>
-            
+
             <Box sx={{ textAlign: 'center' }}>
               <Typography variant="body2" color="text.secondary">
                 Already have an account? <RouterLink to="/login" style={{ color: '#5A31E8', textDecoration: 'none', fontWeight: 600 }}>Sign in</RouterLink>

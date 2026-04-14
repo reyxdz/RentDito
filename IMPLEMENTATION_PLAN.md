@@ -390,7 +390,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 > **Goal:** Every developer has the folder structure, shared types, and tooling ready. No features yet, just the bones.
 
 **________________________________________ D O N E ________________________________________**
-#### 👑 Rey — Server Infrastructure
+<!-- #### 👑 Rey — Server Infrastructure
 **🤖 Gemini**
 
 | # | Task | Files |
@@ -404,12 +404,13 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 7 | `models/User.ts` — full schema with all 4 roles, verification fields, staff fields | `server/src/models/User.ts` |
 | 8 | Update `server.ts` — use db.ts, middleware chain (helmet, cors, morgan, json), route mount placeholders | `server/src/server.ts` |
 
-**✅ Verify:** `npm run dev` in `/server` → connects to MongoDB → prints success log. Check MongoDB Compass → `rentdito` DB exists.
+**✅ Verify:** `npm run dev` in `/server` → connects to MongoDB → prints success log. Check MongoDB Compass → `rentdito` DB exists. -->
 **________________________________________ D O N E ________________________________________**
 
 ---
 
-#### 🔧 Paul — Client Types & API Client
+**________________________________________ D O N E ________________________________________**
+<!-- #### 🔧 Paul — Client Types & API Client
 **🤖 Gemini**
 
 | # | Task | Files |
@@ -419,11 +420,12 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 3 | `infrastructure/api/endpoints.ts` — all endpoint constants by feature group | `client/src/infrastructure/api/endpoints.ts` |
 | 4 | Update `domain/repositories/AuthRepository.ts` — full interface | `client/src/domain/repositories/AuthRepository.ts` |
 
-**✅ Verify:** `npx tsc --noEmit` → zero type errors. All entity files importable. ApiClient instantiates without error.
+**✅ Verify:** `npx tsc --noEmit` → zero type errors. All entity files importable. ApiClient instantiates without error. -->
+**________________________________________ D O N E ________________________________________**
 
 ---
-
-#### 🔧 Emanuel — Component Library & Seed Script Shell
+**________________________________________ D O N E ________________________________________**
+<!-- #### 🔧 Emanuel — Component Library & Seed Script Shell
 **🤖 Gemini**
 
 | # | Task | Files |
@@ -438,7 +440,8 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 8 | `FormDialog.tsx` — dialog wrapper for forms (title, body slot, cancel/save) | `client/src/presentation/components/FormDialog.tsx` |
 | 9 | Create seed script shell `seeds/seed.ts` — structure with clear sections per model, placeholder functions | `server/src/seeds/seed.ts` |
 
-**✅ Verify:** Import each component into a test page → renders. Seed script runs without error (no data yet, just structure).
+**✅ Verify:** Import each component into a test page → renders. Seed script runs without error (no data yet, just structure). -->
+**________________________________________ D O N E ________________________________________**
 
 ---
 
@@ -452,7 +455,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 > **Goal:** Complete working auth system. Anyone can register, login, and get JWT tokens. Frontend login/register pages connected to real API.
 
 **________________________________________ D O N E ________________________________________**
-#### 👑 Rey — Auth Backend
+<!-- #### 👑 Rey — Auth Backend
 **🤖 Claude Opus** ⚡ (security-critical: JWT rotation, password hashing, refresh token storage)
 
 | # | Task | Files |
@@ -470,12 +473,13 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 - POST `/api/auth/login` → 200 + tokens
 - POST `/api/auth/refresh` → new token pair
 - Invalid token → 401
-- Check Compass → user exists, password is hashed (NOT plain text)
+- Check Compass → user exists, password is hashed (NOT plain text) -->
 **________________________________________ D O N E ________________________________________**
 
 ---
+**________________________________________ D O N E ________________________________________**
 
-#### 🔧 Paul — Frontend Auth Integration
+<!-- #### 🔧 Paul — Frontend Auth Integration
 **🤖 Claude Opus** ⚡ (complex state: token rotation, persistent session hydration, role-based redirects)
 
 | # | Task | Files |
@@ -489,11 +493,13 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 - Register new user → token stored in localStorage
 - Refresh page → still logged in (session hydrated)
 - Login with wrong password → error shown
-- DevTools > Application > localStorage → tokens present
+- DevTools > Application > localStorage → tokens present -->
 
+**________________________________________ D O N E ________________________________________**
 ---
+**________________________________________ D O N E ________________________________________**
 
-#### 🔧 Emanuel — Auth Pages & Seed Data
+<!-- #### 🔧 Emanuel — Auth Pages & Seed Data
 **🤖 Gemini**
 
 | # | Task | Files |
@@ -506,8 +512,9 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 **✅ Verify:**
 - Visit `/register` → fill form → submit → redirected to `/u` (user dashboard)
 - Run seed script → check Compass → all accounts exist with hashed passwords
-- Login with each seeded account → successful
 
+- Login with each seeded account → successful -->
+**________________________________________ D O N E ________________________________________**
 ---
 
 #### 🏁 Day 2 Standup Checkpoint
@@ -520,7 +527,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 > **Goal:** Permission system works. Users can apply to become landlords. Landlords can invite staff with custom permissions.
 
 **________________________________________ D O N E ________________________________________**
-#### 👑 Rey — RBAC Middleware + Landlord Application + Staff API
+<!-- #### 👑 Rey — RBAC Middleware + Landlord Application + Staff API
 **🤖 Claude Opus** ⚡ (security-critical: 3-layer RBAC + role promotion logic)
 
 | # | Task | Files |
@@ -540,12 +547,14 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 - Super admin → PATCH approve → user.role becomes `landlord`
 - Landlord → POST invite staff → staff user created
 - Staff → access permitted endpoint → 200
-- Staff → access non-permitted endpoint → 403
+- Staff → access non-permitted endpoint → 403 -->
 **________________________________________ D O N E ________________________________________**
 
 ---
+**________________________________________ D O N E ________________________________________**
 
-#### 🔧 Paul — Layouts & Dynamic Sidebar
+
+<!-- #### 🔧 Paul — Layouts & Dynamic Sidebar
 **🤖 Claude Opus** ⚡ (complex conditional rendering: 3 layouts with permission-filtered sidebar, tenancy-aware sections)
 
 | # | Task | Files |
@@ -561,11 +570,13 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 - Login as landlord → sidebar shows ALL 16 items
 - Login as staff (permissions: [dashboard, units, bookings]) → sidebar shows only those 3
 - Login as user with no tenancy → sidebar shows Inquiries, Visits, Applications, Profile, Become a Landlord
-- Login as user WITH active tenancy → sidebar additionally shows My Room, My Bills, etc.
+- Login as user WITH active tenancy → sidebar additionally shows My Room, My Bills, etc. -->
 
+**________________________________________ D O N E ________________________________________**
 ---
+**________________________________________ D O N E ________________________________________**
 
-#### 🔧 Emanuel — Landlord Onboarding UI + Team Management UI
+<!-- #### 🔧 Emanuel — Landlord Onboarding UI + Team Management UI
 **🤖 Gemini**
 
 | # | Task | Files |
@@ -580,7 +591,8 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 - Login as user → Profile area → "Become a Landlord" → shows verification requirement
 - Verify account (upload ID) → submit landlord application
 - Login as super_admin → see application → approve → user is now a landlord
-- Login as new landlord → Hub dashboard → Team Management → invite staff → staff appears in list
+- Login as new landlord → Hub dashboard → Team Management → invite staff → staff appears in list -->
+**________________________________________ D O N E ________________________________________**
 
 ---
 
@@ -594,7 +606,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 > **Goal:** Complete app routing. Every sidebar item leads to a real page (placeholder is fine). All 3 portals navigable.
 
 **________________________________________ D O N E ________________________________________**
-#### 👑 Rey — API Route Mounting + Profile API
+<!-- #### 👑 Rey — API Route Mounting + Profile API
 **🤖 Gemini**
 
 | # | Task | Files |
@@ -604,12 +616,13 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 3 | `models/AuditLog.ts` — userId, action, resourceType, resourceId, details, ip, timestamp | `server/src/models/AuditLog.ts` |
 | 4 | Create `presentation/pages/hub/overview/Overview.tsx` — placeholder with stat cards (hardcoded 0 values for now), welcome banner | `client/src/presentation/pages/hub/overview/Overview.tsx` |
 
-**✅ Verify:** All mounted routes return proper responses. GET /me returns user with activeTenancy: null for users without tenancy.
+**✅ Verify:** All mounted routes return proper responses. GET /me returns user with activeTenancy: null for users without tenancy. -->
 **________________________________________ D O N E ________________________________________**
 
 ---
+**________________________________________ D O N E ________________________________________**
 
-#### 🔧 Paul — Complete App.tsx Routing
+<!-- #### 🔧 Paul — Complete App.tsx Routing
 **🤖 Gemini**
 
 | # | Task | Files |
@@ -620,11 +633,12 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 4 | `presentation/pages/common/Unauthorized.tsx` — 403 page | `client/src/presentation/pages/common/Unauthorized.tsx` |
 | 5 | `presentation/pages/common/NotFound.tsx` — 404 page | `client/src/presentation/pages/common/NotFound.tsx` |
 
-**✅ Verify:** Every sidebar item for every layout (hub/user/admin) → navigates to a page. Non-permitted routes → 403. Unknown routes → 404. Role mismatch → redirect.
+**✅ Verify:** Every sidebar item for every layout (hub/user/admin) → navigates to a page. Non-permitted routes → 403. Unknown routes → 404. Role mismatch → redirect. -->
 
+**________________________________________ D O N E ________________________________________**
 ---
 
-#### 🔧 Emanuel — User Dashboard + Notification Bell
+<!-- #### 🔧 Emanuel — User Dashboard + Notification Bell
 **🤖 Gemini**
 
 | # | Task | Files |
@@ -635,7 +649,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 4 | Add NotificationBell to all 3 layouts' AppBar (HubLayout, UserLayout, AdminLayout) | modify layout files |
 | 5 | `presentation/pages/common/Profile.tsx` — shared profile page: avatar, name, email, phone, change password. Link to verify account. | `client/src/presentation/pages/common/Profile.tsx` |
 
-**✅ Verify:** Login as user → see Dashboard with quick stats + "Browse Listings". Notification bell appears in all layouts. Profile page shows user data.
+**✅ Verify:** Login as user → see Dashboard with quick stats + "Browse Listings". Notification bell appears in all layouts. Profile page shows user data. -->
 
 ---
 
@@ -648,7 +662,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 
 > **Goal:** Shake out all bugs. Seed all roles. Verify every auth/RBAC scenario.
 
-#### 👑 Rey — Backend Integration Testing
+<!-- #### 👑 Rey — Backend Integration Testing
 **🤖 Gemini**
 
 | # | Task |
@@ -659,11 +673,12 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 4 | Test staff invite → login → permissions enforced |
 | 5 | Test edge cases: expired token, duplicate email, invalid JWT |
 | 6 | Create `server/API_REFERENCE.md` documenting all endpoints |
-| 7 | Fix all bugs found |
+| 7 | Fix all bugs found | -->
 
 ---
+**________________________________________ D O N E ________________________________________**
 
-#### 🔧 Paul — Frontend Auth Flow Polish
+<!-- #### 🔧 Paul — Frontend Auth Flow Polish
 **🤖 Gemini**
 
 | # | Task |
@@ -671,10 +686,11 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 1 | Test login/register on desktop + mobile |
 | 2 | Add password visibility toggle to login/register |
 | 3 | Polish all layouts: responsive, dark mode consistent, transitions smooth |
-| 4 | Test sidebar collapse/expand on desktop, drawer on mobile |
+| 4 | Test sidebar collapse/expand on desktop(close by default), drawer on mobile |
 | 5 | Verify role-based redirects after login |
-| 6 | Fix all bugs found |
+| 6 | Fix all bugs found | -->
 
+**________________________________________ D O N E ________________________________________**
 ---
 
 #### 🔧 Emanuel — E2E Seed & Component Polish
@@ -704,7 +720,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 
 > **Goal:** Landlords can create, edit, and manage properties from the Hub.
 
-#### 👑 Rey — Property Backend
+<!-- #### 👑 Rey — Property Backend
 **🤖 Gemini**
 
 | # | Task | Files |
@@ -714,11 +730,12 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 3 | `controllers/property.controller.ts`, `services/property.service.ts`, `validators/property.validator.ts` | matching files |
 | 4 | Auto-scope: queries filtered by landlordId for landlord, assignedPropertyIds for staff | inside service |
 
-**✅ Verify:** POST create property → GET returns it → PATCH update → DELETE removes. Staff only sees assigned.
+**✅ Verify:** POST create property → GET returns it → PATCH update → DELETE removes. Staff only sees assigned. -->
 
 ---
 
-#### 🔧 Paul — Property Frontend (List + Detail)
+**________________________________________ D O N E ________________________________________**
+<!-- #### 🔧 Paul — Property Frontend (List + Detail)
 **🤖 Gemini**
 
 | # | Task | Files |
@@ -728,7 +745,8 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 3 | `hub/properties/PropertyList.tsx` — DataTable: thumbnail, name, type, location, units count, status badge, actions. Filters: type, status, search. "Add Property" button. | new |
 | 4 | `hub/properties/PropertyDetail.tsx` — header with name + status, tabs: Overview \| Units \| Documents \| Settings. Overview: description, address, inclusions, venues, image gallery. Settings tab: billing config, emergency contacts. | new |
 
-**✅ Verify:** Navigate to `/hub/properties` → see seeded properties. Click one → detail page loads with correct data.
+**✅ Verify:** Navigate to `/hub/properties` → see seeded properties. Click one → detail page loads with correct data. -->
+**________________________________________ D O N E ________________________________________**
 
 ---
 
@@ -754,7 +772,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 
 > **Goal:** Units can be created within properties. Bedspace and room modes supported.
 
-#### 👑 Rey — Unit Backend
+<!-- #### 👑 Rey — Unit Backend
 **🤖 Gemini**
 
 | # | Task | Files |
@@ -763,7 +781,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 2 | `routes/unit.routes.ts` — full CRUD. GET list (filter by propertyId, status, type), GET /:id, POST, PATCH, DELETE, PATCH /:id/status, POST /:id/images, GET /property/:propertyId/units | routes + controller + service + validator |
 | 3 | Auto-update property metrics (totalUnits, vacantUnits, etc.) when unit is created/updated/deleted — use Mongoose post-save hooks or service logic | inside service/model |
 
-**✅ Verify:** Create unit under a property → GET returns it → property metrics update.
+**✅ Verify:** Create unit under a property → GET returns it → property metrics update. -->
 
 ---
 
@@ -802,7 +820,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 
 > **Goal:** Public listing pages use real data. Users can verify their identity.
 
-#### 👑 Rey — Public API + Verification Backend
+<!-- #### 👑 Rey — Public API + Verification Backend
 **🤖 Gemini**
 
 | # | Task | Files |
@@ -810,7 +828,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 1 | `routes/public.routes.ts` — NO auth required. GET /listings (active properties with metrics), GET /listings/:id (property + units), GET /listings/unit/:id (unit detail) | new routes/controller/service |
 | 2 | User verification: POST /users/me/verify → upload ID photos → set verificationStatus to 'pending'. Admin: GET /admin/verifications (pending list), PATCH /admin/verifications/:userId/approve, PATCH reject | add to user routes + admin routes |
 
-**✅ Verify:** Public GET `/api/public/listings` → returns only active properties with unit counts + price ranges. No auth token needed.
+**✅ Verify:** Public GET `/api/public/listings` → returns only active properties with unit counts + price ranges. No auth token needed. -->
 
 ---
 
@@ -855,7 +873,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 
 > **Goal:** Verified users can submit inquiries about properties. Landlords/staff can respond. Real-time-ish conversation.
 
-#### 👑 Rey — Inquiry + Conversation + Message Backend
+<!-- #### 👑 Rey — Inquiry + Conversation + Message Backend
 **🤖 Gemini**
 
 | # | Task | Files |
@@ -865,7 +883,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 3 | `routes/message.routes.ts` — GET /conversation/:id/messages (paginated), POST /conversation/:id/messages (send message, with optional attachment upload) | route + controller + service |
 | 4 | When inquiry is created → auto-create Conversation with participants = [userId, landlordId]. Create Notification for landlord. | inside service |
 
-**✅ Verify:** User POSTs inquiry → conversation auto-created → POST message → GET messages returns it. Landlord receives notification.
+**✅ Verify:** User POSTs inquiry → conversation auto-created → POST message → GET messages returns it. Landlord receives notification. -->
 
 ---
 
@@ -905,7 +923,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 
 > **Goal:** Users can request property viewings. Landlords schedule them, assign staff.
 
-#### 👑 Rey — Visit Backend
+<!-- #### 👑 Rey — Visit Backend
 **🤖 Gemini**
 
 | # | Task | Files |
@@ -915,7 +933,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 3 | Double-booking check: before approving, check no other visit scheduled for same unit at same time → 409 if conflict | inside service |
 | 4 | When visit approved/scheduled → create Notification for user. When 1 day before → create reminder notification for all parties (the function; actual cron in Phase 5). | inside service |
 
-**✅ Verify:** User requests visit → landlord approves → sets schedule → assigns caretaker staff → marks complete. Double-booking rejected.
+**✅ Verify:** User requests visit → landlord approves → sets schedule → assigns caretaker staff → marks complete. Double-booking rejected. -->
 
 ---
 
@@ -956,7 +974,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 
 > **Goal:** Interested users submit formal rental applications. Landlords review and approve.
 
-#### 👑 Rey — Application Backend
+<!-- #### 👑 Rey — Application Backend
 **🤖 Gemini**
 
 | # | Task | Files |
@@ -966,7 +984,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 3 | Validation: user cannot apply if unit is not vacant. User cannot have multiple pending applications for same unit. | inside service |
 | 4 | Notifications: on submit → notify landlord. On approve/reject → notify user. | inside service |
 
-**✅ Verify:** User applies → landlord sees it → approves → user notified. Rejected application → user sees rejection with notes.
+**✅ Verify:** User applies → landlord sees it → approves → user notified. Rejected application → user sees rejection with notes. -->
 
 ---
 
@@ -1005,7 +1023,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 
 > **Goal:** Approved applications generate contract drafts. Both parties sign digitally. PDF generated and downloadable.
 
-#### 👑 Rey — Contract Backend + PDF Generation
+<!-- #### 👑 Rey — Contract Backend + PDF Generation
 **🤖 Claude Opus** ⚡ (complex: PDF template with variable interpolation + multi-step state machine + signature handling)
 
 | # | Task | Files |
@@ -1016,7 +1034,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 4 | `services/templates/contractTemplate.ts` — professional lease agreement HTML. Variables: property name+address, unit, landlord name, tenant name, monthly rent, deposit, advance, dates, lock-in, utility config, terms, signatures. | new |
 | 5 | Install `puppeteer` for PDF generation | server/package.json |
 
-**✅ Verify:** Create contract from approved application → fields auto-populated. Sign (both sides) → generate PDF → download → PDF looks professional with signatures.
+**✅ Verify:** Create contract from approved application → fields auto-populated. Sign (both sides) → generate PDF → download → PDF looks professional with signatures. -->
 
 ---
 

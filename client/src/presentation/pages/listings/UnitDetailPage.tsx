@@ -88,31 +88,28 @@ export default function UnitDetailPage() {
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2, flexWrap: 'wrap', gap: 2 }}>
                 <Box>
                   <Typography variant="h3" sx={{ fontWeight: 800, mb: 2, fontSize: { xs: '2rem', sm: '3rem' } }}>
-                    {unit.name}
+                    {unit.unitIdentifier}
                   </Typography>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
-                    {unit.accommodationType.map((type) => (
+                    <Chip
+                      label={unit.accommodationType === 'room' ? 'Room for Rent' : 'Bedspace'}
+                      size="small"
+                      variant="outlined"
+                      sx={{ fontWeight: 700, borderRadius: 1 }}
+                    />
+                    {unit.status === 'vacant' ? (
                       <Chip
-                        key={type}
-                        label={type}
-                        size="small"
-                        variant="outlined"
-                        sx={{ fontWeight: 700, borderRadius: 1 }}
-                      />
-                    ))}
-                    {unit.vacancies > 0 ? (
-                      <Chip
-                        label={`${unit.vacancies} vacancies`}
+                        label={`${unit.capacity} capacity`}
                         size="small"
                         color="success"
                         sx={{ fontWeight: 700, borderRadius: 1 }}
                       />
                     ) : (
                       <Chip
-                        label="Full"
+                        label={unit.status}
                         size="small"
                         color="error"
-                        sx={{ fontWeight: 700, borderRadius: 1 }}
+                        sx={{ fontWeight: 700, borderRadius: 1, textTransform: 'capitalize' }}
                       />
                     )}
                   </Box>
@@ -121,23 +118,23 @@ export default function UnitDetailPage() {
                   <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 700, mb: 1, letterSpacing: 0.5, textTransform: 'uppercase' }}>
                     Monthly
                   </Typography>
-                  {unit.rentPricing ? (
+                  {unit.bedspaceRent || unit.roomRent ? (
                     <>
-                      {unit.rentPricing.bedspace && (
+                      {unit.bedspaceRent && (
                         <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1 }}>
                           <Typography variant="h4" color="primary.main" sx={{ fontWeight: 800, fontSize: { xs: '1.5rem', sm: '2.125rem' }, lineHeight: 1 }}>
-                            ₱{formatPrice(unit.rentPricing.bedspace)}
+                            ₱{formatPrice(unit.bedspaceRent)}
                           </Typography>
                           <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600 }}> per head</Typography>
                         </Box>
                       )}
-                      {unit.rentPricing.room && (
-                        <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1, mt: unit.rentPricing.bedspace ? 1 : 0 }}>
-                          {unit.rentPricing.bedspace && (
+                      {unit.roomRent && (
+                        <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1, mt: unit.bedspaceRent ? 1 : 0 }}>
+                          {unit.bedspaceRent && (
                             <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 600, mr: 0.5 }}>or</Typography>
                           )}
-                          <Typography variant={unit.rentPricing.bedspace ? "h6" : "h4"} color={unit.rentPricing.bedspace ? "text.primary" : "primary.main"} sx={{ fontWeight: 800, lineHeight: 1 }}>
-                            ₱{formatPrice(unit.rentPricing.room)}
+                          <Typography variant={unit.bedspaceRent ? "h6" : "h4"} color={unit.bedspaceRent ? "text.primary" : "primary.main"} sx={{ fontWeight: 800, lineHeight: 1 }}>
+                            ₱{formatPrice(unit.roomRent)}
                           </Typography>
                           <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 500 }}> per room</Typography>
                         </Box>
@@ -145,7 +142,7 @@ export default function UnitDetailPage() {
                     </>
                   ) : (
                     <Typography variant="h4" color="primary.main" sx={{ fontWeight: 800, fontSize: { xs: '1.5rem', sm: '2.125rem' } }}>
-                      ₱{formatPrice(unit.monthlyRent)}
+                      ₱0
                     </Typography>
                   )}
                 </Box>
@@ -176,10 +173,10 @@ export default function UnitDetailPage() {
                       <MeetingRoomOutlined sx={{ fontSize: 32, color: 'primary.main' }} />
                       <Box>
                         <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
-                          Occupants
+                          Max Occupants
                         </Typography>
                         <Typography variant="h6" sx={{ fontWeight: 700 }}>
-                          {unit.currentOccupants}
+                          {unit.maxOccupants}
                         </Typography>
                       </Box>
                     </Box>
