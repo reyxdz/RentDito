@@ -67,6 +67,9 @@ export const ENDPOINTS = {
   APPLICATIONS: {
     ROOT: '/api/applications',
     DETAILS: (id: string) => `/api/applications/${id}`,
+    REVIEW: (id: string) => `/api/applications/${id}/review`,
+    APPROVE: (id: string) => `/api/applications/${id}/approve`,
+    REJECT: (id: string) => `/api/applications/${id}/reject`,
   },
   CONTRACTS: {
     ROOT: '/api/contracts',

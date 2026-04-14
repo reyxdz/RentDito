@@ -937,7 +937,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 **________________________________________ D O N E ________________________________________**
 ---
 
-#### 🔧 Paul — Visit Management (Landlord Side)
+<!-- #### 🔧 Paul — Visit Management (Landlord Side)
 **🤖 Gemini**
 
 | # | Task | Files |
@@ -946,7 +946,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 2 | `hub/bookings/VisitCalendar.tsx` — calendar view (month/week). Color-coded visit events. Click event → details popup. Click empty slot → schedule. Show available time slots per unit. Install `@fullcalendar/react` or build a date grid. | new |
 | 3 | `hub/bookings/VisitDetail.tsx` — request info, approve/reject buttons, schedule date/time picker, assign staff dropdown, status actions (complete/cancel/no-show), notes field | new |
 
-**✅ Verify:** Visit list shows visits. Calendar view plots them. Approve → schedule → complete flow works. Assigning staff reflected.
+**✅ Verify:** Visit list shows visits. Calendar view plots them. Approve → schedule → complete flow works. Assigning staff reflected. -->
 
 ---
 
