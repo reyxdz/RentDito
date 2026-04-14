@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import type { VisitRequest, VisitStatus } from '../../domain/entities/VisitRequest';
+import type { VisitRequest } from '../../domain/entities/VisitRequest';
 import { visitService } from '../../infrastructure/services/VisitService';
 
 export function useVisits() {

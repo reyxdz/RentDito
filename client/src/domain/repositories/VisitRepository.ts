@@ -1,4 +1,4 @@
-import type { VisitRequest, VisitStatus } from '../entities/VisitRequest';
+import type { VisitRequest } from '../entities/VisitRequest';
 
 export interface VisitRepository {
   getPropertyVisits(propertyId: string, filters?: { status?: string }): Promise<VisitRequest[]>;
