@@ -72,6 +72,10 @@ export const login = async (email: string, password: string) => {
     throw Object.assign(new Error('Account is suspended. Contact support.'), { statusCode: 403 });
   }
 
+  if (user.verificationStatus !== 'verified') {
+    throw Object.assign(new Error('Please verify your email address to continue.'), { statusCode: 403 });
+  }
+
   const isMatch = await compare(password, user.passwordHash);
   if (!isMatch) {
     throw Object.assign(new Error('Invalid email or password'), { statusCode: 401 });
