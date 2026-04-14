@@ -7,6 +7,7 @@
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
+    "seed": "tsx src/seeds/seed.ts",
     "test": "jest --runInBand --detectOpenHandles",
     "test:watch": "jest --watch --runInBand",
     "test:coverage": "jest --coverage --runInBand"
