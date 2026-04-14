@@ -68,8 +68,9 @@ import UnitForm from './presentation/pages/hub/units/UnitForm';
 import VerifyAccount from './presentation/pages/user/VerifyAccount';
 import BecomeLandlord from './presentation/pages/user/BecomeLandlord';
 import Dashboard from './presentation/pages/user/Dashboard';
+import MyInquiries from './presentation/pages/user/MyInquiries';
+import InquiryConversation from './presentation/pages/user/InquiryConversation';
 import {
-  UserInquiries,
   UserBookings,
   UserMyUnit,
   UserBills,
@@ -142,7 +143,8 @@ function App() {
           {/* ────── User Layout (regular user) ────────────────────────── */}
           <Route path="/u" element={<ProtectedRoute><UserLayout /></ProtectedRoute>}>
             <Route index element={<Dashboard />} />
-            <Route path="inquiries" element={<UserInquiries />} />
+            <Route path="inquiries" element={<MyInquiries />} />
+            <Route path="inquiries/:inquiryId" element={<InquiryConversation />} />
             <Route path="bookings" element={<UserBookings />} />
             <Route path="verify" element={<VerifyAccount />} />
             <Route path="become-landlord" element={<BecomeLandlord />} />

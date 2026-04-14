@@ -14,6 +14,7 @@ import {
   ListItemIcon,
   ListItemText,
   Button,
+  TextField,
 } from '@mui/material';
 import {
   ArrowBack,
@@ -29,7 +30,9 @@ import { useUnitDetail } from '../../../application/hooks/useUnitDetail';
 import { useAuth } from '../../../application/context/AuthContext';
 import ImageCarousel from '../../components/ImageCarousel';
 import ConfirmDialog from '../../components/ConfirmDialog';
+import FormDialog from '../../components/FormDialog';
 import Navbar from '../../components/Navbar';
+import { useInquiries } from '../../../application/hooks/useInquiries';
 
 export default function UnitDetailPage() {
   const { unitId } = useParams<{ unitId: string }>();
@@ -39,6 +42,11 @@ export default function UnitDetailPage() {
   
   const [authDialogOpen, setAuthDialogOpen] = useState(false);
   const [pendingDialogOpen, setPendingDialogOpen] = useState(false);
+  const [inquiryDialogOpen, setInquiryDialogOpen] = useState(false);
+  const [inquiryMessage, setInquiryMessage] = useState('');
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  
+  const { createInquiry, loading: submittingInquiry } = useInquiries();
 
   const handleCTA = () => {
     if (!isAuthenticated) {
@@ -53,7 +61,32 @@ export default function UnitDetailPage() {
       }
       return;
     }
-    alert('Action authorized! Proceeding to Inquiry/Visit flow...');
+    
+    // Authenticated & verified, open the inquiry form
+    setInquiryMessage('');
+    setSubmitError(null);
+    setInquiryDialogOpen(true);
+  };
+
+  const handleInquirySubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!inquiryMessage.trim() || !user || !unit) return;
+
+    try {
+      const newInq = await createInquiry({
+        propertyId: unit.propertyId,
+        propertyName: unit.propertyId.replace('prop-', '').replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase()), // Quick format
+        unitId: unit.id,
+        unitIdentifier: unit.unitIdentifier,
+        userId: user.id,
+        userName: user.name || 'User',
+        initialMessage: inquiryMessage
+      });
+      setInquiryDialogOpen(false);
+      navigate(`/u/inquiries/${newInq.id}`);
+    } catch (err: any) {
+      setSubmitError(err.message || 'Failed to submit inquiry');
+    }
   };
 
   const formatPrice = (amount: number) =>
@@ -351,6 +384,35 @@ export default function UnitDetailPage() {
         onConfirm={() => setPendingDialogOpen(false)}
         onCancel={() => navigate('/u/verify')}
       />
+
+      <FormDialog
+        open={inquiryDialogOpen}
+        title="Submit Inquiry"
+        submitText="Send Inquiry"
+        loading={submittingInquiry}
+        onClose={() => setInquiryDialogOpen(false)}
+        onSubmit={handleInquirySubmit}
+      >
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+          You're inquiring about <strong>{unit?.unitIdentifier}</strong>. The landlord will receive your message and respond shortly.
+        </Typography>
+
+        {submitError && (
+          <Typography color="error" variant="body2" sx={{ mb: 2 }}>{submitError}</Typography>
+        )}
+
+        <TextField
+          fullWidth
+          label="Your Message"
+          multiline
+          rows={4}
+          variant="outlined"
+          value={inquiryMessage}
+          onChange={(e) => setInquiryMessage(e.target.value)}
+          placeholder={`Hi! I'm interested in ${unit?.unitIdentifier}. Is this still available?`}
+          required
+        />
+      </FormDialog>
     </Box>
   );
 }
