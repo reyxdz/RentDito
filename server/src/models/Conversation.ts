@@ -25,7 +25,6 @@ const ConversationSchema = new Schema<IConversation>(
 );
 
 // Indexes
-ConversationSchema.index({ inquiryId: 1 });
 ConversationSchema.index({ participants: 1 });
 
 export const Conversation = mongoose.model<IConversation>('Conversation', ConversationSchema);

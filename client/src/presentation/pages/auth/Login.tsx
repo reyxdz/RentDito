@@ -9,12 +9,14 @@ import {
   Snackbar,
   Alert,
   Link as MuiLink,
+  IconButton,
+  InputAdornment,
 } from '@mui/material';
 import { useState } from 'react';
 import { useNavigate, useLocation, Link as RouterLink } from 'react-router-dom';
 import { useAuth } from '../../../application/context/AuthContext';
 import logoPng from '../../../assets/logo.png';
-import { Lock } from '@mui/icons-material';
+import { Lock, Visibility, VisibilityOff } from '@mui/icons-material';
 import type { Role } from '../../../domain/entities/User';
 
 /** Map a user role to its default landing route after login */
@@ -33,6 +35,7 @@ export default function Login() {
   // ── Form state ──────────────────────────────────────────
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   // ── Error toast (Snackbar) ──────────────────────────────
@@ -124,12 +127,26 @@ export default function Login() {
               fullWidth
               label="Password"
               variant="outlined"
-              type="password"
+              type={showPassword ? 'text' : 'password'}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               sx={{ mb: 1 }}
               required
               disabled={isLoading}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={() => setShowPassword(!showPassword)}
+                      onMouseDown={(e) => e.preventDefault()}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
             />
 
             {/* Forgot password link */}

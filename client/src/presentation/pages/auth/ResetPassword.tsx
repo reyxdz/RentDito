@@ -34,7 +34,7 @@ export default function ResetPassword() {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
-    
+
     if (password !== confirmPassword) {
       setError('Passwords do not match');
       setIsLoading(false);
@@ -92,7 +92,7 @@ export default function ResetPassword() {
                 required
                 disabled={isLoading}
               />
-              
+
               <TextField
                 fullWidth
                 label="Confirm New Password"
@@ -105,11 +105,11 @@ export default function ResetPassword() {
                 disabled={isLoading}
               />
 
-              <Button 
+              <Button
                 type="submit"
-                fullWidth 
-                variant="contained" 
-                size="large" 
+                fullWidth
+                variant="contained"
+                size="large"
                 disabled={isLoading}
                 startIcon={isLoading ? <CircularProgress size={20} color="inherit" /> : <LockReset />}
                 sx={{ py: 1.5, fontWeight: 700, fontSize: '1.05rem', boxShadow: 4 }}

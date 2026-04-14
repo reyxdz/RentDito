@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   Box,
   Typography,
@@ -25,13 +26,35 @@ import {
 } from '@mui/icons-material';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useUnitDetail } from '../../../application/hooks/useUnitDetail';
+import { useAuth } from '../../../application/context/AuthContext';
 import ImageCarousel from '../../components/ImageCarousel';
+import ConfirmDialog from '../../components/ConfirmDialog';
 import Navbar from '../../components/Navbar';
 
 export default function UnitDetailPage() {
   const { unitId } = useParams<{ unitId: string }>();
   const navigate = useNavigate();
   const { unit, loading, error } = useUnitDetail(unitId);
+  const { user, isAuthenticated } = useAuth();
+  
+  const [authDialogOpen, setAuthDialogOpen] = useState(false);
+  const [pendingDialogOpen, setPendingDialogOpen] = useState(false);
+
+  const handleCTA = () => {
+    if (!isAuthenticated) {
+      setAuthDialogOpen(true);
+      return;
+    }
+    if (user?.verificationStatus !== 'verified') {
+      if (user?.verificationStatus === 'pending') {
+        setPendingDialogOpen(true);
+      } else {
+        navigate('/u/verify');
+      }
+      return;
+    }
+    alert('Action authorized! Proceeding to Inquiry/Visit flow...');
+  };
 
   const formatPrice = (amount: number) =>
     new Intl.NumberFormat('en-PH').format(amount);
@@ -145,6 +168,10 @@ export default function UnitDetailPage() {
                       ₱0
                     </Typography>
                   )}
+                  <Box sx={{ mt: 3, display: 'flex', gap: 1, justifyContent: { xs: 'flex-start', sm: 'flex-end' } }}>
+                    <Button variant="outlined" color="primary" onClick={handleCTA}>Inquire</Button>
+                    <Button variant="contained" color="primary" disableElevation onClick={handleCTA}>Schedule Visit</Button>
+                  </Box>
                 </Box>
               </Box>
 
@@ -304,6 +331,26 @@ export default function UnitDetailPage() {
           © {new Date().getFullYear()} RentDito. All rights reserved.
         </Typography>
       </Box>
+
+      {/* ── Dialogs ────────────────────────────────────────────────────── */}
+      <ConfirmDialog
+        open={authDialogOpen}
+        title="Authentication Required"
+        message="Please log in first to inquire or schedule a visit for this property."
+        confirmText="Go to Login"
+        cancelText="Cancel"
+        onConfirm={() => navigate('/login')}
+        onCancel={() => setAuthDialogOpen(false)}
+      />
+      <ConfirmDialog
+        open={pendingDialogOpen}
+        title="Verification Pending"
+        message="Your account verification is currently pending review. Please wait for approval before making inquiries."
+        confirmText="Okay"
+        cancelText="Go to Verification"
+        onConfirm={() => setPendingDialogOpen(false)}
+        onCancel={() => navigate('/u/verify')}
+      />
     </Box>
   );
 }
