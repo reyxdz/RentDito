@@ -771,7 +771,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 ### Day 7 — Unit Management
 
 > **Goal:** Units can be created within properties. Bedspace and room modes supported.
-
+**________________________________________ D O N E ________________________________________**
 <!-- #### 👑 Rey — Unit Backend
 **🤖 Gemini**
 
@@ -782,10 +782,10 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 3 | Auto-update property metrics (totalUnits, vacantUnits, etc.) when unit is created/updated/deleted — use Mongoose post-save hooks or service logic | inside service/model |
 
 **✅ Verify:** Create unit under a property → GET returns it → property metrics update. -->
-
+**________________________________________ D O N E ________________________________________**
 ---
-
-#### 🔧 Paul — Unit Frontend (List + Detail)
+**________________________________________ D O N E ________________________________________**
+<!-- #### 🔧 Paul — Unit Frontend (List + Detail)
 **🤖 Gemini**
 
 | # | Task | Files |
@@ -794,8 +794,8 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 2 | `hub/units/UnitList.tsx` — DataTable: identifier, property name, type (room/bedspace), rent pricing, status badge, occupants/capacity, actions. Filters: property dropdown, status, type. | new |
 | 3 | `hub/units/UnitDetail.tsx` — header, tabs: Overview \| Tenants \| Billing History \| Inventory. Overview: photos, features, pricing display (room rent / bedspace rent per spec). For bedspace: show slot grid with vacancy. | new |
 
-**✅ Verify:** `/hub/units` → list all units. Filter by property → correct subset. Click unit → detail with pricing.
-
+**✅ Verify:** `/hub/units` → list all units. Filter by property → correct subset. Click unit → detail with pricing. -->
+**________________________________________ D O N E ________________________________________**
 ---
 
 #### 🔧 Emanuel — Unit Form + Occupancy Modes
@@ -819,7 +819,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 ### Day 8 — Public Listings & User Verification
 
 > **Goal:** Public listing pages use real data. Users can verify their identity.
-
+**________________________________________ D O N E ________________________________________**
 <!-- #### 👑 Rey — Public API + Verification Backend
 **🤖 Gemini**
 
@@ -829,9 +829,9 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 2 | User verification: POST /users/me/verify → upload ID photos → set verificationStatus to 'pending'. Admin: GET /admin/verifications (pending list), PATCH /admin/verifications/:userId/approve, PATCH reject | add to user routes + admin routes |
 
 **✅ Verify:** Public GET `/api/public/listings` → returns only active properties with unit counts + price ranges. No auth token needed. -->
-
+**________________________________________ D O N E ________________________________________**
 ---
-
+<!-- 
 #### 🔧 Paul — Connect Listings to Real API
 **🤖 Gemini**
 
@@ -843,7 +843,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 4 | Update `UnitDetailPage.tsx` — real API | modify |
 | 5 | Delete MockPropertyService.ts and MockUnitService.ts | delete |
 
-**✅ Verify:** Visit `/listings` (no login) → see real properties from DB. Click property → real detail. Click unit → real unit detail. Filters still work.
+**✅ Verify:** Visit `/listings` (no login) → see real properties from DB. Click property → real detail. Click unit → real unit detail. Filters still work. -->
 
 ---
 
@@ -870,7 +870,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 ---
 
 ### Day 9 — Inquiry & Messaging
-
+**________________________________________ D O N E ________________________________________**
 > **Goal:** Verified users can submit inquiries about properties. Landlords/staff can respond. Real-time-ish conversation.
 
 <!-- #### 👑 Rey — Inquiry + Conversation + Message Backend
@@ -884,7 +884,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 4 | When inquiry is created → auto-create Conversation with participants = [userId, landlordId]. Create Notification for landlord. | inside service |
 
 **✅ Verify:** User POSTs inquiry → conversation auto-created → POST message → GET messages returns it. Landlord receives notification. -->
-
+**________________________________________ D O N E ________________________________________**
 ---
 
 #### 🔧 Paul — Inquiry Inbox (Landlord/Staff Side)
@@ -918,7 +918,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 > **Combined demo:** Full inquiry loop: User browses listing → clicks Inquire → submits question → Landlord sees notification + new inquiry in Pipeline inbox → Landlord opens and replies → User sees reply in My Inquiries → conversation continues back and forth.
 
 ---
-
+**________________________________________ D O N E ________________________________________**
 ### Day 10 — Visit Scheduling
 
 > **Goal:** Users can request property viewings. Landlords schedule them, assign staff.
@@ -934,7 +934,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 4 | When visit approved/scheduled → create Notification for user. When 1 day before → create reminder notification for all parties (the function; actual cron in Phase 5). | inside service |
 
 **✅ Verify:** User requests visit → landlord approves → sets schedule → assigns caretaker staff → marks complete. Double-booking rejected. -->
-
+**________________________________________ D O N E ________________________________________**
 ---
 
 #### 🔧 Paul — Visit Management (Landlord Side)
@@ -971,7 +971,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 ---
 
 ### Day 11 — Rental Application (Ready-to-Check-In)
-
+**________________________________________ D O N E ________________________________________**
 > **Goal:** Interested users submit formal rental applications. Landlords review and approve.
 
 <!-- #### 👑 Rey — Application Backend
@@ -985,7 +985,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 4 | Notifications: on submit → notify landlord. On approve/reject → notify user. | inside service |
 
 **✅ Verify:** User applies → landlord sees it → approves → user notified. Rejected application → user sees rejection with notes. -->
-
+**________________________________________ D O N E ________________________________________**
 ---
 
 #### 🔧 Paul — Application Review (Landlord Side)
@@ -1022,7 +1022,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 ### Day 12 — Contract System
 
 > **Goal:** Approved applications generate contract drafts. Both parties sign digitally. PDF generated and downloadable.
-
+**________________________________________ D O N E ________________________________________**
 <!-- #### 👑 Rey — Contract Backend + PDF Generation
 **🤖 Claude Opus** ⚡ (complex: PDF template with variable interpolation + multi-step state machine + signature handling)
 
@@ -1035,7 +1035,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 5 | Install `puppeteer` for PDF generation | server/package.json |
 
 **✅ Verify:** Create contract from approved application → fields auto-populated. Sign (both sides) → generate PDF → download → PDF looks professional with signatures. -->
-
+**________________________________________ D O N E ________________________________________**
 ---
 
 #### 🔧 Paul — Contract Management (Landlord Side) + SignaturePad

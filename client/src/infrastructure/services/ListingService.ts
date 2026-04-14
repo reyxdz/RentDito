@@ -19,6 +19,32 @@ export interface PublicPropertyResponse extends Property {
   units: Unit[];
 }
 
+const mapBackendPropertyToClient = (p: any): Property => {
+  const venues = p.venues || {};
+  
+  const mapVenues = (venueList: any[] = []) => 
+    venueList.map(v => ({ 
+      name: v.name || '', 
+      walking: v.distance || '', 
+      commute: '' 
+    }));
+
+  return {
+    ...p,
+    id: p._id || p.id,
+    reviewCenters: p.reviewCenters || mapVenues(venues.reviewCenters),
+    schools: p.schools || mapVenues(venues.schools),
+    commercialEstablishments: p.commercialEstablishments || mapVenues(venues.commercial),
+    metrics: {
+      ...(p.metrics || {}),
+      priceRange: p.priceRange || { min: 0, max: 0 },
+      totalUnits: p.metrics?.totalUnits || p.totalUnits || 0,
+      activeUnits: p.metrics?.activeUnits || p.occupiedUnits || 0,
+      vacantUnits: p.metrics?.vacantUnits || p.vacantUnits || 0,
+    }
+  };
+};
+
 export class ListingService {
   /**
    * Fetch all active properties with optional filters
@@ -28,9 +54,8 @@ export class ListingService {
       params: filters,
     });
     
-    // The backend returns { status: 'success', data: [...], pagination: {...} }
     return {
-      properties: (data.data || []).map((p: any) => ({ ...p, id: p._id || p.id })),
+      properties: (data.data || []).map(mapBackendPropertyToClient),
       pagination: data.pagination || { page: 1, limit: 20, total: 0, pages: 0 },
     };
   }
@@ -41,13 +66,16 @@ export class ListingService {
   async getPublicPropertyById(propertyId: string): Promise<PublicPropertyResponse | null> {
     try {
       const { data } = await apiClient.get(ENDPOINTS.PUBLIC.PROPERTY_DETAILS(propertyId));
-      const propData = data.data;
+      let propData = data.data;
       if (!propData) return null;
-      if (propData._id && !propData.id) propData.id = propData._id;
+      
+      const mappedProp = mapBackendPropertyToClient(propData);
+      
       if (propData.units) {
-        propData.units = propData.units.map((u: any) => ({ ...u, id: u._id || u.id }));
+        (mappedProp as any).units = propData.units.map((u: any) => ({ ...u, id: u._id || u.id }));
       }
-      return propData;
+      
+      return mappedProp as PublicPropertyResponse;
     } catch (error: any) {
       if (error.statusCode === 404 || error.response?.status === 404) return null;
       throw error;
