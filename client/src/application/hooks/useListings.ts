@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import type { Property } from '../../domain/entities/Property';
-import { mockPropertyService } from '../../infrastructure/services/MockPropertyService';
-
+import { listingService } from '../../infrastructure/services/ListingService';
 export function useListings() {
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
@@ -9,10 +8,10 @@ export function useListings() {
 
   useEffect(() => {
     setLoading(true);
-    mockPropertyService
-      .getAllProperties()
+    listingService
+      .getPublicListings()
       .then((data) => {
-        setProperties(data);
+        setProperties(data.properties);
         setLoading(false);
       })
       .catch((err) => {

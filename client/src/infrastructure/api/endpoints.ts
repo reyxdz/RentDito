@@ -72,5 +72,10 @@ export const ENDPOINTS = {
   INVENTORY: {
     ROOT: '/api/inventory',
     DETAILS: (id: string) => `/api/inventory/${id}`,
+  },
+  PUBLIC: {
+    LISTINGS: '/api/public/listings',
+    PROPERTY_DETAILS: (id: string) => `/api/public/listings/${id}`,
+    UNIT_DETAILS: (id: string) => `/api/public/listings/unit/${id}`,
   }
 } as const;

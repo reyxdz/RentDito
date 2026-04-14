@@ -24,14 +24,14 @@ import {
   WarningAmberOutlined,
 } from '@mui/icons-material';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useUnitDetail } from '../../../application/hooks/useUnitDetail';
+import { useListingUnitDetail } from '../../../application/hooks/useListingUnitDetail';
 import ImageCarousel from '../../components/ImageCarousel';
 import Navbar from '../../components/Navbar';
 
 export default function UnitDetailPage() {
   const { unitId } = useParams<{ unitId: string }>();
   const navigate = useNavigate();
-  const { unit, loading, error } = useUnitDetail(unitId);
+  const { unit, loading, error } = useListingUnitDetail(unitId);
 
   const formatPrice = (amount: number) =>
     new Intl.NumberFormat('en-PH').format(amount);
