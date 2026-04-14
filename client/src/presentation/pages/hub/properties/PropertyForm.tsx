@@ -1,50 +1,74 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { 
-  Box, Typography, Button, Stepper, Step, StepLabel, 
-  Paper, TextField, Grid, Autocomplete, Chip, MenuItem, Divider
+import { useState } from 'react';
+import {
+  Box, Typography, Stepper, Step, StepLabel, Button, Card, CardContent,
+  TextField, Grid, Autocomplete, Chip, useTheme
 } from '@mui/material';
-import PageHeader from '../../../components/PageHeader';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../../../application/context/AuthContext';
+import { mockPropertyService } from '../../../../infrastructure/services/MockPropertyService';
+import VenueEditor from '../../../components/VenueEditor';
 import ImageUploader from '../../../components/ImageUploader';
-import VenueEditor, { type VenueData } from '../../../components/VenueEditor';
+import type { Venue, PropertyType, PropertyStatus } from '../../../../domain/entities/Property';
 
-const steps = ['Basic Info', 'Address', 'Inclusions', 'Nearby Venues', 'Images'];
-const propertyTypes = ['Boarding House', 'Apartment', 'Studio', 'Dormitory', 'Commercial', 'Parking', 'Land', 'Mixed Use'];
+const steps = ['Basic Info', 'Location', 'Inclusions', 'Nearby Venues', 'Images'];
 
-const popularInclusions = ['Free WiFi', 'Water Included', 'Aircon', 'Bunk Beds', 'CCTV', 'Kitchen Access', 'Laundry Area', 'Cleaning Service', 'Gym'];
 
-const PropertyForm: React.FC = () => {
+
+// Pre-defined list of common amenities for autocomplete
+const commonInclusions = [
+  'WiFi', 'Air Conditioning', 'CCTV', 'Security Guard', 'Water Included',
+  'Electricity Included', 'Parking', 'Gym', 'Swimming Pool', 'Laundry', 'Furnished', 'Cooking Allowed'
+];
+
+export default function PropertyForm() {
+  const theme = useTheme();
   const navigate = useNavigate();
+  const { user } = useAuth();
+  
   const [activeStep, setActiveStep] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Form State
-  const [basicInfo, setBasicInfo] = useState({ name: '', description: '', propertyType: '' });
-  const [address, setAddress] = useState({ street: '', city: '', state: '', zipCode: '', country: 'Philippines' });
+  const [basicInfo, setBasicInfo] = useState({ name: '', description: '', type: '' as PropertyType });
+  const [address, setAddress] = useState({ street: '', city: 'Cebu City', state: 'Cebu', zipCode: '', country: 'Philippines' });
   const [inclusions, setInclusions] = useState<string[]>([]);
-  
-  const [reviewCenters, setReviewCenters] = useState<VenueData[]>([]);
-  const [schools, setSchools] = useState<VenueData[]>([]);
-  const [commercialEstablishments, setCommercialEstablishments] = useState<VenueData[]>([]);
-  
+  const [venues, setVenues] = useState({
+    reviewCenters: [] as Venue[],
+    schools: [] as Venue[],
+    commercial: [] as Venue[]
+  });
   const [images, setImages] = useState<File[]>([]);
 
-  const handleNext = () => {
-    if (activeStep === steps.length - 1) {
-      handleSubmit();
-    } else {
-      setActiveStep((prev) => prev + 1);
-    }
-  };
-
+  const handleNext = () => setActiveStep((prev) => prev + 1);
   const handleBack = () => setActiveStep((prev) => prev - 1);
 
   const handleSubmit = async () => {
-    console.log('Submitting form data:', {
-      basicInfo, address, inclusions, reviewCenters, schools, commercialEstablishments, images
-    });
-    // TODO: Wire up actual API submission using PropertyService
-    // For now, redirect to property list
-    navigate('/hub/properties');
+    if (!user) return;
+    setIsSubmitting(true);
+    try {
+      await mockPropertyService.createProperty({
+        landlordId: user.id || 'unknown',
+        name: basicInfo.name,
+        description: basicInfo.description,
+        propertyType: basicInfo.type,
+        status: 'Active' as PropertyStatus,
+        address,
+        inclusions,
+        reviewCenters: venues.reviewCenters,
+        schools: venues.schools,
+        commercialEstablishments: venues.commercial,
+        images: [], // Images handled differently in real backend
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        id: '', // Will be assigned by backend
+        metrics: { totalUnits: 0, activeUnits: 0, vacantUnits: 0, priceRange: { min: 0, max: 0 } },
+      } as any);
+
+      navigate('/hub/properties');
+    } catch (error) {
+      console.error('Failed to create property', error);
+      setIsSubmitting(false);
+    }
   };
 
   const renderStepContent = (step: number) => {
@@ -53,26 +77,26 @@ const PropertyForm: React.FC = () => {
         return (
           <Grid container spacing={3}>
             <Grid size={{ xs: 12 }}>
-              <TextField 
-                required fullWidth label="Property Name" 
-                value={basicInfo.name} 
-                onChange={e => setBasicInfo({...basicInfo, name: e.target.value})} 
+              <TextField
+                fullWidth label="Property Name"
+                value={basicInfo.name}
+                onChange={(e) => setBasicInfo({ ...basicInfo, name: e.target.value })}
+                required
               />
             </Grid>
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <TextField 
-                select required fullWidth label="Property Type" 
-                value={basicInfo.propertyType} 
-                onChange={e => setBasicInfo({...basicInfo, propertyType: e.target.value})}
-              >
-                {propertyTypes.map(pt => <MenuItem key={pt} value={pt}>{pt}</MenuItem>)}
-              </TextField>
+            <Grid size={{ xs: 12 }}>
+              <TextField
+                fullWidth select label="Property Type"
+                value={basicInfo.type}
+                onChange={(e) => setBasicInfo({ ...basicInfo, type: e.target.value as PropertyType })}
+                required
+              />
             </Grid>
             <Grid size={{ xs: 12 }}>
-              <TextField 
-                fullWidth multiline rows={4} label="Description" 
-                value={basicInfo.description} 
-                onChange={e => setBasicInfo({...basicInfo, description: e.target.value})} 
+              <TextField
+                fullWidth label="Description" multiline rows={4}
+                value={basicInfo.description}
+                onChange={(e) => setBasicInfo({ ...basicInfo, description: e.target.value })}
               />
             </Grid>
           </Grid>
@@ -81,42 +105,42 @@ const PropertyForm: React.FC = () => {
         return (
           <Grid container spacing={3}>
             <Grid size={{ xs: 12 }}>
-              <TextField fullWidth label="Street Address" value={address.street} onChange={e => setAddress({...address, street: e.target.value})} />
+              <TextField fullWidth label="Street Address" value={address.street} onChange={(e) => setAddress({ ...address, street: e.target.value })} required />
             </Grid>
             <Grid size={{ xs: 12, sm: 6 }}>
-              <TextField fullWidth label="City" value={address.city} onChange={e => setAddress({...address, city: e.target.value})} />
+              <TextField fullWidth label="City" value={address.city} onChange={(e) => setAddress({ ...address, city: e.target.value })} required />
             </Grid>
             <Grid size={{ xs: 12, sm: 6 }}>
-              <TextField fullWidth label="State / Province" value={address.state} onChange={e => setAddress({...address, state: e.target.value})} />
+              <TextField fullWidth label="State / Province" value={address.state} onChange={(e) => setAddress({ ...address, state: e.target.value })} required />
             </Grid>
             <Grid size={{ xs: 12, sm: 6 }}>
-              <TextField fullWidth label="ZIP Code" value={address.zipCode} onChange={e => setAddress({...address, zipCode: e.target.value})} />
+              <TextField fullWidth label="Zip / Postal Code" value={address.zipCode} onChange={(e) => setAddress({ ...address, zipCode: e.target.value })} required />
             </Grid>
             <Grid size={{ xs: 12, sm: 6 }}>
-              <TextField fullWidth label="Country" value={address.country} onChange={e => setAddress({...address, country: e.target.value})} />
+              <TextField fullWidth label="Country" value={address.country} onChange={(e) => setAddress({ ...address, country: e.target.value })} required />
             </Grid>
           </Grid>
         );
       case 2:
         return (
           <Box>
-            <Typography variant="body1" mb={2} color="text.secondary">
-              Select or type the available inclusions and amenities for this property.
+            <Typography variant="body2" color="text.secondary" mb={2}>
+              Select or type the amenities, facilities, and rules included in this property.
             </Typography>
             <Autocomplete
               multiple
-              options={popularInclusions}
               freeSolo
+              options={commonInclusions}
               value={inclusions}
               onChange={(_, newValue) => setInclusions(newValue)}
               renderTags={(value: readonly string[], getTagProps) =>
                 value.map((option: string, index: number) => {
                   const { key, ...tagProps } = getTagProps({ index });
-                  return <Chip key={key} variant="outlined" label={option} {...tagProps} />;
+                  return <Chip variant="outlined" label={option} key={key} {...tagProps} color="primary" />;
                 })
               }
               renderInput={(params) => (
-                <TextField {...params} variant="outlined" label="Inclusions & Amenities" placeholder="Add inclusion..." />
+                <TextField {...params} variant="outlined" label="Inclusions & Amenities" placeholder="Press enter to add" />
               )}
             />
           </Box>
@@ -124,23 +148,34 @@ const PropertyForm: React.FC = () => {
       case 3:
         return (
           <Box>
-             <Typography variant="body2" mb={3} color="text.secondary">
-              Highlighting nearby venues helps tenants assess the property's accessibility and value.
-            </Typography>
-            <VenueEditor title="Review Centers" venues={reviewCenters} onChange={setReviewCenters} />
-            <Divider sx={{ my: 3 }} />
-            <VenueEditor title="Schools & Universities" venues={schools} onChange={setSchools} />
-            <Divider sx={{ my: 3 }} />
-            <VenueEditor title="Commercial Establishments" venues={commercialEstablishments} onChange={setCommercialEstablishments} />
+            <VenueEditor
+              title="Review Centers"
+              description="Add nearby review centers and estimated travel times."
+              venues={venues.reviewCenters}
+              onChange={(v) => setVenues({ ...venues, reviewCenters: v })}
+            />
+            <VenueEditor
+              title="Educational Institutions"
+              description="Add nearby schools, colleges, or universities."
+              venues={venues.schools}
+              onChange={(v) => setVenues({ ...venues, schools: v })}
+            />
+            <VenueEditor
+              title="Commercial Establishments"
+              description="Add nearby malls, markets, or business parks."
+              venues={venues.commercial}
+              onChange={(v) => setVenues({ ...venues, commercial: v })}
+            />
           </Box>
         );
       case 4:
         return (
           <Box>
-             <Typography variant="body2" mb={2} color="text.secondary">
-              Upload clear, high-quality images of the property. You can drag and drop multiple files.
-            </Typography>
-            <ImageUploader images={images} onImagesChange={setImages} />
+            <ImageUploader 
+              images={images} 
+              onChange={setImages} 
+              maxFiles={12} 
+            />
           </Box>
         );
       default:
@@ -148,44 +183,52 @@ const PropertyForm: React.FC = () => {
     }
   };
 
+  const isStepValid = () => {
+    if (activeStep === 0) return basicInfo.name.length > 0 && basicInfo.type.length > 0;
+    if (activeStep === 1) return address.street.length > 0 && address.city.length > 0;
+    return true; // other steps optional
+  };
+
   return (
-    <Box>
-      <PageHeader
-        title="Add New Property"
-        subtitle="Create a new property listing with complete details."
-        action={
-          <Button variant="outlined" onClick={() => navigate('/hub/properties')}>
-            Cancel
-          </Button>
-        }
-      />
+    <Box sx={{ maxWidth: 800, mx: 'auto' }}>
+      <Typography variant="h4" fontWeight={800} gutterBottom>
+        Add New Property
+      </Typography>
+      <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
+        Fill out the details below to list your property.
+      </Typography>
 
-      <Paper sx={{ p: { xs: 2, md: 4 }, mt: 3, borderRadius: 2 }}>
-        <Stepper activeStep={activeStep} alternativeLabel sx={{ mb: 4 }}>
-          {steps.map((label) => (
-            <Step key={label}>
-              <StepLabel>{label}</StepLabel>
-            </Step>
-          ))}
-        </Stepper>
+      <Stepper activeStep={activeStep} alternativeLabel sx={{ mb: 4 }}>
+        {steps.map((label) => (
+          <Step key={label}>
+            <StepLabel>{label}</StepLabel>
+          </Step>
+        ))}
+      </Stepper>
 
-        <Box sx={{ minHeight: '300px', my: 4 }}>
+      <Card elevation={0} sx={{ border: `1px solid ${theme.palette.divider}`, borderRadius: 3, mb: 4 }}>
+        <CardContent sx={{ p: { xs: 3, md: 5 } }}>
           {renderStepContent(activeStep)}
-        </Box>
+        </CardContent>
+      </Card>
 
-        <Divider sx={{ mb: 2 }} />
-        
-        <Box display="flex" justifyContent="space-between">
-          <Button disabled={activeStep === 0} onClick={handleBack} variant="outlined">
-            Back
-          </Button>
-          <Button variant="contained" onClick={handleNext}>
-            {activeStep === steps.length - 1 ? 'Submit Property' : 'Next Step'}
-          </Button>
-        </Box>
-      </Paper>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+        <Button
+          onClick={activeStep === 0 ? () => navigate('/hub/properties') : handleBack}
+          sx={{ fontWeight: 600, color: 'text.secondary' }}
+        >
+          {activeStep === 0 ? 'Cancel' : 'Back'}
+        </Button>
+        <Button
+          variant="contained"
+          onClick={activeStep === steps.length - 1 ? handleSubmit : handleNext}
+          disabled={!isStepValid() || isSubmitting}
+          sx={{ fontWeight: 700, minWidth: 120 }}
+          disableElevation
+        >
+          {activeStep === steps.length - 1 ? (isSubmitting ? 'Saving...' : 'Publish Property') : 'Next'}
+        </Button>
+      </Box>
     </Box>
   );
-};
-
-export default PropertyForm;
+}

@@ -1,58 +1,46 @@
-import { useState, useMemo } from 'react';
-import { Box, Button, TextField, MenuItem, IconButton, Avatar } from '@mui/material';
-import { Add as AddIcon, Visibility as VisibilityIcon } from '@mui/icons-material';
+import { useEffect, useState } from 'react';
+import { Box, Typography, Button, Chip } from '@mui/material';
+import { Add as AddIcon } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import PageHeader from '../../../components/PageHeader';
-import DataTable, { type Column } from '../../../components/DataTable';
-import StatusBadge from '../../../components/StatusBadge';
-import { useProperties } from '../../../../application/hooks/useProperties';
-import type { Property, PropertyType, PropertyStatus } from '../../../../domain/entities/Property';
-
-const propertyTypes: PropertyType[] = [
-  'Boarding House', 'Apartment', 'Studio', 'Dormitory', 'Commercial', 'Parking', 'Land', 'Mixed Use'
-];
-const propertyStatuses: PropertyStatus[] = ['Active', 'Disabled', 'Maintenance', 'Archived'];
+import { useAuth } from '../../../../application/context/AuthContext';
+import DataTable from '../../../components/DataTable';
+import type { Column } from '../../../components/DataTable';
+import { mockPropertyService } from '../../../../infrastructure/services/MockPropertyService';
+import type { Property } from '../../../../domain/entities/Property';
 
 export default function PropertyList() {
+  const { user } = useAuth();
   const navigate = useNavigate();
-  const { properties, loading, error } = useProperties();
+  const [properties, setProperties] = useState<Property[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const [searchTerm, setSearchTerm] = useState('');
-  const [typeFilter, setTypeFilter] = useState<PropertyType | 'All'>('All');
-  const [statusFilter, setStatusFilter] = useState<PropertyStatus | 'All'>('All');
+  useEffect(() => {
+    if (user?.id) {
+      loadProperties();
+    }
+  }, [user]);
 
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-
-  const filteredData = useMemo(() => {
-    return properties.filter((prop) => {
-      const matchSearch = prop.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        prop.address.city.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchType = typeFilter === 'All' || prop.propertyType === typeFilter;
-      const matchStatus = statusFilter === 'All' || prop.status === statusFilter;
-      return matchSearch && matchType && matchStatus;
-    });
-  }, [properties, searchTerm, typeFilter, statusFilter]);
-
-  const paginatedData = useMemo(() => {
-    const start = page * rowsPerPage;
-    return filteredData.slice(start, start + rowsPerPage);
-  }, [filteredData, page, rowsPerPage]);
+  const loadProperties = async () => {
+    setLoading(true);
+    try {
+      const data = await mockPropertyService.getPropertiesByLandlord(user!.id);
+      setProperties(data);
+    } catch (error) {
+      console.error('Failed to load properties', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const columns: Column<Property>[] = [
     {
-      id: 'image',
-      label: 'Thumbnail',
-      format: (_, row) => (
-        <Avatar src={row.images?.[0]} variant="rounded" sx={{ width: 56, height: 56 }}>
-          {row.name.charAt(0)}
-        </Avatar>
-      )
-    },
-    {
       id: 'name',
-      label: 'Name',
-      format: (_, row) => <strong>{row.name}</strong>
+      label: 'Property Name',
+      format: (value: string) => (
+        <Typography variant="subtitle2" fontWeight={600}>
+          {value}
+        </Typography>
+      )
     },
     {
       id: 'propertyType',
@@ -61,101 +49,59 @@ export default function PropertyList() {
     {
       id: 'address',
       label: 'Location',
-      format: (_, row) => `${row.address.city}, ${row.address.state}`
-    },
-    {
-      id: 'units',
-      label: 'Units',
-      format: (_, row) => `${row.metrics.totalUnits} Total (${row.metrics.vacantUnits} Vacant)`
+      format: (val: any) => `${val.street}, ${val.city}`
     },
     {
       id: 'status',
       label: 'Status',
-      format: (_, row) => <StatusBadge status={row.status} />
+      format: (value: string) => {
+        let color: "default" | "primary" | "secondary" | "error" | "info" | "success" | "warning" = 'default';
+        if (value === 'Active') color = 'success';
+        if (value === 'Disabled') color = 'error';
+        if (value === 'Maintenance') color = 'warning';
+        return <Chip label={value} size="small" color={color} sx={{ fontWeight: 600 }} />;
+      }
     },
     {
       id: 'actions',
       label: 'Actions',
       align: 'right',
-      format: (_, row) => (
-        <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end' }}>
-          <IconButton size="small" onClick={() => navigate(`/hub/properties/${row.id}`)} color="primary">
-            <VisibilityIcon fontSize="small" />
-          </IconButton>
-        </Box>
+      format: (_: any, row: Property) => (
+        <Button size="small" variant="outlined" onClick={() => navigate(`/hub/properties/${row.id}/edit`)}>
+          Edit
+        </Button>
       )
     }
   ];
 
   return (
     <Box>
-      <PageHeader
-        title="Properties"
-        subtitle="Manage all your rental properties in one place."
-        action={
-          <Button
-            variant="contained"
-            startIcon={<AddIcon />}
-            onClick={() => { /* Placeholder for add property form */ }}
-            sx={{ fontWeight: 'bold' }}
-          >
-            Add Property
-          </Button>
-        }
-      />
-
-      <Box sx={{ display: 'flex', gap: 2, mb: 3, flexWrap: 'wrap' }}>
-        <TextField
-          label="Search Properties"
-          variant="outlined"
-          size="small"
-          value={searchTerm}
-          onChange={(e) => { setSearchTerm(e.target.value); setPage(0); }}
-          sx={{ minWidth: 250, flexGrow: 1 }}
-        />
-        <TextField
-          select
-          label="Type"
-          size="small"
-          value={typeFilter}
-          onChange={(e) => { setTypeFilter(e.target.value as any); setPage(0); }}
-          sx={{ minWidth: 150 }}
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+        <Box>
+          <Typography variant="h4" fontWeight={800}>
+            Properties
+          </Typography>
+          <Typography variant="body1" color="text.secondary">
+            Manage your properties and list new ones.
+          </Typography>
+        </Box>
+        <Button
+          variant="contained"
+          startIcon={<AddIcon />}
+          onClick={() => navigate('/hub/properties/new')}
+          sx={{ fontWeight: 700 }}
         >
-          <MenuItem value="All">All Types</MenuItem>
-          {propertyTypes.map(type => <MenuItem key={type} value={type}>{type}</MenuItem>)}
-        </TextField>
-        <TextField
-          select
-          label="Status"
-          size="small"
-          value={statusFilter}
-          onChange={(e) => { setStatusFilter(e.target.value as any); setPage(0); }}
-          sx={{ minWidth: 150 }}
-        >
-          <MenuItem value="All">All Statuses</MenuItem>
-          {propertyStatuses.map(s => <MenuItem key={s} value={s}>{s}</MenuItem>)}
-        </TextField>
+          Add Property
+        </Button>
       </Box>
 
-      {error ? (
-        <Box sx={{ color: 'error.main', p: 2 }}>{error}</Box>
-      ) : (
-        <DataTable
-          columns={columns}
-          data={paginatedData}
-          loading={loading}
-          page={page}
-          rowsPerPage={rowsPerPage}
-          totalCount={filteredData.length}
-          onPageChange={(_, p) => setPage(p)}
-          onRowsPerPageChange={(e) => {
-            setRowsPerPage(parseInt(e.target.value, 10));
-            setPage(0);
-          }}
-          emptyTitle="No properties found"
-          emptyDescription="Try adjusting your filters or click 'Add Property' to create a new one."
-        />
-      )}
+      <DataTable
+        columns={columns}
+        data={properties}
+        loading={loading}
+        emptyTitle="No Properties Found"
+        emptyDescription="Get started by adding your first property."
+      />
     </Box>
   );
 }
