@@ -1,36 +1,59 @@
 import express from 'express';
-import mongoose from 'mongoose';
 import cors from 'cors';
 import helmet from 'helmet';
+import morgan from 'morgan';
 import dotenv from 'dotenv';
+import connectDB from './config/db';
+import authRoutes from './routes/auth.routes';
+import userRoutes from './routes/user.routes';
+import landlordApplicationRoutes from './routes/landlord-application.routes';
+import teamRoutes from './routes/team.routes';
+import propertyRoutes from './routes/property.routes';
+import unitRoutes from './routes/unit.routes';
+import publicRoutes from './routes/public.routes';
+import adminRoutes from './routes/admin.routes';
+import inquiryRoutes from './routes/inquiry.routes';
+import messageRoutes from './routes/message.routes';
+import visitRoutes from './routes/visit.routes';
+import applicationRoutes from './routes/application.routes';
+import contractRoutes from './routes/contract.routes';
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
+// Middleware chain
 app.use(helmet());
 app.use(cors());
+app.use(morgan('dev'));
 app.use(express.json());
 
-// Basic health check route
+// Database connection
+connectDB();
+
+// Basic health check
 app.get('/api/health', (req, res) => {
   res.status(200).json({ status: 'success', message: 'RentDito API is active' });
 });
 
-// Database connection & Server Boot
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/rentdito';
+// Route mounts
+app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/landlord-applications', landlordApplicationRoutes);
+app.use('/api/team', teamRoutes);
+app.use('/api/properties', propertyRoutes);
+app.use('/api/units', unitRoutes);
+app.use('/api/public', publicRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/inquiries', inquiryRoutes);
+app.use('/api/messages', messageRoutes);
+app.use('/api/visits', visitRoutes);
+app.use('/api/applications', applicationRoutes);
+app.use('/api/contracts', contractRoutes);
 
-mongoose
-  .connect(MONGO_URI)
-  .then(() => {
-    console.log('Successfully connected to MongoDB');
-    app.listen(PORT, () => {
-      console.log(`Server is running in development mode on port ${PORT}`);
-    });
-  })
-  .catch((err) => {
-    console.error('Failed to connect to MongoDB:', err.message);
-    process.exit(1);
-  });
+const server = app.listen(PORT, () => {
+  console.log(`Server is running in development mode on port ${PORT}`);
+});
+
+export default server;

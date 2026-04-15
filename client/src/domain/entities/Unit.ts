@@ -1,23 +1,36 @@
-export type AccommodationType =
-  | 'Bedspace'
-  | 'Room for Rent'
+import type { Tenancy } from './Tenancy';
 
-export type UnitStatus = 'Available' | 'Occupied' | 'Maintenance';
+export type AccommodationType = 'room' | 'bedspace';
+export type UnitStatus = 'vacant' | 'occupied' | 'reserved' | 'maintenance';
+
+export interface Slot {
+  slotNumber: number;
+  status: string;
+  tenancyId?: string;
+  tenancy?: Tenancy;
+}
 
 export interface Unit {
   id: string;
   propertyId: string;
-  name: string;
-  accommodationType: AccommodationType[];
+  unitIdentifier: string;
+  accommodationType: AccommodationType;
   images: string[];
-  monthlyRent: number;
-  rentPricing?: {
-    bedspace?: number;
-    room?: number;
-  };
+  
+  roomRent?: number;
+  bedspaceRent?: number;
+  perHeadRate?: number;
+  
+  deposit: number;
   capacity: number;
-  currentOccupants: number;
-  vacancies: number;
-  status: UnitStatus;
+  maxOccupants: number;
+  sizeSqm?: number;
+  
   features: string[];
+  status: UnitStatus;
+  
+  slots?: Slot[];
+  
+  createdAt: string | Date;
+  updatedAt: string | Date;
 }
