@@ -1004,12 +1004,13 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | # | Task | Files | Status |
 |---|---|---|---|
 | 1 | `user/MyApplications.tsx` — list of user's applications with status badges, review notes (if rejected/approved). Slide-up detail dialog with full personal info, emergency contact, documents, and withdraw button for pending/under-review applications. | `client/src/presentation/pages/user/MyApplications.tsx` | ✅ |
-| 2 | Application form integrated into `UnitDetailPage.tsx` — "Apply Now" button (only for vacant units + verified users). Multi-field form: personal details (full name, phone, occupation, school, address) + emergency contact (name, phone, relation). | `UnitDetailPage.tsx` | ✅ |
-| 3 | Wire "Apply Now" button on unit detail page → opens application form → submit → redirect to My Applications. Button only shown if unit is vacant + user is verified. | `UnitDetailPage.tsx` | ✅ |
-| 4 | `infrastructure/services/MockApplicationService.ts` — mock CRUD with duplicate-check (no double pending apps for same unit) + withdraw capability. `hooks/useApplications.ts` — `fetchApplications`, `createApplication`, `withdrawApplication`. | `MockApplicationService.ts`, `useApplications.ts` | ✅ |
-| 5 | Added route `/u/applications` in `App.tsx` and "My Applications" sidebar entry in `menuConfig.ts`. | `App.tsx`, `menuConfig.ts` | ✅ |
+| 2 | **`ApplicationFormDialog.tsx`** — extracted reusable, self-contained application form dialog (clean architecture). Owns form state internally, delegates persistence to `useApplications` hook. Accepts `ApplicationContext` props (`propertyId`, `propertyName`, `unitId`, `unitIdentifier`) + `onSuccess` callback. Used by both `UnitDetailPage` and `InquiryConversation`. | `client/src/presentation/components/ApplicationFormDialog.tsx` | ✅ |
+| 3 | `UnitDetailPage.tsx` refactored — "Apply Now" button (only for vacant units + verified users) now opens the shared `ApplicationFormDialog`. ~120 lines of inline form code replaced with a single `<ApplicationFormDialog />` call. | `UnitDetailPage.tsx` | ✅ |
+| 4 | **"Apply Now" in InquiryConversation** — floating green action button (Assignment icon) placed next to the message input box. Tooltip: "Apply for this unit". Auto-populates property/unit context from the inquiry data. User can apply without leaving the conversation. Disabled when inquiry is resolved. On success → navigates to `/u/applications`. | `client/src/presentation/pages/user/InquiryConversation.tsx` | ✅ |
+| 5 | `infrastructure/services/MockApplicationService.ts` — mock CRUD with duplicate-check (no double pending apps for same unit) + withdraw capability. `hooks/useApplications.ts` — `fetchApplications`, `createApplication`, `withdrawApplication`. | `MockApplicationService.ts`, `useApplications.ts` | ✅ |
+| 6 | Added route `/u/applications` in `App.tsx` and "My Applications" sidebar entry in `menuConfig.ts`. | `App.tsx`, `menuConfig.ts` | ✅ |
 
-**✅ Verify:** User on unit page → "Apply Now" → fill form + submit → appears as Pending in My Applications → Can view details in slide-up dialog → Can withdraw pending applications.
+**✅ Verify:** User on unit page → "Apply Now" → fill form + submit → appears as Pending in My Applications → Can view details in slide-up dialog → Can withdraw pending applications. **Additionally:** User in inquiry conversation → clicks green "Apply Now" button next to message input → application form opens pre-filled with inquiry's property/unit context → submit → redirects to My Applications.
 
 ---
 

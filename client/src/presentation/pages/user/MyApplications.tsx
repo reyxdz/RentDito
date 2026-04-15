@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import {
   Box, Typography, Card, CardContent, Chip, CircularProgress, Button,
   Dialog, DialogTitle, DialogContent, DialogActions, IconButton, Divider, Slide,
-  TextField, Grid, Alert,
+  Alert,
 } from '@mui/material';
 import type { TransitionProps } from '@mui/material/transitions';
 import React from 'react';
@@ -269,26 +269,9 @@ export default function MyApplications() {
                 </Box>
               </Box>
 
-              <Divider sx={{ mb: 3 }} />
-
-              {/* Documents */}
-              <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 2, color: 'primary.main' }}>
-                Submitted Documents
-              </Typography>
-              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 3 }}>
-                {selected.documents.map((doc, i) => (
-                  <Chip
-                    key={i}
-                    icon={<Description fontSize="small" />}
-                    label={doc}
-                    variant="outlined"
-                    size="small"
-                    sx={{ fontWeight: 500 }}
-                  />
-                ))}
-              </Box>
 
               <Divider sx={{ my: 3 }} />
+
 
               <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                 <Typography variant="caption" color="text.secondary">

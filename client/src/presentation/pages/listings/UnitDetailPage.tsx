@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import type { ApplicationContext } from '../../components/ApplicationFormDialog';
 import {
   Box,
   Typography,
@@ -35,8 +36,8 @@ import FormDialog from '../../components/FormDialog';
 import Navbar from '../../components/Navbar';
 import { useInquiries } from '../../../application/hooks/useInquiries';
 import { useVisits, useTimeSlots } from '../../../application/hooks/useVisits';
-import { useApplications } from '../../../application/hooks/useApplications';
 import TimeSlotPicker from '../../components/TimeSlotPicker';
+import ApplicationFormDialog from '../../components/ApplicationFormDialog';
 
 export default function UnitDetailPage() {
   const { unitId } = useParams<{ unitId: string }>();
@@ -60,22 +61,11 @@ export default function UnitDetailPage() {
 
   // Application state
   const [appDialogOpen, setAppDialogOpen] = useState(false);
-  const [appError, setAppError] = useState<string | null>(null);
-  const [appForm, setAppForm] = useState({
-    fullName: '',
-    phone: '',
-    occupation: '',
-    school: '',
-    address: '',
-    ecName: '',
-    ecPhone: '',
-    ecRelation: '',
-  });
+  const [appContext, setAppContext] = useState<ApplicationContext | null>(null);
   
   const { createInquiry, loading: submittingInquiry } = useInquiries();
   const { createVisit, loading: submittingVisit } = useVisits();
   const { slots, loading: slotsLoading, fetchSlots } = useTimeSlots();
-  const { createApplication, loading: submittingApp } = useApplications();
 
   const checkAuth = (): boolean => {
     if (!isAuthenticated) {
@@ -112,16 +102,12 @@ export default function UnitDetailPage() {
 
   const handleApplyCTA = () => {
     if (!checkAuth()) return;
-    setAppError(null);
-    setAppForm({
-      fullName: user?.name || '',
-      phone: '',
-      occupation: '',
-      school: '',
-      address: '',
-      ecName: '',
-      ecPhone: '',
-      ecRelation: '',
+    if (!unit) return;
+    setAppContext({
+      propertyId: unit.propertyId,
+      propertyName: unit.propertyId.replace('prop-', '').replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+      unitId: unit.id,
+      unitIdentifier: unit.unitIdentifier,
     });
     setAppDialogOpen(true);
   };
@@ -581,124 +567,12 @@ export default function UnitDetailPage() {
       </FormDialog>
 
       {/* ── Application Form Dialog ─────────────────────────────────── */}
-      <FormDialog
+      <ApplicationFormDialog
         open={appDialogOpen}
-        title="Apply for This Unit"
-        submitText="Submit Application"
-        loading={submittingApp}
         onClose={() => setAppDialogOpen(false)}
-        onSubmit={async (e) => {
-          e.preventDefault();
-          if (!appForm.fullName || !appForm.phone || !appForm.occupation || !appForm.address) {
-            setAppError('Please fill in all required fields.');
-            return;
-          }
-          if (!appForm.ecName || !appForm.ecPhone || !appForm.ecRelation) {
-            setAppError('Please provide emergency contact details.');
-            return;
-          }
-          if (!user || !unit) return;
-
-          try {
-            await createApplication({
-              propertyId: unit.propertyId,
-              propertyName: unit.propertyId.replace('prop-', '').replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
-              unitId: unit.id,
-              unitIdentifier: unit.unitIdentifier,
-              userId: user.id,
-              userName: user.name || 'User',
-              personalDetails: {
-                fullName: appForm.fullName,
-                phone: appForm.phone,
-                occupation: appForm.occupation,
-                school: appForm.school || undefined,
-                address: appForm.address,
-                emergencyContact: {
-                  name: appForm.ecName,
-                  phone: appForm.ecPhone,
-                  relation: appForm.ecRelation,
-                },
-              },
-              documents: ['valid_id.jpg'], // Mock document upload
-            });
-            setAppDialogOpen(false);
-            navigate('/u/applications');
-          } catch (err: any) {
-            setAppError(err.message || 'Failed to submit application');
-          }
-        }}
-      >
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-          You're applying for <strong>{unit?.unitIdentifier}</strong>. Please fill in your details below.
-        </Typography>
-
-        {appError && (
-          <Typography color="error" variant="body2" sx={{ mb: 2 }}>{appError}</Typography>
-        )}
-
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
-          <Typography variant="subtitle2" sx={{ fontWeight: 700, color: 'primary.main' }}>Personal Information</Typography>
-          <TextField
-            fullWidth label="Full Name" required
-            value={appForm.fullName}
-            onChange={(e) => setAppForm(f => ({ ...f, fullName: e.target.value }))}
-          />
-          <TextField
-            fullWidth label="Phone Number" required
-            value={appForm.phone}
-            onChange={(e) => setAppForm(f => ({ ...f, phone: e.target.value }))}
-            placeholder="09171234567"
-          />
-          <Grid container spacing={2}>
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <TextField
-                fullWidth label="Occupation" required
-                value={appForm.occupation}
-                onChange={(e) => setAppForm(f => ({ ...f, occupation: e.target.value }))}
-              />
-            </Grid>
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <TextField
-                fullWidth label="School (if student)"
-                value={appForm.school}
-                onChange={(e) => setAppForm(f => ({ ...f, school: e.target.value }))}
-              />
-            </Grid>
-          </Grid>
-          <TextField
-            fullWidth label="Address" required multiline rows={2}
-            value={appForm.address}
-            onChange={(e) => setAppForm(f => ({ ...f, address: e.target.value }))}
-          />
-
-          <Divider sx={{ my: 1 }} />
-
-          <Typography variant="subtitle2" sx={{ fontWeight: 700, color: 'primary.main' }}>Emergency Contact</Typography>
-          <TextField
-            fullWidth label="Contact Name" required
-            value={appForm.ecName}
-            onChange={(e) => setAppForm(f => ({ ...f, ecName: e.target.value }))}
-          />
-          <Grid container spacing={2}>
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <TextField
-                fullWidth label="Contact Phone" required
-                value={appForm.ecPhone}
-                onChange={(e) => setAppForm(f => ({ ...f, ecPhone: e.target.value }))}
-                placeholder="09189876543"
-              />
-            </Grid>
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <TextField
-                fullWidth label="Relation" required
-                value={appForm.ecRelation}
-                onChange={(e) => setAppForm(f => ({ ...f, ecRelation: e.target.value }))}
-                placeholder="e.g. Mother, Father, Sibling"
-              />
-            </Grid>
-          </Grid>
-        </Box>
-      </FormDialog>
+        context={appContext}
+        onSuccess={() => navigate('/u/applications')}
+      />
     </Box>
   );
 }

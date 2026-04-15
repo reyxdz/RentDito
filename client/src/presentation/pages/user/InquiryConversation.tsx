@@ -1,10 +1,15 @@
 import { useEffect, useState } from 'react';
-import { Box, Typography, Card, CardContent, CircularProgress, Button, TextField, Divider, IconButton, Chip } from '@mui/material';
-import { ArrowBack, Send, AttachFile } from '@mui/icons-material';
+import {
+  Box, Typography, Card, CardContent, CircularProgress, Button,
+  TextField, Divider, IconButton, Chip, Tooltip,
+} from '@mui/material';
+import { ArrowBack, Send, AttachFile, Assignment } from '@mui/icons-material';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../application/context/AuthContext';
 import { useInquiryDetail } from '../../../application/hooks/useInquiries';
 import ChatThread from '../../components/ChatThread';
+import ApplicationFormDialog from '../../components/ApplicationFormDialog';
+import type { ApplicationContext } from '../../components/ApplicationFormDialog';
 
 export default function InquiryConversation() {
   const { inquiryId } = useParams<{ inquiryId: string }>();
@@ -13,6 +18,10 @@ export default function InquiryConversation() {
   const { inquiry, loading, error, fetchInquiry, sendMessage } = useInquiryDetail(inquiryId);
   const [draft, setDraft] = useState('');
   const [sending, setSending] = useState(false);
+
+  // Application dialog state
+  const [appDialogOpen, setAppDialogOpen] = useState(false);
+  const [appContext, setAppContext] = useState<ApplicationContext | null>(null);
 
   useEffect(() => {
     fetchInquiry();
@@ -32,6 +41,17 @@ export default function InquiryConversation() {
     } finally {
       setSending(false);
     }
+  };
+
+  const handleApplyNow = () => {
+    if (!inquiry) return;
+    setAppContext({
+      propertyId: inquiry.propertyId,
+      propertyName: inquiry.propertyName,
+      unitId: inquiry.unitId,
+      unitIdentifier: inquiry.unitIdentifier,
+    });
+    setAppDialogOpen(true);
   };
 
   const getStatusColor = (status: string) => {
@@ -90,7 +110,7 @@ export default function InquiryConversation() {
         
         <Divider />
         
-        {/* Reply Box */}
+        {/* Reply Box + Apply Now */}
         <CardContent sx={{ p: 2, bgcolor: 'background.paper', '&:last-child': { pb: 2 } }}>
           <Box component="form" onSubmit={handleSend} sx={{ display: 'flex', gap: 1, alignItems: 'flex-end' }}>
             <IconButton color="primary" sx={{ mb: 0.5 }}>
@@ -108,6 +128,30 @@ export default function InquiryConversation() {
               sx={{ '& .MuiOutlinedInput-root': { borderRadius: 3 } }}
               disabled={sending || inquiry.status === 'resolved'}
             />
+            <Tooltip title="Apply for this unit" arrow placement="top">
+              <Button
+                variant="contained"
+                color="success"
+                onClick={handleApplyNow}
+                disabled={inquiry.status === 'resolved'}
+                sx={{
+                  borderRadius: 3,
+                  minWidth: 48,
+                  width: 48,
+                  height: 40,
+                  mb: 0.5,
+                  p: 0,
+                  boxShadow: 2,
+                  transition: 'all 0.2s',
+                  '&:hover': {
+                    transform: 'scale(1.08)',
+                    boxShadow: 4,
+                  },
+                }}
+              >
+                <Assignment fontSize="small" />
+              </Button>
+            </Tooltip>
             <Button
               type="submit"
               variant="contained"
@@ -120,6 +164,14 @@ export default function InquiryConversation() {
           </Box>
         </CardContent>
       </Card>
+
+      {/* Application Form Dialog */}
+      <ApplicationFormDialog
+        open={appDialogOpen}
+        onClose={() => setAppDialogOpen(false)}
+        context={appContext}
+        onSuccess={() => navigate('/u/applications')}
+      />
     </Box>
   );
 }
