@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import type { Unit } from '../../domain/entities/Unit';
 import type { Property } from '../../domain/entities/Property';
-import { mockUnitService } from '../../infrastructure/services/MockUnitService';
-import { mockPropertyService } from '../../infrastructure/services/MockPropertyService';
+import { unitService } from '../../infrastructure/services/UnitService';
+import { propertyService } from '../../infrastructure/services/PropertyService';
 
 export function useUnitDetail(unitId: string | undefined) {
   const [unit, setUnit] = useState<Unit | null>(null);
@@ -18,7 +18,7 @@ export function useUnitDetail(unitId: string | undefined) {
     }
 
     setLoading(true);
-    mockUnitService
+    unitService
       .getUnitById(unitId)
       .then((unitData) => {
         if (!unitData) {
@@ -30,7 +30,7 @@ export function useUnitDetail(unitId: string | undefined) {
         setUnit(unitData);
 
         // Fetch property data to get nearbyCategories
-        return mockPropertyService.getPropertyById(unitData.propertyId);
+        return propertyService.getPropertyById(unitData.propertyId);
       })
       .then((propertyData) => {
         if (propertyData) {

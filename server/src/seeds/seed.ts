@@ -2,6 +2,9 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import path from 'path';
 import { User } from '../models/User';
+import { Property } from '../models/Property';
+import { Unit } from '../models/Unit';
+import { MOCK_PROPERTIES, MOCK_UNITS } from './seedData';
 import { hash } from '../utils/password';
 
 // Load env vars
@@ -21,7 +24,8 @@ const clearDatabase = async () => {
   console.log('Clearing database...');
   // Clear all collections
   await User.deleteMany();
-  // await Property.deleteMany();
+  await Property.deleteMany();
+  await Unit.deleteMany();
   // await Lease.deleteMany();
   console.log('Database cleared!');
 };
@@ -50,10 +54,34 @@ const seedUsers = async () => {
   return [superAdmin, landlord1, landlord2, staff1, staff2, staff3, staff4, user1, user2, user3, user4, user5, user6];
 };
 
-const seedProperties = async (users: any[]) => {
-  console.log('Seeding properties...');
-  // Placeholder logic
-  return []; // Return created properties
+const seedPropertiesAndUnits = async (users: any[]) => {
+  console.log('Seeding properties and units...');
+  // Use landlord1 as the owner of these properties
+  const landlord1 = users.find(u => u.email === 'landlord1@rentdito.com');
+  const createdProperties = [];
+
+  for (const propMock of MOCK_PROPERTIES) {
+    const property = await Property.create({
+      ...propMock,
+      landlordId: landlord1._id
+    });
+    createdProperties.push(property);
+  }
+
+  console.log('Seeding units...');
+  const createdUnits = [];
+  for (const unitMock of MOCK_UNITS) {
+    const propId = createdProperties[unitMock.propertyIndex]._id;
+    const { propertyIndex, ...unitData } = unitMock;
+    
+    const unit = await Unit.create({
+      ...unitData,
+      propertyId: propId
+    });
+    createdUnits.push(unit);
+  }
+
+  return createdProperties;
 };
 
 const seedLeases = async (users: any[], properties: any[]) => {
@@ -85,7 +113,7 @@ const runSeeder = async () => {
 
     // Call individual seed functions in order of dependencies
     const users = await seedUsers();
-    const properties = await seedProperties(users);
+    const properties = await seedPropertiesAndUnits(users);
     const leases = await seedLeases(users, properties);
     await seedPayments(leases);
     await seedMaintenanceRequests(properties, users);

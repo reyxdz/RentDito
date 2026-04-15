@@ -1,36 +1,16 @@
-import { useEffect, useState } from 'react';
 import { Box, Typography, Button, Chip } from '@mui/material';
 import { Add as AddIcon } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../../application/context/AuthContext';
 import DataTable from '../../../components/DataTable';
 import type { Column } from '../../../components/DataTable';
-import { mockPropertyService } from '../../../../infrastructure/services/MockPropertyService';
 import type { Property } from '../../../../domain/entities/Property';
+import { useProperties } from '../../../../application/hooks/useProperties';
 
 export default function PropertyList() {
-  const { user } = useAuth();
+  useAuth();
   const navigate = useNavigate();
-  const [properties, setProperties] = useState<Property[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (user?.id) {
-      loadProperties();
-    }
-  }, [user]);
-
-  const loadProperties = async () => {
-    setLoading(true);
-    try {
-      const data = await mockPropertyService.getPropertiesByLandlord(user!.id);
-      setProperties(data);
-    } catch (error) {
-      console.error('Failed to load properties', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { properties, loading } = useProperties();
 
   const columns: Column<Property>[] = [
     {
