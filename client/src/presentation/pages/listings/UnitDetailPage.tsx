@@ -15,6 +15,7 @@ import {
   ListItemText,
   Button,
   TextField,
+  MenuItem,
 } from '@mui/material';
 import {
   ArrowBack,
@@ -33,6 +34,9 @@ import ConfirmDialog from '../../components/ConfirmDialog';
 import FormDialog from '../../components/FormDialog';
 import Navbar from '../../components/Navbar';
 import { useInquiries } from '../../../application/hooks/useInquiries';
+import { useVisits, useTimeSlots } from '../../../application/hooks/useVisits';
+import { useApplications } from '../../../application/hooks/useApplications';
+import TimeSlotPicker from '../../components/TimeSlotPicker';
 
 export default function UnitDetailPage() {
   const { unitId } = useParams<{ unitId: string }>();
@@ -45,13 +49,38 @@ export default function UnitDetailPage() {
   const [inquiryDialogOpen, setInquiryDialogOpen] = useState(false);
   const [inquiryMessage, setInquiryMessage] = useState('');
   const [submitError, setSubmitError] = useState<string | null>(null);
+
+  // Visit state
+  const [visitDialogOpen, setVisitDialogOpen] = useState(false);
+  const [visitDate, setVisitDate] = useState('');
+  const [visitTime, setVisitTime] = useState('');
+  const [visitPurpose, setVisitPurpose] = useState<'viewing' | 'inspection'>('viewing');
+  const [visitNotes, setVisitNotes] = useState('');
+  const [visitError, setVisitError] = useState<string | null>(null);
+
+  // Application state
+  const [appDialogOpen, setAppDialogOpen] = useState(false);
+  const [appError, setAppError] = useState<string | null>(null);
+  const [appForm, setAppForm] = useState({
+    fullName: '',
+    phone: '',
+    occupation: '',
+    school: '',
+    address: '',
+    ecName: '',
+    ecPhone: '',
+    ecRelation: '',
+  });
   
   const { createInquiry, loading: submittingInquiry } = useInquiries();
+  const { createVisit, loading: submittingVisit } = useVisits();
+  const { slots, loading: slotsLoading, fetchSlots } = useTimeSlots();
+  const { createApplication, loading: submittingApp } = useApplications();
 
-  const handleCTA = () => {
+  const checkAuth = (): boolean => {
     if (!isAuthenticated) {
       setAuthDialogOpen(true);
-      return;
+      return false;
     }
     if (user?.verificationStatus !== 'verified') {
       if (user?.verificationStatus === 'pending') {
@@ -59,13 +88,50 @@ export default function UnitDetailPage() {
       } else {
         navigate('/u/verify');
       }
-      return;
+      return false;
     }
-    
-    // Authenticated & verified, open the inquiry form
+    return true;
+  };
+
+  const handleInquireCTA = () => {
+    if (!checkAuth()) return;
     setInquiryMessage('');
     setSubmitError(null);
     setInquiryDialogOpen(true);
+  };
+
+  const handleVisitCTA = () => {
+    if (!checkAuth()) return;
+    setVisitDate('');
+    setVisitTime('');
+    setVisitPurpose('viewing');
+    setVisitNotes('');
+    setVisitError(null);
+    setVisitDialogOpen(true);
+  };
+
+  const handleApplyCTA = () => {
+    if (!checkAuth()) return;
+    setAppError(null);
+    setAppForm({
+      fullName: user?.name || '',
+      phone: '',
+      occupation: '',
+      school: '',
+      address: '',
+      ecName: '',
+      ecPhone: '',
+      ecRelation: '',
+    });
+    setAppDialogOpen(true);
+  };
+
+  const handleDateChange = (date: string) => {
+    setVisitDate(date);
+    setVisitTime('');
+    if (unit && date) {
+      fetchSlots(unit.id, date);
+    }
   };
 
   const handleInquirySubmit = async (e: React.FormEvent) => {
@@ -202,8 +268,13 @@ export default function UnitDetailPage() {
                     </Typography>
                   )}
                   <Box sx={{ mt: 3, display: 'flex', gap: 1, justifyContent: { xs: 'flex-start', sm: 'flex-end' } }}>
-                    <Button variant="outlined" color="primary" onClick={handleCTA}>Inquire</Button>
-                    <Button variant="contained" color="primary" disableElevation onClick={handleCTA}>Schedule Visit</Button>
+                    <Button variant="outlined" color="primary" onClick={handleInquireCTA}>Inquire</Button>
+                    <Button variant="contained" color="primary" disableElevation onClick={handleVisitCTA}>Schedule Visit</Button>
+                    {unit.status === 'vacant' && (
+                      <Button variant="contained" color="success" disableElevation onClick={handleApplyCTA}>
+                        Apply Now
+                      </Button>
+                    )}
                   </Box>
                 </Box>
               </Box>
@@ -412,6 +483,221 @@ export default function UnitDetailPage() {
           placeholder={`Hi! I'm interested in ${unit?.unitIdentifier}. Is this still available?`}
           required
         />
+      </FormDialog>
+
+      {/* ── Visit Request Dialog ──────────────────────────────────────── */}
+      <FormDialog
+        open={visitDialogOpen}
+        title="Schedule a Visit"
+        submitText="Request Visit"
+        loading={submittingVisit}
+        onClose={() => setVisitDialogOpen(false)}
+        onSubmit={async (e) => {
+          e.preventDefault();
+          if (!visitDate) {
+            setVisitError('Please select a preferred date.');
+            return;
+          }
+          if (!visitTime) {
+            setVisitError('Please select an available time slot.');
+            return;
+          }
+          if (!user || !unit) return;
+          
+          try {
+            await createVisit({
+              propertyId: unit.propertyId,
+              propertyName: unit.propertyId.replace('prop-', '').replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+              unitId: unit.id,
+              unitIdentifier: unit.unitIdentifier,
+              userId: user.id,
+              userName: user.name || 'User',
+              preferredDate: visitDate,
+              preferredTime: visitTime,
+              purpose: visitPurpose,
+              notes: visitNotes || undefined,
+            });
+            setVisitDialogOpen(false);
+            navigate('/u/bookings');
+          } catch (err: any) {
+            setVisitError(err.message || 'Failed to submit visit request');
+          }
+        }}
+      >
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+          Schedule a visit for <strong>{unit?.unitIdentifier}</strong>. Pick your preferred date and time.
+        </Typography>
+
+        {visitError && (
+          <Typography color="error" variant="body2" sx={{ mb: 2 }}>{visitError}</Typography>
+        )}
+
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+          <TextField
+            fullWidth
+            label="Preferred Date"
+            type="date"
+            value={visitDate}
+            onChange={(e) => handleDateChange(e.target.value)}
+            slotProps={{ inputLabel: { shrink: true } }}
+            inputProps={{ min: new Date().toISOString().slice(0, 10) }}
+            required
+            sx={{
+              '& input::-webkit-calendar-picker-indicator': {
+                filter: 'invert(1)',
+                cursor: 'pointer',
+              },
+            }}
+          />
+
+          <TimeSlotPicker
+            slots={slots}
+            loading={slotsLoading}
+            selectedTime={visitTime}
+            onSelect={setVisitTime}
+          />
+
+          <TextField
+            fullWidth
+            select
+            label="Purpose"
+            value={visitPurpose}
+            onChange={(e) => setVisitPurpose(e.target.value as 'viewing' | 'inspection')}
+          >
+            <MenuItem value="viewing">Property Viewing</MenuItem>
+            <MenuItem value="inspection">Unit Inspection</MenuItem>
+          </TextField>
+
+          <TextField
+            fullWidth
+            label="Notes (optional)"
+            multiline
+            rows={3}
+            value={visitNotes}
+            onChange={(e) => setVisitNotes(e.target.value)}
+            placeholder="Any special requests or questions?"
+          />
+        </Box>
+      </FormDialog>
+
+      {/* ── Application Form Dialog ─────────────────────────────────── */}
+      <FormDialog
+        open={appDialogOpen}
+        title="Apply for This Unit"
+        submitText="Submit Application"
+        loading={submittingApp}
+        onClose={() => setAppDialogOpen(false)}
+        onSubmit={async (e) => {
+          e.preventDefault();
+          if (!appForm.fullName || !appForm.phone || !appForm.occupation || !appForm.address) {
+            setAppError('Please fill in all required fields.');
+            return;
+          }
+          if (!appForm.ecName || !appForm.ecPhone || !appForm.ecRelation) {
+            setAppError('Please provide emergency contact details.');
+            return;
+          }
+          if (!user || !unit) return;
+
+          try {
+            await createApplication({
+              propertyId: unit.propertyId,
+              propertyName: unit.propertyId.replace('prop-', '').replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+              unitId: unit.id,
+              unitIdentifier: unit.unitIdentifier,
+              userId: user.id,
+              userName: user.name || 'User',
+              personalDetails: {
+                fullName: appForm.fullName,
+                phone: appForm.phone,
+                occupation: appForm.occupation,
+                school: appForm.school || undefined,
+                address: appForm.address,
+                emergencyContact: {
+                  name: appForm.ecName,
+                  phone: appForm.ecPhone,
+                  relation: appForm.ecRelation,
+                },
+              },
+              documents: ['valid_id.jpg'], // Mock document upload
+            });
+            setAppDialogOpen(false);
+            navigate('/u/applications');
+          } catch (err: any) {
+            setAppError(err.message || 'Failed to submit application');
+          }
+        }}
+      >
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+          You're applying for <strong>{unit?.unitIdentifier}</strong>. Please fill in your details below.
+        </Typography>
+
+        {appError && (
+          <Typography color="error" variant="body2" sx={{ mb: 2 }}>{appError}</Typography>
+        )}
+
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+          <Typography variant="subtitle2" sx={{ fontWeight: 700, color: 'primary.main' }}>Personal Information</Typography>
+          <TextField
+            fullWidth label="Full Name" required
+            value={appForm.fullName}
+            onChange={(e) => setAppForm(f => ({ ...f, fullName: e.target.value }))}
+          />
+          <TextField
+            fullWidth label="Phone Number" required
+            value={appForm.phone}
+            onChange={(e) => setAppForm(f => ({ ...f, phone: e.target.value }))}
+            placeholder="09171234567"
+          />
+          <Grid container spacing={2}>
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <TextField
+                fullWidth label="Occupation" required
+                value={appForm.occupation}
+                onChange={(e) => setAppForm(f => ({ ...f, occupation: e.target.value }))}
+              />
+            </Grid>
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <TextField
+                fullWidth label="School (if student)"
+                value={appForm.school}
+                onChange={(e) => setAppForm(f => ({ ...f, school: e.target.value }))}
+              />
+            </Grid>
+          </Grid>
+          <TextField
+            fullWidth label="Address" required multiline rows={2}
+            value={appForm.address}
+            onChange={(e) => setAppForm(f => ({ ...f, address: e.target.value }))}
+          />
+
+          <Divider sx={{ my: 1 }} />
+
+          <Typography variant="subtitle2" sx={{ fontWeight: 700, color: 'primary.main' }}>Emergency Contact</Typography>
+          <TextField
+            fullWidth label="Contact Name" required
+            value={appForm.ecName}
+            onChange={(e) => setAppForm(f => ({ ...f, ecName: e.target.value }))}
+          />
+          <Grid container spacing={2}>
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <TextField
+                fullWidth label="Contact Phone" required
+                value={appForm.ecPhone}
+                onChange={(e) => setAppForm(f => ({ ...f, ecPhone: e.target.value }))}
+                placeholder="09189876543"
+              />
+            </Grid>
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <TextField
+                fullWidth label="Relation" required
+                value={appForm.ecRelation}
+                onChange={(e) => setAppForm(f => ({ ...f, ecRelation: e.target.value }))}
+                placeholder="e.g. Mother, Father, Sibling"
+              />
+            </Grid>
+          </Grid>
+        </Box>
       </FormDialog>
     </Box>
   );

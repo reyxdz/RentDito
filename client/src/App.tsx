@@ -70,8 +70,9 @@ import BecomeLandlord from './presentation/pages/user/BecomeLandlord';
 import Dashboard from './presentation/pages/user/Dashboard';
 import MyInquiries from './presentation/pages/user/MyInquiries';
 import InquiryConversation from './presentation/pages/user/InquiryConversation';
+import MyVisits from './presentation/pages/user/MyVisits';
+import MyApplications from './presentation/pages/user/MyApplications';
 import {
-  UserBookings,
   UserMyUnit,
   UserBills,
   UserContract,
@@ -145,7 +146,8 @@ function App() {
             <Route index element={<Dashboard />} />
             <Route path="inquiries" element={<MyInquiries />} />
             <Route path="inquiries/:inquiryId" element={<InquiryConversation />} />
-            <Route path="bookings" element={<UserBookings />} />
+            <Route path="bookings" element={<MyVisits />} />
+            <Route path="applications" element={<MyApplications />} />
             <Route path="verify" element={<VerifyAccount />} />
             <Route path="become-landlord" element={<BecomeLandlord />} />
             <Route path="my-unit" element={<UserMyUnit />} />

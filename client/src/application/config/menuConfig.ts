@@ -77,6 +77,7 @@ export const USER_MENU_ITEMS: MenuItem[] = [
   { text: 'Browse Listings', icon: HomeWork,              path: '/listings' },
   { text: 'My Inquiries',    icon: Forum,                 path: '/u/inquiries' },
   { text: 'My Bookings',     icon: EventNote,             path: '/u/bookings' },
+  { text: 'My Applications', icon: Description,           path: '/u/applications' },
   { text: 'Verify Account',  icon: VerifiedUser,          path: '/u/verify' },
   { text: 'Become Landlord', icon: Storefront,            path: '/u/become-landlord' },
   // Tenancy-conditional section

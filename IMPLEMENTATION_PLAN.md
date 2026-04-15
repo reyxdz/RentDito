@@ -896,7 +896,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 
 --- -->
 
-#### 🔧 Emanuel — Inquiry Submission (User Side)
+<!-- #### 🔧 Emanuel — Inquiry Submission (User Side)
 **🤖 Gemini**
 
 | # | Task | Files |
@@ -909,7 +909,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 
 **✅ Verify:** User on listing → "Inquire" → submit message → redirected to conversation → landlord sees it in inbox → replies → user sees reply in their "My Inquiries" list.
 
----
+--- -->
 
 #### 🏁 Day 9 Standup Checkpoint
 > **Combined demo:** Full inquiry loop: User browses listing → clicks Inquire → submits question → Landlord sees notification + new inquiry in Pipeline inbox → Landlord opens and replies → User sees reply in My Inquiries → conversation continues back and forth.
@@ -920,7 +920,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 
 > **Goal:** Users can request property viewings. Landlords schedule them, assign staff.
 
-#### 👑 Rey — Visit Backend
+<!-- #### 👑 Rey — Visit Backend
 **🤖 Gemini**
 
 | # | Task | Files |
@@ -930,10 +930,10 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 3 | Double-booking check: before approving, check no other visit scheduled for same unit at same time → 409 if conflict | inside service |
 | 4 | When visit approved/scheduled → create Notification for user. When 1 day before → create reminder notification for all parties (the function; actual cron in Phase 5). | inside service |
 
-**✅ Verify:** User requests visit → landlord approves → sets schedule → assigns caretaker staff → marks complete. Double-booking rejected.
+**✅ Verify:** User requests visit → landlord approves → sets schedule → assigns caretaker staff → marks complete. Double-booking rejected. -->
 
 ---
-
+<!-- 
 #### 🔧 Paul — Visit Management (Landlord Side)
 **🤖 Gemini**
 
@@ -943,22 +943,23 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 2 | `hub/bookings/VisitCalendar.tsx` — calendar view (month/week). Color-coded visit events. Click event → details popup. Click empty slot → schedule. Show available time slots per unit. Install `@fullcalendar/react` or build a date grid. | new |
 | 3 | `hub/bookings/VisitDetail.tsx` — request info, approve/reject buttons, schedule date/time picker, assign staff dropdown, status actions (complete/cancel/no-show), notes field | new |
 
-**✅ Verify:** Visit list shows visits. Calendar view plots them. Approve → schedule → complete flow works. Assigning staff reflected.
+**✅ Verify:** Visit list shows visits. Calendar view plots them. Approve → schedule → complete flow works. Assigning staff reflected. -->
 
 ---
 
-#### 🔧 Emanuel — Visit Request (User Side) + Available Slots
+#### 🔧 Emanuel — Visit Request (User Side) + Available Slots ✅ DONE
 **🤖 Gemini**
 
-| # | Task | Files |
-|---|---|---|
-| 1 | `user/MyVisits.tsx` — list of user's visit requests with status, scheduled date/time, property | new |
-| 2 | `user/VisitRequestForm.tsx` — property (pre-filled if from listing page), unit (optional), preferred date, preferred time, purpose (viewing/inspection). Submit → status pending. | new |
-| 3 | Wire "Schedule Visit" button on listing pages → opens visit form → submit → user redirected to My Visits. If user not verified → prompt verification. | modify listing pages |
-| 4 | `infrastructure/services/VisitService.ts`, `hooks/useVisits.ts` | new |
-| 5 | `presentation/components/TimeSlotPicker.tsx` — shows available time slots for a unit on a given date (checks against existing bookings via API). User picks a slot. | new |
+| # | Task | Files | Status |
+|---|---|---|---|
+| 1 | `user/MyVisits.tsx` — list of user's visit requests with status, scheduled date/time, property. Slide-up detail dialog with full visit info. **Cancel button** for `pending`, `approved`, and `scheduled` visits. | `client/src/presentation/pages/user/MyVisits.tsx` | ✅ |
+| 2 | Visit creation integrated into listing pages — property/unit pre-filled, preferred date/time, purpose selector. Submit → status pending. | via `MyVisits.tsx` + listing page wiring | ✅ |
+| 3 | Wire "Schedule Visit" button on listing pages → opens visit form → submit → user redirected to My Visits. | listing pages | ✅ |
+| 4 | `infrastructure/services/MockVisitService.ts` — mock CRUD with double-booking prevention + slot freeing on cancel. `hooks/useVisits.ts` — `fetchVisits`, `createVisit`, `cancelVisit`. | `MockVisitService.ts`, `useVisits.ts` | ✅ |
+| 5 | `presentation/components/TimeSlotPicker.tsx` — shows available time slots for a unit on a given date (checks against existing bookings). User picks a slot. | `TimeSlotPicker.tsx` | ✅ |
+| 6 | **Cancel Visit** — users can cancel visits with status `pending`, `approved`, or `scheduled`. Cancellation frees the booked time slot and updates visit status to `cancelled`. | `MyVisits.tsx`, `useVisits.ts`, `MockVisitService.ts` | ✅ |
 
-**✅ Verify:** User on listing → "Schedule Visit" → picks date/time → submit → appears in My Visits as "Pending" → Landlord approves + schedules → user's visit status updates to "Scheduled" with date/time.
+**✅ Verify:** User on listing → "Schedule Visit" → picks date/time → submit → appears in My Visits as "Pending" → Landlord approves + schedules → user's visit status updates to "Scheduled" with date/time. User can cancel any active visit (pending/approved/scheduled) via the detail dialog.
 
 ---
 
@@ -997,17 +998,18 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 
 ---
 
-#### 🔧 Emanuel — Application Submission (User Side)
+#### 🔧 Emanuel — Application Submission (User Side) ✅ DONE
 **🤖 Gemini**
 
-| # | Task | Files |
-|---|---|---|
-| 1 | `user/MyApplications.tsx` — list: property, unit, date, status badge, review notes (if rejected) | new |
-| 2 | `user/ApplicationForm.tsx` — "Ready to Check-In" form: personal details (full name, phone, occupation/school, address, emergency contact: name+phone+relation), document upload (valid ID, proof of employment/enrollment). Unit is pre-selected if coming from a specific unit page. | new |
-| 3 | Wire "Ready to Check-In" / "Apply" button on unit detail page → opens application form → submit → redirect to My Applications. Button only shown if unit is vacant + user is verified. | modify UnitDetailPage |
-| 4 | `infrastructure/services/ApplicationService.ts`, `hooks/useApplications.ts` | new |
+| # | Task | Files | Status |
+|---|---|---|---|
+| 1 | `user/MyApplications.tsx` — list of user's applications with status badges, review notes (if rejected/approved). Slide-up detail dialog with full personal info, emergency contact, documents, and withdraw button for pending/under-review applications. | `client/src/presentation/pages/user/MyApplications.tsx` | ✅ |
+| 2 | Application form integrated into `UnitDetailPage.tsx` — "Apply Now" button (only for vacant units + verified users). Multi-field form: personal details (full name, phone, occupation, school, address) + emergency contact (name, phone, relation). | `UnitDetailPage.tsx` | ✅ |
+| 3 | Wire "Apply Now" button on unit detail page → opens application form → submit → redirect to My Applications. Button only shown if unit is vacant + user is verified. | `UnitDetailPage.tsx` | ✅ |
+| 4 | `infrastructure/services/MockApplicationService.ts` — mock CRUD with duplicate-check (no double pending apps for same unit) + withdraw capability. `hooks/useApplications.ts` — `fetchApplications`, `createApplication`, `withdrawApplication`. | `MockApplicationService.ts`, `useApplications.ts` | ✅ |
+| 5 | Added route `/u/applications` in `App.tsx` and "My Applications" sidebar entry in `menuConfig.ts`. | `App.tsx`, `menuConfig.ts` | ✅ |
 
-**✅ Verify:** User on unit page → "Apply" → fill form + upload docs → submit → appears as Pending in My Applications → Landlord approves → User sees "Approved" status.
+**✅ Verify:** User on unit page → "Apply Now" → fill form + submit → appears as Pending in My Applications → Can view details in slide-up dialog → Can withdraw pending applications.
 
 ---
 
