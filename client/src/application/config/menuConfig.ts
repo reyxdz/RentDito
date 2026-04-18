@@ -78,12 +78,12 @@ export const USER_MENU_ITEMS: MenuItem[] = [
   { text: 'My Inquiries',    icon: Forum,                 path: '/u/inquiries' },
   { text: 'My Bookings',     icon: EventNote,             path: '/u/bookings' },
   { text: 'My Applications', icon: Description,           path: '/u/applications' },
+  { text: 'My Contracts',    icon: Gavel,                 path: '/u/contracts' },
   { text: 'Verify Account',  icon: VerifiedUser,          path: '/u/verify' },
   { text: 'Become Landlord', icon: Storefront,            path: '/u/become-landlord' },
   // Tenancy-conditional section
   { text: 'My Unit',         icon: Home,                  path: '/u/my-unit',         requiresTenancy: true, sectionLabel: 'Tenancy' },
   { text: 'My Bills',        icon: Receipt,               path: '/u/bills',           requiresTenancy: true },
-  { text: 'My Contract',     icon: Description,           path: '/u/contract',        requiresTenancy: true },
   { text: 'Maintenance',     icon: Handyman,              path: '/u/maintenance',     requiresTenancy: true },
 ];
 

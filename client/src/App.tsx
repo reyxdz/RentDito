@@ -75,9 +75,11 @@ import MyApplications from './presentation/pages/user/MyApplications';
 import {
   UserMyUnit,
   UserBills,
-  UserContract,
   UserMaintenance,
 } from './presentation/pages/user/Placeholders';
+
+import MyContracts from './presentation/pages/user/MyContracts';
+import ContractView from './presentation/pages/user/ContractView';
 
 function App() {
   return (
@@ -152,7 +154,8 @@ function App() {
             <Route path="become-landlord" element={<BecomeLandlord />} />
             <Route path="my-unit" element={<UserMyUnit />} />
             <Route path="bills" element={<UserBills />} />
-            <Route path="contract" element={<UserContract />} />
+            <Route path="contracts" element={<MyContracts />} />
+            <Route path="contracts/:contractId" element={<ContractView />} />
             <Route path="maintenance" element={<UserMaintenance />} />
             <Route path="profile" element={<Profile />} />
           </Route>
