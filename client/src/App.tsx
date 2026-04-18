@@ -88,9 +88,11 @@ import MyApplications from './presentation/pages/user/MyApplications';
 import {
   UserMyUnit,
   UserBills,
-  UserContract,
   UserMaintenance,
 } from './presentation/pages/user/Placeholders';
+
+import MyContracts from './presentation/pages/user/MyContracts';
+import ContractView from './presentation/pages/user/ContractView';
 
 function App() {
   return (
