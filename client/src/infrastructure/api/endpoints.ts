@@ -44,6 +44,8 @@ export const ENDPOINTS = {
   TENANCIES: {
     ROOT: '/api/tenancies',
     DETAILS: (id: string) => `/api/tenancies/${id}`,
+    CONFIRM_CHECKIN: '/api/tenancies/confirm-checkin',
+    CHECKOUT: (id: string) => `/api/tenancies/${id}/checkout`,
   },
   INQUIRIES: {
     ROOT: '/api/inquiries',

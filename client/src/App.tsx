@@ -44,7 +44,6 @@ import {
 import HubOverview from './presentation/pages/hub/overview/Overview';
 import TeamManagement from './presentation/pages/hub/team/TeamManagement';
 import {
-  HubTenantsPlaceholder,
   HubBillingPlaceholder,
   HubUtilitiesPlaceholder,
   HubFinancialsPlaceholder,
@@ -73,6 +72,9 @@ import VisitDetail from './presentation/pages/hub/bookings/VisitDetail';
 import ContractList from './presentation/pages/hub/contracts/ContractList';
 import ContractDetail from './presentation/pages/hub/contracts/ContractDetail';
 import ContractForm from './presentation/pages/hub/contracts/ContractForm';
+
+import TenantList from './presentation/pages/hub/tenants/TenantList';
+import TenantDetail from './presentation/pages/hub/tenants/TenantDetail';
 
 // ─── User pages ──────────────────────────────────────────────────────
 import VerifyAccount from './presentation/pages/user/VerifyAccount';
@@ -131,7 +133,10 @@ function App() {
             <Route index element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="units"><UnitList /></ProtectedRoute>} />
             <Route path=":unitId" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="units"><UnitDetail /></ProtectedRoute>} />
           </Route>
-          <Route path="tenants" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="tenants"><HubTenantsPlaceholder /></ProtectedRoute>} />
+          <Route path="tenants">
+            <Route index element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="tenants"><TenantList /></ProtectedRoute>} />
+            <Route path=":tenancyId" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="tenants"><TenantDetail /></ProtectedRoute>} />
+          </Route>
           <Route path="pipeline">
             <Route index element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="pipeline"><InquiryList /></ProtectedRoute>} />
             <Route path="inquiries" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="pipeline"><InquiryList /></ProtectedRoute>} />

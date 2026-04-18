@@ -18,10 +18,12 @@ import {
   Payments as MoneyIcon,
   Lock as LockIcon,
   Gavel as TermsIcon,
+  VpnKey as KeyIcon,
 } from '@mui/icons-material';
 import { useContractDetail } from '../../../../application/hooks/useContracts';
 import SignaturePad from '../../../components/SignaturePad';
 import type { ContractStatus } from '../../../../domain/entities/Contract';
+import CheckInFlow from '../pipeline/CheckInFlow';
 
 /** Contract status config */
 const STATUS_CONFIG: Record<ContractStatus, { label: string; color: string }> = {
@@ -56,6 +58,7 @@ export default function ContractDetail() {
 
   const [signatureData, setSignatureData] = useState<string | null>(null);
   const [signOpen, setSignOpen] = useState(false);
+  const [checkInOpen, setCheckInOpen] = useState(false);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [confirmDialog, setConfirmDialog] = useState<{
     open: boolean; title: string; message: string;
@@ -136,6 +139,7 @@ export default function ContractDetail() {
   const canSendReview = contract.status === 'draft';
   const canSendSignature = contract.status === 'pending_review';
   const canSign = contract.status === 'pending_signature' && !contract.landlordSignature;
+  const canCheckIn = contract.status === 'signed';
   const canGeneratePDF = ['signed', 'active'].includes(contract.status);
   const canDownload = !!contract.documentUrl;
 
@@ -224,6 +228,13 @@ export default function ContractDetail() {
                 disabled={!!actionLoading}
                 sx={{ bgcolor: '#3b82f6', '&:hover': { bgcolor: '#2563eb' }, fontWeight: 700, borderRadius: 2, textTransform: 'none' }}>
                 Sign Contract
+              </Button>
+            )}
+            {canCheckIn && (
+              <Button variant="contained" startIcon={<KeyIcon />} onClick={() => setCheckInOpen(true)}
+                disabled={!!actionLoading}
+                sx={{ bgcolor: '#10b981', '&:hover': { bgcolor: '#059669' }, fontWeight: 700, borderRadius: 2, textTransform: 'none' }}>
+                Proceed to Check-In
               </Button>
             )}
             {canGeneratePDF && (
@@ -409,6 +420,13 @@ export default function ContractDetail() {
           </Button>
         </DialogActions>
       </Dialog>
+      
+      {/* Check-In Dialog */}
+      <CheckInFlow
+        open={checkInOpen}
+        onClose={() => setCheckInOpen(false)}
+        contract={contract}
+      />
     </Box>
   );
 }
