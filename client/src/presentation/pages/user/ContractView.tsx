@@ -1,8 +1,7 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Box, Typography, Paper, Grid, Divider, Button, Skeleton, useTheme } from '@mui/material';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useContractDetail, useSignContract } from '../../../application/hooks/useContracts';
-
+import { useContractDetail } from '../../../application/hooks/useContracts';
 import PageHeader from '../../components/PageHeader';
 import StatusBadge from '../../components/StatusBadge';
 import SignaturePad from '../../components/SignaturePad';
@@ -21,33 +20,36 @@ export default function ContractView() {
   const { contractId } = useParams<{ contractId: string }>();
   const navigate = useNavigate();
   const theme = useTheme();
-  
-  const { contract, isLoading, error, fetchContract } = useContractDetail(contractId);
-  const { signContract } = useSignContract();
+
+  const { contract, loading, error, fetchContract, signContract, downloadPDF } = useContractDetail(contractId);
+
+  // Signature capture state
+  const [signatureData, setSignatureData] = useState<string | null>(null);
+  const [isSigning, setIsSigning] = useState(false);
 
   useEffect(() => {
     fetchContract();
   }, [fetchContract]);
 
   useEffect(() => {
-    if (error) {
-      console.error(error);
-    }
+    if (error) console.error(error);
   }, [error]);
 
-  const handleSign = async (dataUrl: string) => {
-    if (!contractId) return;
+  const handleSign = async () => {
+    if (!signatureData) return;
+    setIsSigning(true);
     try {
-      await signContract(contractId, dataUrl, () => {
-        fetchContract(); // Refresh to get active status
-      });
+      await signContract(signatureData, 'user');
+      await fetchContract(); // Refresh
     } catch (err) {
-      // Error handled by hook Notification
+      // Error logged by hook
+    } finally {
+      setIsSigning(false);
     }
   };
 
-  if (isLoading) {
-    return <Box sx={{ p: 3 }}><Skeleton variant="rectangular" height={400} /></Box>;
+  if (loading) {
+    return <Box sx={{ p: 3 }}><Skeleton variant="rectangular" height={400} sx={{ borderRadius: 2 }} /></Box>;
   }
 
   if (!contract) {
@@ -61,18 +63,18 @@ export default function ContractView() {
     );
   }
 
-  // Calculate generic elapsed months
+  // Calculate elapsed months
   const startD = new Date(contract.startDate);
   const currentD = new Date();
-  const elapsedMonths = Math.floor((currentD.getTime() - startD.getTime()) / (1000 * 60 * 60 * 24 * 30));
+  const elapsedMonths = Math.max(0, Math.floor((currentD.getTime() - startD.getTime()) / (1000 * 60 * 60 * 24 * 30)));
 
   const needsSignature = contract.status === 'pending_signature' && !contract.userSignature;
 
   return (
     <Box sx={{ maxWidth: 900, mx: 'auto', pb: 8 }}>
-      <Button 
-        startIcon={<ArrowBack />} 
-        onClick={() => navigate('/u/contracts')} 
+      <Button
+        startIcon={<ArrowBack />}
+        onClick={() => navigate('/u/contracts')}
         sx={{ mb: 2 }}
         color="inherit"
       >
@@ -83,11 +85,11 @@ export default function ContractView() {
         title="Contract Details"
         subtitle={`Ref: ${contract.id.toUpperCase()}`}
         action={
-          <Button 
-            variant="outlined" 
+          <Button
+            variant="outlined"
             startIcon={<PictureAsPdf />}
-            disabled={contract.status === 'draft' || contract.status === 'pending_review' || contract.status === 'pending_signature'}
-            onClick={() => console.info('PDF generation will be implemented in the future.')}
+            disabled={!contract.documentUrl}
+            onClick={() => downloadPDF()}
           >
             Download PDF
           </Button>
@@ -173,10 +175,20 @@ export default function ContractView() {
               <Typography variant="body2" color="text.secondary" mb={2}>
                 Please review the terms above carefully. Draw your signature below to agree to the rental contract.
               </Typography>
-              <SignaturePad 
-                height={180} 
-                onSign={handleSign}
+              <SignaturePad
+                height={180}
+                onSignatureChange={(data) => setSignatureData(data)}
               />
+              <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end' }}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleSign}
+                  disabled={!signatureData || isSigning}
+                >
+                  {isSigning ? 'Submitting...' : 'Submit Signature'}
+                </Button>
+              </Box>
             </Box>
           )}
 
@@ -185,22 +197,22 @@ export default function ContractView() {
         {/* Right Column - Sidebar */}
         <Grid size={{ xs: 12, md: 4 }}>
           <Paper elevation={0} sx={{ p: 3, border: '1px solid', borderColor: 'divider', borderRadius: 2, mb: 3 }}>
-            <LockInTracker 
-              monthsElapsed={elapsedMonths > 0 ? elapsedMonths : 0} 
-              monthsTotal={contract.lockInPeriod} 
-              startDate={contract.startDate} 
-              endDate={contract.endDate} 
+            <LockInTracker
+              monthsElapsed={elapsedMonths}
+              monthsTotal={contract.lockInPeriod}
+              startDate={contract.startDate}
+              endDate={contract.endDate}
             />
           </Paper>
 
           <Paper elevation={0} sx={{ p: 3, border: '1px solid', borderColor: 'divider', borderRadius: 2 }}>
             <Typography variant="subtitle1" fontWeight={600} gutterBottom>Billing Breakdown</Typography>
-            
+
             <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
               <Typography variant="body2" color="text.secondary">Monthly Rent</Typography>
               <Typography variant="body2" fontWeight={500}>{formatCurrency(contract.monthlyRent)}</Typography>
             </Box>
-            
+
             <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
               <Typography variant="body2" color="text.secondary">Advance Payment</Typography>
               <Typography variant="body2" fontWeight={500}>{formatCurrency(contract.advancePayment)}</Typography>

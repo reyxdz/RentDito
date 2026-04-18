@@ -184,7 +184,8 @@ function App() {
             <Route path="become-landlord" element={<BecomeLandlord />} />
             <Route path="my-unit" element={<UserMyUnit />} />
             <Route path="bills" element={<UserBills />} />
-            <Route path="contract" element={<UserContract />} />
+            <Route path="contracts" element={<MyContracts />} />
+            <Route path="contracts/:contractId" element={<ContractView />} />
             <Route path="maintenance" element={<UserMaintenance />} />
             <Route path="profile" element={<Profile />} />
           </Route>
