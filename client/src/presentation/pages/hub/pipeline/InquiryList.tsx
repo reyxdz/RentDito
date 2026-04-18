@@ -7,7 +7,8 @@ import { useProperties } from '../../../../application/hooks/useProperties';
 import DataTable from '../../../components/DataTable';
 import type { Column } from '../../../components/DataTable';
 import StatusBadge from '../../../components/StatusBadge';
-import type { Inquiry, InquiryStatus } from '../../../../domain/entities/Inquiry';
+
+type MockInquiry = any;
 
 /** Helper to format relative dates */
 function formatRelativeDate(date: string | Date): string {
@@ -26,8 +27,11 @@ function formatRelativeDate(date: string | Date): string {
 }
 
 /** Map inquiry status to a display-friendly label */
-function getStatusLabel(status: InquiryStatus): string {
-  const map: Record<InquiryStatus, string> = {
+function getStatusLabel(status: string): string {
+  const map: Record<string, string> = {
+    pending: 'Pending',
+    responded: 'Responded',
+    resolved: 'Resolved',
     open: 'Open',
     in_progress: 'In Progress',
     closed: 'Closed',
@@ -38,81 +42,43 @@ function getStatusLabel(status: InquiryStatus): string {
 
 export default function InquiryList() {
   const navigate = useNavigate();
-  const { inquiries, loading: inquiriesLoading, fetchPropertyInquiries } = useInquiries();
+  const { inquiries, loading: inquiriesLoading, fetchInquiries } = useInquiries();
   const { properties, loading: propsLoading } = useProperties();
 
   const [selectedPropertyId, setSelectedPropertyId] = useState<string>('all');
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
-  const [fetchingAll, setFetchingAll] = useState(false);
-  const [allInquiries, setAllInquiries] = useState<Inquiry[]>([]);
 
-  // Fetch inquiries when property filter changes
+  // Fetch inquiries on mount
   useEffect(() => {
-    if (propsLoading || properties.length === 0) return;
+    fetchInquiries();
+  }, [fetchInquiries]);
 
-    if (selectedPropertyId !== 'all') {
-      fetchPropertyInquiries(selectedPropertyId, selectedStatus !== 'all' ? { status: selectedStatus } : undefined);
-    } else {
-      fetchAllInquiries();
-    }
-  }, [selectedPropertyId, selectedStatus, properties, propsLoading]);
-
-  // Merge inquiries from all properties when "all" is selected
-  const fetchAllInquiries = async () => {
-    setFetchingAll(true);
-    try {
-      const results = await Promise.all(
-        properties.map(p =>
-          fetchPropertyInquiries(p.id, selectedStatus !== 'all' ? { status: selectedStatus } : undefined).catch(() => [])
-        )
-      );
-      const merged = results.flat();
-      // De-duplicate (in case) & sort by newest
-      const uniqueMap = new Map<string, Inquiry>();
-      merged.forEach(inq => {
-        const id = (inq as any)._id || inq.id;
-        if (!uniqueMap.has(id)) uniqueMap.set(id, inq);
-      });
-      const unique = Array.from(uniqueMap.values()).sort(
-        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      );
-      setAllInquiries(unique);
-    } finally {
-      setFetchingAll(false);
-    }
-  };
-
-  // Decide which data to display
+  // Client-side filtering
   const displayData = useMemo(() => {
-    const data = selectedPropertyId === 'all' ? allInquiries : inquiries;
-    // Normalize IDs for DataTable (needs `id` field)
-    return data.map(inq => ({
+    let data = inquiries as MockInquiry[];
+
+    // Filter by property
+    if (selectedPropertyId !== 'all') {
+      data = data.filter((inq: MockInquiry) => inq.propertyId === selectedPropertyId);
+    }
+
+    // Filter by status
+    if (selectedStatus !== 'all') {
+      data = data.filter((inq: MockInquiry) => inq.status === selectedStatus);
+    }
+
+    // Normalize IDs for DataTable
+    return data.map((inq: MockInquiry) => ({
       ...inq,
-      id: (inq as any)._id || inq.id,
+      id: inq._id || inq.id,
     }));
-  }, [selectedPropertyId, allInquiries, inquiries]);
+  }, [inquiries, selectedPropertyId, selectedStatus]);
 
-  const getPropertyName = (inq: Inquiry) => {
-    if (inq.property) return (inq.property as any).name || 'Unknown';
-    const propId = typeof inq.propertyId === 'string' ? inq.propertyId : (inq.propertyId as any)?._id;
-    return properties.find(p => p.id === propId)?.name || 'Unknown';
-  };
-
-  const getUserName = (inq: Inquiry) => {
-    if (inq.user) return (inq.user as any).name || 'Unknown User';
-    return 'Unknown User';
-  };
-
-  const getUnitName = (inq: Inquiry) => {
-    if (inq.unit) return (inq.unit as any).unitIdentifier || '—';
-    return '—';
-  };
-
-  const columns: Column<Inquiry & { id: string }>[] = [
+  const columns: Column<any>[] = [
     {
-      id: 'userId',
+      id: 'userName',
       label: 'Inquirer',
-      format: (_: any, row: Inquiry) => (
+      format: (_: any, row: MockInquiry) => (
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
           <Box
             sx={{
@@ -129,59 +95,38 @@ export default function InquiryList() {
               flexShrink: 0,
             }}
           >
-            {getUserName(row).charAt(0).toUpperCase()}
+            {(row.userName || 'U').charAt(0).toUpperCase()}
           </Box>
           <Box>
             <Typography variant="subtitle2" fontWeight={600} sx={{ lineHeight: 1.3 }}>
-              {getUserName(row)}
-            </Typography>
-            <Typography variant="caption" color="text.secondary">
-              {(row.user as any)?.email || ''}
+              {row.userName || 'Unknown'}
             </Typography>
           </Box>
         </Box>
       ),
     },
     {
-      id: 'propertyId',
+      id: 'propertyName',
       label: 'Property',
-      format: (_: any, row: Inquiry) => (
-        <Typography variant="body2" fontWeight={500}>
-          {getPropertyName(row)}
-        </Typography>
-      ),
-    },
-    {
-      id: 'unitId',
-      label: 'Unit',
-      format: (_: any, row: Inquiry) => (
-        <Typography variant="body2" color="text.secondary">
-          {getUnitName(row)}
-        </Typography>
-      ),
-    },
-    {
-      id: 'subject',
-      label: 'Subject',
       format: (value: string) => (
-        <Typography
-          variant="body2"
-          fontWeight={500}
-          sx={{
-            maxWidth: 220,
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-          }}
-        >
-          {value}
+        <Typography variant="body2" fontWeight={500}>
+          {value || 'Unknown'}
+        </Typography>
+      ),
+    },
+    {
+      id: 'unitIdentifier',
+      label: 'Unit',
+      format: (value: string) => (
+        <Typography variant="body2" color="text.secondary">
+          {value || '—'}
         </Typography>
       ),
     },
     {
       id: 'status',
       label: 'Status',
-      format: (value: string) => <StatusBadge status={getStatusLabel(value as InquiryStatus)} />,
+      format: (value: string) => <StatusBadge status={getStatusLabel(value)} />,
     },
     {
       id: 'createdAt',
@@ -197,7 +142,7 @@ export default function InquiryList() {
       id: 'actions',
       label: '',
       align: 'right',
-      format: (_: any, row: Inquiry & { id: string }) => (
+      format: (_: any, row: any) => (
         <Tooltip title="View Conversation" arrow>
           <IconButton
             size="small"
@@ -214,7 +159,7 @@ export default function InquiryList() {
     },
   ];
 
-  const isLoading = inquiriesLoading || propsLoading || fetchingAll;
+  const isLoading = inquiriesLoading || propsLoading;
 
   return (
     <Box>
@@ -274,10 +219,9 @@ export default function InquiryList() {
               size="small"
             >
               <MenuItem value="all">All Statuses</MenuItem>
-              <MenuItem value="open">Open</MenuItem>
-              <MenuItem value="in_progress">In Progress</MenuItem>
-              <MenuItem value="closed">Closed</MenuItem>
-              <MenuItem value="converted">Converted</MenuItem>
+              <MenuItem value="pending">Pending</MenuItem>
+              <MenuItem value="responded">Responded</MenuItem>
+              <MenuItem value="resolved">Resolved</MenuItem>
             </TextField>
           </Grid>
         </Grid>
@@ -286,7 +230,7 @@ export default function InquiryList() {
       {/* Data Table */}
       <DataTable
         columns={columns}
-        data={displayData}
+        data={displayData as any}
         loading={isLoading}
         emptyTitle="No Inquiries Found"
         emptyDescription="Once tenants submit inquiries about your properties, they'll appear here."

@@ -55,7 +55,7 @@ const seedUsers = async () => {
 
 const seedProperties = async (users: any[]) => {
   console.log('Seeding properties...');
-  
+
   const landlord1 = users.find(u => u.email === 'landlord1@rentdito.com');
   const landlord2 = users.find(u => u.email === 'landlord2@rentdito.com');
 
@@ -68,7 +68,7 @@ const seedProperties = async (users: any[]) => {
     status: "Active",
     amenities: ["WiFi", "Guard"],
     inclusions: ["Water", "Garbage"],
-    venues: { reviewCenters: [], schools: [{name: "USC", distance: "5 min"}], commercial: [] },
+    venues: { reviewCenters: [], schools: [{ name: "USC", distance: "5 min" }], commercial: [] },
     billingSettings: { billingDay: 1, dueDay: 5, lateFeePercent: 5, utilityDefault: "metered" },
     emergencyContacts: []
   });

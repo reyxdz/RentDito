@@ -44,7 +44,7 @@ export default function UnitDetailPage() {
   const navigate = useNavigate();
   const { unit, loading, error } = useUnitDetail(unitId);
   const { user, isAuthenticated } = useAuth();
-  
+
   const [authDialogOpen, setAuthDialogOpen] = useState(false);
   const [pendingDialogOpen, setPendingDialogOpen] = useState(false);
   const [inquiryDialogOpen, setInquiryDialogOpen] = useState(false);
@@ -62,7 +62,7 @@ export default function UnitDetailPage() {
   // Application state
   const [appDialogOpen, setAppDialogOpen] = useState(false);
   const [appContext, setAppContext] = useState<ApplicationContext | null>(null);
-  
+
   const { createInquiry, loading: submittingInquiry } = useInquiries();
   const { createVisit, loading: submittingVisit } = useVisits();
   const { slots, loading: slotsLoading, fetchSlots } = useTimeSlots();
@@ -489,7 +489,7 @@ export default function UnitDetailPage() {
             return;
           }
           if (!user || !unit) return;
-          
+
           try {
             await createVisit({
               propertyId: unit.propertyId,

@@ -133,10 +133,10 @@ export default function ApplicationDetail() {
     );
   }
 
-  const appUser = application.user as any;
-  const appProperty = application.property as any;
-  const appUnit = application.unit as any;
-  const pd = application.personalDetails;
+  const appUser = (application as any).user || { name: (application as any).userName };
+  const appProperty = (application as any).property || { name: (application as any).propertyName };
+  const appUnit = (application as any).unit || { unitIdentifier: (application as any).unitIdentifier };
+  const pd = application.personalDetails as any;
   const statusConfig = STATUS_CONFIG[application.status] || { label: application.status, color: '#6b7280' };
 
   const isTerminal = ['approved', 'rejected'].includes(application.status);
@@ -327,7 +327,11 @@ export default function ApplicationDetail() {
                 <InfoRow
                   icon={<EmergencyIcon fontSize="small" />}
                   label="Emergency Contact"
-                  value={pd?.emergencyContact || '—'}
+                  value={
+                    typeof pd?.emergencyContact === 'object' && pd?.emergencyContact
+                      ? `${pd.emergencyContact.name} (${pd.emergencyContact.relation}) — ${pd.emergencyContact.phone}`
+                      : (pd?.emergencyContact || '—')
+                  }
                   highlight
                 />
               </Box>
@@ -439,8 +443,9 @@ export default function ApplicationDetail() {
 
               {application.documents && application.documents.length > 0 ? (
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-                  {application.documents.map((doc, idx) => {
-                    const isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(doc);
+                  {application.documents.map((doc: any, idx: number) => {
+                    const docStr = typeof doc === 'string' ? doc : '';
+                    const isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(docStr);
                     return (
                       <Box
                         key={idx}

@@ -3,7 +3,6 @@ import { useParams, useNavigate } from 'react-router-dom';
 import {
   Box, Typography, Button, Paper, CircularProgress,
   TextField, IconButton, Divider, Chip, Avatar,
-  MenuItem, Select, type SelectChangeEvent,
   Card, CardContent,
 } from '@mui/material';
 import {
@@ -16,8 +15,6 @@ import {
 import { useInquiryDetail } from '../../../../application/hooks/useInquiries';
 import { useAuth } from '../../../../application/context/AuthContext';
 import StatusBadge from '../../../components/StatusBadge';
-import type { InquiryStatus } from '../../../../domain/entities/Inquiry';
-import type { Message } from '../../../../domain/entities/Message';
 
 /** Helper to format message timestamps */
 function formatMessageTime(date: string | Date): string {
@@ -37,8 +34,11 @@ function formatMessageTime(date: string | Date): string {
 }
 
 /** Map status to display label */
-function getStatusLabel(status: InquiryStatus): string {
-  const map: Record<InquiryStatus, string> = {
+function getStatusLabel(status: string): string {
+  const map: Record<string, string> = {
+    pending: 'Pending',
+    responded: 'Responded',
+    resolved: 'Resolved',
     open: 'Open',
     in_progress: 'In Progress',
     closed: 'Closed',
@@ -54,7 +54,7 @@ function MessageBubble({
   senderName,
   senderAvatar,
 }: {
-  message: Message;
+  message: any;
   isOwn: boolean;
   senderName: string;
   senderAvatar?: string;
@@ -103,7 +103,7 @@ function MessageBubble({
             {isOwn ? 'You' : senderName}
           </Typography>
           <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.7rem' }}>
-            {formatMessageTime(message.createdAt)}
+            {formatMessageTime(message.timestamp || message.createdAt)}
           </Typography>
         </Box>
 
@@ -115,7 +115,7 @@ function MessageBubble({
             borderRadius: isOwn ? '16px 4px 16px 16px' : '4px 16px 16px 16px',
             bgcolor: isOwn
               ? 'primary.main'
-              : (theme) => theme.palette.mode === 'dark' ? 'grey.800' : 'grey.100',
+              : (theme: any) => theme.palette.mode === 'dark' ? 'grey.800' : 'grey.100',
             color: isOwn ? '#fff' : 'text.primary',
             maxWidth: 480,
           }}
@@ -125,7 +125,7 @@ function MessageBubble({
           </Typography>
           {message.attachments && message.attachments.length > 0 && (
             <Box sx={{ mt: 1, display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
-              {message.attachments.map((att, i) => (
+              {message.attachments.map((att: string, i: number) => (
                 <Chip
                   key={i}
                   label={`Attachment ${i + 1}`}
@@ -155,32 +155,23 @@ export default function InquiryDetail() {
   const { user } = useAuth();
   const {
     inquiry,
-    messages,
     loading,
-    messagesLoading,
     error,
     fetchInquiry,
-    fetchMessages,
     sendMessage,
-    updateStatus,
   } = useInquiryDetail(inquiryId);
 
   const [replyText, setReplyText] = useState('');
   const [sending, setSending] = useState(false);
-  const [statusUpdating, setStatusUpdating] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Messages are embedded in the inquiry
+  const messages = (inquiry as any)?.messages || [];
 
   // Fetch inquiry on mount
   useEffect(() => {
     fetchInquiry();
   }, [fetchInquiry]);
-
-  // Fetch messages when inquiry loads and has conversationId
-  useEffect(() => {
-    if (inquiry?.conversationId) {
-      fetchMessages(inquiry.conversationId as string);
-    }
-  }, [inquiry?.conversationId, fetchMessages]);
 
   // Auto-scroll to bottom when messages change
   useEffect(() => {
@@ -188,12 +179,14 @@ export default function InquiryDetail() {
   }, [messages]);
 
   const handleSendMessage = async () => {
-    if (!replyText.trim() || !inquiry?.conversationId || sending) return;
+    if (!replyText.trim() || !inquiry || sending) return;
 
     setSending(true);
     try {
-      await sendMessage(inquiry.conversationId as string, replyText.trim());
+      await sendMessage(user?.id || '', user?.name || 'Staff', replyText.trim());
       setReplyText('');
+      // Refetch to get updated messages
+      fetchInquiry();
     } catch (err) {
       console.error('Failed to send message:', err);
     } finally {
@@ -208,27 +201,15 @@ export default function InquiryDetail() {
     }
   };
 
-  const handleStatusChange = async (e: SelectChangeEvent<string>) => {
-    const newStatus = e.target.value as InquiryStatus;
-    setStatusUpdating(true);
-    try {
-      await updateStatus(newStatus);
-    } catch (err) {
-      console.error('Failed to update status:', err);
-    } finally {
-      setStatusUpdating(false);
-    }
-  };
-
-  // Resolve sender info from participants
+  // Resolve sender info
   const getSenderInfo = (senderId: string): { name: string; avatar?: string } => {
     if (senderId === user?.id) {
       return { name: user.name, avatar: user.avatar };
     }
     // The inquiry user (tenant side)
-    const inquiryUser = inquiry?.user as any;
-    if (inquiryUser && ((inquiryUser._id || inquiryUser.id) === senderId)) {
-      return { name: inquiryUser.name, avatar: inquiryUser.avatar };
+    const inq = inquiry as any;
+    if (inq?.userId === senderId) {
+      return { name: inq.userName || 'Tenant', avatar: inq.userAvatar };
     }
     return { name: 'Participant' };
   };
@@ -252,10 +233,8 @@ export default function InquiryDetail() {
     );
   }
 
-  const inquiryUser = inquiry.user as any;
-  const inquiryProperty = inquiry.property as any;
-  const inquiryUnit = inquiry.unit as any;
-  const isClosed = inquiry.status === 'closed' || inquiry.status === 'converted';
+  const inq = inquiry as any;
+  const isClosed = inq.status === 'resolved';
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 120px)' }}>
@@ -287,14 +266,14 @@ export default function InquiryDetail() {
           {/* Left: Inquiry Info */}
           <Box sx={{ flex: 1, minWidth: 280 }}>
             <Typography variant="h5" fontWeight={800} gutterBottom>
-              {inquiry.subject}
+              Inquiry about {inq.unitIdentifier || 'Unit'}
             </Typography>
 
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3, mt: 2 }}>
               {/* User Info */}
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <Avatar
-                  src={inquiryUser?.avatar}
+                  src={inq.userAvatar}
                   sx={{
                     width: 32,
                     height: 32,
@@ -302,14 +281,11 @@ export default function InquiryDetail() {
                     fontSize: '0.8rem',
                   }}
                 >
-                  {inquiryUser?.name?.charAt(0) || <PersonIcon fontSize="small" />}
+                  {(inq.userName || 'U').charAt(0) || <PersonIcon fontSize="small" />}
                 </Avatar>
                 <Box>
                   <Typography variant="body2" fontWeight={600}>
-                    {inquiryUser?.name || 'Unknown'}
-                  </Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    {inquiryUser?.email || ''}
+                    {inq.userName || 'Unknown'}
                   </Typography>
                 </Box>
               </Box>
@@ -318,41 +294,25 @@ export default function InquiryDetail() {
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <PropertyIcon fontSize="small" color="action" />
                 <Typography variant="body2" color="text.secondary">
-                  {inquiryProperty?.name || 'Unknown Property'}
+                  {inq.propertyName || 'Unknown Property'}
                 </Typography>
               </Box>
 
               {/* Unit */}
-              {inquiryUnit && (
+              {inq.unitIdentifier && (
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   <UnitIcon fontSize="small" color="action" />
                   <Typography variant="body2" color="text.secondary">
-                    {inquiryUnit?.unitIdentifier || '—'}
+                    {inq.unitIdentifier}
                   </Typography>
                 </Box>
               )}
             </Box>
           </Box>
 
-          {/* Right: Status & Actions */}
+          {/* Right: Status */}
           <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 1.5 }}>
-            <StatusBadge status={getStatusLabel(inquiry.status)} />
-
-            <Select
-              value={inquiry.status}
-              onChange={handleStatusChange}
-              size="small"
-              disabled={statusUpdating}
-              sx={{
-                minWidth: 160,
-                '& .MuiSelect-select': { py: 1 },
-              }}
-            >
-              <MenuItem value="open">Open</MenuItem>
-              <MenuItem value="in_progress">In Progress</MenuItem>
-              <MenuItem value="closed">Close</MenuItem>
-              <MenuItem value="converted">Convert to Visit</MenuItem>
-            </Select>
+            <StatusBadge status={getStatusLabel(inq.status)} />
           </Box>
         </Box>
       </Paper>
@@ -400,11 +360,7 @@ export default function InquiryDetail() {
             },
           }}
         >
-          {messagesLoading ? (
-            <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-              <CircularProgress size={32} />
-            </Box>
-          ) : messages.length === 0 ? (
+          {messages.length === 0 ? (
             <Box sx={{ textAlign: 'center', py: 6 }}>
               <Typography variant="h6" color="text.secondary" gutterBottom>
                 No messages yet
@@ -414,17 +370,17 @@ export default function InquiryDetail() {
               </Typography>
             </Box>
           ) : (
-            messages.map((msg) => {
-              const senderId = (msg as any).senderId?._id || (msg as any).senderId;
+            messages.map((msg: any) => {
+              const senderId = msg.senderId?._id || msg.senderId;
               const isOwn = senderId === user?.id;
               const senderInfo = getSenderInfo(senderId);
 
               return (
                 <MessageBubble
-                  key={(msg as any)._id || msg.id}
+                  key={msg._id || msg.id}
                   message={msg}
                   isOwn={isOwn}
-                  senderName={senderInfo.name}
+                  senderName={msg.senderName || senderInfo.name}
                   senderAvatar={senderInfo.avatar}
                 />
               );
@@ -444,7 +400,7 @@ export default function InquiryDetail() {
           {isClosed ? (
             <Box sx={{ textAlign: 'center', py: 1 }}>
               <Typography variant="body2" color="text.secondary">
-                This inquiry has been {inquiry.status === 'closed' ? 'closed' : 'converted'}. Reopen it to continue the conversation.
+                This inquiry has been resolved. Reopen it to continue the conversation.
               </Typography>
             </Box>
           ) : (

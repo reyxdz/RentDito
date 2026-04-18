@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 import type { Unit } from '../../domain/entities/Unit';
 import type { Property } from '../../domain/entities/Property';
-import { unitService } from '../../infrastructure/services/UnitService';
-import { propertyService } from '../../infrastructure/services/PropertyService';
+import { listingService } from '../../infrastructure/services/ListingService';
 
 export function useUnitDetail(unitId: string | undefined) {
   const [unit, setUnit] = useState<Unit | null>(null);
@@ -18,19 +17,29 @@ export function useUnitDetail(unitId: string | undefined) {
     }
 
     setLoading(true);
-    unitService
-      .getUnitById(unitId)
+    listingService
+      .getPublicUnitById(unitId)
       .then((unitData) => {
         if (!unitData) {
           setError('Unit not found');
           setLoading(false);
           return;
         }
-        
+
+        // The public API populates propertyId (returns the object, not just the ID string).
+        // Extract the string ID for the subsequent property fetch.
+        const populatedProperty = unitData.propertyId;
+        const propertyIdStr =
+          typeof populatedProperty === 'object' && populatedProperty !== null
+            ? (populatedProperty as any)._id || (populatedProperty as any).id
+            : populatedProperty;
+
+        // Normalize propertyId on the unit to a string for downstream consumers
+        unitData.propertyId = propertyIdStr;
         setUnit(unitData);
 
         // Fetch property data to get nearbyCategories
-        return propertyService.getPropertyById(unitData.propertyId);
+        return listingService.getPublicPropertyById(propertyIdStr);
       })
       .then((propertyData) => {
         if (propertyData) {
