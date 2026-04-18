@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { Box, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { useUserContracts } from '../../../application/hooks/useContracts';
+import { useContracts } from '../../../application/hooks/useContracts';
 import PageHeader from '../../components/PageHeader';
 import StatusBadge from '../../components/StatusBadge';
 import EmptyState from '../../components/EmptyState';
@@ -14,17 +14,14 @@ import {
 
 export default function MyContracts() {
   const navigate = useNavigate();
-  const MOCK_USER_ID = 'user_1';
-  const { contracts, isLoading, error, fetchContracts } = useUserContracts(MOCK_USER_ID);
+  const { contracts, loading, error, fetchContracts } = useContracts();
 
   useEffect(() => {
     fetchContracts();
   }, [fetchContracts]);
 
   useEffect(() => {
-    if (error) {
-      console.error(error);
-    }
+    if (error) console.error(error);
   }, [error]);
 
   return (
@@ -34,7 +31,7 @@ export default function MyContracts() {
         subtitle="Manage your past and active rental contracts"
       />
 
-      {isLoading ? (
+      {loading ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', py: 10 }}>
           <CircularProgress size={40} thickness={4} />
         </Box>

@@ -5,6 +5,7 @@ import { User } from '../models/User';
 import { Property } from '../models/Property';
 import { Unit } from '../models/Unit';
 import { hash } from '../utils/password';
+import { MOCK_PROPERTIES, MOCK_UNITS } from './seedData';
 
 // Load env vars
 dotenv.config({ path: path.resolve(__dirname, '../../.env') });
@@ -56,127 +57,47 @@ const seedUsers = async () => {
 const seedProperties = async (users: any[]) => {
   console.log('Seeding properties...');
 
-  const landlord1 = users.find(u => u.email === 'landlord1@rentdito.com');
-  const landlord2 = users.find(u => u.email === 'landlord2@rentdito.com');
+  const landlord1 = users.find((u: any) => u.email === 'landlord1@rentdito.com');
+  const landlord2 = users.find((u: any) => u.email === 'landlord2@rentdito.com');
 
-  const p1 = await Property.create({
-    landlordId: landlord1._id,
-    name: "Sunshine Apartments",
-    description: "Modern apartment complex near the university.",
-    address: { street: "123 Main St", city: "Cebu City", province: "Cebu", zipCode: "6000", country: "Philippines" },
-    propertyType: "Apartment",
-    status: "Active",
-    amenities: ["WiFi", "Guard"],
-    inclusions: ["Water", "Garbage"],
-    venues: { reviewCenters: [], schools: [{ name: "USC", distance: "5 min" }], commercial: [] },
-    billingSettings: { billingDay: 1, dueDay: 5, lateFeePercent: 5, utilityDefault: "metered" },
-    emergencyContacts: []
-  });
+  const properties = [];
+  
+  for (let i = 0; i < MOCK_PROPERTIES.length; i++) {
+    const mockProp = MOCK_PROPERTIES[i];
+    const landlordId = i === 0 ? landlord1._id : landlord2._id;
 
-  const p2 = await Property.create({
-    landlordId: landlord2._id,
-    name: "Blue Boarding House",
-    description: "Cozy boarding house with shared and private spaces.",
-    address: { street: "456 Side St", city: "Cebu City", province: "Cebu", zipCode: "6000", country: "Philippines" },
-    propertyType: "Boarding House",
-    status: "Active",
-    amenities: ["CCTV"],
-    inclusions: ["WiFi"],
-    venues: { reviewCenters: [], schools: [], commercial: [] },
-    billingSettings: { billingDay: 1, dueDay: 5, lateFeePercent: 5, utilityDefault: "included" },
-    emergencyContacts: []
-  });
+    const newProp = await Property.create({
+      landlordId,
+      ...mockProp,
+      billingSettings: { billingDay: 1, dueDay: 5, lateFeePercent: 5, utilityDefault: "metered" },
+      emergencyContacts: []
+    });
+    properties.push(newProp);
+  }
 
-  const p3 = await Property.create({
-    landlordId: landlord2._id,
-    name: "Green Residences",
-    description: "High-end residential complex.",
-    address: { street: "789 High Ave", city: "Mandaue City", province: "Cebu", zipCode: "6014", country: "Philippines" },
-    propertyType: "Mixed Use",
-    status: "Active",
-    amenities: ["Pool", "Gym"],
-    inclusions: [],
-    venues: { reviewCenters: [], schools: [], commercial: [] },
-    billingSettings: { billingDay: 5, dueDay: 10, lateFeePercent: 10, utilityDefault: "metered" },
-    emergencyContacts: []
-  });
-
-  return [p1, p2, p3]; // Return created properties
+  return properties;
 };
 
 const seedUnits = async (properties: any[]) => {
   console.log('Seeding units...');
-  const [p1, p2, p3] = properties;
-
-  // Property 1: 5 Room units
-  for (let i = 1; i <= 5; i++) {
-    await Unit.create({
-      propertyId: p1._id,
-      unitIdentifier: `Unit 10${i}`,
-      accommodationType: 'room',
-      roomRent: 15000 + (i * 1000),
-      deposit: 30000,
-      capacity: 2,
-      maxOccupants: 3,
-      sizeSqm: 25,
-      features: ['Balcony', 'AC'],
-      status: i === 1 ? 'occupied' : 'vacant',
-    });
-  }
-
-  // Property 2: Mixed (2 rooms, 3 bedspaces)
-  for (let i = 1; i <= 2; i++) {
-    await Unit.create({
-      propertyId: p2._id,
-      unitIdentifier: `Room A${i}`,
-      accommodationType: 'room',
-      roomRent: 10000,
-      deposit: 10000,
-      capacity: 1,
-      maxOccupants: 2,
-      sizeSqm: 15,
-      features: ['Ceiling Fan'],
-      status: 'vacant',
-    });
-  }
-  for (let i = 1; i <= 3; i++) {
-    const slots = [];
-    for (let s = 1; s <= 4; s++) {
-      slots.push({ slotNumber: s, status: s === 1 ? 'occupied' : 'vacant' });
+  
+  for (const mockUnit of MOCK_UNITS) {
+    const propertyId = properties[mockUnit.propertyIndex]._id;
+    
+    // Process slots if it's a bedspace
+    let slots = [];
+    if (mockUnit.accommodationType === 'bedspace' && mockUnit.capacity > 0) {
+      for (let s = 1; s <= mockUnit.capacity; s++) {
+        slots.push({ slotNumber: s, status: s === 1 ? 'occupied' : 'vacant' });
+      }
     }
-    await Unit.create({
-      propertyId: p2._id,
-      unitIdentifier: `Bedspace B${i}`,
-      accommodationType: 'bedspace',
-      bedspaceRent: 2500,
-      deposit: 2500,
-      capacity: 4,
-      maxOccupants: 4,
-      sizeSqm: 20,
-      features: ['Bunk Beds', 'Lockers'],
-      status: i === 1 ? 'occupied' : 'vacant',
-      slots
-    });
-  }
 
-  // Property 3: 4 Bedspace units
-  for (let i = 1; i <= 4; i++) {
-    const slots = [];
-    for (let s = 1; s <= 6; s++) {
-      slots.push({ slotNumber: s, status: 'vacant' });
-    }
+    const { propertyIndex, ...unitData } = mockUnit; // Remove propertyIndex so it doesn't go into Mongo
+
     await Unit.create({
-      propertyId: p3._id,
-      unitIdentifier: `Suite C${i}`,
-      accommodationType: 'bedspace',
-      bedspaceRent: 4000,
-      deposit: 4000,
-      capacity: 6,
-      maxOccupants: 6,
-      sizeSqm: 35,
-      features: ['AC', 'Premium Beds'],
-      status: 'vacant',
-      slots
+      propertyId,
+      ...unitData,
+      slots: slots.length > 0 ? slots : undefined
     });
   }
 };
