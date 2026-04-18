@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import {
   Box, Typography, Stepper, Step, StepLabel, Button, Card, CardContent,
-  TextField, Grid, Autocomplete, Chip, useTheme
+  TextField, Grid, Autocomplete, Chip, useTheme, MenuItem
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../../application/context/AuthContext';
@@ -19,6 +19,8 @@ const commonInclusions = [
   'WiFi', 'Air Conditioning', 'CCTV', 'Security Guard', 'Water Included',
   'Electricity Included', 'Parking', 'Gym', 'Swimming Pool', 'Laundry', 'Furnished', 'Cooking Allowed'
 ];
+
+const propertyTypes = ['Boarding House', 'Apartment', 'Studio', 'Dormitory', 'Commercial', 'Parking', 'Land', 'Mixed Use'];
 
 export default function PropertyForm() {
   const theme = useTheme();
@@ -86,7 +88,25 @@ export default function PropertyForm() {
                 value={basicInfo.type}
                 onChange={(e) => setBasicInfo({ ...basicInfo, type: e.target.value as PropertyType })}
                 required
-              />
+                InputLabelProps={{ shrink: true }}
+                slotProps={{
+                  select: {
+                    displayEmpty: true,
+                    MenuProps: {
+                      sx: { zIndex: 99999 }
+                    }
+                  }
+                }}
+              >
+                <MenuItem value="" disabled sx={{ color: 'text.secondary', fontStyle: 'italic' }}>
+                  Select Property Type
+                </MenuItem>
+                {propertyTypes.map((type) => (
+                  <MenuItem key={type} value={type}>
+                    {type}
+                  </MenuItem>
+                ))}
+              </TextField>
             </Grid>
             <Grid size={{ xs: 12 }}>
               <TextField

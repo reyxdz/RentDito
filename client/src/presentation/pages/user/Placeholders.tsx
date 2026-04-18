@@ -16,9 +16,6 @@ const PlaceholderView = ({ title, description }: { title: string, description: s
   </Box>
 );
 
-
-export const UserInquiries = () => <PlaceholderView title="My Inquiries" description="Track your property inquiries and messages with landlords." />;
-export const UserBookings = () => <PlaceholderView title="My Bookings" description="View your pending and confirmed bookings." />;
 export const UserMyUnit = () => <PlaceholderView title="My Unit" description="View details about your currently rented unit." />;
 export const UserBills = () => <PlaceholderView title="My Bills" description="View and pay outstanding bills for your tenancy." />;
 export const UserContract = () => <PlaceholderView title="My Contract" description="View your active rental contract and terms." />;

@@ -44,7 +44,7 @@ export default function DataTable<T extends { id: string | number }>({
   sortDirection = 'asc',
   onSort,
 }: DataTableProps<T>) {
-  
+
   const isPaginatable = page !== undefined && rowsPerPage !== undefined && onPageChange && onRowsPerPageChange;
 
   const handleSortRequest = (columnId: string) => {
@@ -64,9 +64,9 @@ export default function DataTable<T extends { id: string | number }>({
                   key={String(column.id)}
                   align={column.align}
                   style={{ minWidth: column.minWidth, fontWeight: 600 }}
-                  sx={{ 
-                    bgcolor: 'background.paper', 
-                    borderBottom: '2px solid', 
+                  sx={{
+                    bgcolor: 'background.paper',
+                    borderBottom: '2px solid',
                     borderColor: 'divider',
                     color: 'text.secondary',
                     textTransform: 'uppercase',
@@ -106,10 +106,10 @@ export default function DataTable<T extends { id: string | number }>({
               </TableRow>
             ) : (
               data.map((row) => (
-                <TableRow 
-                  hover 
-                  role="checkbox" 
-                  tabIndex={-1} 
+                <TableRow
+                  hover
+                  role="checkbox"
+                  tabIndex={-1}
                   key={row.id}
                   sx={{
                     transition: 'background-color 0.2s ease',

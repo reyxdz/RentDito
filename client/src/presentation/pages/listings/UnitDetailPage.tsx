@@ -1,3 +1,5 @@
+import { useState } from 'react';
+import type { ApplicationContext } from '../../components/ApplicationFormDialog';
 import {
   Box,
   Typography,
@@ -13,6 +15,8 @@ import {
   ListItemIcon,
   ListItemText,
   Button,
+  TextField,
+  MenuItem,
 } from '@mui/material';
 import {
   ArrowBack,
@@ -24,14 +28,118 @@ import {
   WarningAmberOutlined,
 } from '@mui/icons-material';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useListingUnitDetail } from '../../../application/hooks/useListingUnitDetail';
+import { useUnitDetail } from '../../../application/hooks/useUnitDetail';
+import { useAuth } from '../../../application/context/AuthContext';
 import ImageCarousel from '../../components/ImageCarousel';
+import ConfirmDialog from '../../components/ConfirmDialog';
+import FormDialog from '../../components/FormDialog';
 import Navbar from '../../components/Navbar';
+import { useInquiries } from '../../../application/hooks/useInquiries';
+import { useVisits, useTimeSlots } from '../../../application/hooks/useVisits';
+import TimeSlotPicker from '../../components/TimeSlotPicker';
+import ApplicationFormDialog from '../../components/ApplicationFormDialog';
 
 export default function UnitDetailPage() {
   const { unitId } = useParams<{ unitId: string }>();
   const navigate = useNavigate();
-  const { unit, loading, error } = useListingUnitDetail(unitId);
+  const { unit, loading, error } = useUnitDetail(unitId);
+  const { user, isAuthenticated } = useAuth();
+  
+  const [authDialogOpen, setAuthDialogOpen] = useState(false);
+  const [pendingDialogOpen, setPendingDialogOpen] = useState(false);
+  const [inquiryDialogOpen, setInquiryDialogOpen] = useState(false);
+  const [inquiryMessage, setInquiryMessage] = useState('');
+  const [submitError, setSubmitError] = useState<string | null>(null);
+
+  // Visit state
+  const [visitDialogOpen, setVisitDialogOpen] = useState(false);
+  const [visitDate, setVisitDate] = useState('');
+  const [visitTime, setVisitTime] = useState('');
+  const [visitPurpose, setVisitPurpose] = useState<'viewing' | 'inspection'>('viewing');
+  const [visitNotes, setVisitNotes] = useState('');
+  const [visitError, setVisitError] = useState<string | null>(null);
+
+  // Application state
+  const [appDialogOpen, setAppDialogOpen] = useState(false);
+  const [appContext, setAppContext] = useState<ApplicationContext | null>(null);
+  
+  const { createInquiry, loading: submittingInquiry } = useInquiries();
+  const { createVisit, loading: submittingVisit } = useVisits();
+  const { slots, loading: slotsLoading, fetchSlots } = useTimeSlots();
+
+  const checkAuth = (): boolean => {
+    if (!isAuthenticated) {
+      setAuthDialogOpen(true);
+      return false;
+    }
+    if (user?.verificationStatus !== 'verified') {
+      if (user?.verificationStatus === 'pending') {
+        setPendingDialogOpen(true);
+      } else {
+        navigate('/u/verify');
+      }
+      return false;
+    }
+    return true;
+  };
+
+  const handleInquireCTA = () => {
+    if (!checkAuth()) return;
+    setInquiryMessage('');
+    setSubmitError(null);
+    setInquiryDialogOpen(true);
+  };
+
+  const handleVisitCTA = () => {
+    if (!checkAuth()) return;
+    setVisitDate('');
+    setVisitTime('');
+    setVisitPurpose('viewing');
+    setVisitNotes('');
+    setVisitError(null);
+    setVisitDialogOpen(true);
+  };
+
+  const handleApplyCTA = () => {
+    if (!checkAuth()) return;
+    if (!unit) return;
+    setAppContext({
+      propertyId: unit.propertyId,
+      propertyName: unit.propertyId.replace('prop-', '').replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+      unitId: unit.id,
+      unitIdentifier: unit.unitIdentifier,
+    });
+    setAppDialogOpen(true);
+  };
+
+  const handleDateChange = (date: string) => {
+    setVisitDate(date);
+    setVisitTime('');
+    if (unit && date) {
+      fetchSlots(unit.id, date);
+    }
+  };
+
+  const handleInquirySubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!inquiryMessage.trim() || !user || !unit) return;
+
+    try {
+      const newInq = await createInquiry({
+        propertyId: unit.propertyId,
+        propertyName: unit.propertyId.replace('prop-', '').replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase()), // Quick format
+        unitId: unit.id,
+        unitIdentifier: unit.unitIdentifier,
+        userId: user.id,
+        userName: user.name || 'User',
+        initialMessage: inquiryMessage
+      });
+      setInquiryDialogOpen(false);
+      navigate(`/u/inquiries/${newInq.id}`);
+    } catch (err: any) {
+      setSubmitError(err.message || 'Failed to submit inquiry');
+    }
+  };
 
   const formatPrice = (amount: number) =>
     new Intl.NumberFormat('en-PH').format(amount);
@@ -145,6 +253,15 @@ export default function UnitDetailPage() {
                       ₱0
                     </Typography>
                   )}
+                  <Box sx={{ mt: 3, display: 'flex', gap: 1, justifyContent: { xs: 'flex-start', sm: 'flex-end' } }}>
+                    <Button variant="outlined" color="primary" onClick={handleInquireCTA}>Inquire</Button>
+                    <Button variant="contained" color="primary" disableElevation onClick={handleVisitCTA}>Schedule Visit</Button>
+                    {unit.status === 'vacant' && (
+                      <Button variant="contained" color="success" disableElevation onClick={handleApplyCTA}>
+                        Apply Now
+                      </Button>
+                    )}
+                  </Box>
                 </Box>
               </Box>
 
@@ -304,6 +421,158 @@ export default function UnitDetailPage() {
           © {new Date().getFullYear()} RentDito. All rights reserved.
         </Typography>
       </Box>
+
+      {/* ── Dialogs ────────────────────────────────────────────────────── */}
+      <ConfirmDialog
+        open={authDialogOpen}
+        title="Authentication Required"
+        message="Please log in first to inquire or schedule a visit for this property."
+        confirmText="Go to Login"
+        cancelText="Cancel"
+        onConfirm={() => navigate('/login')}
+        onCancel={() => setAuthDialogOpen(false)}
+      />
+      <ConfirmDialog
+        open={pendingDialogOpen}
+        title="Verification Pending"
+        message="Your account verification is currently pending review. Please wait for approval before making inquiries."
+        confirmText="Okay"
+        cancelText="Go to Verification"
+        onConfirm={() => setPendingDialogOpen(false)}
+        onCancel={() => navigate('/u/verify')}
+      />
+
+      <FormDialog
+        open={inquiryDialogOpen}
+        title="Submit Inquiry"
+        submitText="Send Inquiry"
+        loading={submittingInquiry}
+        onClose={() => setInquiryDialogOpen(false)}
+        onSubmit={handleInquirySubmit}
+      >
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+          You're inquiring about <strong>{unit?.unitIdentifier}</strong>. The landlord will receive your message and respond shortly.
+        </Typography>
+
+        {submitError && (
+          <Typography color="error" variant="body2" sx={{ mb: 2 }}>{submitError}</Typography>
+        )}
+
+        <TextField
+          fullWidth
+          label="Your Message"
+          multiline
+          rows={4}
+          variant="outlined"
+          value={inquiryMessage}
+          onChange={(e) => setInquiryMessage(e.target.value)}
+          placeholder={`Hi! I'm interested in ${unit?.unitIdentifier}. Is this still available?`}
+          required
+        />
+      </FormDialog>
+
+      {/* ── Visit Request Dialog ──────────────────────────────────────── */}
+      <FormDialog
+        open={visitDialogOpen}
+        title="Schedule a Visit"
+        submitText="Request Visit"
+        loading={submittingVisit}
+        onClose={() => setVisitDialogOpen(false)}
+        onSubmit={async (e) => {
+          e.preventDefault();
+          if (!visitDate) {
+            setVisitError('Please select a preferred date.');
+            return;
+          }
+          if (!visitTime) {
+            setVisitError('Please select an available time slot.');
+            return;
+          }
+          if (!user || !unit) return;
+          
+          try {
+            await createVisit({
+              propertyId: unit.propertyId,
+              propertyName: unit.propertyId.replace('prop-', '').replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+              unitId: unit.id,
+              unitIdentifier: unit.unitIdentifier,
+              userId: user.id,
+              userName: user.name || 'User',
+              preferredDate: visitDate,
+              preferredTime: visitTime,
+              purpose: visitPurpose,
+              notes: visitNotes || undefined,
+            });
+            setVisitDialogOpen(false);
+            navigate('/u/bookings');
+          } catch (err: any) {
+            setVisitError(err.message || 'Failed to submit visit request');
+          }
+        }}
+      >
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+          Schedule a visit for <strong>{unit?.unitIdentifier}</strong>. Pick your preferred date and time.
+        </Typography>
+
+        {visitError && (
+          <Typography color="error" variant="body2" sx={{ mb: 2 }}>{visitError}</Typography>
+        )}
+
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+          <TextField
+            fullWidth
+            label="Preferred Date"
+            type="date"
+            value={visitDate}
+            onChange={(e) => handleDateChange(e.target.value)}
+            slotProps={{ inputLabel: { shrink: true } }}
+            inputProps={{ min: new Date().toISOString().slice(0, 10) }}
+            required
+            sx={{
+              '& input::-webkit-calendar-picker-indicator': {
+                filter: 'invert(1)',
+                cursor: 'pointer',
+              },
+            }}
+          />
+
+          <TimeSlotPicker
+            slots={slots}
+            loading={slotsLoading}
+            selectedTime={visitTime}
+            onSelect={setVisitTime}
+          />
+
+          <TextField
+            fullWidth
+            select
+            label="Purpose"
+            value={visitPurpose}
+            onChange={(e) => setVisitPurpose(e.target.value as 'viewing' | 'inspection')}
+          >
+            <MenuItem value="viewing">Property Viewing</MenuItem>
+            <MenuItem value="inspection">Unit Inspection</MenuItem>
+          </TextField>
+
+          <TextField
+            fullWidth
+            label="Notes (optional)"
+            multiline
+            rows={3}
+            value={visitNotes}
+            onChange={(e) => setVisitNotes(e.target.value)}
+            placeholder="Any special requests or questions?"
+          />
+        </Box>
+      </FormDialog>
+
+      {/* ── Application Form Dialog ─────────────────────────────────── */}
+      <ApplicationFormDialog
+        open={appDialogOpen}
+        onClose={() => setAppDialogOpen(false)}
+        context={appContext}
+        onSuccess={() => navigate('/u/applications')}
+      />
     </Box>
   );
 }

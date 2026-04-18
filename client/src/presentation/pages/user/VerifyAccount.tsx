@@ -8,9 +8,13 @@ export default function VerifyAccount() {
   const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [status, setStatus] = useState<'unverified' | 'pending' | 'verified'>(user?.verificationStatus || 'unverified');
+  
+  const [frontImage, setFrontImage] = useState<File | null>(null);
+  const [backImage, setBackImage] = useState<File | null>(null);
 
   const handleUpload = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!frontImage || !backImage) return;
     setIsLoading(true);
     
     // Simulate delay
@@ -53,14 +57,28 @@ export default function VerifyAccount() {
               Please upload a clear picture of the front and back of a valid government ID.
             </Alert>
 
-            <Box sx={{ border: '2px dashed', borderColor: 'divider', borderRadius: 2, p: 4, textAlign: 'center', bgcolor: 'background.default', mb: 4, cursor: 'pointer', '&:hover': { bgcolor: 'action.hover' } }}>
-              <CloudUpload color="primary" sx={{ fontSize: 48, mb: 2 }} />
-              <Typography variant="body1" sx={{ fontWeight: 'medium' }}>
-                Drag & Drop Files Here
-              </Typography>
-              <Typography variant="caption" color="text.secondary">
-                or click to browse local files (Max 5MB each)
-              </Typography>
+            <Box sx={{ display: 'flex', gap: 2, mb: 4, flexDirection: { xs: 'column', sm: 'row' } }}>
+              <Box 
+                component="label"
+                sx={{ flex: 1, border: '2px dashed', borderColor: frontImage ? 'primary.main' : 'divider', borderRadius: 2, p: 3, textAlign: 'center', bgcolor: frontImage ? 'primary.50' : 'background.default', cursor: 'pointer', '&:hover': { bgcolor: 'action.hover' } }}
+              >
+                <input type="file" hidden accept="image/*" onChange={(e) => setFrontImage(e.target.files?.[0] || null)} />
+                <CloudUpload color={frontImage ? "primary" : "action"} sx={{ fontSize: 40, mb: 1 }} />
+                <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                  {frontImage ? frontImage.name : 'Upload Front ID'}
+                </Typography>
+              </Box>
+              
+              <Box 
+                component="label"
+                sx={{ flex: 1, border: '2px dashed', borderColor: backImage ? 'primary.main' : 'divider', borderRadius: 2, p: 3, textAlign: 'center', bgcolor: backImage ? 'primary.50' : 'background.default', cursor: 'pointer', '&:hover': { bgcolor: 'action.hover' } }}
+              >
+                <input type="file" hidden accept="image/*" onChange={(e) => setBackImage(e.target.files?.[0] || null)} />
+                <CloudUpload color={backImage ? "primary" : "action"} sx={{ fontSize: 40, mb: 1 }} />
+                <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                  {backImage ? backImage.name : 'Upload Back ID'}
+                </Typography>
+              </Box>
             </Box>
 
             <Button 
@@ -68,7 +86,7 @@ export default function VerifyAccount() {
               variant="contained" 
               fullWidth 
               size="large"
-              disabled={isLoading}
+              disabled={isLoading || (!frontImage || !backImage)}
               startIcon={isLoading ? <CircularProgress size={20} color="inherit" /> : null}
             >
               {isLoading ? 'Uploading...' : 'Submit Documents'}

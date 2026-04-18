@@ -30,6 +30,7 @@ import UserLayout from './presentation/layouts/UserLayout';
 import AdminOverview from './presentation/pages/admin/Overview';
 import AdminUsers from './presentation/pages/admin/Users';
 import LandlordApplications from './presentation/pages/admin/LandlordApplications';
+import UserVerifications from './presentation/pages/admin/UserVerifications';
 import {
   PropertiesPlaceholder as AdminProperties,
   FinancialsPlaceholder as AdminFinancials,
@@ -44,7 +45,12 @@ import {
 import HubOverview from './presentation/pages/hub/overview/Overview';
 import TeamManagement from './presentation/pages/hub/team/TeamManagement';
 import {
+  HubUnitsPlaceholder,
+  HubTenantsPlaceholder,
+  HubPipelinePlaceholder,
+  HubBookingsPlaceholder,
   HubBillingPlaceholder,
+  HubContractsPlaceholder,
   HubUtilitiesPlaceholder,
   HubFinancialsPlaceholder,
   HubInventoryPlaceholder,
@@ -56,33 +62,17 @@ import {
 
 import PropertyList from './presentation/pages/hub/properties/PropertyList';
 import PropertyForm from './presentation/pages/hub/properties/PropertyForm';
-
-import UnitList from './presentation/pages/hub/units/UnitList';
-import UnitDetail from './presentation/pages/hub/units/UnitDetail';
-
-import InquiryList from './presentation/pages/hub/pipeline/InquiryList';
-import InquiryDetail from './presentation/pages/hub/pipeline/InquiryDetail';
-
-import ApplicationList from './presentation/pages/hub/pipeline/ApplicationList';
-import ApplicationDetail from './presentation/pages/hub/pipeline/ApplicationDetail';
-
-import VisitList from './presentation/pages/hub/bookings/VisitList';
-import VisitDetail from './presentation/pages/hub/bookings/VisitDetail';
-
-import ContractList from './presentation/pages/hub/contracts/ContractList';
-import ContractDetail from './presentation/pages/hub/contracts/ContractDetail';
-import ContractForm from './presentation/pages/hub/contracts/ContractForm';
-
-import TenantList from './presentation/pages/hub/tenants/TenantList';
-import TenantDetail from './presentation/pages/hub/tenants/TenantDetail';
+import UnitForm from './presentation/pages/hub/units/UnitForm';
 
 // ─── User pages ──────────────────────────────────────────────────────
 import VerifyAccount from './presentation/pages/user/VerifyAccount';
 import BecomeLandlord from './presentation/pages/user/BecomeLandlord';
 import Dashboard from './presentation/pages/user/Dashboard';
+import MyInquiries from './presentation/pages/user/MyInquiries';
+import InquiryConversation from './presentation/pages/user/InquiryConversation';
+import MyVisits from './presentation/pages/user/MyVisits';
+import MyApplications from './presentation/pages/user/MyApplications';
 import {
-  UserInquiries,
-  UserBookings,
   UserMyUnit,
   UserBills,
   UserContract,
@@ -93,103 +83,91 @@ function App() {
   return (
     <NotificationProvider>
       <Router>
-      <Routes>
-        {/* ────── Public ────────────────────────────────────────────── */}
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/listings" element={<ListingsPage />} />
-        <Route path="/listings/:propertyId" element={<PropertyDetailPage />} />
-        <Route path="/listings/unit/:unitId" element={<UnitDetailPage />} />
+        <Routes>
+          {/* ────── Public ────────────────────────────────────────────── */}
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/listings" element={<ListingsPage />} />
+          <Route path="/listings/:propertyId" element={<PropertyDetailPage />} />
+          <Route path="/listings/unit/:unitId" element={<UnitDetailPage />} />
 
-        {/* ────── Auth ──────────────────────────────────────────────── */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password/:token" element={<ResetPassword />} />
+          {/* ────── Auth ──────────────────────────────────────────────── */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password/:token" element={<ResetPassword />} />
 
-        {/* ────── Admin Layout (super_admin) ────────────────────────── */}
-        <Route path="/admin" element={<ProtectedRoute allowedRoles={['super_admin']}><AdminLayout /></ProtectedRoute>}>
-          <Route index element={<AdminOverview />} />
-          <Route path="users" element={<AdminUsers />} />
-          <Route path="applications" element={<LandlordApplications />} />
-          <Route path="properties" element={<AdminProperties />} />
-          <Route path="financials" element={<AdminFinancials />} />
-          <Route path="reports" element={<AdminReports />} />
-          <Route path="moderation" element={<AdminModeration />} />
-          <Route path="communications" element={<AdminComms />} />
-          <Route path="system" element={<AdminSystem />} />
-          <Route path="security" element={<AdminSecurity />} />
-          <Route path="profile" element={<Profile />} />
-        </Route>
-
-        {/* ────── Hub Layout (landlord + staff) ─────────────────────── */}
-        <Route path="/hub" element={<ProtectedRoute allowedRoles={['landlord', 'staff']}><HubLayout /></ProtectedRoute>}>
-          <Route index element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="dashboard"><HubOverview /></ProtectedRoute>} />
-          <Route path="properties">
-            <Route index element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="properties"><PropertyList /></ProtectedRoute>} />
-            <Route path="new" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="properties"><PropertyForm /></ProtectedRoute>} />
-            <Route path=":propertyId/edit" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="properties"><PropertyForm /></ProtectedRoute>} />
+          {/* ────── Admin Layout (super_admin) ────────────────────────── */}
+          <Route path="/admin" element={<ProtectedRoute allowedRoles={['super_admin']}><AdminLayout /></ProtectedRoute>}>
+            <Route index element={<AdminOverview />} />
+            <Route path="users" element={<AdminUsers />} />
+            <Route path="applications" element={<LandlordApplications />} />
+            <Route path="verifications" element={<UserVerifications />} />
+            <Route path="properties" element={<AdminProperties />} />
+            <Route path="financials" element={<AdminFinancials />} />
+            <Route path="reports" element={<AdminReports />} />
+            <Route path="moderation" element={<AdminModeration />} />
+            <Route path="communications" element={<AdminComms />} />
+            <Route path="system" element={<AdminSystem />} />
+            <Route path="security" element={<AdminSecurity />} />
+            <Route path="profile" element={<Profile />} />
           </Route>
-          <Route path="units">
-            <Route index element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="units"><UnitList /></ProtectedRoute>} />
-            <Route path=":unitId" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="units"><UnitDetail /></ProtectedRoute>} />
-          </Route>
-          <Route path="tenants">
-            <Route index element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="tenants"><TenantList /></ProtectedRoute>} />
-            <Route path=":tenancyId" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="tenants"><TenantDetail /></ProtectedRoute>} />
-          </Route>
-          <Route path="pipeline">
-            <Route index element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="pipeline"><InquiryList /></ProtectedRoute>} />
-            <Route path="inquiries" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="pipeline"><InquiryList /></ProtectedRoute>} />
-            <Route path="inquiries/:inquiryId" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="pipeline"><InquiryDetail /></ProtectedRoute>} />
-            <Route path="applications" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="pipeline"><ApplicationList /></ProtectedRoute>} />
-            <Route path="applications/:applicationId" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="pipeline"><ApplicationDetail /></ProtectedRoute>} />
-          </Route>
-          <Route path="bookings">
-            <Route index element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="bookings"><VisitList /></ProtectedRoute>} />
-            <Route path=":visitId" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="bookings"><VisitDetail /></ProtectedRoute>} />
-          </Route>
-          <Route path="billing" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="billing"><HubBillingPlaceholder /></ProtectedRoute>} />
-          <Route path="contracts">
-            <Route index element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="contracts"><ContractList /></ProtectedRoute>} />
-            <Route path=":contractId" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="contracts"><ContractDetail /></ProtectedRoute>} />
-            <Route path=":contractId/edit" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="contracts"><ContractForm /></ProtectedRoute>} />
-          </Route>
-          <Route path="utilities" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="utilities"><HubUtilitiesPlaceholder /></ProtectedRoute>} />
-          <Route path="financials" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="financials"><HubFinancialsPlaceholder /></ProtectedRoute>} />
-          <Route path="inventory" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="inventory"><HubInventoryPlaceholder /></ProtectedRoute>} />
-          <Route path="maintenance" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="maintenance"><HubMaintenancePlaceholder /></ProtectedRoute>} />
-          <Route path="documents" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="documents"><HubDocumentsPlaceholder /></ProtectedRoute>} />
-          <Route path="reports" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="reports"><HubReportsPlaceholder /></ProtectedRoute>} />
-          <Route path="security" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="security"><HubSecurityPlaceholder /></ProtectedRoute>} />
-          <Route path="team" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="team"><TeamManagement /></ProtectedRoute>} />
-          <Route path="profile" element={<Profile />} />
-        </Route>
 
-        {/* ────── User Layout (regular user) ────────────────────────── */}
-        <Route path="/u" element={<ProtectedRoute><UserLayout /></ProtectedRoute>}>
-          <Route index element={<Dashboard />} />
-          <Route path="inquiries" element={<UserInquiries />} />
-          <Route path="bookings" element={<UserBookings />} />
-          <Route path="verify" element={<VerifyAccount />} />
-          <Route path="become-landlord" element={<BecomeLandlord />} />
-          <Route path="my-unit" element={<UserMyUnit />} />
-          <Route path="bills" element={<UserBills />} />
-          <Route path="contract" element={<UserContract />} />
-          <Route path="maintenance" element={<UserMaintenance />} />
-          <Route path="profile" element={<Profile />} />
-        </Route>
+          {/* ────── Hub Layout (landlord + staff) ─────────────────────── */}
+          <Route path="/hub" element={<ProtectedRoute allowedRoles={['landlord', 'staff']}><HubLayout /></ProtectedRoute>}>
+            <Route index element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="dashboard"><HubOverview /></ProtectedRoute>} />
+            <Route path="properties">
+              <Route index element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="properties"><PropertyList /></ProtectedRoute>} />
+              <Route path="new" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="properties"><PropertyForm /></ProtectedRoute>} />
+              <Route path=":propertyId/edit" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="properties"><PropertyForm /></ProtectedRoute>} />
+            </Route>
+            <Route path="units">
+              <Route index element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="units"><HubUnitsPlaceholder /></ProtectedRoute>} />
+              <Route path="new" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="units"><UnitForm /></ProtectedRoute>} />
+              <Route path=":unitId/edit" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="units"><UnitForm /></ProtectedRoute>} />
+            </Route>
+            <Route path="tenants" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="tenants"><HubTenantsPlaceholder /></ProtectedRoute>} />
+            <Route path="pipeline" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="pipeline"><HubPipelinePlaceholder /></ProtectedRoute>} />
+            <Route path="bookings" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="bookings"><HubBookingsPlaceholder /></ProtectedRoute>} />
+            <Route path="billing" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="billing"><HubBillingPlaceholder /></ProtectedRoute>} />
+            <Route path="contracts" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="contracts"><HubContractsPlaceholder /></ProtectedRoute>} />
+            <Route path="utilities" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="utilities"><HubUtilitiesPlaceholder /></ProtectedRoute>} />
+            <Route path="financials" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="financials"><HubFinancialsPlaceholder /></ProtectedRoute>} />
+            <Route path="inventory" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="inventory"><HubInventoryPlaceholder /></ProtectedRoute>} />
+            <Route path="maintenance" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="maintenance"><HubMaintenancePlaceholder /></ProtectedRoute>} />
+            <Route path="documents" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="documents"><HubDocumentsPlaceholder /></ProtectedRoute>} />
+            <Route path="reports" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="reports"><HubReportsPlaceholder /></ProtectedRoute>} />
+            <Route path="security" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="security"><HubSecurityPlaceholder /></ProtectedRoute>} />
+            <Route path="team" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="team"><TeamManagement /></ProtectedRoute>} />
+            <Route path="profile" element={<Profile />} />
+          </Route>
 
-        {/* ────── Legacy redirect: /landlord → /hub ─────────────────── */}
-        <Route path="/landlord/*" element={<Navigate to="/hub" replace />} />
+          {/* ────── User Layout (regular user) ────────────────────────── */}
+          <Route path="/u" element={<ProtectedRoute><UserLayout /></ProtectedRoute>}>
+            <Route index element={<Dashboard />} />
+            <Route path="inquiries" element={<MyInquiries />} />
+            <Route path="inquiries/:inquiryId" element={<InquiryConversation />} />
+            <Route path="bookings" element={<MyVisits />} />
+            <Route path="applications" element={<MyApplications />} />
+            <Route path="verify" element={<VerifyAccount />} />
+            <Route path="become-landlord" element={<BecomeLandlord />} />
+            <Route path="my-unit" element={<UserMyUnit />} />
+            <Route path="bills" element={<UserBills />} />
+            <Route path="contract" element={<UserContract />} />
+            <Route path="maintenance" element={<UserMaintenance />} />
+            <Route path="profile" element={<Profile />} />
+          </Route>
 
-        {/* ────── Error routes ──────────────────────────────────────── */}
-        <Route path="/unauthorized" element={<Unauthorized />} />
+          {/* ────── Legacy redirect: /landlord → /hub ─────────────────── */}
+          <Route path="/landlord/*" element={<Navigate to="/hub" replace />} />
 
-        {/* ────── Catch-all ─────────────────────────────────────────── */}
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </Router>
-  </NotificationProvider>
+          {/* ────── Error routes ──────────────────────────────────────── */}
+          <Route path="/unauthorized" element={<Unauthorized />} />
+
+          {/* ────── Catch-all ─────────────────────────────────────────── */}
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </Router>
+    </NotificationProvider>
   )
 }
 

@@ -1,210 +1,84 @@
 import { useState, useCallback } from 'react';
-import type { VisitRequest } from '../../domain/entities/VisitRequest';
-import { visitService } from '../../infrastructure/services/VisitService';
+import { MockVisitService } from '../../infrastructure/services/MockVisitService';
+import type { Visit, TimeSlot } from '../../infrastructure/services/MockVisitService';
 
-export function useVisits() {
-  const [visits, setVisits] = useState<VisitRequest[]>([]);
+export function useVisits(userId?: string) {
+  const [visits, setVisits] = useState<Visit[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchPropertyVisits = useCallback(async (propertyId: string, filters?: { status?: string }) => {
+  const fetchVisits = useCallback(async () => {
+    if (!userId) return;
     setLoading(true);
     setError(null);
     try {
-      const data = await visitService.getPropertyVisits(propertyId, filters);
+      const data = await MockVisitService.getVisitsByUser(userId);
       setVisits(data);
-      return data;
     } catch (err: any) {
       setError(err.message || 'Failed to fetch visits');
-      return [];
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [userId]);
 
-  const approveVisit = useCallback(async (visitId: string) => {
+  const createVisit = async (data: {
+    propertyId: string;
+    propertyName: string;
+    unitId?: string;
+    unitIdentifier?: string;
+    userId: string;
+    userName: string;
+    preferredDate: string;
+    preferredTime: string;
+    purpose: 'viewing' | 'inspection';
+    notes?: string;
+  }) => {
+    setLoading(true);
     try {
-      const updated = await visitService.approveVisit(visitId);
-      setVisits(prev => prev.map(v => (v.id === visitId || (v as any)._id === visitId) ? { ...v, ...updated, id: v.id } : v));
-      return updated;
+      const newVisit = await MockVisitService.createVisit(data);
+      setVisits((prev) => [newVisit, ...prev]);
+      return newVisit;
     } catch (err: any) {
-      throw new Error(err.message || 'Failed to approve visit');
+      setError(err.message || 'Failed to create visit');
+      throw err;
+    } finally {
+      setLoading(false);
     }
-  }, []);
-
-  const scheduleVisit = useCallback(async (visitId: string, data: { scheduledDate: string; scheduledTime: string }) => {
-    try {
-      const updated = await visitService.scheduleVisit(visitId, data);
-      setVisits(prev => prev.map(v => (v.id === visitId || (v as any)._id === visitId) ? { ...v, ...updated, id: v.id } : v));
-      return updated;
-    } catch (err: any) {
-      throw new Error(err.message || 'Failed to schedule visit');
-    }
-  }, []);
-
-  const assignStaff = useCallback(async (visitId: string, staffId: string) => {
-    try {
-      const updated = await visitService.assignStaff(visitId, staffId);
-      setVisits(prev => prev.map(v => (v.id === visitId || (v as any)._id === visitId) ? { ...v, ...updated, id: v.id } : v));
-      return updated;
-    } catch (err: any) {
-      throw new Error(err.message || 'Failed to assign staff');
-    }
-  }, []);
-
-  const completeVisit = useCallback(async (visitId: string) => {
-    try {
-      const updated = await visitService.completeVisit(visitId);
-      setVisits(prev => prev.map(v => (v.id === visitId || (v as any)._id === visitId) ? { ...v, ...updated, id: v.id } : v));
-      return updated;
-    } catch (err: any) {
-      throw new Error(err.message || 'Failed to complete visit');
-    }
-  }, []);
-
-  const cancelVisit = useCallback(async (visitId: string) => {
-    try {
-      const updated = await visitService.cancelVisit(visitId);
-      setVisits(prev => prev.map(v => (v.id === visitId || (v as any)._id === visitId) ? { ...v, ...updated, id: v.id } : v));
-      return updated;
-    } catch (err: any) {
-      throw new Error(err.message || 'Failed to cancel visit');
-    }
-  }, []);
-
-  const markNoShow = useCallback(async (visitId: string) => {
-    try {
-      const updated = await visitService.markNoShow(visitId);
-      setVisits(prev => prev.map(v => (v.id === visitId || (v as any)._id === visitId) ? { ...v, ...updated, id: v.id } : v));
-      return updated;
-    } catch (err: any) {
-      throw new Error(err.message || 'Failed to mark no-show');
-    }
-  }, []);
-
-  return {
-    visits,
-    loading,
-    error,
-    fetchPropertyVisits,
-    approveVisit,
-    scheduleVisit,
-    assignStaff,
-    completeVisit,
-    cancelVisit,
-    markNoShow,
   };
+
+  const cancelVisit = async (visitId: string) => {
+    setLoading(true);
+    try {
+      const updated = await MockVisitService.cancelVisit(visitId);
+      setVisits((prev) => prev.map((v) => (v.id === visitId ? updated : v)));
+      return updated;
+    } catch (err: any) {
+      setError(err.message || 'Failed to cancel visit');
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { visits, loading, error, fetchVisits, createVisit, cancelVisit };
 }
 
-export function useVisitDetail(visitId?: string) {
-  const [visit, setVisit] = useState<VisitRequest | null>(null);
+export function useTimeSlots() {
+  const [slots, setSlots] = useState<TimeSlot[]>([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
-  const fetchVisit = useCallback(async () => {
-    if (!visitId) return;
+  const fetchSlots = useCallback(async (unitId: string, date: string) => {
+    if (!unitId || !date) return;
     setLoading(true);
-    setError(null);
     try {
-      const data = await visitService.getVisitById(visitId);
-      setVisit(data);
-      return data;
-    } catch (err: any) {
-      setError(err.message || 'Failed to fetch visit');
-      return null;
+      const data = await MockVisitService.getAvailableSlots(unitId, date);
+      setSlots(data);
+    } catch {
+      setSlots([]);
     } finally {
       setLoading(false);
     }
-  }, [visitId]);
+  }, []);
 
-  const approve = useCallback(async () => {
-    if (!visitId) return;
-    try {
-      const updated = await visitService.approveVisit(visitId);
-      setVisit(prev => prev ? { ...prev, ...updated } : updated);
-      return updated;
-    } catch (err: any) {
-      throw new Error(err.message || 'Failed to approve visit');
-    }
-  }, [visitId]);
-
-  const schedule = useCallback(async (data: { scheduledDate: string; scheduledTime: string }) => {
-    if (!visitId) return;
-    try {
-      const updated = await visitService.scheduleVisit(visitId, data);
-      setVisit(prev => prev ? { ...prev, ...updated } : updated);
-      return updated;
-    } catch (err: any) {
-      throw new Error(err.message || 'Failed to schedule visit');
-    }
-  }, [visitId]);
-
-  const assign = useCallback(async (staffId: string) => {
-    if (!visitId) return;
-    try {
-      const updated = await visitService.assignStaff(visitId, staffId);
-      setVisit(prev => prev ? { ...prev, ...updated } : updated);
-      return updated;
-    } catch (err: any) {
-      throw new Error(err.message || 'Failed to assign staff');
-    }
-  }, [visitId]);
-
-  const complete = useCallback(async () => {
-    if (!visitId) return;
-    try {
-      const updated = await visitService.completeVisit(visitId);
-      setVisit(prev => prev ? { ...prev, ...updated } : updated);
-      return updated;
-    } catch (err: any) {
-      throw new Error(err.message || 'Failed to complete visit');
-    }
-  }, [visitId]);
-
-  const cancel = useCallback(async () => {
-    if (!visitId) return;
-    try {
-      const updated = await visitService.cancelVisit(visitId);
-      setVisit(prev => prev ? { ...prev, ...updated } : updated);
-      return updated;
-    } catch (err: any) {
-      throw new Error(err.message || 'Failed to cancel visit');
-    }
-  }, [visitId]);
-
-  const noShow = useCallback(async () => {
-    if (!visitId) return;
-    try {
-      const updated = await visitService.markNoShow(visitId);
-      setVisit(prev => prev ? { ...prev, ...updated } : updated);
-      return updated;
-    } catch (err: any) {
-      throw new Error(err.message || 'Failed to mark no-show');
-    }
-  }, [visitId]);
-
-  const updateNotes = useCallback(async (notes: string) => {
-    if (!visitId) return;
-    try {
-      const updated = await visitService.updateNotes(visitId, notes);
-      setVisit(prev => prev ? { ...prev, ...updated } : updated);
-      return updated;
-    } catch (err: any) {
-      throw new Error(err.message || 'Failed to update notes');
-    }
-  }, [visitId]);
-
-  return {
-    visit,
-    loading,
-    error,
-    fetchVisit,
-    approve,
-    schedule,
-    assign,
-    complete,
-    cancel,
-    noShow,
-    updateNotes,
-  };
+  return { slots, loading, fetchSlots };
 }
