@@ -184,7 +184,10 @@ function App() {
             <Route path="become-landlord" element={<BecomeLandlord />} />
             <Route path="my-unit" element={<UserMyUnit />} />
             <Route path="bills" element={<UserBills />} />
-            <Route path="contract" element={<UserContract />} />
+            <Route path="contracts">
+              <Route index element={<MyContracts />} />
+              <Route path=":contractId" element={<ContractView />} />
+            </Route>
             <Route path="maintenance" element={<UserMaintenance />} />
             <Route path="profile" element={<Profile />} />
           </Route>
