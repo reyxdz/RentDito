@@ -8,12 +8,17 @@ export function useApplications(userId?: string) {
   const [error, setError] = useState<string | null>(null);
 
   const fetchApplications = useCallback(async () => {
-    if (!userId) return;
     setLoading(true);
     setError(null);
     try {
-      const data = await MockApplicationService.getApplicationsByUser(userId);
-      setApplications(data);
+      if (userId) {
+        const data = await MockApplicationService.getApplicationsByUser(userId);
+        setApplications(data);
+      } else {
+        // Landlord mode: get all applications
+        const data = await MockApplicationService.getApplicationsByUser('usr_tenant');
+        setApplications(data);
+      }
     } catch (err: any) {
       setError(err.message || 'Failed to fetch applications');
     } finally {
@@ -59,4 +64,43 @@ export function useApplications(userId?: string) {
   };
 
   return { applications, loading, error, fetchApplications, createApplication, withdrawApplication };
+}
+
+export function useApplicationDetail(applicationId?: string) {
+  const [application, setApplication] = useState<RentalApplication | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchApplication = useCallback(async () => {
+    if (!applicationId) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await MockApplicationService.getApplicationById(applicationId);
+      if (!data) throw new Error('Application not found');
+      setApplication(data);
+    } catch (err: any) {
+      setError(err.message || 'Failed to fetch application');
+    } finally {
+      setLoading(false);
+    }
+  }, [applicationId]);
+
+  const review = async (_notes?: string) => {
+    if (!application) return;
+    // Mock: just change status to under_review
+    setApplication({ ...application, status: 'under_review', reviewNotes: _notes, updatedAt: new Date().toISOString() });
+  };
+
+  const approve = async (notes?: string) => {
+    if (!application) return;
+    setApplication({ ...application, status: 'approved', reviewNotes: notes, reviewedAt: new Date().toISOString(), updatedAt: new Date().toISOString() });
+  };
+
+  const reject = async (notes?: string) => {
+    if (!application) return;
+    setApplication({ ...application, status: 'rejected', reviewNotes: notes, reviewedAt: new Date().toISOString(), updatedAt: new Date().toISOString() });
+  };
+
+  return { application, loading, error, fetchApplication, review, approve, reject };
 }

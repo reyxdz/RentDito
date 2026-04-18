@@ -5,7 +5,7 @@ import {
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../../application/context/AuthContext';
-import { mockPropertyService } from '../../../../infrastructure/services/MockPropertyService';
+import { useProperties } from '../../../../application/hooks/useProperties';
 import VenueEditor from '../../../components/VenueEditor';
 import ImageUploader from '../../../components/ImageUploader';
 import type { Venue, PropertyType, PropertyStatus } from '../../../../domain/entities/Property';
@@ -26,6 +26,7 @@ export default function PropertyForm() {
   const theme = useTheme();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { createProperty } = useProperties();
   
   const [activeStep, setActiveStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -48,8 +49,7 @@ export default function PropertyForm() {
     if (!user) return;
     setIsSubmitting(true);
     try {
-      await mockPropertyService.createProperty({
-        landlordId: user.id || 'unknown',
+      await createProperty({
         name: basicInfo.name,
         description: basicInfo.description,
         propertyType: basicInfo.type,
@@ -60,10 +60,6 @@ export default function PropertyForm() {
         schools: venues.schools,
         commercialEstablishments: venues.commercial,
         images: [], // Images handled differently in real backend
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        id: '', // Will be assigned by backend
-        metrics: { totalUnits: 0, activeUnits: 0, vacantUnits: 0, priceRange: { min: 0, max: 0 } },
       } as any);
 
       navigate('/hub/properties');

@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 import type { Property } from '../../domain/entities/Property';
 import type { Unit } from '../../domain/entities/Unit';
-import { mockPropertyService } from '../../infrastructure/services/MockPropertyService';
-import { mockUnitService } from '../../infrastructure/services/MockUnitService';
+import { listingService } from '../../infrastructure/services/ListingService';
 
 export function usePropertyDetail(propertyId: string | undefined) {
   const [property, setProperty] = useState<Property | null>(null);
@@ -18,16 +17,14 @@ export function usePropertyDetail(propertyId: string | undefined) {
     }
 
     setLoading(true);
-    Promise.all([
-      mockPropertyService.getPropertyById(propertyId),
-      mockUnitService.getUnitsByPropertyId(propertyId),
-    ])
-      .then(([propertyData, unitData]) => {
+    listingService
+      .getPublicPropertyById(propertyId)
+      .then((propertyData) => {
         if (!propertyData) {
           setError('Property not found');
         } else {
           setProperty(propertyData);
-          setUnits(unitData);
+          setUnits(propertyData.units || []);
         }
         setLoading(false);
       })

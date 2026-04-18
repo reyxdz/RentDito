@@ -1,13 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
   Box, Typography, Stepper, Step, StepLabel, Button, Card, CardContent,
   TextField, Grid, Autocomplete, Chip, useTheme, MenuItem, RadioGroup, FormControlLabel, Radio, FormControl, FormLabel, InputAdornment
 } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useAuth } from '../../../../application/context/AuthContext';
-import { mockPropertyService } from '../../../../infrastructure/services/MockPropertyService';
 import ImageUploader from '../../../components/ImageUploader';
-import type { Property } from '../../../../domain/entities/Property';
+import { useProperties } from '../../../../application/hooks/useProperties';
 import type { AccommodationType } from '../../../../domain/entities/Unit';
 
 const steps = ['Basic Info', 'Pricing & Capacity', 'Features', 'Images'];
@@ -20,12 +18,12 @@ const commonFeatures = [
 export default function UnitForm() {
   const theme = useTheme();
   const navigate = useNavigate();
-  const { user } = useAuth();
   const { unitId } = useParams(); // if edit mode
   
   const [activeStep, setActiveStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [properties, setProperties] = useState<Property[]>([]);
+  
+  const { properties } = useProperties();
 
   // Form State
   const [basicInfo, setBasicInfo] = useState({ 
@@ -44,19 +42,6 @@ export default function UnitForm() {
   
   const [features, setFeatures] = useState<string[]>([]);
   const [images, setImages] = useState<File[]>([]);
-
-  useEffect(() => {
-    async function fetchProperties() {
-      if (user?.role === 'landlord') {
-        const props = await mockPropertyService.getPropertiesByLandlord(user.id);
-        setProperties(props);
-      } else {
-        const props = await mockPropertyService.getAllProperties();
-        setProperties(props);
-      }
-    }
-    fetchProperties();
-  }, [user]);
 
   const handleNext = () => setActiveStep((prev) => prev + 1);
   const handleBack = () => setActiveStep((prev) => prev - 1);

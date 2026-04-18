@@ -27,7 +27,7 @@ export interface RentalApplication {
   updatedAt: string;
 }
 
-export let mockApplications: RentalApplication[] = [
+let mockApplications: RentalApplication[] = [
   {
     id: 'app_1',
     propertyId: 'prop-white-dorm',

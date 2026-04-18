@@ -44,22 +44,43 @@ export const ENDPOINTS = {
   TENANCIES: {
     ROOT: '/api/tenancies',
     DETAILS: (id: string) => `/api/tenancies/${id}`,
+    CONFIRM_CHECKIN: '/api/tenancies/confirm-checkin',
+    CHECKOUT: (id: string) => `/api/tenancies/${id}/checkout`,
   },
   INQUIRIES: {
     ROOT: '/api/inquiries',
     DETAILS: (id: string) => `/api/inquiries/${id}`,
+    PROPERTY: (propertyId: string) => `/api/inquiries/property/${propertyId}`,
+  },
+  MESSAGES: {
+    CONVERSATION: (conversationId: string) => `/api/messages/conversation/${conversationId}/messages`,
   },
   VISITS: {
     ROOT: '/api/visits',
     DETAILS: (id: string) => `/api/visits/${id}`,
+    PROPERTY: (propertyId: string) => `/api/visits/property/${propertyId}`,
+    APPROVE: (id: string) => `/api/visits/${id}/approve`,
+    SCHEDULE: (id: string) => `/api/visits/${id}/schedule`,
+    ASSIGN: (id: string) => `/api/visits/${id}/assign`,
+    COMPLETE: (id: string) => `/api/visits/${id}/complete`,
+    CANCEL: (id: string) => `/api/visits/${id}/cancel`,
+    NO_SHOW: (id: string) => `/api/visits/${id}/no-show`,
   },
   APPLICATIONS: {
     ROOT: '/api/applications',
     DETAILS: (id: string) => `/api/applications/${id}`,
+    REVIEW: (id: string) => `/api/applications/${id}/review`,
+    APPROVE: (id: string) => `/api/applications/${id}/approve`,
+    REJECT: (id: string) => `/api/applications/${id}/reject`,
   },
   CONTRACTS: {
     ROOT: '/api/contracts',
     DETAILS: (id: string) => `/api/contracts/${id}`,
+    CREATE_FROM_APP: '/api/contracts/create-from-application',
+    SIGN: (id: string) => `/api/contracts/${id}/sign`,
+    STATUS: (id: string) => `/api/contracts/${id}/status`,
+    GENERATE_PDF: (id: string) => `/api/contracts/${id}/generate-pdf`,
+    DOWNLOAD: (id: string) => `/api/contracts/${id}/download`,
   },
   BILLS: {
     ROOT: '/api/bills',
@@ -72,5 +93,10 @@ export const ENDPOINTS = {
   INVENTORY: {
     ROOT: '/api/inventory',
     DETAILS: (id: string) => `/api/inventory/${id}`,
+  },
+  PUBLIC: {
+    LISTINGS: '/api/public/listings',
+    PROPERTY_DETAILS: (id: string) => `/api/public/listings/${id}`,
+    UNIT_DETAILS: (id: string) => `/api/public/listings/unit/${id}`,
   }
 } as const;

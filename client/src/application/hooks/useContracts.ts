@@ -1,73 +1,131 @@
 import { useState, useCallback } from 'react';
-import { MockContractService } from '../../infrastructure/services/MockContractService';
-import type { Contract } from '../../domain/entities/Contract';
+import type { Contract, ContractStatus } from '../../domain/entities/Contract';
+import { contractService } from '../../infrastructure/services/ContractService';
 
-export function useUserContracts(userId: string) {
+export function useContracts() {
   const [contracts, setContracts] = useState<Contract[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchContracts = useCallback(async () => {
-    setIsLoading(true);
+  const fetchContracts = useCallback(async (filters?: { status?: string; propertyId?: string }) => {
+    setLoading(true);
     setError(null);
     try {
-      const data = await MockContractService.getUserContracts(userId);
+      const data = await contractService.getContracts(filters);
       setContracts(data);
+      return data;
     } catch (err: any) {
       setError(err.message || 'Failed to fetch contracts');
+      return [];
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
-  }, [userId]);
+  }, []);
 
-  return { contracts, isLoading, error, fetchContracts };
+  const createFromApplication = useCallback(async (applicationId: string) => {
+    try {
+      const newContract = await contractService.createFromApplication(applicationId);
+      setContracts(prev => [newContract, ...prev]);
+      return newContract;
+    } catch (err: any) {
+      throw new Error(err.message || 'Failed to create contract');
+    }
+  }, []);
+
+  return {
+    contracts,
+    loading,
+    error,
+    fetchContracts,
+    createFromApplication,
+  };
 }
 
-export function useContractDetail(contractId: string | undefined) {
+export function useContractDetail(contractId?: string) {
   const [contract, setContract] = useState<Contract | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const fetchContract = useCallback(async () => {
-    if (!contractId) {
-      setIsLoading(false);
-      return;
-    }
-    
-    setIsLoading(true);
+    if (!contractId) return;
+    setLoading(true);
     setError(null);
     try {
-      const data = await MockContractService.getContractById(contractId);
-      if (data) {
-        setContract(data);
-      } else {
-        setError('Contract not found');
-      }
+      const data = await contractService.getContractById(contractId);
+      setContract(data);
+      return data;
     } catch (err: any) {
-      setError(err.message || 'Failed to fetch contract details');
+      setError(err.message || 'Failed to fetch contract');
+      return null;
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   }, [contractId]);
 
-  return { contract, isLoading, error, fetchContract };
-}
-
-export function useSignContract() {
-  const [isSigning, setIsSigning] = useState(false);
-  const signContract = async (contractId: string, signatureData: string, onSuccess?: (contract: Contract) => void) => {
-    setIsSigning(true);
+  const updateContract = useCallback(async (updates: Partial<Contract>) => {
+    if (!contractId) return;
     try {
-      const updated = await MockContractService.signContract(contractId, signatureData);
-      if (onSuccess) onSuccess(updated);
+      const updated = await contractService.updateContract(contractId, updates);
+      setContract(prev => prev ? { ...prev, ...updated } : updated);
       return updated;
-    } catch (error: any) {
-      console.error(error.message || 'Failed to sign contract');
-      throw error;
-    } finally {
-      setIsSigning(false);
+    } catch (err: any) {
+      throw new Error(err.message || 'Failed to update contract');
     }
-  };
+  }, [contractId]);
 
-  return { signContract, isSigning };
+  const signContract = useCallback(async (signatureData: string, role: 'landlord' | 'user') => {
+    if (!contractId) return;
+    try {
+      const updated = await contractService.signContract(contractId, signatureData, role);
+      setContract(prev => prev ? { ...prev, ...updated } : updated);
+      return updated;
+    } catch (err: any) {
+      throw new Error(err.message || 'Failed to sign contract');
+    }
+  }, [contractId]);
+
+  const updateStatus = useCallback(async (status: ContractStatus) => {
+    if (!contractId) return;
+    try {
+      const updated = await contractService.updateStatus(contractId, status);
+      setContract(prev => prev ? { ...prev, ...updated } : updated);
+      return updated;
+    } catch (err: any) {
+      throw new Error(err.message || 'Failed to update status');
+    }
+  }, [contractId]);
+
+  const generatePDF = useCallback(async () => {
+    if (!contractId) return;
+    try {
+      const updated = await contractService.generatePDF(contractId);
+      setContract(prev => prev ? { ...prev, ...updated } : updated);
+      return updated;
+    } catch (err: any) {
+      throw new Error(err.message || 'Failed to generate PDF');
+    }
+  }, [contractId]);
+
+  const downloadPDF = useCallback(async () => {
+    if (!contractId) return;
+    try {
+      const url = await contractService.getDownloadUrl(contractId);
+      window.open(url, '_blank');
+      return url;
+    } catch (err: any) {
+      throw new Error(err.message || 'Failed to download PDF');
+    }
+  }, [contractId]);
+
+  return {
+    contract,
+    loading,
+    error,
+    fetchContract,
+    updateContract,
+    signContract,
+    updateStatus,
+    generatePDF,
+    downloadPDF,
+  };
 }
