@@ -1093,7 +1093,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 
 ---
 
-#### 🔧 Paul — Check-In UI (Landlord Side) ✅ DONE
+<!-- #### 🔧 Paul — Check-In UI (Landlord Side) ✅ DONE
 **🤖 Gemini**
 
 | # | Task | Files | Status |
@@ -1103,7 +1103,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 3 | `hub/tenants/TenantList.tsx` — DataTable of all active tenancies: tenant name, unit, property, check-in date, contract status, actions. Filter by property, status. This is the post-check-in tenant management view. | `client/src/presentation/pages/hub/tenants/TenantList.tsx` | ✅ |
 | 4 | `hub/tenants/TenantDetail.tsx` — tenant profile, unit info, contract summary, billing summary, inventory tab, activity/comments tab, checkout button | `client/src/presentation/pages/hub/tenants/TenantDetail.tsx` | ✅ |
 
-**✅ Verify:** Signed contract → "Proceed to Check-In" → Complete → Tenant appears in Tenants list. Tenant detail shows all info.
+**✅ Verify:** Signed contract → "Proceed to Check-In" → Complete → Tenant appears in Tenants list. Tenant detail shows all info. -->
 
 ---
 

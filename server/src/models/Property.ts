@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
 export type PropertyStatus = 'Active' | 'Inactive' | 'Maintenance' | 'Archived';
-export type PropertyType = 'Boarding House' | 'Apartment' | 'Commercial' | 'Parking' | 'Land' | 'Mixed Use';
+export type PropertyType = 'Boarding House' | 'Apartment' | 'Studio' | 'Dormitory' | 'Commercial' | 'Parking' | 'Land' | 'Mixed Use';
 
 export interface IProperty extends Document {
   landlordId: mongoose.Types.ObjectId;
@@ -80,13 +80,13 @@ const PropertySchema = new Schema<IProperty>(
     inclusions: [{ type: String }],
     propertyType: {
       type: String,
-      enum: ['Boarding House', 'Apartment', 'Commercial', 'Parking', 'Land', 'Mixed Use'],
+      enum: ['Boarding House', 'Apartment', 'Studio', 'Dormitory', 'Commercial', 'Parking', 'Land', 'Mixed Use'],
       required: true
     },
     status: { 
       type: String, 
       enum: ['Active', 'Inactive', 'Maintenance', 'Archived'], 
-      default: 'Inactive' 
+      default: 'Active' 
     },
     images: [{ type: String }],
     

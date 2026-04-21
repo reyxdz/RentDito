@@ -59,7 +59,7 @@ export default function PropertyDetail() {
 
       <PageHeader
         title={property.name}
-        subtitle={`${property.address.street}, ${property.address.city}, ${property.address.state}`}
+        subtitle={`${property.address.street}, ${property.address.city}, ${property.address.province}`}
         action={
           <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
             <StatusBadge status={property.status} />

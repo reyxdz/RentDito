@@ -1,11 +1,14 @@
 import { useState } from 'react';
 import {
   Box, Typography, Stepper, Step, StepLabel, Button, Card, CardContent,
-  TextField, Grid, Autocomplete, Chip, useTheme, MenuItem, RadioGroup, FormControlLabel, Radio, FormControl, FormLabel, InputAdornment
+  TextField, Grid, Autocomplete, Chip, useTheme, MenuItem, RadioGroup, FormControlLabel, Radio, FormControl, FormLabel, InputAdornment, Alert
 } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import ImageUploader from '../../../components/ImageUploader';
 import { useProperties } from '../../../../application/hooks/useProperties';
+import { useUnits } from '../../../../application/hooks/useUnits';
+import { apiClient } from '../../../../infrastructure/api/apiClient';
+import { ENDPOINTS } from '../../../../infrastructure/api/endpoints';
 import type { AccommodationType } from '../../../../domain/entities/Unit';
 
 const steps = ['Basic Info', 'Pricing & Capacity', 'Features', 'Images'];
@@ -22,8 +25,10 @@ export default function UnitForm() {
   
   const [activeStep, setActiveStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   
   const { properties } = useProperties();
+  const { createUnit } = useUnits();
 
   // Form State
   const [basicInfo, setBasicInfo] = useState({ 
@@ -48,14 +53,57 @@ export default function UnitForm() {
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
+    setSubmitError(null);
     try {
-      // Simulate API call to create/update unit
-      await new Promise(resolve => setTimeout(resolve, 800));
-      console.log('Saved Unit:', { basicInfo, pricing, features, images });
+      // Parse string values to numbers for server validation
+      const capacityNum = parseInt(pricing.capacity, 10) || 1;
+      
+      const unitParams: any = {
+        propertyId: basicInfo.propertyId,
+        unitIdentifier: basicInfo.unitIdentifier,
+        accommodationType: basicInfo.accommodationType,
+        deposit: parseFloat(pricing.deposit) || 0,
+        capacity: capacityNum,
+        maxOccupants: capacityNum, // derive maxOccupants from capacity
+        features,
+        images: [],
+        status: 'vacant',
+      };
+
+      // Add size if provided
+      if (basicInfo.sizeSqm) {
+        unitParams.sizeSqm = parseFloat(basicInfo.sizeSqm);
+      }
+
+      // Add the appropriate rent field based on accommodation type
+      if (basicInfo.accommodationType === 'room') {
+        unitParams.roomRent = parseFloat(pricing.roomRent) || 0;
+      } else {
+        unitParams.bedspaceRent = parseFloat(pricing.bedspaceRent) || 0;
+      }
+
+      const newUnit = await createUnit(basicInfo.propertyId, unitParams);
+
+      // Upload images if any were selected
+      if (images.length > 0 && newUnit?.id) {
+        try {
+          const formData = new FormData();
+          images.forEach((file) => {
+            formData.append('images', file);
+          });
+          await apiClient.post(ENDPOINTS.UNITS.IMAGES(newUnit.id), formData, {
+            headers: { 'Content-Type': 'multipart/form-data' },
+          });
+        } catch (imgError) {
+          console.warn('Unit created but image upload failed:', imgError);
+          // Don't block navigation — unit was created successfully
+        }
+      }
+
       navigate('/hub/units');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to create unit', error);
-    } finally {
+      setSubmitError(error?.message || 'Failed to create unit. Please check your inputs and try again.');
       setIsSubmitting(false);
     }
   };
@@ -201,8 +249,8 @@ export default function UnitForm() {
   const isStepValid = () => {
     if (activeStep === 0) return basicInfo.propertyId && basicInfo.unitIdentifier;
     if (activeStep === 1) {
-      if (basicInfo.accommodationType === 'room') return pricing.roomRent && pricing.capacity;
-      return pricing.bedspaceRent && pricing.capacity;
+      const hasRent = basicInfo.accommodationType === 'room' ? !!pricing.roomRent : !!pricing.bedspaceRent;
+      return hasRent && !!pricing.deposit && !!pricing.capacity;
     }
     return true; 
   };
@@ -223,6 +271,12 @@ export default function UnitForm() {
           </Step>
         ))}
       </Stepper>
+
+      {submitError && (
+        <Alert severity="error" sx={{ mb: 3 }} onClose={() => setSubmitError(null)}>
+          {submitError}
+        </Alert>
+      )}
 
       <Card elevation={0} sx={{ border: `1px solid ${theme.palette.divider}`, borderRadius: 3, mb: 4 }}>
         <CardContent sx={{ p: { xs: 3, md: 5 } }}>
