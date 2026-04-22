@@ -1200,7 +1200,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 **✅ Verify:** Submit meter readings → utility bill created with correct amounts. Per-head calculation for bedspace unit → divided correctly. Combined bill → totals match.
 
 ---
-
+<!-- 
 #### 🔧 Paul — Utility Dashboard (Landlord Side)
 **🤖 Gemini**
 
@@ -1210,7 +1210,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 2 | `hub/utilities/MeterReadingForm.tsx` — unit selector, reading type, previous reading (auto-filled), current reading → auto-compute consumption + cost | new |
 | 3 | `infrastructure/services/UtilityService.ts`, `hooks/useUtilities.ts` | new |
 
-**✅ Verify:** Submit readings → utility dashboard charts update. Highest usage unit displayed. Overconsumption alert fires.
+**✅ Verify:** Submit readings → utility dashboard charts update. Highest usage unit displayed. Overconsumption alert fires. -->
 
 ---
 
