@@ -1248,7 +1248,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 
 ---
 
-#### 🔧 Paul — Inventory Management (Landlord/Staff Side)
+<!-- #### 🔧 Paul — Inventory Management (Landlord/Staff Side)
 **🤖 Gemini**
 
 | # | Task | Files |
@@ -1261,7 +1261,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 6 | `hub/inventory/MonthlyReport.tsx` — stat cards: active issued, lost/damaged, most damaged item. Depreciation table. | new |
 | 7 | `infrastructure/services/InventoryService.ts`, `hooks/useInventory.ts` | new |
 
-**✅ Verify:** Add item → issue to tenant → return with damage → penalty shown. Monthly report reflects data.
+**✅ Verify:** Add item → issue to tenant → return with damage → penalty shown. Monthly report reflects data. -->
 
 ---
 
