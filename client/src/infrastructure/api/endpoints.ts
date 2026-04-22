@@ -95,6 +95,8 @@ export const ENDPOINTS = {
   INVENTORY: {
     ROOT: '/api/inventory',
     DETAILS: (id: string) => `/api/inventory/${id}`,
+    RECORDS: '/api/inventory/records',
+    METRICS: '/api/inventory/metrics',
   },
   UTILITIES: {
     ROOT: '/api/utilities',
