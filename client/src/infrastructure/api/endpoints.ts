@@ -96,6 +96,11 @@ export const ENDPOINTS = {
     ROOT: '/api/inventory',
     DETAILS: (id: string) => `/api/inventory/${id}`,
   },
+  UTILITIES: {
+    ROOT: '/api/utilities',
+    READINGS: '/api/utilities/readings',
+    METRICS: '/api/utilities/metrics',
+  },
   PUBLIC: {
     LISTINGS: '/api/public/listings',
     PROPERTY_DETAILS: (id: string) => `/api/public/listings/${id}`,
