@@ -45,7 +45,6 @@ import {
 import HubOverview from './presentation/pages/hub/overview/Overview';
 import TeamManagement from './presentation/pages/hub/team/TeamManagement';
 import {
-  HubBillingPlaceholder,
   HubUtilitiesPlaceholder,
   HubFinancialsPlaceholder,
   HubInventoryPlaceholder,
@@ -54,6 +53,9 @@ import {
   HubReportsPlaceholder,
   HubSecurityPlaceholder,
 } from './presentation/pages/hub/Placeholders';
+
+import BillList from './presentation/pages/hub/billing/BillList';
+import BillDetail from './presentation/pages/hub/billing/BillDetail';
 
 import PropertyList from './presentation/pages/hub/properties/PropertyList';
 import PropertyForm from './presentation/pages/hub/properties/PropertyForm';
@@ -156,7 +158,10 @@ function App() {
               <Route index element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="bookings"><VisitList /></ProtectedRoute>} />
               <Route path=":visitId" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="bookings"><VisitDetail /></ProtectedRoute>} />
             </Route>
-            <Route path="billing" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="billing"><HubBillingPlaceholder /></ProtectedRoute>} />
+            <Route path="billing">
+              <Route index element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="billing"><BillList /></ProtectedRoute>} />
+              <Route path=":billId" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="billing"><BillDetail /></ProtectedRoute>} />
+            </Route>
             <Route path="contracts">
               <Route index element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="contracts"><ContractList /></ProtectedRoute>} />
               <Route path="new" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="contracts"><ContractForm /></ProtectedRoute>} />

@@ -85,6 +85,8 @@ export const ENDPOINTS = {
   BILLS: {
     ROOT: '/api/bills',
     DETAILS: (id: string) => `/api/bills/${id}`,
+    GENERATE: '/api/bills/generate',
+    PAY: (id: string) => `/api/bills/${id}/pay`,
   },
   TICKETS: {
     ROOT: '/api/tickets',
