@@ -21,7 +21,7 @@ const commonInclusions = [
   'Electricity Included', 'Parking', 'Gym', 'Swimming Pool', 'Laundry', 'Furnished', 'Cooking Allowed'
 ];
 
-const propertyTypes = ['Boarding House', 'Apartment', 'Studio', 'Dormitory', 'Commercial', 'Parking', 'Land', 'Mixed Use'];
+const propertyTypes = ['Boarding House', 'Apartment', 'Commercial', 'Parking', 'Land', 'Mixed Use'];
 
 export default function PropertyForm() {
   const theme = useTheme();
@@ -196,18 +196,18 @@ export default function PropertyForm() {
               </TextField>
             </Grid>
             {isEditMode && (
-            <Grid size={{ xs: 12 }}>
-              <TextField
-                fullWidth select label="Property Status"
-                value={propertyStatus}
-                onChange={(e) => setPropertyStatus(e.target.value as PropertyStatus)}
-                helperText="Active properties are visible to tenants. Inactive properties are hidden from public listings."
-              >
-                <MenuItem value="Active">Active — Visible in Listings</MenuItem>
-                <MenuItem value="Inactive">Inactive — Hidden from Listings</MenuItem>
-                <MenuItem value="Maintenance">Maintenance</MenuItem>
-              </TextField>
-            </Grid>
+              <Grid size={{ xs: 12 }}>
+                <TextField
+                  fullWidth select label="Property Status"
+                  value={propertyStatus}
+                  onChange={(e) => setPropertyStatus(e.target.value as PropertyStatus)}
+                  helperText="Active properties are visible to tenants. Inactive properties are hidden from public listings."
+                >
+                  <MenuItem value="Active">Active — Visible in Listings</MenuItem>
+                  <MenuItem value="Inactive">Inactive — Hidden from Listings</MenuItem>
+                  <MenuItem value="Maintenance">Maintenance</MenuItem>
+                </TextField>
+              </Grid>
             )}
             <Grid size={{ xs: 12 }}>
               <TextField
@@ -313,10 +313,10 @@ export default function PropertyForm() {
             <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1 }}>
               {isEditMode ? 'Add New Images' : 'Upload Images'}
             </Typography>
-            <ImageUploader 
-              images={images} 
-              onChange={setImages} 
-              maxFiles={12} 
+            <ImageUploader
+              images={images}
+              onChange={setImages}
+              maxFiles={12}
             />
           </Box>
         );
@@ -383,8 +383,8 @@ export default function PropertyForm() {
           sx={{ fontWeight: 700, minWidth: 120 }}
           disableElevation
         >
-          {activeStep === steps.length - 1 
-            ? (isSubmitting ? 'Saving...' : (isEditMode ? 'Save Changes' : 'Publish Property')) 
+          {activeStep === steps.length - 1
+            ? (isSubmitting ? 'Saving...' : (isEditMode ? 'Save Changes' : 'Publish Property'))
             : 'Next'}
         </Button>
       </Box>
