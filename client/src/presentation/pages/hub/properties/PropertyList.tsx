@@ -37,7 +37,7 @@ export default function PropertyList() {
       format: (value: string) => {
         let color: "default" | "primary" | "secondary" | "error" | "info" | "success" | "warning" = 'default';
         if (value === 'Active') color = 'success';
-        if (value === 'Disabled') color = 'error';
+        if (value === 'Inactive') color = 'error';
         if (value === 'Maintenance') color = 'warning';
         return <Chip label={value} size="small" color={color} sx={{ fontWeight: 600 }} />;
       }

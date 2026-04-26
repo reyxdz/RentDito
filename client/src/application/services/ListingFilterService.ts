@@ -13,12 +13,12 @@ const PROPERTY_CATEGORIES = [
 
 export function useFilterOptions(properties: Property[], selectedProvince: string | 'All' = 'All'): FilterOptions {
   // Extract unique provinces and cities from properties
-  const provinces = Array.from(new Set(properties.map((p) => p.address.state)))
+  const provinces = Array.from(new Set(properties.map((p) => p.address.province)))
     .filter(Boolean)
     .sort();
 
   const propertiesForCities = selectedProvince !== 'All'
-    ? properties.filter(p => p.address.state === selectedProvince)
+    ? properties.filter(p => p.address.province === selectedProvince)
     : properties;
 
   const cities = Array.from(new Set(propertiesForCities.map((p) => p.address.city)))
@@ -46,7 +46,7 @@ export function applyListingFilters(
       q &&
       !p.name.toLowerCase().includes(q) &&
       !p.address.city.toLowerCase().includes(q) &&
-      !p.address.state.toLowerCase().includes(q)
+      !p.address.province.toLowerCase().includes(q)
     ) {
       return false;
     }
@@ -64,7 +64,7 @@ export function applyListingFilters(
     }
 
     // Province filter
-    if (filters.province !== 'All' && p.address.state !== filters.province) {
+    if (filters.province !== 'All' && p.address.province !== filters.province) {
       return false;
     }
 

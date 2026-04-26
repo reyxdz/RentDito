@@ -7,6 +7,19 @@ export function useUnits() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const fetchUnits = useCallback(async (filters: Record<string, string> = {}) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await unitService.getUnits(filters);
+      setUnits(data);
+    } catch (err: any) {
+      setError(err.message || 'Failed to fetch units');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   const fetchUnitsByProperty = useCallback(async (propertyId: string) => {
     if (!propertyId) return;
     
@@ -55,6 +68,7 @@ export function useUnits() {
     units, 
     loading, 
     error, 
+    fetchUnits,
     fetchUnitsByProperty,
     createUnit,
     updateUnit,

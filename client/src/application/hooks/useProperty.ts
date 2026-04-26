@@ -8,7 +8,10 @@ export function useProperty(propertyId: string | undefined) {
   const [error, setError] = useState<string | null>(null);
 
   const fetchProperty = useCallback(async () => {
-    if (!propertyId) return;
+    if (!propertyId) {
+      setLoading(false);
+      return;
+    }
     
     setLoading(true);
     setError(null);

@@ -42,7 +42,7 @@ import ApplicationFormDialog from '../../components/ApplicationFormDialog';
 export default function UnitDetailPage() {
   const { unitId } = useParams<{ unitId: string }>();
   const navigate = useNavigate();
-  const { unit, loading, error } = useUnitDetail(unitId);
+  const { unit, loading, error } = useUnitDetail(unitId, true);
   const { user, isAuthenticated } = useAuth();
 
   const [authDialogOpen, setAuthDialogOpen] = useState(false);

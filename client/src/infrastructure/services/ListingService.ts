@@ -32,6 +32,10 @@ const mapBackendPropertyToClient = (p: any): Property => {
   return {
     ...p,
     id: p._id || p.id,
+    address: {
+      ...p.address,
+      province: p.address?.province || p.address?.state || '',
+    },
     reviewCenters: p.reviewCenters || mapVenues(venues.reviewCenters),
     schools: p.schools || mapVenues(venues.schools),
     commercialEstablishments: p.commercialEstablishments || mapVenues(venues.commercial),

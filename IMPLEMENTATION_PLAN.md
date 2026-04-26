@@ -985,7 +985,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 **✅ Verify:** User applies → landlord sees it → approves → user notified. Rejected application → user sees rejection with notes.
 
 ---
-
+<!-- 
 #### 🔧 Paul — Application Review (Landlord Side)
 **🤖 Gemini**
 
@@ -994,11 +994,11 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 1 | `hub/pipeline/ApplicationList.tsx` — DataTable: applicant name, property, unit, date, status, actions. Filter by status, property. | new |
 | 2 | `hub/pipeline/ApplicationDetail.tsx` — applicant profile card (name, phone, occupation, emergency contact), uploaded documents viewer, unit info card, Review Notes textarea, Approve/Reject buttons with confirmation dialog. | new |
 
-**✅ Verify:** Applications list loads. Click one → detail with full profile + documents. Approve → status changes. Reject with notes → status changes.
+**✅ Verify:** Applications list loads. Click one → detail with full profile + documents. Approve → status changes. Reject with notes → status changes. -->
 
 ---
 
-#### 🔧 Emanuel — Application Submission (User Side) ✅ DONE
+<!-- #### 🔧 Emanuel — Application Submission (User Side) ✅ DONE
 **🤖 Gemini**
 
 | # | Task | Files | Status |
@@ -1010,7 +1010,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 5 | `infrastructure/services/MockApplicationService.ts` — mock CRUD with duplicate-check (no double pending apps for same unit) + withdraw capability. `hooks/useApplications.ts` — `fetchApplications`, `createApplication`, `withdrawApplication`. | `MockApplicationService.ts`, `useApplications.ts` | ✅ |
 | 6 | Added route `/u/applications` in `App.tsx` and "My Applications" sidebar entry in `menuConfig.ts`. | `App.tsx`, `menuConfig.ts` | ✅ |
 
-**✅ Verify:** User on unit page → "Apply Now" → fill form + submit → appears as Pending in My Applications → Can view details in slide-up dialog → Can withdraw pending applications. **Additionally:** User in inquiry conversation → clicks green "Apply Now" button next to message input → application form opens pre-filled with inquiry's property/unit context → submit → redirects to My Applications.
+**✅ Verify:** User on unit page → "Apply Now" → fill form + submit → appears as Pending in My Applications → Can view details in slide-up dialog → Can withdraw pending applications. **Additionally:** User in inquiry conversation → clicks green "Apply Now" button next to message input → application form opens pre-filled with inquiry's property/unit context → submit → redirects to My Applications. -->
 
 ---
 
@@ -1022,7 +1022,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 ### Day 12 — Contract System
 
 > **Goal:** Approved applications generate contract drafts. Both parties sign digitally. PDF generated and downloadable.
-
+<!-- 
 #### 👑 Rey — Contract Backend + PDF Generation
 **🤖 Claude Opus** ⚡ (complex: PDF template with variable interpolation + multi-step state machine + signature handling)
 
@@ -1034,10 +1034,10 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 4 | `services/templates/contractTemplate.ts` — professional lease agreement HTML. Variables: property name+address, unit, landlord name, tenant name, monthly rent, deposit, advance, dates, lock-in, utility config, terms, signatures. | new |
 | 5 | Install `puppeteer` for PDF generation | server/package.json |
 
-**✅ Verify:** Create contract from approved application → fields auto-populated. Sign (both sides) → generate PDF → download → PDF looks professional with signatures.
+**✅ Verify:** Create contract from approved application → fields auto-populated. Sign (both sides) → generate PDF → download → PDF looks professional with signatures. -->
 
 ---
-
+<!-- 
 #### 🔧 Paul — Contract Management (Landlord Side) + SignaturePad
 **🤖 Gemini**
 
@@ -1049,7 +1049,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 4 | `presentation/components/SignaturePad.tsx` — HTML5 Canvas drawing, touch support, clear button, outputs base64 PNG. | new |
 | 5 | `infrastructure/services/ContractService.ts`, `hooks/useContracts.ts` | new |
 
-**✅ Verify:** Create contract from approved application → appears as Draft → edit terms → send for review → sign with canvas → both signed → generate PDF → download.
+**✅ Verify:** Create contract from approved application → appears as Draft → edit terms → send for review → sign with canvas → both signed → generate PDF → download. -->
 
 ---
 
@@ -1093,17 +1093,17 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 
 ---
 
-#### 🔧 Paul — Check-In UI (Landlord Side)
+<!-- #### 🔧 Paul — Check-In UI (Landlord Side) ✅ DONE
 **🤖 Gemini**
 
-| # | Task | Files |
-|---|---|---|
-| 1 | `hub/pipeline/CheckInFlow.tsx` — shown when viewing a signed contract or approved application. Steps: (1) "Confirm Tenant Arrival" button, (2) select slot if bedspace, (3) "Complete Check-In" button → calls confirm-checkin → success summary (tenancy ID, unit, contract activated). | new |
-| 2 | Add check-in action to contract detail page — if status=signed, show "Proceed to Check-In" button | modify ContractDetail |
-| 3 | `hub/tenants/TenantList.tsx` — DataTable of all active tenancies: tenant name, unit, property, check-in date, contract status, actions. Filter by property, status. This is the post-check-in tenant management view. | new |
-| 4 | `hub/tenants/TenantDetail.tsx` — tenant profile, unit info, contract summary, billing summary, inventory tab, activity/comments tab, checkout button | new |
+| # | Task | Files | Status |
+|---|---|---|---|
+| 1 | `hub/pipeline/CheckInFlow.tsx` — shown when viewing a signed contract or approved application. Steps: (1) "Confirm Tenant Arrival" button, (2) select slot if bedspace, (3) "Complete Check-In" button → calls confirm-checkin → success summary (tenancy ID, unit, contract activated). | `client/src/presentation/pages/hub/pipeline/CheckInFlow.tsx` | ✅ |
+| 2 | Add check-in action to contract detail page — if status=signed, show "Proceed to Check-In" button | `client/src/presentation/pages/hub/contracts/ContractDetail.tsx` | ✅ |
+| 3 | `hub/tenants/TenantList.tsx` — DataTable of all active tenancies: tenant name, unit, property, check-in date, contract status, actions. Filter by property, status. This is the post-check-in tenant management view. | `client/src/presentation/pages/hub/tenants/TenantList.tsx` | ✅ |
+| 4 | `hub/tenants/TenantDetail.tsx` — tenant profile, unit info, contract summary, billing summary, inventory tab, activity/comments tab, checkout button | `client/src/presentation/pages/hub/tenants/TenantDetail.tsx` | ✅ |
 
-**✅ Verify:** Signed contract → "Proceed to Check-In" → Complete → Tenant appears in Tenants list. Tenant detail shows all info.
+**✅ Verify:** Signed contract → "Proceed to Check-In" → Complete → Tenant appears in Tenants list. Tenant detail shows all info. -->
 
 ---
 
@@ -1150,7 +1150,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 
 ---
 
-#### 🔧 Paul — Bill Management (Landlord Side)
+<!-- #### 🔧 Paul — Bill Management (Landlord Side)
 **🤖 Gemini**
 
 | # | Task | Files |
@@ -1161,7 +1161,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 4 | `hub/billing/AutoGenerateDialog.tsx` — "Generate for month [dropdown]?" → preview count → confirm → POST → show results | new |
 | 5 | `infrastructure/services/BillingService.ts`, `hooks/useBilling.ts` | new |
 
-**✅ Verify:** Bill list shows bills. "Generate Bills" → auto-create for current month. Open bill → Record Payment → status updates. Generate receipt → PDF downloads.
+**✅ Verify:** Bill list shows bills. "Generate Bills" → auto-create for current month. Open bill → Record Payment → status updates. Generate receipt → PDF downloads. -->
 
 ---
 
@@ -1200,7 +1200,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 **✅ Verify:** Submit meter readings → utility bill created with correct amounts. Per-head calculation for bedspace unit → divided correctly. Combined bill → totals match.
 
 ---
-
+<!-- 
 #### 🔧 Paul — Utility Dashboard (Landlord Side)
 **🤖 Gemini**
 
@@ -1210,7 +1210,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 2 | `hub/utilities/MeterReadingForm.tsx` — unit selector, reading type, previous reading (auto-filled), current reading → auto-compute consumption + cost | new |
 | 3 | `infrastructure/services/UtilityService.ts`, `hooks/useUtilities.ts` | new |
 
-**✅ Verify:** Submit readings → utility dashboard charts update. Highest usage unit displayed. Overconsumption alert fires.
+**✅ Verify:** Submit readings → utility dashboard charts update. Highest usage unit displayed. Overconsumption alert fires. -->
 
 ---
 
@@ -1248,7 +1248,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 
 ---
 
-#### 🔧 Paul — Inventory Management (Landlord/Staff Side)
+<!-- #### 🔧 Paul — Inventory Management (Landlord/Staff Side)
 **🤖 Gemini**
 
 | # | Task | Files |
@@ -1261,7 +1261,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 6 | `hub/inventory/MonthlyReport.tsx` — stat cards: active issued, lost/damaged, most damaged item. Depreciation table. | new |
 | 7 | `infrastructure/services/InventoryService.ts`, `hooks/useInventory.ts` | new |
 
-**✅ Verify:** Add item → issue to tenant → return with damage → penalty shown. Monthly report reflects data.
+**✅ Verify:** Add item → issue to tenant → return with damage → penalty shown. Monthly report reflects data. -->
 
 ---
 
