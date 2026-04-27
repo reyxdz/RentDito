@@ -91,6 +91,10 @@ export const ENDPOINTS = {
   TICKETS: {
     ROOT: '/api/tickets',
     DETAILS: (id: string) => `/api/tickets/${id}`,
+    ASSIGN: (id: string) => `/api/tickets/${id}/assign`,
+    UPDATE: (id: string) => `/api/tickets/${id}/updates`,
+    RESOLVE: (id: string) => `/api/tickets/${id}/resolve`,
+    CLOSE: (id: string) => `/api/tickets/${id}/close`,
   },
   INVENTORY: {
     ROOT: '/api/inventory',

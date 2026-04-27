@@ -46,7 +46,6 @@ import HubOverview from './presentation/pages/hub/overview/Overview';
 import TeamManagement from './presentation/pages/hub/team/TeamManagement';
 import {
   HubFinancialsPlaceholder,
-  HubMaintenancePlaceholder,
   HubDocumentsPlaceholder,
   HubReportsPlaceholder,
   HubSecurityPlaceholder,
@@ -56,6 +55,9 @@ import BillList from './presentation/pages/hub/billing/BillList';
 import BillDetail from './presentation/pages/hub/billing/BillDetail';
 import UtilityDashboard from './presentation/pages/hub/utilities/UtilityDashboard';
 import InventoryDashboard from './presentation/pages/hub/inventory/InventoryDashboard';
+
+import TicketList from './presentation/pages/hub/maintenance/TicketList';
+import TicketDetail from './presentation/pages/hub/maintenance/TicketDetail';
 
 import PropertyList from './presentation/pages/hub/properties/PropertyList';
 import PropertyForm from './presentation/pages/hub/properties/PropertyForm';
@@ -170,7 +172,10 @@ function App() {
             <Route path="utilities" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="utilities"><UtilityDashboard /></ProtectedRoute>} />
             <Route path="financials" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="financials"><HubFinancialsPlaceholder /></ProtectedRoute>} />
             <Route path="inventory" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="inventory"><InventoryDashboard /></ProtectedRoute>} />
-            <Route path="maintenance" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="maintenance"><HubMaintenancePlaceholder /></ProtectedRoute>} />
+            <Route path="maintenance">
+               <Route index element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="maintenance"><TicketList /></ProtectedRoute>} />
+               <Route path=":ticketId" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="maintenance"><TicketDetail /></ProtectedRoute>} />
+            </Route>
             <Route path="documents" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="documents"><HubDocumentsPlaceholder /></ProtectedRoute>} />
             <Route path="reports" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="reports"><HubReportsPlaceholder /></ProtectedRoute>} />
             <Route path="security" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="security"><HubSecurityPlaceholder /></ProtectedRoute>} />
