@@ -1301,7 +1301,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 
 ---
 
-#### 🔧 Paul — Ticket Management (Landlord/Staff Side)
+<!-- #### 🔧 Paul — Ticket Management (Landlord/Staff Side)
 **🤖 Gemini**
 
 | # | Task | Files |
@@ -1310,7 +1310,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 2 | `hub/maintenance/TicketDetail.tsx` — ticket info, photo gallery, assignment dropdown (pick staff), reassignment for specific work, status timeline (open → assigned → in_progress → resolved → closed), progress updates thread (staff posts notes), resolution notes, cost fields (estimated, actual) | new |
 | 3 | `infrastructure/services/TicketService.ts`, `hooks/useTickets.ts` | new |
 
-**✅ Verify:** Ticket list shows tickets by priority. Assign staff → reassign → post progress → resolve. Timeline displays correctly.
+**✅ Verify:** Ticket list shows tickets by priority. Assign staff → reassign → post progress → resolve. Timeline displays correctly. -->
 
 ---
 
