@@ -2,10 +2,10 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   Box, Typography, Button, Paper, CircularProgress,
-  TextField, Divider, Avatar, MenuItem, Select,
-  type SelectChangeEvent, Card, CardContent, Grid,
+  TextField, Divider, Avatar, MenuItem,
+  Card, CardContent, Grid,
   Dialog, DialogTitle, DialogContent, DialogActions,
-  Chip, IconButton, Tooltip, Alert,
+  Chip, Alert,
 } from '@mui/material';
 import {
   ArrowBack,
@@ -25,8 +25,6 @@ import {
   Save as SaveIcon,
 } from '@mui/icons-material';
 import { useVisitDetail } from '../../../../application/hooks/useVisits';
-import { apiClient } from '../../../../infrastructure/api/apiClient';
-import { ENDPOINTS } from '../../../../infrastructure/api/endpoints';
 import type { VisitStatus } from '../../../../domain/entities/VisitRequest';
 
 /** Visit status config for color-coded display */
@@ -112,8 +110,8 @@ export default function VisitDetail() {
     async function fetchStaff() {
       setStaffLoading(true);
       try {
-        const { data } = await apiClient.get(ENDPOINTS.TEAM.ROOT);
-        setStaffMembers(data.data || data || []);
+        // In mock mode, just provide empty staff list
+        setStaffMembers([]);
       } catch {
         // Staff list may not be available
       } finally {
@@ -259,11 +257,11 @@ export default function VisitDetail() {
     );
   }
 
-  const visitUser = visit.user as any;
-  const visitProperty = visit.property as any;
-  const visitUnit = visit.unit as any;
-  const visitStaff = visit.assignedStaff as any;
-  const statusConfig = STATUS_CONFIG[visit.status] || { label: visit.status, color: '#6b7280', icon: ScheduleIcon };
+  const visitUser = (visit as any).user || { name: (visit as any).userName };
+  const visitProperty = (visit as any).property || { name: (visit as any).propertyName };
+  const visitUnit = (visit as any).unit || ((visit as any).unitIdentifier ? { unitIdentifier: (visit as any).unitIdentifier } : null);
+  const visitStaff = (visit as any).assignedStaff as any;
+  const statusConfig = STATUS_CONFIG[(visit as any).status as VisitStatus] || { label: (visit as any).status, color: '#6b7280', icon: ScheduleIcon };
   const StatusIcon = statusConfig.icon;
 
   const isTerminal = ['completed', 'cancelled', 'no_show'].includes(visit.status);
@@ -412,8 +410,8 @@ export default function VisitDetail() {
                 variant="outlined"
                 startIcon={<ScheduleIcon />}
                 onClick={() => {
-                  setScheduleDate(formatShortDate(visit.requestedDate));
-                  setScheduleTime(visit.requestedTime || '10:00');
+                  setScheduleDate(formatShortDate((visit as any).preferredDate || (visit as any).requestedDate));
+                  setScheduleTime((visit as any).preferredTime || (visit as any).requestedTime || '10:00');
                   setScheduleOpen(true);
                 }}
                 disabled={!!actionLoading}
@@ -512,8 +510,8 @@ export default function VisitDetail() {
               </Box>
 
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
-                <InfoRow icon={<CalendarIcon fontSize="small" />} label="Requested Date" value={formatDate(visit.requestedDate)} />
-                <InfoRow icon={<TimeIcon fontSize="small" />} label="Requested Time" value={visit.requestedTime || '—'} />
+                <InfoRow icon={<CalendarIcon fontSize="small" />} label="Requested Date" value={formatDate((visit as any).preferredDate || (visit as any).requestedDate)} />
+                <InfoRow icon={<TimeIcon fontSize="small" />} label="Requested Time" value={(visit as any).preferredTime || (visit as any).requestedTime || '—'} />
                 <InfoRow icon={<CalendarIcon fontSize="small" />} label="Scheduled Date" value={formatDate(visit.scheduledDate)} highlight={!!visit.scheduledDate} />
                 <InfoRow icon={<TimeIcon fontSize="small" />} label="Scheduled Time" value={visit.scheduledTime || '—'} highlight={!!visit.scheduledTime} />
                 <Divider />

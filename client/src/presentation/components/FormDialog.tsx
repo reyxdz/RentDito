@@ -37,10 +37,10 @@ export default function FormDialog({
   maxWidth = 'sm'
 }: FormDialogProps) {
   return (
-    <Dialog 
-      open={open} 
-      onClose={loading ? undefined : onClose} 
-      maxWidth={maxWidth} 
+    <Dialog
+      open={open}
+      onClose={loading ? undefined : onClose}
+      maxWidth={maxWidth}
       fullWidth
       TransitionComponent={Transition}
       keepMounted
@@ -62,12 +62,12 @@ export default function FormDialog({
           <Button onClick={onClose} color="inherit" disabled={loading} sx={{ fontWeight: 600, color: 'text.secondary' }}>
             {cancelText}
           </Button>
-          <Button 
-            type="submit" 
-            variant="contained" 
-            color="primary" 
-            disabled={loading} 
-            disableElevation 
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            disabled={loading}
+            disableElevation
             sx={{ fontWeight: 600, minWidth: 100 }}
             startIcon={loading ? <CircularProgress size={16} color="inherit" /> : null}
           >

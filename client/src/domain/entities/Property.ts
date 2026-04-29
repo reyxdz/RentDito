@@ -1,4 +1,4 @@
-export type PropertyStatus = 'Active' | 'Disabled' | 'Maintenance' | 'Archived';
+export type PropertyStatus = 'Active' | 'Inactive' | 'Maintenance' | 'Archived';
 export type PropertyType = 'Boarding House' | 'Apartment' | 'Studio' | 'Dormitory' | 'Commercial' | 'Parking' | 'Land' | 'Mixed Use';
 
 import type { AccommodationType } from './Unit';
@@ -34,7 +34,7 @@ export interface Property {
   address: {
     street: string;
     city: string;
-    state: string;
+    province: string;
     zipCode: string;
     country: string;
   };

@@ -11,7 +11,7 @@ import type { Unit } from '../../../../domain/entities/Unit';
 
 export default function UnitList() {
   const navigate = useNavigate();
-  const { units, fetchUnitsByProperty, loading: unitsLoading } = useUnits();
+  const { units, fetchUnits, loading: unitsLoading } = useUnits();
   const { properties, loading: propsLoading } = useProperties();
 
   const [selectedPropertyId, setSelectedPropertyId] = useState<string>('all');
@@ -19,34 +19,17 @@ export default function UnitList() {
   const [selectedType, setSelectedType] = useState<string>('all');
 
   useEffect(() => {
-    // Ideally we would fetch units across all properties if 'all' is selected. 
-    // If the API requires propertyId, we might need to loop or change API.
-    // Assuming we just fetch for the first property or wait until one is selected.
-    // For now:
-    if (selectedPropertyId !== 'all') {
-      fetchUnitsByProperty(selectedPropertyId);
-    } else if (properties.length > 0) {
-      // Loop to fetch all units for this user's properties since endpoint might require propertyId
-      // Or if there's a global endpoint, but useUnits expects a propertyId.
-      // Let's just default to the first property if none selected to make it simpler, 
-      // or fetch for all properties concurrently and merge.
-      fetchAllUnits();
+    if (selectedPropertyId === 'all') {
+      fetchUnits();
+    } else {
+      // Use the query-based filter on GET /api/units?propertyId=...
+      fetchUnits({ propertyId: selectedPropertyId });
     }
-  }, [selectedPropertyId, properties, fetchUnitsByProperty]);
+  }, [selectedPropertyId, fetchUnits]);
 
-  const [fetchingAll, setFetchingAll] = useState(false);
-
-  const fetchAllUnits = async () => {
-    setFetchingAll(true);
-    try {
-      await Promise.all(properties.map(p => fetchUnitsByProperty(p.id).catch(() => [])));
-      // Hacky way since useUnits hook updates its own state. 
-    } finally {
-      setFetchingAll(false);
-    }
-  };
-
-  const getPropertyName = (propId: string) => {
+  const getPropertyName = (propId: string | any) => {
+    // propId may be a populated object (from server .populate()) or a string
+    if (typeof propId === 'object' && propId?.name) return propId.name;
     return properties.find(p => p.id === propId)?.name || 'Unknown Property';
   };
 
@@ -102,7 +85,6 @@ export default function UnitList() {
 
   // Filtering
   const filteredUnits = useMemo(() => {
-    // If fetching all units, wait, we need a custom hook behavior or we just use `units` state
     let filtered = units;
     
     // Status filter
@@ -118,8 +100,7 @@ export default function UnitList() {
     return filtered;
   }, [units, selectedStatus, selectedType]);
 
-
-  const isLoading = unitsLoading || propsLoading || fetchingAll;
+  const isLoading = unitsLoading || propsLoading;
 
   return (
     <Box>

@@ -27,7 +27,7 @@ export default function Register() {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
-    
+
     if (password !== confirmPassword) {
       setError('Passwords do not match');
       setIsLoading(false);
@@ -42,7 +42,7 @@ export default function Register() {
         password,
         confirmPassword,
       });
-      
+
       navigate('/u', { replace: true });
     } catch (err: unknown) {
       const message =
@@ -87,16 +87,16 @@ export default function Register() {
               <TextField fullWidth label="Municipality / City" variant="outlined" value={municipality} onChange={(e) => setMunicipality(e.target.value)} required disabled={isLoading} />
             </Box>
             <TextField fullWidth label="Province" variant="outlined" value={province} onChange={(e) => setProvince(e.target.value)} sx={{ mb: 2 }} required disabled={isLoading} />
-            <TextField 
-              fullWidth 
-              label="Password" 
-              variant="outlined" 
-              type={showPassword ? 'text' : 'password'} 
-              value={password} 
-              onChange={(e) => setPassword(e.target.value)} 
-              sx={{ mb: 2 }} 
-              required 
-              disabled={isLoading} 
+            <TextField
+              fullWidth
+              label="Password"
+              variant="outlined"
+              type={showPassword ? 'text' : 'password'}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              sx={{ mb: 2 }}
+              required
+              disabled={isLoading}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
@@ -112,16 +112,16 @@ export default function Register() {
                 ),
               }}
             />
-            <TextField 
-              fullWidth 
-              label="Confirm Password" 
-              variant="outlined" 
-              type={showConfirmPassword ? 'text' : 'password'} 
-              value={confirmPassword} 
-              onChange={(e) => setConfirmPassword(e.target.value)} 
-              sx={{ mb: 4 }} 
-              required 
-              disabled={isLoading} 
+            <TextField
+              fullWidth
+              label="Confirm Password"
+              variant="outlined"
+              type={showConfirmPassword ? 'text' : 'password'}
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              sx={{ mb: 4 }}
+              required
+              disabled={isLoading}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
@@ -138,18 +138,18 @@ export default function Register() {
               }}
             />
 
-            <Button 
+            <Button
               type="submit"
-              fullWidth 
-              variant="contained" 
-              size="large" 
+              fullWidth
+              variant="contained"
+              size="large"
               disabled={isLoading}
               startIcon={isLoading ? <CircularProgress size={20} color="inherit" /> : <PersonAdd />}
               sx={{ py: 1.5, fontWeight: 700, fontSize: '1.05rem', boxShadow: 4, mb: 2 }}
             >
               {isLoading ? 'Creating Account...' : 'Sign Up'}
             </Button>
-            
+
             <Box sx={{ textAlign: 'center' }}>
               <Typography variant="body2" color="text.secondary">
                 Already have an account? <RouterLink to="/login" style={{ color: '#5A31E8', textDecoration: 'none', fontWeight: 600 }}>Sign in</RouterLink>

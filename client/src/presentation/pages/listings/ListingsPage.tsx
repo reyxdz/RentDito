@@ -306,7 +306,7 @@ export default function ListingsPage() {
                             sx={{ fontSize: 18, color: 'text.secondary' }}
                           />
                           <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 500 }}>
-                            {property.address.city}, {property.address.state}
+                            {property.address.city}, {property.address.province}
                           </Typography>
                         </Box>
 

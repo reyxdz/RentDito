@@ -9,9 +9,9 @@ export default function StatusBadge({ status, ...props }: StatusBadgeProps) {
   
   const normalizedStatus = status.toLowerCase();
   
-  if (['active', 'approved', 'completed', 'success', 'paid'].includes(normalizedStatus)) {
+  if (['active', 'approved', 'completed', 'success', 'paid', 'signed'].includes(normalizedStatus)) {
     color = 'success';
-  } else if (['pending', 'reviewing', 'processing', 'in progress'].includes(normalizedStatus)) {
+  } else if (['pending', 'reviewing', 'processing', 'in progress', 'pending_review', 'pending_signature'].includes(normalizedStatus)) {
     color = 'warning';
   } else if (['rejected', 'cancelled', 'failed', 'error', 'inactive'].includes(normalizedStatus)) {
     color = 'error';

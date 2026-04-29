@@ -44,6 +44,8 @@ export const ENDPOINTS = {
   TENANCIES: {
     ROOT: '/api/tenancies',
     DETAILS: (id: string) => `/api/tenancies/${id}`,
+    CONFIRM_CHECKIN: '/api/tenancies/confirm-checkin',
+    CHECKOUT: (id: string) => `/api/tenancies/${id}/checkout`,
   },
   INQUIRIES: {
     ROOT: '/api/inquiries',
@@ -83,14 +85,27 @@ export const ENDPOINTS = {
   BILLS: {
     ROOT: '/api/bills',
     DETAILS: (id: string) => `/api/bills/${id}`,
+    GENERATE: '/api/bills/generate',
+    PAY: (id: string) => `/api/bills/${id}/pay`,
   },
   TICKETS: {
     ROOT: '/api/tickets',
     DETAILS: (id: string) => `/api/tickets/${id}`,
+    ASSIGN: (id: string) => `/api/tickets/${id}/assign`,
+    UPDATE: (id: string) => `/api/tickets/${id}/updates`,
+    RESOLVE: (id: string) => `/api/tickets/${id}/resolve`,
+    CLOSE: (id: string) => `/api/tickets/${id}/close`,
   },
   INVENTORY: {
     ROOT: '/api/inventory',
     DETAILS: (id: string) => `/api/inventory/${id}`,
+    RECORDS: '/api/inventory/records',
+    METRICS: '/api/inventory/metrics',
+  },
+  UTILITIES: {
+    ROOT: '/api/utilities',
+    READINGS: '/api/utilities/readings',
+    METRICS: '/api/utilities/metrics',
   },
   PUBLIC: {
     LISTINGS: '/api/public/listings',

@@ -12,7 +12,7 @@ import { useProperties } from '../../../application/hooks/useProperties';
 import type { PropertyStatus, PropertyType } from '../../../domain/entities/Property';
 
 const PROPERTY_TYPES: PropertyType[] = [
-  'Boarding House', 'Apartment', 'Commercial', 'Parking', 'Land', 'Mixed Use'
+  'Boarding House', 'Apartment', 'Studio', 'Dormitory', 'Commercial', 'Parking', 'Land', 'Mixed Use'
 ];
 
 export default function Properties() {
@@ -33,7 +33,7 @@ export default function Properties() {
   const metrics = {
     total: properties.length,
     active: properties.filter(p => p.status === 'Active').length,
-    disabled: properties.filter(p => p.status === 'Disabled').length,
+    disabled: properties.filter(p => p.status === 'Inactive').length,
     units: properties.reduce((acc, p) => acc + p.metrics.totalUnits, 0),
   };
 
@@ -98,7 +98,7 @@ export default function Properties() {
         </Grid>
 
         <Box sx={{ display: 'flex', gap: 1, mt: 3, flexWrap: 'wrap' }}>
-          {['All', 'Active', 'Disabled'].map((status) => (
+          {['All', 'Active', 'Inactive'].map((status) => (
             <Chip 
               key={status}
               label={status} 
@@ -124,7 +124,7 @@ export default function Properties() {
         {[
           { label: 'TOTAL', value: metrics.total },
           { label: 'ACTIVE', value: metrics.active },
-          { label: 'DISABLED', value: metrics.disabled },
+          { label: 'INACTIVE', value: metrics.disabled },
           { label: 'UNITS', value: metrics.units },
         ].map((stat, i) => (
           <Grid size={{ xs: 6, sm: 3 }} key={i}>
@@ -245,7 +245,7 @@ export default function Properties() {
                    }}>
                      <LocationOnOutlined color="action" fontSize="small" />
                      <Typography variant="caption" color="text.secondary" noWrap sx={{ fontWeight: 500 }}>
-                       {property.address.street}, {property.address.city}, {property.address.state}
+                       {property.address.street}, {property.address.city}, {property.address.province}
                      </Typography>
                   </Box>
 

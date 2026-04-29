@@ -68,20 +68,27 @@ export default function ApplicationList() {
   const [selectedPropertyId, setSelectedPropertyId] = useState<string>('all');
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
 
-  // Fetch applications when filters change
+  // Fetch applications on mount
   useEffect(() => {
-    const filters: { status?: string; propertyId?: string } = {};
-    if (selectedStatus !== 'all') filters.status = selectedStatus;
-    if (selectedPropertyId !== 'all') filters.propertyId = selectedPropertyId;
-    fetchApplications(filters);
-  }, [selectedPropertyId, selectedStatus, fetchApplications]);
+    fetchApplications();
+  }, [fetchApplications]);
 
+  // Client-side filtering
   const displayData = useMemo(() => {
-    return applications.map(app => ({
+    let data = applications as any[];
+
+    if (selectedPropertyId !== 'all') {
+      data = data.filter((app: any) => app.propertyId === selectedPropertyId);
+    }
+    if (selectedStatus !== 'all') {
+      data = data.filter((app: any) => app.status === selectedStatus);
+    }
+
+    return data.map((app: any) => ({
       ...app,
-      id: (app as any)._id || app.id,
+      id: app._id || app.id,
     }));
-  }, [applications]);
+  }, [applications, selectedPropertyId, selectedStatus]);
 
   const getPropertyName = (app: RentalApplication) => {
     if (app.property) return (app.property as any).name || 'Unknown';
@@ -303,7 +310,7 @@ export default function ApplicationList() {
       {/* Data Table */}
       <DataTable
         columns={columns}
-        data={displayData}
+        data={displayData as any}
         loading={isLoading}
         emptyTitle="No Applications Found"
         emptyDescription="Once prospective tenants submit rental applications, they'll appear here for review."

@@ -22,7 +22,7 @@ export const createPropertySchema = Joi.object({
   amenities: Joi.array().items(Joi.string()).default([]),
   inclusions: Joi.array().items(Joi.string()).default([]),
   propertyType: Joi.string()
-    .valid('Boarding House', 'Apartment', 'Commercial', 'Parking', 'Land', 'Mixed Use')
+    .valid('Boarding House', 'Apartment', 'Studio', 'Dormitory', 'Commercial', 'Parking', 'Land', 'Mixed Use')
     .required()
     .messages({ 'any.required': 'Property type is required' }),
   status: Joi.string()
@@ -81,7 +81,7 @@ export const updatePropertySchema = Joi.object({
   amenities: Joi.array().items(Joi.string()).optional(),
   inclusions: Joi.array().items(Joi.string()).optional(),
   propertyType: Joi.string()
-    .valid('Boarding House', 'Apartment', 'Commercial', 'Parking', 'Land', 'Mixed Use')
+    .valid('Boarding House', 'Apartment', 'Studio', 'Dormitory', 'Commercial', 'Parking', 'Land', 'Mixed Use')
     .optional(),
   status: Joi.string()
     .valid('Active', 'Inactive', 'Maintenance', 'Archived')

@@ -69,56 +69,34 @@ function VisitStatusChip({ status }: { status: VisitStatus }) {
 
 export default function VisitList() {
   const navigate = useNavigate();
-  const { visits, loading: visitsLoading, fetchPropertyVisits } = useVisits();
+  const { visits, loading: visitsLoading, fetchVisits } = useVisits();
   const { properties, loading: propsLoading } = useProperties();
 
   const [selectedPropertyId, setSelectedPropertyId] = useState<string>('all');
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
-  const [fetchingAll, setFetchingAll] = useState(false);
-  const [allVisits, setAllVisits] = useState<VisitRequest[]>([]);
   const [viewTab, setViewTab] = useState(0); // 0 = list, 1 = calendar
 
-  // Fetch visits when filters change
+  // Fetch visits on mount
   useEffect(() => {
-    if (propsLoading || properties.length === 0) return;
+    fetchVisits();
+  }, [fetchVisits]);
+
+  // Client-side filtering
+  const displayData = useMemo(() => {
+    let data = visits as any[];
 
     if (selectedPropertyId !== 'all') {
-      fetchPropertyVisits(selectedPropertyId, selectedStatus !== 'all' ? { status: selectedStatus } : undefined);
-    } else {
-      fetchAllVisits();
+      data = data.filter((v: any) => v.propertyId === selectedPropertyId);
     }
-  }, [selectedPropertyId, selectedStatus, properties, propsLoading]);
-
-  const fetchAllVisits = async () => {
-    setFetchingAll(true);
-    try {
-      const results = await Promise.all(
-        properties.map(p =>
-          fetchPropertyVisits(p.id, selectedStatus !== 'all' ? { status: selectedStatus } : undefined).catch(() => [])
-        )
-      );
-      const merged = results.flat();
-      const uniqueMap = new Map<string, VisitRequest>();
-      merged.forEach(v => {
-        const id = (v as any)._id || v.id;
-        if (!uniqueMap.has(id)) uniqueMap.set(id, v);
-      });
-      const unique = Array.from(uniqueMap.values()).sort(
-        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      );
-      setAllVisits(unique);
-    } finally {
-      setFetchingAll(false);
+    if (selectedStatus !== 'all') {
+      data = data.filter((v: any) => v.status === selectedStatus);
     }
-  };
 
-  const displayData = useMemo(() => {
-    const data = selectedPropertyId === 'all' ? allVisits : visits;
-    return data.map(v => ({
+    return data.map((v: any) => ({
       ...v,
-      id: (v as any)._id || v.id,
+      id: v._id || v.id,
     }));
-  }, [selectedPropertyId, allVisits, visits]);
+  }, [visits, selectedPropertyId, selectedStatus]);
 
   const getPropertyName = (v: VisitRequest) => {
     if (v.property) return (v.property as any).name || 'Unknown';
@@ -143,16 +121,15 @@ export default function VisitList() {
 
   // Summary stat counts
   const statusCounts = useMemo(() => {
-    const data = selectedPropertyId === 'all' ? allVisits : visits;
     return {
-      pending: data.filter(v => v.status === 'pending').length,
-      scheduled: data.filter(v => v.status === 'scheduled' || v.status === 'approved').length,
-      completed: data.filter(v => v.status === 'completed').length,
-      total: data.length,
+      pending: displayData.filter((v: any) => v.status === 'pending').length,
+      scheduled: displayData.filter((v: any) => v.status === 'scheduled' || v.status === 'approved').length,
+      completed: displayData.filter((v: any) => v.status === 'completed').length,
+      total: displayData.length,
     };
-  }, [selectedPropertyId, allVisits, visits]);
+  }, [displayData]);
 
-  const columns: Column<VisitRequest & { id: string }>[] = [
+  const columns: Column<any>[] = [
     {
       id: 'userId',
       label: 'Visitor',
@@ -271,7 +248,7 @@ export default function VisitList() {
     },
   ];
 
-  const isLoading = visitsLoading || propsLoading || fetchingAll;
+  const isLoading = visitsLoading || propsLoading;
 
   return (
     <Box>
@@ -396,7 +373,7 @@ export default function VisitList() {
       {viewTab === 0 ? (
         <DataTable
           columns={columns}
-          data={displayData}
+          data={displayData as any}
           loading={isLoading}
           emptyTitle="No Visits Found"
           emptyDescription="Once visitors request property viewings, they'll appear here."
@@ -404,7 +381,7 @@ export default function VisitList() {
       ) : (
         /* Lazy-load VisitCalendar to avoid bundling FullCalendar if not needed */
         <VisitCalendarView
-          visits={displayData}
+          visits={displayData as any}
           loading={isLoading}
           onEventClick={(visitId) => navigate(`/hub/bookings/${visitId}`)}
         />
@@ -418,7 +395,7 @@ export default function VisitList() {
    ═══════════════════════════════════════════════════════════════════════ */
 
 interface CalendarViewProps {
-  visits: (VisitRequest & { id: string })[];
+  visits: any[];
   loading: boolean;
   onEventClick: (visitId: string) => void;
 }
@@ -441,7 +418,7 @@ function VisitCalendarView({ visits, loading, onEventClick }: CalendarViewProps)
 
   // Map visits to date keys
   const visitsByDate = useMemo(() => {
-    const map = new Map<string, (VisitRequest & { id: string })[]>();
+    const map = new Map<string, any[]>();
     visits.forEach(v => {
       const dateStr = v.scheduledDate || v.requestedDate;
       if (!dateStr) return;
@@ -607,7 +584,7 @@ function VisitCalendarView({ visits, loading, onEventClick }: CalendarViewProps)
               {/* Visit Events */}
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, mt: 0.5 }}>
                 {dayVisits.slice(0, 3).map(v => {
-                  const config = STATUS_CONFIG[v.status] || { label: v.status, color: '#6b7280' };
+                  const config = STATUS_CONFIG[v.status as VisitStatus] || { label: v.status, color: '#6b7280' };
                   return (
                     <Box
                       key={v.id}

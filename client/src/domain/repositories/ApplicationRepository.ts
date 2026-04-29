@@ -1,4 +1,4 @@
-import type { RentalApplication, ApplicationStatus } from '../entities/RentalApplication';
+import type { RentalApplication } from '../entities/RentalApplication';
 
 export interface ApplicationRepository {
   getApplications(filters?: { status?: string; propertyId?: string }): Promise<RentalApplication[]>;

@@ -4,8 +4,8 @@ import path from 'path';
 import { User } from '../models/User';
 import { Property } from '../models/Property';
 import { Unit } from '../models/Unit';
-import { MOCK_PROPERTIES, MOCK_UNITS } from './seedData';
 import { hash } from '../utils/password';
+import { MOCK_PROPERTIES, MOCK_UNITS } from './seedData';
 
 // Load env vars
 dotenv.config({ path: path.resolve(__dirname, '../../.env') });
@@ -33,12 +33,12 @@ const clearDatabase = async () => {
 const seedUsers = async () => {
   console.log('Seeding users...');
   const defaultPassword = await hash('password123');
-  
+
   const superAdmin = await User.create({ name: 'System Admin', email: 'admin@rentdito.com', phone: '09171234567', passwordHash: defaultPassword, role: 'super_admin', verificationStatus: 'verified' });
-  
+
   const landlord1 = await User.create({ name: 'Juan Dela Cruz', email: 'landlord1@rentdito.com', phone: '09181234567', passwordHash: defaultPassword, role: 'landlord', verificationStatus: 'verified' });
   const landlord2 = await User.create({ name: 'Maria Santos', email: 'landlord2@rentdito.com', phone: '09191234567', passwordHash: defaultPassword, role: 'landlord', verificationStatus: 'verified' });
-  
+
   const staff1 = await User.create({ name: 'Pedro Penduko', email: 'manager@rentdito.com', phone: '09201234567', passwordHash: defaultPassword, role: 'staff', positionName: 'Manager', permissions: ['dashboard', 'properties', 'units', 'tenants', 'pipeline', 'maintenance'], verificationStatus: 'verified', landlordId: landlord1._id });
   const staff2 = await User.create({ name: 'Jose Rizal', email: 'maintenance@rentdito.com', phone: '09211234567', passwordHash: defaultPassword, role: 'staff', positionName: 'Maintenance Staff', permissions: ['dashboard', 'maintenance', 'inventory'], verificationStatus: 'verified', landlordId: landlord1._id });
   const staff3 = await User.create({ name: 'Andres Bonifacio', email: 'finance@rentdito.com', phone: '09221234567', passwordHash: defaultPassword, role: 'staff', positionName: 'Accountant', permissions: ['dashboard', 'billing', 'financials', 'reports'], verificationStatus: 'verified', landlordId: landlord2._id });
@@ -54,34 +54,52 @@ const seedUsers = async () => {
   return [superAdmin, landlord1, landlord2, staff1, staff2, staff3, staff4, user1, user2, user3, user4, user5, user6];
 };
 
-const seedPropertiesAndUnits = async (users: any[]) => {
-  console.log('Seeding properties and units...');
-  // Use landlord1 as the owner of these properties
-  const landlord1 = users.find(u => u.email === 'landlord1@rentdito.com');
-  const createdProperties = [];
+const seedProperties = async (users: any[]) => {
+  console.log('Seeding properties...');
 
-  for (const propMock of MOCK_PROPERTIES) {
-    const property = await Property.create({
-      ...propMock,
-      landlordId: landlord1._id
+  const landlord1 = users.find((u: any) => u.email === 'landlord1@rentdito.com');
+  const landlord2 = users.find((u: any) => u.email === 'landlord2@rentdito.com');
+
+  const properties = [];
+  
+  for (let i = 0; i < MOCK_PROPERTIES.length; i++) {
+    const mockProp = MOCK_PROPERTIES[i];
+    const landlordId = i === 0 ? landlord1._id : landlord2._id;
+
+    const newProp = await Property.create({
+      landlordId,
+      ...mockProp,
+      billingSettings: { billingDay: 1, dueDay: 5, lateFeePercent: 5, utilityDefault: "metered" },
+      emergencyContacts: []
     });
-    createdProperties.push(property);
+    properties.push(newProp);
   }
 
+  return properties;
+};
+
+const seedUnits = async (properties: any[]) => {
   console.log('Seeding units...');
-  const createdUnits = [];
-  for (const unitMock of MOCK_UNITS) {
-    const propId = createdProperties[unitMock.propertyIndex]._id;
-    const { propertyIndex, ...unitData } = unitMock;
+  
+  for (const mockUnit of MOCK_UNITS) {
+    const propertyId = properties[mockUnit.propertyIndex]._id;
     
-    const unit = await Unit.create({
-      ...unitData,
-      propertyId: propId
-    });
-    createdUnits.push(unit);
-  }
+    // Process slots if it's a bedspace
+    let slots = [];
+    if (mockUnit.accommodationType === 'bedspace' && mockUnit.capacity > 0) {
+      for (let s = 1; s <= mockUnit.capacity; s++) {
+        slots.push({ slotNumber: s, status: s === 1 ? 'occupied' : 'vacant' });
+      }
+    }
 
-  return createdProperties;
+    const { propertyIndex, ...unitData } = mockUnit; // Remove propertyIndex so it doesn't go into Mongo
+
+    await Unit.create({
+      propertyId,
+      ...unitData,
+      slots: slots.length > 0 ? slots : undefined
+    });
+  }
 };
 
 const seedLeases = async (users: any[], properties: any[]) => {
@@ -113,7 +131,8 @@ const runSeeder = async () => {
 
     // Call individual seed functions in order of dependencies
     const users = await seedUsers();
-    const properties = await seedPropertiesAndUnits(users);
+    const properties = await seedProperties(users);
+    await seedUnits(properties);
     const leases = await seedLeases(users, properties);
     await seedPayments(leases);
     await seedMaintenanceRequests(properties, users);
