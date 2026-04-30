@@ -70,6 +70,8 @@ import InquiryList from './presentation/pages/hub/pipeline/InquiryList';
 import InquiryDetail from './presentation/pages/hub/pipeline/InquiryDetail';
 import ApplicationList from './presentation/pages/hub/pipeline/ApplicationList';
 import ApplicationDetail from './presentation/pages/hub/pipeline/ApplicationDetail';
+import TransferList from './presentation/pages/hub/pipeline/TransferList';
+import TransferDetail from './presentation/pages/hub/pipeline/TransferDetail';
 
 import VisitList from './presentation/pages/hub/bookings/VisitList';
 import VisitDetail from './presentation/pages/hub/bookings/VisitDetail';
@@ -155,6 +157,8 @@ function App() {
               <Route path="inquiries/:inquiryId" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="pipeline"><InquiryDetail /></ProtectedRoute>} />
               <Route path="applications" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="pipeline"><ApplicationList /></ProtectedRoute>} />
               <Route path="applications/:applicationId" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="pipeline"><ApplicationDetail /></ProtectedRoute>} />
+              <Route path="transfers" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="pipeline"><TransferList /></ProtectedRoute>} />
+              <Route path="transfers/:transferId" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="pipeline"><TransferDetail /></ProtectedRoute>} />
             </Route>
             <Route path="bookings">
               <Route index element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="bookings"><VisitList /></ProtectedRoute>} />
