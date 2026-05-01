@@ -1363,8 +1363,8 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 **✅ Verify:** Transfer: request → approve → complete → tenancy now on new unit, old unit released. Checkout: review shows outstanding items → resolve → checkout → unit released, contract closed.
 
 ---
-
-#### 🔧 Paul — Transfer/Checkout UI (Landlord Side)
+**________________________________________ D O N E ________________________________________**
+<!-- #### 🔧 Paul — Transfer/Checkout UI (Landlord Side)
 **🤖 Gemini**
 
 | # | Task | Files |
@@ -1374,8 +1374,8 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 3 | `hub/pipeline/CheckoutFlow.tsx` — shown in tenant detail page. Pre-checkout checklist (bills cleared?, inventory returned?, contract terms met?). Warning badges for unresolved items. "Confirm Checkout" button. | new |
 | 4 | Add checkout action button to TenantDetail page | modify TenantDetail |
 
-**✅ Verify:** Landlord sees transfer request → reviews dues → approves + completes → unit assignment changes. Checkout flow: review checklist → all green → confirm → tenant removed from active list.
-
+**✅ Verify:** Landlord sees transfer request → reviews dues → approves + completes → unit assignment changes. Checkout flow: review checklist → all green → confirm → tenant removed from active list. -->
+**________________________________________ D O N E ________________________________________**
 ---
 
 #### 🔧 Emanuel — Transfer/Checkout (Tenant Side) + Pre-Checkout Reminders
@@ -1416,7 +1416,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 
 ---
 
-#### 🔧 Paul — Report Dashboard + Occupancy
+<!-- #### 🔧 Paul — Report Dashboard + Occupancy
 **🤖 Gemini**
 
 | # | Task | Files |
@@ -1424,7 +1424,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 1 | `routes/report.routes.ts` — GET /occupancy (total, occupied, vacant, reserved, rate%), GET /checkout-forecast (expiring contracts, peak move-out, revenue loss), GET /vacancy-forecast, GET /reservation-forecast | routes + controller + service |
 | 2 | `hub/reports/ReportsDashboard.tsx` — tabbed: Occupancy \| Financial \| Checkout Forecast \| Vacancy | new |
 | 3 | `hub/reports/OccupancyReport.tsx` — stat cards + donut chart + per-property breakdown table | new |
-| 4 | `hub/reports/CheckoutForecast.tsx` — bar chart (next 6 months), peak month highlighted, revenue loss cards, marketing alert banner if high vacancy expected, auto-renewal offer list | new |
+| 4 | `hub/reports/CheckoutForecast.tsx` — bar chart (next 6 months), peak month highlighted, revenue loss cards, marketing alert banner if high vacancy expected, auto-renewal offer list | new | -->
 
 ---
 
