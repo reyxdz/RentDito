@@ -47,7 +47,6 @@ import TeamManagement from './presentation/pages/hub/team/TeamManagement';
 import {
   HubFinancialsPlaceholder,
   HubDocumentsPlaceholder,
-  HubReportsPlaceholder,
   HubSecurityPlaceholder,
 } from './presentation/pages/hub/Placeholders';
 
@@ -82,6 +81,8 @@ import ContractForm from './presentation/pages/hub/contracts/ContractForm';
 
 import TenantList from './presentation/pages/hub/tenants/TenantList';
 import TenantDetail from './presentation/pages/hub/tenants/TenantDetail';
+
+import ReportsDashboard from './presentation/pages/hub/reports/ReportsDashboard';
 
 // ─── User pages ──────────────────────────────────────────────────────
 import VerifyAccount from './presentation/pages/user/VerifyAccount';
@@ -181,7 +182,7 @@ function App() {
                <Route path=":ticketId" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="maintenance"><TicketDetail /></ProtectedRoute>} />
             </Route>
             <Route path="documents" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="documents"><HubDocumentsPlaceholder /></ProtectedRoute>} />
-            <Route path="reports" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="reports"><HubReportsPlaceholder /></ProtectedRoute>} />
+            <Route path="reports" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="reports"><ReportsDashboard /></ProtectedRoute>} />
             <Route path="security" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="security"><HubSecurityPlaceholder /></ProtectedRoute>} />
             <Route path="team" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="team"><TeamManagement /></ProtectedRoute>} />
             <Route path="profile" element={<Profile />} />

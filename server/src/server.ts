@@ -17,6 +17,7 @@ import messageRoutes from './routes/message.routes';
 import visitRoutes from './routes/visit.routes';
 import applicationRoutes from './routes/application.routes';
 import contractRoutes from './routes/contract.routes';
+import reportRoutes from './routes/report.routes';
 
 dotenv.config();
 
@@ -51,6 +52,7 @@ app.use('/api/messages', messageRoutes);
 app.use('/api/visits', visitRoutes);
 app.use('/api/applications', applicationRoutes);
 app.use('/api/contracts', contractRoutes);
+app.use('/api/reports', reportRoutes);
 
 const server = app.listen(PORT, () => {
   console.log(`Server is running in development mode on port ${PORT}`);
