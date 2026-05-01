@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   Box, Typography, Button, Paper, CircularProgress,
-  Grid, Card, CardContent, Dialog, DialogTitle, DialogContent, DialogActions, Alert
+  Grid, Card, CardContent, Dialog, DialogTitle, DialogContent
 } from '@mui/material';
 import {
   ArrowBack, Person as PersonIcon, Home as HomeIcon,
@@ -19,7 +19,7 @@ export default function TenantDetail() {
   const { tenancy, loading, error, fetchTenancy, checkout } = useTenantDetail(tenancyId);
 
   const [checkoutOpen, setCheckoutOpen] = useState(false);
-  const [actionLoading, setActionLoading] = useState(false);
+  const [_actionLoading, setActionLoading] = useState(false);
 
   useEffect(() => {
     fetchTenancy();

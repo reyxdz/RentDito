@@ -1,10 +1,9 @@
-import React from 'react';
 import { 
   Box, 
   Card, 
   CardContent, 
   Typography, 
-  Grid2 as Grid, 
+  Grid, 
   Table, 
   TableBody, 
   TableCell, 
@@ -16,7 +15,7 @@ import {
   LinearProgress
 } from '@mui/material';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from 'recharts';
-import { OccupancyStats } from '../../../../domain/models/Report';
+import type { OccupancyStats } from '../../../../domain/models/Report';
 
 interface OccupancyReportProps {
   stats: OccupancyStats;

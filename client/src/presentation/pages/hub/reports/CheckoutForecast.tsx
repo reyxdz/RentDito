@@ -1,10 +1,9 @@
-import React from 'react';
 import { 
   Box, 
   Card, 
   CardContent, 
   Typography, 
-  Grid2 as Grid, 
+  Grid, 
   Table, 
   TableBody, 
   TableCell, 
@@ -18,7 +17,7 @@ import {
   Button
 } from '@mui/material';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { CheckoutForecast as ForecastModel } from '../../../../domain/models/Report';
+import type { CheckoutForecast as ForecastModel } from '../../../../domain/models/Report';
 import { format } from 'date-fns';
 
 interface CheckoutForecastProps {
@@ -105,8 +104,8 @@ export default function CheckoutForecast({ forecast }: CheckoutForecastProps) {
                       <YAxis allowDecimals={false} />
                       <Tooltip 
                         cursor={{ fill: 'rgba(0, 0, 0, 0.05)' }}
-                        formatter={(value: number, name: string) => {
-                          if (name === 'revenueLoss') return [`₱${value.toLocaleString()}`, 'Revenue Loss'];
+                        formatter={(value: any, name: any) => {
+                          if (name === 'revenueLoss') return [`₱${Number(value).toLocaleString()}`, 'Revenue Loss'];
                           return [value, 'Expiring Contracts'];
                         }}
                       />

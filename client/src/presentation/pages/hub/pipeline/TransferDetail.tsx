@@ -1,12 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Box, Typography, Grid, IconButton, Tooltip, TextField, MenuItem, Button, CircularProgress, Card, CardContent, Divider, Alert } from '@mui/material';
+import { Box, Typography, Grid, Button, CircularProgress, Card, CardContent, Divider, Alert } from '@mui/material';
 import {
   ArrowBack,
   Person as PersonIcon,
-  Home as HomeIcon,
   SwapHoriz as TransferIcon,
-  CheckCircle as CheckIcon,
-  Warning as WarningIcon
+  CheckCircle as CheckIcon
 } from '@mui/icons-material';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTransferDetail } from '../../../../application/hooks/useTransfers';
@@ -70,7 +68,7 @@ export default function TransferDetail() {
 
       <Grid container spacing={3}>
         {/* Tenant Details */}
-        <Grid item xs={12} md={4}>
+        <Grid size={{ xs: 12, md: 4 }}>
           <Card variant="outlined" sx={{ borderRadius: 4, height: '100%' }}>
             <CardContent>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2 }}>
@@ -96,7 +94,7 @@ export default function TransferDetail() {
         </Grid>
 
         {/* Transfer Details (From/To) */}
-        <Grid item xs={12} md={8}>
+        <Grid size={{ xs: 12, md: 8 }}>
           <Card variant="outlined" sx={{ borderRadius: 4, height: '100%' }}>
             <CardContent>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>
@@ -104,23 +102,23 @@ export default function TransferDetail() {
                 <Typography variant="h6" fontWeight={700}>Unit Transfer Details</Typography>
               </Box>
               <Grid container spacing={2}>
-                <Grid item xs={12} sm={5}>
+                <Grid size={{ xs: 12, sm: 5 }}>
                   <Box sx={{ p: 2, bgcolor: 'error.50', borderRadius: 2, border: '1px solid', borderColor: 'error.200' }}>
                     <Typography variant="caption" color="error.main" fontWeight={700} textTransform="uppercase">From Unit</Typography>
                     <Typography variant="h6" fontWeight={800} sx={{ mt: 1 }}>{transfer.fromUnit?.unitIdentifier || transfer.fromUnitId}</Typography>
-                    <Typography variant="body2" sx={{ mt: 1 }}>Type: {transfer.fromUnit?.type}</Typography>
-                    <Typography variant="body2">Rent: ₱{transfer.fromUnit?.monthlyRent}</Typography>
+                    <Typography variant="body2" sx={{ mt: 1 }}>Type: {(transfer.fromUnit as any)?.type}</Typography>
+                    <Typography variant="body2">Rent: ₱{(transfer.fromUnit as any)?.monthlyRent}</Typography>
                   </Box>
                 </Grid>
-                <Grid item xs={12} sm={2} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Grid size={{ xs: 12, sm: 2 }} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <TransferIcon color="disabled" sx={{ fontSize: 32 }} />
                 </Grid>
-                <Grid item xs={12} sm={5}>
+                <Grid size={{ xs: 12, sm: 5 }}>
                   <Box sx={{ p: 2, bgcolor: 'success.50', borderRadius: 2, border: '1px solid', borderColor: 'success.200' }}>
                     <Typography variant="caption" color="success.main" fontWeight={700} textTransform="uppercase">To Unit</Typography>
                     <Typography variant="h6" fontWeight={800} sx={{ mt: 1 }}>{transfer.toUnit?.unitIdentifier || transfer.toUnitId}</Typography>
-                    <Typography variant="body2" sx={{ mt: 1 }}>Type: {transfer.toUnit?.type}</Typography>
-                    <Typography variant="body2">Rent: ₱{transfer.toUnit?.monthlyRent}</Typography>
+                    <Typography variant="body2" sx={{ mt: 1 }}>Type: {(transfer.toUnit as any)?.type}</Typography>
+                    <Typography variant="body2">Rent: ₱{(transfer.toUnit as any)?.monthlyRent}</Typography>
                   </Box>
                 </Grid>
               </Grid>
@@ -129,7 +127,7 @@ export default function TransferDetail() {
         </Grid>
 
         {/* Pre-transfer checklist & Actions */}
-        <Grid item xs={12}>
+        <Grid size={{ xs: 12 }}>
           <Card variant="outlined" sx={{ borderRadius: 4 }}>
             <CardContent>
               <Typography variant="h6" fontWeight={700} sx={{ mb: 2 }}>Pre-Transfer Checklist</Typography>

@@ -17,7 +17,7 @@ import {
 } from '@mui/icons-material';
 
 import { ReportService } from '../../../../application/services/ReportService';
-import { OccupancyStats, CheckoutForecast as ForecastModel } from '../../../../domain/models/Report';
+import type { OccupancyStats, CheckoutForecast as ForecastModel } from '../../../../domain/models/Report';
 
 import OccupancyReport from './OccupancyReport';
 import CheckoutForecast from './CheckoutForecast';
