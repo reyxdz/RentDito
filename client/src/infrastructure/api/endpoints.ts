@@ -111,5 +111,14 @@ export const ENDPOINTS = {
     LISTINGS: '/api/public/listings',
     PROPERTY_DETAILS: (id: string) => `/api/public/listings/${id}`,
     UNIT_DETAILS: (id: string) => `/api/public/listings/unit/${id}`,
+  },
+  DOCUMENTS: {
+    ROOT: '/api/documents',
+    DETAILS: (id: string) => `/api/documents/${id}`,
+  },
+  SECURITY: {
+    INCIDENTS: '/api/security/incidents',
+    INCIDENT_DETAILS: (id: string) => `/api/security/incidents/${id}`,
+    CONTACTS: (propertyId: string) => `/api/security/contacts/${propertyId}`,
   }
 } as const;

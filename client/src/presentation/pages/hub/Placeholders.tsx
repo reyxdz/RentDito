@@ -27,6 +27,4 @@ export const HubUtilitiesPlaceholder = () => <PlaceholderView title="Utilities" 
 export const HubFinancialsPlaceholder = () => <PlaceholderView title="Financials" description="Monitor revenue, expenses, and generate financial reports." />;
 export const HubInventoryPlaceholder = () => <PlaceholderView title="Inventory" description="Track property assets, appliances, and furniture records." />;
 export const HubMaintenancePlaceholder = () => <PlaceholderView title="Maintenance" description="Manage maintenance tickets and work orders." />;
-export const HubDocumentsPlaceholder = () => <PlaceholderView title="Documents" description="Store and organize property-related documents." />;
 export const HubReportsPlaceholder = () => <PlaceholderView title="Reports" description="Generate business analytics and performance reports." />;
-export const HubSecurityPlaceholder = () => <PlaceholderView title="Security" description="Audit logs, access control, and security settings." />;

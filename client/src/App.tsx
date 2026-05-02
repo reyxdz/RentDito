@@ -46,9 +46,10 @@ import HubOverview from './presentation/pages/hub/overview/Overview';
 import TeamManagement from './presentation/pages/hub/team/TeamManagement';
 import {
   HubFinancialsPlaceholder,
-  HubDocumentsPlaceholder,
-  HubSecurityPlaceholder,
 } from './presentation/pages/hub/Placeholders';
+
+import DocumentList from './presentation/pages/hub/documents/DocumentList';
+import SecurityDashboard from './presentation/pages/hub/security/SecurityDashboard';
 
 import BillList from './presentation/pages/hub/billing/BillList';
 import BillDetail from './presentation/pages/hub/billing/BillDetail';
@@ -181,9 +182,9 @@ function App() {
                <Route index element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="maintenance"><TicketList /></ProtectedRoute>} />
                <Route path=":ticketId" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="maintenance"><TicketDetail /></ProtectedRoute>} />
             </Route>
-            <Route path="documents" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="documents"><HubDocumentsPlaceholder /></ProtectedRoute>} />
+            <Route path="documents" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="documents"><DocumentList /></ProtectedRoute>} />
             <Route path="reports" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="reports"><ReportsDashboard /></ProtectedRoute>} />
-            <Route path="security" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="security"><HubSecurityPlaceholder /></ProtectedRoute>} />
+            <Route path="security" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="security"><SecurityDashboard /></ProtectedRoute>} />
             <Route path="team" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="team"><TeamManagement /></ProtectedRoute>} />
             <Route path="profile" element={<Profile />} />
           </Route>
