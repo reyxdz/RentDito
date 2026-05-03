@@ -22,7 +22,7 @@ export const ENDPOINTS = {
   },
   TEAM: {
     ROOT: '/api/team',
-    INVITE: '/api/team/invite',
+    INVITE: '/api/team',
     UPDATE: (id: string) => `/api/team/${id}`,
     UPDATE_PERMISSIONS: (id: string) => `/api/team/${id}/permissions`,
     UPDATE_PROPERTIES: (id: string) => `/api/team/${id}/properties`,

@@ -1415,7 +1415,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 2 | `hub/financials/FinancialDashboard.tsx` — Summary cards (Total Rent, Utilities, Penalties, Refunds, Net Income). Monthly revenue line chart. Income by property bar chart. Period selector. | new (frontend) |
 
 ---
-
+**________________________________________ D O N E ________________________________________**
 <!-- #### 🔧 Paul — Report Dashboard + Occupancy
 **🤖 Gemini**
 
@@ -1425,7 +1425,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 2 | `hub/reports/ReportsDashboard.tsx` — tabbed: Occupancy \| Financial \| Checkout Forecast \| Vacancy | new |
 | 3 | `hub/reports/OccupancyReport.tsx` — stat cards + donut chart + per-property breakdown table | new |
 | 4 | `hub/reports/CheckoutForecast.tsx` — bar chart (next 6 months), peak month highlighted, revenue loss cards, marketing alert banner if high vacancy expected, auto-renewal offer list | new | -->
-
+**________________________________________ D O N E ________________________________________**
 ---
 
 #### 🔧 Emanuel — Forecast Algorithms + Notifications
@@ -1461,8 +1461,9 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 4 | Install `node-cron`. Create `services/scheduler.service.ts`: monthly bill auto-gen (1st of month), daily late fee check, daily visit reminders (1 day + 2 hour), daily checkout reminders (7/3/1 day), daily auto-renewal offer (30 days before expiry). Wire in server.ts with enable flag. | new |
 
 ---
+**________________________________________ D O N E ________________________________________**
 
-#### 🔧 Paul — Document Management + Security
+<!-- #### 🔧 Paul — Document Management + Security
 **🤖 Gemini**
 
 | # | Task | Files |
@@ -1472,8 +1473,8 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 3 | `hub/documents/DocumentList.tsx` — table with type icons, title, linked entity, date, download. Upload button. Filter by type. | new |
 | 4 | `hub/documents/DocumentUploadForm.tsx` — drag-drop, type selector, link to property/tenancy | new |
 | 5 | `hub/security/SecurityDashboard.tsx` — emergency contacts per property (editable list), incident report list + submit form | new |
-| 6 | `models/IncidentReport.ts` + simple CRUD | new |
-
+| 6 | `models/IncidentReport.ts` + simple CRUD | new | -->
+**________________________________________ D O N E ________________________________________**
 ---
 
 #### 🔧 Emanuel — Admin Review Pages + Activity Log
