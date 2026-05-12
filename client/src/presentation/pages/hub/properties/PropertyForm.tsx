@@ -9,7 +9,7 @@ import { useProperties } from '../../../../application/hooks/useProperties';
 import { useProperty } from '../../../../application/hooks/useProperty';
 import VenueEditor from '../../../components/VenueEditor';
 import ImageUploader from '../../../components/ImageUploader';
-import { apiClient } from '../../../../infrastructure/api/apiClient';
+import { apiClient, getImageUrl } from '../../../../infrastructure/api/apiClient';
 import { ENDPOINTS } from '../../../../infrastructure/api/endpoints';
 import type { Venue, PropertyType, PropertyStatus } from '../../../../domain/entities/Property';
 
@@ -302,7 +302,7 @@ export default function PropertyForm() {
                     <Box
                       key={i}
                       component="img"
-                      src={img}
+                      src={getImageUrl(img)}
                       alt={`Property ${i + 1}`}
                       sx={{ width: 100, height: 80, objectFit: 'cover', borderRadius: 1, border: '1px solid', borderColor: 'divider' }}
                     />

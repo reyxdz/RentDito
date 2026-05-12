@@ -2,6 +2,9 @@ import { Request, Response, NextFunction } from 'express';
 import multer from 'multer';
 import cloudinary from '../config/cloudinary';
 import { Readable } from 'stream';
+import path from 'path';
+import fs from 'fs';
+import crypto from 'crypto';
 
 // ─── Multer Config ──────────────────────────────────────────
 
@@ -24,34 +27,61 @@ export const upload = multer({
   },
 });
 
-// ─── Cloudinary Upload Helper ───────────────────────────────
+// ─── Local Storage Fallback ─────────────────────────────────
+
+const UPLOADS_DIR = path.resolve(__dirname, '../../uploads');
+
+/**
+ * Save a buffer to local disk and return a URL path for it.
+ */
+const saveLocally = (buffer: Buffer, folder: string, mimetype: string): string => {
+  const subDir = path.join(UPLOADS_DIR, folder);
+  fs.mkdirSync(subDir, { recursive: true });
+
+  const ext = mimetype.split('/')[1] === 'jpeg' ? 'jpg' : mimetype.split('/')[1];
+  const filename = `${crypto.randomUUID()}.${ext}`;
+  const filePath = path.join(subDir, filename);
+
+  fs.writeFileSync(filePath, buffer);
+  return `/uploads/${folder}/${filename}`;
+};
+
+// ─── Cloudinary Upload Helper (with local fallback) ─────────
 
 /**
  * Upload a single buffer to Cloudinary and return the secure URL.
+ * Falls back to local file storage if Cloudinary fails.
  */
-export const uploadToCloudinary = (
+export const uploadToCloudinary = async (
   buffer: Buffer,
-  folder: string
+  folder: string,
+  mimetype: string = 'image/jpeg'
 ): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const uploadStream = cloudinary.uploader.upload_stream(
-      {
-        folder: `rentdito/${folder}`,
-        resource_type: 'image',
-        transformation: [{ quality: 'auto', fetch_format: 'auto' }],
-      },
-      (error, result) => {
-        if (error) return reject(error);
-        if (!result) return reject(new Error('Upload returned no result'));
-        resolve(result.secure_url);
-      }
-    );
+  try {
+    const url: string = await new Promise((resolve, reject) => {
+      const uploadStream = cloudinary.uploader.upload_stream(
+        {
+          folder: `rentdito/${folder}`,
+          resource_type: 'image',
+          transformation: [{ quality: 'auto', fetch_format: 'auto' }],
+        },
+        (error, result) => {
+          if (error) return reject(error);
+          if (!result) return reject(new Error('Upload returned no result'));
+          resolve(result.secure_url);
+        }
+      );
 
-    const readable = new Readable();
-    readable.push(buffer);
-    readable.push(null);
-    readable.pipe(uploadStream);
-  });
+      const readable = new Readable();
+      readable.push(buffer);
+      readable.push(null);
+      readable.pipe(uploadStream);
+    });
+    return url;
+  } catch (err: any) {
+    console.warn(`Cloudinary upload failed (${err.message}), saving locally...`);
+    return saveLocally(buffer, folder, mimetype);
+  }
 };
 
 /**
@@ -67,7 +97,7 @@ export const uploadSingle = (fieldName: string, folder: string) => {
           next();
           return;
         }
-        const url = await uploadToCloudinary(req.file.buffer, folder);
+        const url = await uploadToCloudinary(req.file.buffer, folder, req.file.mimetype);
         req.body.imageUrl = url;
         next();
       } catch (error: any) {
@@ -95,7 +125,7 @@ export const uploadMultiple = (fieldName: string, folder: string, maxCount = 10)
           return;
         }
         const urls = await Promise.all(
-          files.map((file) => uploadToCloudinary(file.buffer, folder))
+          files.map((file) => uploadToCloudinary(file.buffer, folder, file.mimetype))
         );
         req.body.imageUrls = urls;
         next();
