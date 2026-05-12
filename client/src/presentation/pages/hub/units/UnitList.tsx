@@ -86,12 +86,12 @@ export default function UnitList() {
   // Filtering
   const filteredUnits = useMemo(() => {
     let filtered = units;
-
+    
     // Status filter
     if (selectedStatus !== 'all') {
       filtered = filtered.filter(u => u.status === selectedStatus);
     }
-
+    
     // Type filter
     if (selectedType !== 'all') {
       filtered = filtered.filter(u => u.accommodationType === selectedType);
@@ -135,10 +135,9 @@ export default function UnitList() {
               onChange={(e) => setSelectedPropertyId(e.target.value)}
             >
               <MenuItem value="all">All Properties</MenuItem>
-              {properties.map(p => {
-                const propStringId = String(p.id || p._id);
-                return <MenuItem key={propStringId} value={propStringId}>{p.name}</MenuItem>;
-              })}
+              {properties.map(p => (
+                <MenuItem key={p.id} value={p.id}>{p.name}</MenuItem>
+              ))}
             </TextField>
           </Grid>
           <Grid size={{ xs: 12, md: 4 }}>

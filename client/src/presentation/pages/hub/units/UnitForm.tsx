@@ -14,7 +14,7 @@ import type { AccommodationType } from '../../../../domain/entities/Unit';
 const steps = ['Basic Info', 'Pricing & Capacity', 'Features', 'Images'];
 
 const commonFeatures = [
-  'Air Conditioning', 'Ceiling Fan', 'Attached Bathroom', 'Balcony',
+  'Air Conditioning', 'Ceiling Fan', 'Attached Bathroom', 'Balcony', 
   'Window', 'Fully Furnished', 'Semi-Furnished', 'Bunk Beds', 'Single Beds'
 ];
 
@@ -22,29 +22,29 @@ export default function UnitForm() {
   const theme = useTheme();
   const navigate = useNavigate();
   const { unitId } = useParams(); // if edit mode
-
+  
   const [activeStep, setActiveStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
-
+  
   const { properties } = useProperties();
   const { createUnit } = useUnits();
 
   // Form State
-  const [basicInfo, setBasicInfo] = useState({
-    propertyId: '',
-    unitIdentifier: '',
+  const [basicInfo, setBasicInfo] = useState({ 
+    propertyId: '', 
+    unitIdentifier: '', 
     accommodationType: 'room' as AccommodationType,
     sizeSqm: ''
   });
-
-  const [pricing, setPricing] = useState({
-    roomRent: '',
-    bedspaceRent: '',
+  
+  const [pricing, setPricing] = useState({ 
+    roomRent: '', 
+    bedspaceRent: '', 
     deposit: '',
     capacity: '1'
   });
-
+  
   const [features, setFeatures] = useState<string[]>([]);
   const [images, setImages] = useState<File[]>([]);
 
@@ -57,7 +57,7 @@ export default function UnitForm() {
     try {
       // Parse string values to numbers for server validation
       const capacityNum = parseInt(pricing.capacity, 10) || 1;
-
+      
       const unitParams: any = {
         propertyId: basicInfo.propertyId,
         unitIdentifier: basicInfo.unitIdentifier,
@@ -125,10 +125,9 @@ export default function UnitForm() {
                 <MenuItem value="" disabled sx={{ color: 'text.secondary', fontStyle: 'italic' }}>
                   Choose a Property
                 </MenuItem>
-                {properties.map((p) => {
-                  const propStringId = String(p.id || p._id);
-                  return <MenuItem key={propStringId} value={propStringId}>{p.name}</MenuItem>;
-                })}
+                {properties.map((p) => (
+                  <MenuItem key={p.id} value={p.id}>{p.name}</MenuItem>
+                ))}
               </TextField>
             </Grid>
             <Grid size={{ xs: 12, sm: 6 }}>
@@ -189,7 +188,7 @@ export default function UnitForm() {
                 />
               </Grid>
             )}
-
+            
             <Grid size={{ xs: 12, sm: 6 }}>
               <TextField
                 fullWidth label="Security Deposit"
@@ -200,7 +199,7 @@ export default function UnitForm() {
                 required
               />
             </Grid>
-
+            
             <Grid size={{ xs: 12, sm: 6 }}>
               <TextField
                 fullWidth label={basicInfo.accommodationType === 'bedspace' ? "Number of Slots/Beds" : "Max Occupants"}
@@ -253,7 +252,7 @@ export default function UnitForm() {
       const hasRent = basicInfo.accommodationType === 'room' ? !!pricing.roomRent : !!pricing.bedspaceRent;
       return hasRent && !!pricing.deposit && !!pricing.capacity;
     }
-    return true;
+    return true; 
   };
 
   return (

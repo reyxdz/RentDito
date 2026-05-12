@@ -60,7 +60,7 @@ export function useUnitDetail(unitId: string | undefined, usePublic: boolean = f
         // If we got a populated property object with name, use it directly
         if (embeddedProperty?.name) {
           setProperty(embeddedProperty as Property);
-        } else if (propertyIdStr && propertyIdStr !== 'undefined') {
+        } else if (propertyIdStr) {
           // Otherwise fetch the full property data
           try {
             let propData: Property | null;
