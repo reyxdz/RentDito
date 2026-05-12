@@ -83,10 +83,10 @@ const PropertySchema = new Schema<IProperty>(
       enum: ['Boarding House', 'Apartment', 'Studio', 'Dormitory', 'Commercial', 'Parking', 'Land', 'Mixed Use'],
       required: true
     },
-    status: { 
-      type: String, 
-      enum: ['Active', 'Inactive', 'Maintenance', 'Archived'], 
-      default: 'Active' 
+    status: {
+      type: String,
+      enum: ['Active', 'Inactive', 'Maintenance', 'Archived'],
+      default: 'Active'
     },
     images: [{ type: String }],
 
