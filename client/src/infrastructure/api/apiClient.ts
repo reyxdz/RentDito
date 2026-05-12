@@ -2,7 +2,14 @@ import axios, { AxiosError } from 'axios';
 import type { InternalAxiosRequestConfig } from 'axios';
 
 // Get base URL from environment or fallback
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+export const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+
+export const getImageUrl = (url: string | undefined): string | undefined => {
+  if (!url) return undefined;
+  if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:')) return url;
+  if (url.startsWith('/uploads/')) return `${BASE_URL}${url}`;
+  return url;
+};
 
 export const apiClient = axios.create({
   baseURL: BASE_URL,

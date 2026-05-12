@@ -23,7 +23,8 @@ export interface BillingSettings {
 }
 
 export interface Property {
-  id: string;
+  id: string; // From UI models
+  _id?: string; // From Mongoose
   landlordId: string;
   name: string;
   description: string;

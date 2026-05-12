@@ -19,6 +19,7 @@ export class PropertyService implements PropertyRepository {
   }
 
   async getPropertyById(propertyId: string): Promise<Property | null> {
+    if (!propertyId || propertyId === 'undefined') return null;
     try {
       const { data } = await apiClient.get(ENDPOINTS.PROPERTIES.DETAILS(propertyId));
       return mapProperty(data.data || data);
@@ -34,6 +35,9 @@ export class PropertyService implements PropertyRepository {
   }
 
   async updateProperty(propertyId: string, updates: Partial<Property>): Promise<Property> {
+    if (!propertyId || propertyId === 'undefined') {
+      throw new Error('Invalid property ID');
+    }
     const { data } = await apiClient.patch(ENDPOINTS.PROPERTIES.DETAILS(propertyId), updates);
     return mapProperty(data.data || data);
   }

@@ -20,14 +20,14 @@ export interface IProperty extends Document {
   propertyType: PropertyType;
   status: PropertyStatus;
   images: string[];
-  
+
   // Nearby venues
   venues: {
     reviewCenters: Array<{ name: string; distance: string }>;
     schools: Array<{ name: string; distance: string }>;
     commercial: Array<{ name: string; distance: string }>;
   };
-  
+
   // Billing settings
   billingSettings: {
     billingDay: number;
@@ -35,36 +35,36 @@ export interface IProperty extends Document {
     lateFeePercent: number;
     utilityDefault: 'included' | 'metered' | 'shared';
   };
-  
+
   // Emergency contacts
   emergencyContacts: Array<{
     name: string;
     phone: string;
     role: string;
   }>;
-  
+
   // Geographic coordinates
   geoCoords?: {
     latitude: number;
     longitude: number;
   };
-  
+
   // Persisted metrics (updated by Unit post-hooks)
   totalUnits: number;
   occupiedUnits: number;
   vacantUnits: number;
   occupancyRate: number;
-  
+
   createdAt: Date;
   updatedAt: Date;
 }
 
 const PropertySchema = new Schema<IProperty>(
   {
-    landlordId: { 
-      type: Schema.Types.ObjectId, 
-      ref: 'User', 
-      required: true 
+    landlordId: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      required: true
     },
     name: { type: String, required: true, trim: true },
     description: { type: String, required: true },
@@ -89,13 +89,13 @@ const PropertySchema = new Schema<IProperty>(
       default: 'Active' 
     },
     images: [{ type: String }],
-    
+
     // Persisted metrics (auto-updated by Unit model hooks)
     totalUnits: { type: Number, default: 0 },
     occupiedUnits: { type: Number, default: 0 },
     vacantUnits: { type: Number, default: 0 },
     occupancyRate: { type: Number, default: 0 },
-    
+
     venues: {
       reviewCenters: [{
         name: { type: String },
@@ -110,31 +110,31 @@ const PropertySchema = new Schema<IProperty>(
         distance: { type: String }
       }]
     },
-    
+
     billingSettings: {
       billingDay: { type: Number, default: 1, min: 1, max: 31 },
       dueDay: { type: Number, default: 5, min: 1, max: 31 },
       lateFeePercent: { type: Number, default: 5, min: 0, max: 100 },
-      utilityDefault: { 
-        type: String, 
-        enum: ['included', 'metered', 'shared'], 
-        default: 'metered' 
+      utilityDefault: {
+        type: String,
+        enum: ['included', 'metered', 'shared'],
+        default: 'metered'
       }
     },
-    
+
     emergencyContacts: [{
       name: { type: String, required: true },
       phone: { type: String, required: true },
       role: { type: String, required: true }
     }],
-    
+
     geoCoords: {
       latitude: { type: Number },
       longitude: { type: Number }
     }
   },
   { timestamps: true }
-);
+)
 
 // Indexing for quick filtering
 PropertySchema.index({ landlordId: 1 });

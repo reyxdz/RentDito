@@ -112,6 +112,7 @@ export const ENDPOINTS = {
     PROPERTY_DETAILS: (id: string) => `/api/public/listings/${id}`,
     UNIT_DETAILS: (id: string) => `/api/public/listings/unit/${id}`,
   },
+<<<<<<< marcxdev-development
   DOCUMENTS: {
     ROOT: '/api/documents',
     DETAILS: (id: string) => `/api/documents/${id}`,
@@ -120,5 +121,12 @@ export const ENDPOINTS = {
     INCIDENTS: '/api/security/incidents',
     INCIDENT_DETAILS: (id: string) => `/api/security/incidents/${id}`,
     CONTACTS: (propertyId: string) => `/api/security/contacts/${propertyId}`,
+=======
+  FINANCIALS: {
+    ROOT: '/api/financials',
+    SUMMARY: '/api/financials/summary',
+    MONTHLY: '/api/financials/monthly',
+    BY_PROPERTY: '/api/financials/by-property',
+>>>>>>> development
   }
 } as const;
