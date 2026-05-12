@@ -64,6 +64,11 @@ app.use('/api/messages', messageRoutes);
 app.use('/api/visits', visitRoutes);
 app.use('/api/applications', applicationRoutes);
 app.use('/api/contracts', contractRoutes);
+<<<<<<< marcxdev-development
+app.use('/api/reports', reportRoutes);
+app.use('/api/documents', documentRoutes);
+app.use('/api/security', securityRoutes);
+=======
 app.use('/api/tenancies', tenancyRoutes);
 app.use('/api/billing', billingRoutes);
 app.use('/api/payments', paymentRoutes);
@@ -72,6 +77,7 @@ app.use('/api/inventory', inventoryRoutes);
 app.use('/api/tickets', ticketRoutes);
 app.use('/api/transfers', transferRoutes);
 app.use('/api/financials', financialRoutes);
+>>>>>>> development
 
 const server = app.listen(PORT, () => {
   console.log(`Server is running in development mode on port ${PORT}`);
