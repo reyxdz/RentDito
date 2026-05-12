@@ -44,8 +44,8 @@ import {
 // ─── Hub pages (Landlord + Staff) ────────────────────────────────────
 import HubOverview from './presentation/pages/hub/overview/Overview';
 import TeamManagement from './presentation/pages/hub/team/TeamManagement';
+import FinancialDashboard from './presentation/pages/hub/financials/FinancialDashboard';
 import {
-  HubFinancialsPlaceholder,
   HubDocumentsPlaceholder,
   HubReportsPlaceholder,
   HubSecurityPlaceholder,
@@ -170,7 +170,7 @@ function App() {
               <Route path=":contractId" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="contracts"><ContractDetail /></ProtectedRoute>} />
             </Route>
             <Route path="utilities" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="utilities"><UtilityDashboard /></ProtectedRoute>} />
-            <Route path="financials" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="financials"><HubFinancialsPlaceholder /></ProtectedRoute>} />
+            <Route path="financials" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="financials"><FinancialDashboard /></ProtectedRoute>} />
             <Route path="inventory" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="inventory"><InventoryDashboard /></ProtectedRoute>} />
             <Route path="maintenance">
                <Route index element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="maintenance"><TicketList /></ProtectedRoute>} />
