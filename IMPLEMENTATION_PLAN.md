@@ -651,14 +651,14 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 5 | `presentation/pages/common/Profile.tsx` — shared profile page: avatar, name, email, phone, change password. Link to verify account. | `client/src/presentation/pages/common/Profile.tsx` |
 
 **✅ Verify:** Login as user → see Dashboard with quick stats + "Browse Listings". Notification bell appears in all layouts. Profile page shows user data. -->
-
+**________________________________________ D O N E ________________________________________**
 ---
 
 #### 🏁 Day 4 Standup Checkpoint
 > **Combined demo:** Login as each role → correct dashboard appears. Navigate through every sidebar item → no broken links. Notification bell visible in all layouts. Profile page accessible from all portals.
 
 ---
-
+**________________________________________ D O N E ________________________________________**
 ### Day 5 — Foundation Testing & Polish
 
 <!-- > **Goal:** Shake out all bugs. Seed all roles. Verify every auth/RBAC scenario.
@@ -675,7 +675,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 5 | Test edge cases: expired token, duplicate email, invalid JWT |
 | 6 | Create `server/API_REFERENCE.md` documenting all endpoints |
 | 7 | Fix all bugs found | -->
-
+**________________________________________ D O N E ________________________________________**
 ---
 
 #### 🔧 Paul — Frontend Auth Flow Polish
@@ -714,7 +714,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 ### PHASE 2: PROPERTY & LISTINGS (Days 6–8)
 
 ---
-
+**________________________________________ D O N E ________________________________________**
 ### Day 6 — Property Management
 <!-- 
 > **Goal:** Landlords can create, edit, and manage properties from the Hub.
@@ -779,7 +779,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 3 | Auto-update property metrics (totalUnits, vacantUnits, etc.) when unit is created/updated/deleted — use Mongoose post-save hooks or service logic | inside service/model |
 
 **✅ Verify:** Create unit under a property → GET returns it → property metrics update. -->
-
+**________________________________________ D O N E ________________________________________**
 ---
 <!-- 
 #### 🔧 Paul — Unit Frontend (List + Detail)
@@ -869,7 +869,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 ### Day 9 — Inquiry & Messaging
 
 > **Goal:** Verified users can submit inquiries about properties. Landlords/staff can respond. Real-time-ish conversation.
-
+**________________________________________ D O N E ________________________________________**
 <!-- #### 👑 Rey — Inquiry + Conversation + Message Backend
 **🤖 Gemini**
 
@@ -919,7 +919,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 ### Day 10 — Visit Scheduling
 
 > **Goal:** Users can request property viewings. Landlords schedule them, assign staff.
-
+**________________________________________ D O N E ________________________________________**
 <!-- #### 👑 Rey — Visit Backend
 **🤖 Gemini**
 
@@ -931,7 +931,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 4 | When visit approved/scheduled → create Notification for user. When 1 day before → create reminder notification for all parties (the function; actual cron in Phase 5). | inside service |
 
 **✅ Verify:** User requests visit → landlord approves → sets schedule → assigns caretaker staff → marks complete. Double-booking rejected. -->
-
+**________________________________________ D O N E ________________________________________**
 ---
 <!-- 
 #### 🔧 Paul — Visit Management (Landlord Side)
@@ -1035,7 +1035,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 5 | Install `puppeteer` for PDF generation | server/package.json |
 
 **✅ Verify:** Create contract from approved application → fields auto-populated. Sign (both sides) → generate PDF → download → PDF looks professional with signatures. -->
-
+**________________________________________ D O N E ________________________________________**
 ---
 <!-- 
 #### 🔧 Paul — Contract Management (Landlord Side) + SignaturePad
@@ -1106,6 +1106,8 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 
 **✅ Verify:** Signed contract → "Proceed to Check-In" → Complete → Tenant appears in Tenants list. Tenant detail shows all info. -->
 
+**✅ Verify:** Signed contract → "Proceed to Check-In" → Complete → Tenant appears in Tenants list. Tenant detail shows all info. -->
+**________________________________________ D O N E ________________________________________**
 ---
 
 #### 🔧 Emanuel — Tenant Dashboard Activation + Post-Check-In
@@ -1305,8 +1307,8 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 -->
 
 ---
-
-#### 🔧 Paul — Ticket Management (Landlord/Staff Side)
+**________________________________________ D O N E ________________________________________**
+<!-- #### 🔧 Paul — Ticket Management (Landlord/Staff Side)
 **🤖 Gemini**
 
 | # | Task | Files |
@@ -1315,8 +1317,8 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 2 | `hub/maintenance/TicketDetail.tsx` — ticket info, photo gallery, assignment dropdown (pick staff), reassignment for specific work, status timeline (open → assigned → in_progress → resolved → closed), progress updates thread (staff posts notes), resolution notes, cost fields (estimated, actual) | new |
 | 3 | `infrastructure/services/TicketService.ts`, `hooks/useTickets.ts` | new |
 
-**✅ Verify:** Ticket list shows tickets by priority. Assign staff → reassign → post progress → resolve. Timeline displays correctly.
-
+**✅ Verify:** Ticket list shows tickets by priority. Assign staff → reassign → post progress → resolve. Timeline displays correctly. -->
+**________________________________________ D O N E ________________________________________**
 ---
 
 #### 🔧 Emanuel — Ticket Submission (Tenant Side)
@@ -1356,8 +1358,8 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 -->
 
 ---
-
-#### 🔧 Paul — Transfer/Checkout UI (Landlord Side)
+**________________________________________ D O N E ________________________________________**
+<!-- #### 🔧 Paul — Transfer/Checkout UI (Landlord Side)
 **🤖 Gemini**
 
 | # | Task | Files |
@@ -1367,8 +1369,8 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 3 | `hub/pipeline/CheckoutFlow.tsx` — shown in tenant detail page. Pre-checkout checklist (bills cleared?, inventory returned?, contract terms met?). Warning badges for unresolved items. "Confirm Checkout" button. | new |
 | 4 | Add checkout action button to TenantDetail page | modify TenantDetail |
 
-**✅ Verify:** Landlord sees transfer request → reviews dues → approves + completes → unit assignment changes. Checkout flow: review checklist → all green → confirm → tenant removed from active list.
-
+**✅ Verify:** Landlord sees transfer request → reviews dues → approves + completes → unit assignment changes. Checkout flow: review checklist → all green → confirm → tenant removed from active list. -->
+**________________________________________ D O N E ________________________________________**
 ---
 
 #### 🔧 Emanuel — Transfer/Checkout (Tenant Side) + Pre-Checkout Reminders
@@ -1409,8 +1411,8 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 -->
 
 ---
-
-#### 🔧 Paul — Report Dashboard + Occupancy
+**________________________________________ D O N E ________________________________________**
+<!-- #### 🔧 Paul — Report Dashboard + Occupancy
 **🤖 Gemini**
 
 | # | Task | Files |
@@ -1418,8 +1420,8 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 1 | `routes/report.routes.ts` — GET /occupancy (total, occupied, vacant, reserved, rate%), GET /checkout-forecast (expiring contracts, peak move-out, revenue loss), GET /vacancy-forecast, GET /reservation-forecast | routes + controller + service |
 | 2 | `hub/reports/ReportsDashboard.tsx` — tabbed: Occupancy \| Financial \| Checkout Forecast \| Vacancy | new |
 | 3 | `hub/reports/OccupancyReport.tsx` — stat cards + donut chart + per-property breakdown table | new |
-| 4 | `hub/reports/CheckoutForecast.tsx` — bar chart (next 6 months), peak month highlighted, revenue loss cards, marketing alert banner if high vacancy expected, auto-renewal offer list | new |
-
+| 4 | `hub/reports/CheckoutForecast.tsx` — bar chart (next 6 months), peak month highlighted, revenue loss cards, marketing alert banner if high vacancy expected, auto-renewal offer list | new | -->
+**________________________________________ D O N E ________________________________________**
 ---
 
 #### 🔧 Emanuel — Forecast Algorithms + Notifications
@@ -1456,8 +1458,9 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 -->
 
 ---
+**________________________________________ D O N E ________________________________________**
 
-#### 🔧 Paul — Document Management + Security
+<!-- #### 🔧 Paul — Document Management + Security
 **🤖 Gemini**
 
 | # | Task | Files |
@@ -1467,8 +1470,8 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 3 | `hub/documents/DocumentList.tsx` — table with type icons, title, linked entity, date, download. Upload button. Filter by type. | new |
 | 4 | `hub/documents/DocumentUploadForm.tsx` — drag-drop, type selector, link to property/tenancy | new |
 | 5 | `hub/security/SecurityDashboard.tsx` — emergency contacts per property (editable list), incident report list + submit form | new |
-| 6 | `models/IncidentReport.ts` + simple CRUD | new |
-
+| 6 | `models/IncidentReport.ts` + simple CRUD | new | -->
+**________________________________________ D O N E ________________________________________**
 ---
 
 #### 🔧 Emanuel — Admin Review Pages + Activity Log

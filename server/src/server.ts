@@ -3,6 +3,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
+import path from 'path';
 import connectDB from './config/db';
 import authRoutes from './routes/auth.routes';
 import userRoutes from './routes/user.routes';
@@ -33,10 +34,13 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware chain
-app.use(helmet());
+app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
 app.use(cors());
 app.use(morgan('dev'));
 app.use(express.json());
+
+// Serve locally-uploaded files (fallback when Cloudinary is unavailable)
+app.use('/uploads', express.static(path.resolve(__dirname, '../uploads')));
 
 // Database connection
 connectDB();

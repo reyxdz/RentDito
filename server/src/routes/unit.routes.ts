@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import auth from '../middleware/auth';
 import validate from '../middleware/validate';
+import { uploadMultiple } from '../middleware/upload';
 import * as unitController from '../controllers/unit.controller';
 import * as unitValidator from '../validators/unit.validator';
 
@@ -28,7 +29,11 @@ router.patch('/:id', validate(unitValidator.updateUnitSchema), unitController.up
 router.patch('/:id/status', validate(unitValidator.updateStatusSchema), unitController.updateUnitStatus);
 
 // POST /api/units/:id/images - Upload unit images
-router.post('/:id/images', validate(unitValidator.uploadImagesSchema), unitController.uploadUnitImages);
+router.post(
+  '/:id/images',
+  ...uploadMultiple('images', 'units'),
+  unitController.uploadUnitImages
+);
 
 // DELETE /api/units/:id - Delete unit
 router.delete('/:id', unitController.deleteUnit);

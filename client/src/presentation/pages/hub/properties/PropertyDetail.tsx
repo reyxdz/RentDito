@@ -5,6 +5,7 @@ import { ArrowBack, Settings, Map, Apartment, Description } from '@mui/icons-mat
 import PageHeader from '../../../components/PageHeader';
 import StatusBadge from '../../../components/StatusBadge';
 import { useProperty } from '../../../../application/hooks/useProperty';
+import { getImageUrl } from '../../../../infrastructure/api/apiClient';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -135,7 +136,7 @@ export default function PropertyDetail() {
             <Typography variant="h6" gutterBottom>Images ({property.images?.length || 0})</Typography>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
               {property.images?.map((img, i) => (
-                <Box key={i} component="img" src={img} alt={`Property view ${i}`} sx={{ width: '100%', borderRadius: 1, objectFit: 'cover' }} />
+                <Box key={i} component="img" src={getImageUrl(img)} alt={`Property view ${i}`} sx={{ width: '100%', borderRadius: 1, objectFit: 'cover' }} />
               ))}
             </Box>
           </Grid>

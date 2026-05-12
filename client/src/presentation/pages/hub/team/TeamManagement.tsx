@@ -1,24 +1,15 @@
 import { useState } from 'react';
-import { Container, Box, Button, TextField, Chip } from '@mui/material';
+import { Container, Box, Button, TextField, Chip, Alert, Snackbar, CircularProgress, Typography } from '@mui/material';
 import PageHeader from '../../../components/PageHeader';
 import DataTable from '../../../components/DataTable';
 import FormDialog from '../../../components/FormDialog';
 import PermissionMatrix from '../../../components/PermissionMatrix';
 import type { PermissionKey } from '../../../components/PermissionMatrix';
 import { PersonAdd } from '@mui/icons-material';
-
-interface StaffRow {
-  id: string;
-  name: string;
-  email: string;
-  position: string;
-  permissions: string[];
-}
+import { useTeam } from '../../../../application/hooks/useTeam';
 
 export default function TeamManagement() {
-  const [data, setData] = useState<StaffRow[]>([
-    { id: '1', name: 'John Manager', email: 'john@rentdito.com', position: 'Property Manager', permissions: ['dashboard', 'properties', 'units'] },
-  ]);
+  const { staff, loading, error, inviteStaff, removeStaff } = useTeam();
   const [isInviteOpen, setIsInviteOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -28,78 +19,109 @@ export default function TeamManagement() {
   const [position, setPosition] = useState('');
   const [permissions, setPermissions] = useState<PermissionKey[]>(['dashboard']);
 
+  // Snackbar state
+  const [snackbar, setSnackbar] = useState<{ open: boolean; message: string; severity: 'success' | 'error' }>({
+    open: false,
+    message: '',
+    severity: 'success',
+  });
+
+  const resetForm = () => {
+    setName('');
+    setEmail('');
+    setPosition('');
+    setPermissions(['dashboard']);
+  };
+
   const handleInviteSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
-    // Simulate delay
-    await new Promise(resolve => setTimeout(resolve, 800));
-    
-    setData(prev => [...prev, {
-      id: Math.random().toString(),
-      name,
-      email,
-      position,
-      permissions
-    }]);
-    
-    setIsSubmitting(false);
-    setIsInviteOpen(false);
-    
-    // Reset
-    setName(''); setEmail(''); setPosition(''); setPermissions(['dashboard']);
+
+    try {
+      await inviteStaff({
+        name,
+        email,
+        positionName: position,
+        permissions,
+      });
+      setSnackbar({ open: true, message: 'Staff invitation sent successfully!', severity: 'success' });
+      setIsInviteOpen(false);
+      resetForm();
+    } catch (err: any) {
+      setSnackbar({ open: true, message: err.message || 'Failed to send invitation', severity: 'error' });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleRemove = async (staffId: string) => {
+    try {
+      await removeStaff(staffId);
+      setSnackbar({ open: true, message: 'Staff member removed.', severity: 'success' });
+    } catch (err: any) {
+      setSnackbar({ open: true, message: err.message || 'Failed to remove staff', severity: 'error' });
+    }
   };
 
   const columns = [
     { id: 'name', label: 'Name' },
     { id: 'email', label: 'Email' },
-    { id: 'position', label: 'Position' },
-    { 
-      id: 'permissions', 
+    { id: 'positionName', label: 'Position' },
+    {
+      id: 'permissions',
       label: 'Access Keys',
-      format: (_: any, row: StaffRow) => (
-        row.permissions.length > 3 
+      format: (_: any, row: any) =>
+        row.permissions?.length > 3
           ? <Chip size="small" label={`${row.permissions.length} keys`} />
           : <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
-              {row.permissions.map(p => <Chip size="small" key={p} label={p} />)}
+              {(row.permissions || []).map((p: string) => <Chip size="small" key={p} label={p} />)}
             </Box>
-      )
     },
     {
       id: 'actions',
       label: 'Actions',
       align: 'right' as const,
-      format: (_: any, row: StaffRow) => (
-        <Button size="small" color="error" onClick={() => setData(d => d.filter(item => item.id !== row.id))}>Remove</Button>
+      format: (_: any, row: any) => (
+        <Button size="small" color="error" onClick={() => handleRemove(row.id)}>Remove</Button>
       )
     }
   ];
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
-      <PageHeader 
-        title="Team Management" 
-        subtitle="Invite staff and manage their access permissions" 
+      <PageHeader
+        title="Team Management"
+        subtitle="Invite staff and manage their access permissions"
         action={
           <Button variant="contained" startIcon={<PersonAdd />} onClick={() => setIsInviteOpen(true)}>
             Invite Staff
           </Button>
         }
       />
-      
+
+      {error && (
+        <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>
+      )}
+
       <Box sx={{ mt: 4 }}>
-        <DataTable 
-          columns={columns} 
-          data={data} 
-          emptyTitle="No Staff Members" 
-          emptyDescription="You haven't invited any staff yet. Click Invite Staff to get started." 
-        />
+        {loading ? (
+          <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
+            <CircularProgress />
+          </Box>
+        ) : (
+          <DataTable
+            columns={columns}
+            data={staff}
+            emptyTitle="No Staff Members"
+            emptyDescription="You haven't invited any staff yet. Click Invite Staff to get started."
+          />
+        )}
       </Box>
 
       <FormDialog
         open={isInviteOpen}
         title="Invite New Staff"
-        onClose={() => setIsInviteOpen(false)}
+        onClose={() => { setIsInviteOpen(false); resetForm(); }}
         onSubmit={handleInviteSubmit}
         submitText="Send Invitation"
         loading={isSubmitting}
@@ -113,6 +135,22 @@ export default function TeamManagement() {
 
         <PermissionMatrix selectedPermissions={permissions} onChange={setPermissions} />
       </FormDialog>
+
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={4000}
+        onClose={() => setSnackbar(prev => ({ ...prev, open: false }))}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert
+          onClose={() => setSnackbar(prev => ({ ...prev, open: false }))}
+          severity={snackbar.severity}
+          variant="filled"
+          sx={{ width: '100%' }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Container>
   );
 }
