@@ -22,7 +22,7 @@ export const ENDPOINTS = {
   },
   TEAM: {
     ROOT: '/api/team',
-    INVITE: '/api/team/invite',
+    INVITE: '/api/team',
     UPDATE: (id: string) => `/api/team/${id}`,
     UPDATE_PERMISSIONS: (id: string) => `/api/team/${id}/permissions`,
     UPDATE_PROPERTIES: (id: string) => `/api/team/${id}/properties`,
@@ -91,6 +91,10 @@ export const ENDPOINTS = {
   TICKETS: {
     ROOT: '/api/tickets',
     DETAILS: (id: string) => `/api/tickets/${id}`,
+    ASSIGN: (id: string) => `/api/tickets/${id}/assign`,
+    UPDATE: (id: string) => `/api/tickets/${id}/updates`,
+    RESOLVE: (id: string) => `/api/tickets/${id}/resolve`,
+    CLOSE: (id: string) => `/api/tickets/${id}/close`,
   },
   INVENTORY: {
     ROOT: '/api/inventory',
@@ -107,5 +111,14 @@ export const ENDPOINTS = {
     LISTINGS: '/api/public/listings',
     PROPERTY_DETAILS: (id: string) => `/api/public/listings/${id}`,
     UNIT_DETAILS: (id: string) => `/api/public/listings/unit/${id}`,
+  },
+  DOCUMENTS: {
+    ROOT: '/api/documents',
+    DETAILS: (id: string) => `/api/documents/${id}`,
+  },
+  SECURITY: {
+    INCIDENTS: '/api/security/incidents',
+    INCIDENT_DETAILS: (id: string) => `/api/security/incidents/${id}`,
+    CONTACTS: (propertyId: string) => `/api/security/contacts/${propertyId}`,
   }
 } as const;

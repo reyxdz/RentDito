@@ -46,16 +46,18 @@ import HubOverview from './presentation/pages/hub/overview/Overview';
 import TeamManagement from './presentation/pages/hub/team/TeamManagement';
 import {
   HubFinancialsPlaceholder,
-  HubMaintenancePlaceholder,
-  HubDocumentsPlaceholder,
-  HubReportsPlaceholder,
-  HubSecurityPlaceholder,
 } from './presentation/pages/hub/Placeholders';
+
+import DocumentList from './presentation/pages/hub/documents/DocumentList';
+import SecurityDashboard from './presentation/pages/hub/security/SecurityDashboard';
 
 import BillList from './presentation/pages/hub/billing/BillList';
 import BillDetail from './presentation/pages/hub/billing/BillDetail';
 import UtilityDashboard from './presentation/pages/hub/utilities/UtilityDashboard';
 import InventoryDashboard from './presentation/pages/hub/inventory/InventoryDashboard';
+
+import TicketList from './presentation/pages/hub/maintenance/TicketList';
+import TicketDetail from './presentation/pages/hub/maintenance/TicketDetail';
 
 import PropertyList from './presentation/pages/hub/properties/PropertyList';
 import PropertyForm from './presentation/pages/hub/properties/PropertyForm';
@@ -68,6 +70,8 @@ import InquiryList from './presentation/pages/hub/pipeline/InquiryList';
 import InquiryDetail from './presentation/pages/hub/pipeline/InquiryDetail';
 import ApplicationList from './presentation/pages/hub/pipeline/ApplicationList';
 import ApplicationDetail from './presentation/pages/hub/pipeline/ApplicationDetail';
+import TransferList from './presentation/pages/hub/pipeline/TransferList';
+import TransferDetail from './presentation/pages/hub/pipeline/TransferDetail';
 
 import VisitList from './presentation/pages/hub/bookings/VisitList';
 import VisitDetail from './presentation/pages/hub/bookings/VisitDetail';
@@ -78,6 +82,8 @@ import ContractForm from './presentation/pages/hub/contracts/ContractForm';
 
 import TenantList from './presentation/pages/hub/tenants/TenantList';
 import TenantDetail from './presentation/pages/hub/tenants/TenantDetail';
+
+import ReportsDashboard from './presentation/pages/hub/reports/ReportsDashboard';
 
 // ─── User pages ──────────────────────────────────────────────────────
 import VerifyAccount from './presentation/pages/user/VerifyAccount';
@@ -153,6 +159,8 @@ function App() {
               <Route path="inquiries/:inquiryId" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="pipeline"><InquiryDetail /></ProtectedRoute>} />
               <Route path="applications" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="pipeline"><ApplicationList /></ProtectedRoute>} />
               <Route path="applications/:applicationId" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="pipeline"><ApplicationDetail /></ProtectedRoute>} />
+              <Route path="transfers" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="pipeline"><TransferList /></ProtectedRoute>} />
+              <Route path="transfers/:transferId" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="pipeline"><TransferDetail /></ProtectedRoute>} />
             </Route>
             <Route path="bookings">
               <Route index element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="bookings"><VisitList /></ProtectedRoute>} />
@@ -170,10 +178,13 @@ function App() {
             <Route path="utilities" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="utilities"><UtilityDashboard /></ProtectedRoute>} />
             <Route path="financials" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="financials"><HubFinancialsPlaceholder /></ProtectedRoute>} />
             <Route path="inventory" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="inventory"><InventoryDashboard /></ProtectedRoute>} />
-            <Route path="maintenance" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="maintenance"><HubMaintenancePlaceholder /></ProtectedRoute>} />
-            <Route path="documents" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="documents"><HubDocumentsPlaceholder /></ProtectedRoute>} />
-            <Route path="reports" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="reports"><HubReportsPlaceholder /></ProtectedRoute>} />
-            <Route path="security" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="security"><HubSecurityPlaceholder /></ProtectedRoute>} />
+            <Route path="maintenance">
+               <Route index element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="maintenance"><TicketList /></ProtectedRoute>} />
+               <Route path=":ticketId" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="maintenance"><TicketDetail /></ProtectedRoute>} />
+            </Route>
+            <Route path="documents" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="documents"><DocumentList /></ProtectedRoute>} />
+            <Route path="reports" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="reports"><ReportsDashboard /></ProtectedRoute>} />
+            <Route path="security" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="security"><SecurityDashboard /></ProtectedRoute>} />
             <Route path="team" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="team"><TeamManagement /></ProtectedRoute>} />
             <Route path="profile" element={<Profile />} />
           </Route>
