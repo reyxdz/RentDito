@@ -6,6 +6,7 @@ export type NotificationType =
   | 'visit' 
   | 'application' 
   | 'contract' 
+  | 'tenancy'
   | 'billing' 
   | 'maintenance' 
   | 'system';
@@ -31,7 +32,7 @@ const NotificationSchema = new Schema<INotification>(
     },
     type: {
       type: String,
-      enum: ['inquiry', 'message', 'visit', 'application', 'contract', 'billing', 'maintenance', 'system'],
+      enum: ['inquiry', 'message', 'visit', 'application', 'contract', 'tenancy', 'billing', 'maintenance', 'system'],
       required: true
     },
     title: {
