@@ -1075,7 +1075,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 
 > **Goal:** This is the most critical day. Contract signed → check-in confirmed → Tenancy created → user becomes operational tenant → tenant dashboard activates.
 
-#### 👑 Rey — Check-In Backend + Tenancy Model
+<!-- #### 👑 Rey — Check-In Backend + Tenancy Model
 **🤖 Claude Opus** ⚡ (complex state machine: cascading creates across 4+ collections, status transitions, occupancy updates)
 
 | # | Task | Files |
@@ -1089,7 +1089,8 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 1. POST confirm-checkin → Tenancy created, unit occupied, contract active → 201
 2. GET /users/me → activeTenancy populated
 3. Bedspace: confirm-checkin with slotNumber=2 → slot 2 marked occupied
-4. Checkout → tenancy checked_out, unit released, contract expired
+4. Checkout → tenancy checked_out, unit released, contract expired 
+-->
 
 ---
 
@@ -1135,7 +1136,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 
 > **Goal:** Bills are generated for active tenancies. Payments are recorded. Receipts are downloadable.
 
-#### 👑 Rey — Bill + Payment Backend
+<!-- #### 👑 Rey — Bill + Payment Backend
 **🤖 Claude Opus** ⚡ (complex: auto-generation logic, late fee computation, partial payment tracking, receipt PDF)
 
 | # | Task | Files |
@@ -1146,7 +1147,8 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 4 | `routes/payment.routes.ts` — GET / (all payments, filterable), GET /tenancy/:id (payment history) | routes |
 | 5 | `services/templates/receiptTemplate.ts` — OR template with auto-incrementing number | new |
 
-**✅ Verify:** Auto-generate → bills created for all tenancies. Record full payment → status=paid. Partial → status=partial. Late fee applied. Receipt PDF downloads correctly.
+**✅ Verify:** Auto-generate → bills created for all tenancies. Record full payment → status=paid. Partial → status=partial. Late fee applied. Receipt PDF downloads correctly. 
+-->
 
 ---
 
@@ -1188,7 +1190,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 
 > **Goal:** Meter readings captured, utility costs allocated, consumption visualized.
 
-#### 👑 Rey — Utility Billing Backend
+<!-- #### 👑 Rey — Utility Billing Backend
 **🤖 Gemini**
 
 | # | Task | Files |
@@ -1197,7 +1199,8 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 2 | `routes/utility.routes.ts` — GET /consumption (monthly data for charts), GET /highest-usage, GET /overconsumption (units > 150% average), GET /expense-summary, POST /readings (submit meter readings for a unit) | routes + controller + service |
 | 3 | Combined bill: POST /bills/combined — merges rent + utility into single bill | extend billing service |
 
-**✅ Verify:** Submit meter readings → utility bill created with correct amounts. Per-head calculation for bedspace unit → divided correctly. Combined bill → totals match.
+**✅ Verify:** Submit meter readings → utility bill created with correct amounts. Per-head calculation for bedspace unit → divided correctly. Combined bill → totals match. 
+-->
 
 ---
 <!-- 
@@ -1236,7 +1239,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 
 > **Goal:** Items tracked per property. Issued to tenants on check-in. Damage/loss tracked with penalties.
 
-#### 👑 Rey — Inventory Backend
+<!-- #### 👑 Rey — Inventory Backend
 **🤖 Gemini**
 
 | # | Task | Files |
@@ -1244,7 +1247,8 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 1 | `models/Inventory.ts` + `models/InventoryRecord.ts` per Section 3 | 2 models |
 | 2 | `routes/inventory.routes.ts` — GET / (items, filterable), POST / (add item), PATCH /:id (update), POST /:id/issue (issue to tenancy → create record), POST /:id/return (mark returned, assess condition), POST /records/:id/damage (report damage, compute penalty, flag deposit deduction), GET /records (all records), GET /records/tenancy/:id, GET /reports/monthly (active issued, lost/damaged, most frequently damaged, depreciation) | routes + controller + service + validator |
 
-**✅ Verify:** Add inventory item → issue to tenant → return with damage → penalty computed. Monthly report aggregates work.
+**✅ Verify:** Add inventory item → issue to tenant → return with damage → penalty computed. Monthly report aggregates work. 
+-->
 
 ---
 
@@ -1288,7 +1292,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 
 > **Goal:** Tenants submit issues. Staff assigned. Progress tracked.
 
-#### 👑 Rey — Ticket Backend
+<!-- #### 👑 Rey — Ticket Backend
 **🤖 Gemini**
 
 | # | Task | Files |
@@ -1297,7 +1301,8 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 2 | `routes/ticket.routes.ts` — POST / (tenant creates, requires active tenancy), GET /my (tenant's tickets), GET / (landlord/staff: tickets for their properties), GET /:id, PATCH /:id/assign (landlord assigns staff), PATCH /:id/reassign (assign different staff for specific work), POST /:id/updates (staff posts progress), PATCH /:id/resolve, PATCH /:id/close | routes + controller + service + validator |
 | 3 | Notifications: on create → notify landlord+assigned staff. On update → notify tenant. On resolve → notify tenant. | inside service |
 
-**✅ Verify:** Tenant creates ticket → landlord sees it → assigns staff → staff posts update → resolves → tenant notified.
+**✅ Verify:** Tenant creates ticket → landlord sees it → assigns staff → staff posts update → resolves → tenant notified. 
+-->
 
 ---
 
@@ -1337,7 +1342,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 
 > **Goal:** Tenants can transfer between units. Check-out flow closes tenancy properly.
 
-#### 👑 Rey — Transfer + Checkout Backend
+<!-- #### 👑 Rey — Transfer + Checkout Backend
 **🤖 Claude Opus** ⚡ (complex: cascading state changes across tenancy, unit, billing, contract, inventory)
 
 | # | Task | Files |
@@ -1347,7 +1352,8 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 3 | Checkout service enhancements in `services/tenancy.service.ts`: `processCheckout(tenancyId)` → (1) check outstanding dues, (2) check inventory returns, (3) release unit/slot occupancy, (4) terminate/expire contract, (5) set tenancy.status=checked_out + checkOutDate, (6) create final billing summary, (7) notify all parties. Returns warnings if dues or inventory outstanding. | modify service |
 | 4 | Pre-checkout review endpoint: GET /tenancies/:id/checkout-review → returns { outstandingBills, unreturned​Inventory, contractStatus, warnings[] } | add to tenancy routes |
 
-**✅ Verify:** Transfer: request → approve → complete → tenancy now on new unit, old unit released. Checkout: review shows outstanding items → resolve → checkout → unit released, contract closed.
+**✅ Verify:** Transfer: request → approve → complete → tenancy now on new unit, old unit released. Checkout: review shows outstanding items → resolve → checkout → unit released, contract closed. 
+-->
 
 ---
 
@@ -1393,13 +1399,14 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 
 > **Goal:** Business intelligence dashboards for landlords. Occupancy, financial, and forecast reports.
 
-#### 👑 Rey — Financial Dashboard + Report APIs
+<!-- #### 👑 Rey — Financial Dashboard + Report APIs
 **🤖 Gemini**
 
 | # | Task | Files |
 |---|---|---|
 | 1 | `routes/financial.routes.ts` — GET /summary (rent collected, utilities, penalties, refunds, net), GET /monthly (trend), GET /by-property | routes + controller + service |
-| 2 | `hub/financials/FinancialDashboard.tsx` — Summary cards (Total Rent, Utilities, Penalties, Refunds, Net Income). Monthly revenue line chart. Income by property bar chart. Period selector. | new (frontend) |
+| 2 | `hub/financials/FinancialDashboard.tsx` — Summary cards (Total Rent, Utilities, Penalties, Refunds, Net Income). Monthly revenue line chart. Income by property bar chart. Period selector. | new (frontend) | 
+-->
 
 ---
 
@@ -1437,7 +1444,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 
 > **Goal:** Platform administration. Automated jobs. Document management.
 
-#### 👑 Rey — Super Admin Dashboard + Cron
+<!-- #### 👑 Rey — Super Admin Dashboard + Cron
 **🤖 Claude Opus** ⚡ (complex: cron orchestration + multi-model aggregation for platform KPIs)
 
 | # | Task | Files |
@@ -1445,7 +1452,8 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 1 | `routes/admin.routes.ts` — GET /stats (platform KPIs), GET /users (all, filterable), PATCH /users/:id/status, GET /activity (audit log) | new |
 | 2 | `admin/Overview.tsx` — KPI cards (Total Users, Landlords, Properties, Active Tenancies, Revenue), growth charts, activity feed | new (frontend) |
 | 3 | `admin/Users.tsx` — DataTable of all users, filter by role/status, suspend/activate actions | overwrite |
-| 4 | Install `node-cron`. Create `services/scheduler.service.ts`: monthly bill auto-gen (1st of month), daily late fee check, daily visit reminders (1 day + 2 hour), daily checkout reminders (7/3/1 day), daily auto-renewal offer (30 days before expiry). Wire in server.ts with enable flag. | new |
+| 4 | Install `node-cron`. Create `services/scheduler.service.ts`: monthly bill auto-gen (1st of month), daily late fee check, daily visit reminders (1 day + 2 hour), daily checkout reminders (7/3/1 day), daily auto-renewal offer (30 days before expiry). Wire in server.ts with enable flag. | new | 
+-->
 
 ---
 
