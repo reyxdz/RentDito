@@ -93,14 +93,13 @@ import MyInquiries from './presentation/pages/user/MyInquiries';
 import InquiryConversation from './presentation/pages/user/InquiryConversation';
 import MyVisits from './presentation/pages/user/MyVisits';
 import MyApplications from './presentation/pages/user/MyApplications';
-import {
-  UserMyUnit,
-  UserBills,
-  UserMaintenance,
-} from './presentation/pages/user/Placeholders';
+import { UserMaintenance } from './presentation/pages/user/Placeholders';
+import MyBills from './presentation/pages/user/MyBills';
+import BillDetail from './presentation/pages/user/BillDetail';
 
 import MyContracts from './presentation/pages/user/MyContracts';
 import ContractView from './presentation/pages/user/ContractView';
+import MyRoom from './presentation/pages/user/MyRoom';
 
 function App() {
   return (
@@ -198,8 +197,11 @@ function App() {
             <Route path="applications" element={<MyApplications />} />
             <Route path="verify" element={<VerifyAccount />} />
             <Route path="become-landlord" element={<BecomeLandlord />} />
-            <Route path="my-unit" element={<UserMyUnit />} />
-            <Route path="bills" element={<UserBills />} />
+            <Route path="my-unit" element={<MyRoom />} />
+            <Route path="bills">
+              <Route index element={<MyBills />} />
+              <Route path=":billId" element={<BillDetail />} />
+            </Route>
             <Route path="contracts">
               <Route index element={<MyContracts />} />
               <Route path=":contractId" element={<ContractView />} />

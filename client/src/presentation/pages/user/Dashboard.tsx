@@ -1,4 +1,5 @@
 
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Box,
@@ -21,6 +22,10 @@ import {
   Receipt as ReceiptIcon,
 } from '@mui/icons-material';
 import { useAuth } from '../../../application/context/AuthContext';
+import { tenantBillingService } from '../../../infrastructure/services/TenantBillingService';
+import type { Bill } from '../../../domain/entities/Bill';
+import { format } from 'date-fns';
+import StatusBadge from '../../components/StatusBadge';
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -35,12 +40,26 @@ export default function Dashboard() {
   };
 
   const hasTenancy = !!user?.activeTenancy;
+  const tenancy = user?.activeTenancy as any;
 
   const statCards = [
     { label: 'My Inquiries', value: stats.inquiries, icon: <MessageIcon />, color: theme.palette.info.main },
     { label: 'My Visits', value: stats.visits, icon: <VisibilityIcon />, color: theme.palette.secondary.main },
     { label: 'My Applications', value: stats.applications, icon: <AssignmentIcon />, color: theme.palette.success.main },
   ];
+
+  const [currentBill, setCurrentBill] = useState<Bill | null>(null);
+
+  useEffect(() => {
+    if (hasTenancy) {
+      tenantBillingService.getMyBills().then((bills) => {
+        const outstandingBills = bills.filter((b) => ['unpaid', 'partial', 'overdue'].includes(b.status));
+        if (outstandingBills.length > 0) {
+          setCurrentBill(outstandingBills[0]);
+        }
+      }).catch(err => console.error("Failed to load bills on dashboard", err));
+    }
+  }, [hasTenancy]);
 
   return (
     <Box sx={{ maxWidth: 1200, mx: 'auto', p: { xs: 2, md: 3 } }}>
@@ -183,13 +202,13 @@ export default function Dashboard() {
                     </Typography>
                   </Box>
                   <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                    You are currently a resident at <strong>Sunrise Apartments, Unit 3B</strong>.
+                    You are currently a resident at <strong>{tenancy?.property?.name || 'Property'}</strong>, Unit <strong>{tenancy?.unit?.unitIdentifier || 'Unknown'}</strong>.
                   </Typography>
                   {/* You could add more mock details here */}
                 </CardContent>
                 <CardActions sx={{ p: 2, pt: 0 }}>
                   <Button size="small" onClick={() => navigate('/u/my-unit')} sx={{ fontWeight: 600 }}>
-                    View Contract Details
+                    View Unit Details
                   </Button>
                 </CardActions>
               </Card>
@@ -201,31 +220,56 @@ export default function Dashboard() {
                 elevation={0}
                 sx={{
                   borderRadius: 3,
-                  border: `1px solid ${theme.palette.divider}`,
+                  border: `1px solid ${currentBill?.status === 'overdue' ? theme.palette.error.main : theme.palette.divider}`,
                   height: '100%',
                 }}
               >
                 <CardContent sx={{ p: 3 }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
-                    <ReceiptIcon color="error" />
-                    <Typography variant="subtitle1" fontWeight={700}>
-                      Current Bill
-                    </Typography>
+                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                      <ReceiptIcon color={currentBill?.status === 'overdue' ? 'error' : 'primary'} />
+                      <Typography variant="subtitle1" fontWeight={700}>
+                        Current Bill
+                      </Typography>
+                    </Box>
+                    {currentBill && <StatusBadge status={currentBill.status} />}
                   </Box>
-                  <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                    Upcoming invoice for <strong>November 2026</strong>.
-                  </Typography>
-                  <Typography variant="h5" fontWeight={800} color="error.main" sx={{ mb: 2 }}>
-                    $850.00
-                  </Typography>
+                  
+                  {currentBill ? (
+                    <>
+                      <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                        Upcoming invoice for <strong>{format(new Date(currentBill.billingPeriod.start), 'MMMM yyyy')}</strong>. Due {format(new Date(currentBill.dueDate), 'MMM dd')}.
+                      </Typography>
+                      <Typography variant="h5" fontWeight={800} color={currentBill.status === 'overdue' ? 'error.main' : 'primary.main'} sx={{ mb: 2 }}>
+                        ₱{Number(currentBill.balanceAmount).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                      </Typography>
+                    </>
+                  ) : (
+                    <>
+                      <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                        You currently have no outstanding bills.
+                      </Typography>
+                      <Typography variant="h5" fontWeight={800} color="success.main" sx={{ mb: 2 }}>
+                        All clear!
+                      </Typography>
+                    </>
+                  )}
                 </CardContent>
                 <CardActions sx={{ p: 2, pt: 0 }}>
-                  <Button size="small" variant="contained" onClick={() => navigate('/u/bills')} sx={{ fontWeight: 600, px: 3 }}>
-                    Pay Now
-                  </Button>
-                  <Button size="small" onClick={() => navigate('/u/bills')} sx={{ fontWeight: 600 }}>
-                    View Details
-                  </Button>
+                  {currentBill ? (
+                    <>
+                      <Button size="small" variant="contained" onClick={() => navigate(`/u/bills/${currentBill.id}`)} sx={{ fontWeight: 600, px: 3 }}>
+                        Pay Now
+                      </Button>
+                      <Button size="small" onClick={() => navigate('/u/bills')} sx={{ fontWeight: 600 }}>
+                        View All
+                      </Button>
+                    </>
+                  ) : (
+                    <Button size="small" onClick={() => navigate('/u/bills')} sx={{ fontWeight: 600 }}>
+                      Billing History
+                    </Button>
+                  )}
                 </CardActions>
               </Card>
             </Grid>
