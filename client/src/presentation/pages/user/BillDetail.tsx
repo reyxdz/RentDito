@@ -6,6 +6,7 @@ import { format } from 'date-fns';
 
 import PageHeader from '../../components/PageHeader';
 import StatusBadge from '../../components/StatusBadge';
+import UtilityBreakdownTable from '../../components/UtilityBreakdownTable';
 import { tenantBillingService } from '../../../infrastructure/services/TenantBillingService';
 import type { Bill } from '../../../domain/entities/Bill';
 
@@ -130,26 +131,7 @@ export default function BillDetail() {
                   <Typography fontWeight={500}>₱{bill.utilityAmount.toLocaleString(undefined, { minimumFractionDigits: 2 })}</Typography>
                 </Box>
                 {bill.utilityBreakdown && (
-                  <Box sx={{ pl: 2, borderLeft: `2px solid ${theme.palette.divider}`, mb: 2 }}>
-                    {bill.utilityBreakdown.electricity && (
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', py: 0.5 }}>
-                        <Typography variant="body2" color="text.secondary">Electricity</Typography>
-                        <Typography variant="body2">₱{bill.utilityBreakdown.electricity.toLocaleString(undefined, { minimumFractionDigits: 2 })}</Typography>
-                      </Box>
-                    )}
-                    {bill.utilityBreakdown.water && (
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', py: 0.5 }}>
-                        <Typography variant="body2" color="text.secondary">Water</Typography>
-                        <Typography variant="body2">₱{bill.utilityBreakdown.water.toLocaleString(undefined, { minimumFractionDigits: 2 })}</Typography>
-                      </Box>
-                    )}
-                    {bill.utilityBreakdown.internet && (
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', py: 0.5 }}>
-                        <Typography variant="body2" color="text.secondary">Internet</Typography>
-                        <Typography variant="body2">₱{bill.utilityBreakdown.internet.toLocaleString(undefined, { minimumFractionDigits: 2 })}</Typography>
-                      </Box>
-                    )}
-                  </Box>
+                  <UtilityBreakdownTable breakdown={bill.utilityBreakdown} notes={bill.notes} />
                 )}
               </Box>
             )}
