@@ -103,6 +103,8 @@ import MyContracts from './presentation/pages/user/MyContracts';
 import ContractView from './presentation/pages/user/ContractView';
 import MyRoom from './presentation/pages/user/MyRoom';
 import MyInventory from './presentation/pages/user/MyInventory';
+import RequestTransfer from './presentation/pages/user/RequestTransfer';
+import MyTransfers from './presentation/pages/user/MyTransfers';
 
 function App() {
   return (
@@ -152,8 +154,8 @@ function App() {
               <Route path=":unitId/edit" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="units"><UnitForm /></ProtectedRoute>} />
             </Route>
             <Route path="tenants">
-               <Route index element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="tenants"><TenantList /></ProtectedRoute>} />
-               <Route path=":tenancyId" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="tenants"><TenantDetail /></ProtectedRoute>} />
+              <Route index element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="tenants"><TenantList /></ProtectedRoute>} />
+              <Route path=":tenancyId" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="tenants"><TenantDetail /></ProtectedRoute>} />
             </Route>
             <Route path="pipeline">
               <Route index element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="pipeline"><InquiryList /></ProtectedRoute>} />
@@ -181,8 +183,8 @@ function App() {
             <Route path="financials" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="financials"><HubFinancialsPlaceholder /></ProtectedRoute>} />
             <Route path="inventory" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="inventory"><InventoryDashboard /></ProtectedRoute>} />
             <Route path="maintenance">
-               <Route index element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="maintenance"><TicketList /></ProtectedRoute>} />
-               <Route path=":ticketId" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="maintenance"><TicketDetail /></ProtectedRoute>} />
+              <Route index element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="maintenance"><TicketList /></ProtectedRoute>} />
+              <Route path=":ticketId" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="maintenance"><TicketDetail /></ProtectedRoute>} />
             </Route>
             <Route path="documents" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="documents"><DocumentList /></ProtectedRoute>} />
             <Route path="reports" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="reports"><ReportsDashboard /></ProtectedRoute>} />
@@ -210,6 +212,10 @@ function App() {
               <Route path=":contractId" element={<ContractView />} />
             </Route>
             <Route path="inventory" element={<MyInventory />} />
+            <Route path="transfers">
+              <Route index element={<MyTransfers />} />
+              <Route path="new" element={<RequestTransfer />} />
+            </Route>
             <Route path="maintenance">
               <Route index element={<MyTickets />} />
               <Route path="new" element={<SubmitTicket />} />

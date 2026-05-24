@@ -27,6 +27,7 @@ import { useAuth } from '../../../application/context/AuthContext';
 import { tenantBillingService } from '../../../infrastructure/services/TenantBillingService';
 import { inventoryService } from '../../../infrastructure/services/InventoryService';
 import { ticketService } from '../../../infrastructure/services/TicketService';
+import { tenantService } from '../../../infrastructure/services/TenantService';
 import type { Bill } from '../../../domain/entities/Bill';
 import { format } from 'date-fns';
 import StatusBadge from '../../components/StatusBadge';
@@ -55,6 +56,7 @@ export default function Dashboard() {
   const [currentBill, setCurrentBill] = useState<Bill | null>(null);
   const [inventoryCount, setInventoryCount] = useState<number>(0);
   const [openTicketCount, setOpenTicketCount] = useState<number>(0);
+  const [contractEndDate, setContractEndDate] = useState<Date | null>(null);
 
   useEffect(() => {
     if (hasTenancy) {
@@ -65,7 +67,7 @@ export default function Dashboard() {
         }
       }).catch(err => console.error("Failed to load bills on dashboard", err));
 
-      const tenancyId = typeof user?.activeTenancy === 'string' ? user?.activeTenancy : (user?.activeTenancy as any)?._id;
+      const tenancyId = typeof user?.activeTenancy === 'string' ? user?.activeTenancy : (user?.activeTenancy as any)?._id || (user?.activeTenancy as any)?.id;
       if (tenancyId) {
         inventoryService.getRecords({ tenancyId }).then((records) => {
           setInventoryCount(records.filter(r => r.status === 'active').length);
@@ -74,6 +76,13 @@ export default function Dashboard() {
         ticketService.getTickets({}).then((tickets) => {
           setOpenTicketCount(tickets.filter(t => ['open', 'assigned', 'in_progress'].includes(t.status)).length);
         }).catch(err => console.error("Failed to load tickets on dashboard", err));
+
+        tenantService.getMyTenancies().then((tenancies) => {
+          const active = tenancies.find(t => t.id === tenancyId || (t as any)._id === tenancyId);
+          if (active && active.contractId && (active.contractId as any).endDate) {
+            setContractEndDate(new Date((active.contractId as any).endDate));
+          }
+        }).catch(err => console.error("Failed to load tenancy details on dashboard", err));
       }
     }
   }, [hasTenancy, user?.activeTenancy]);
@@ -200,6 +209,44 @@ export default function Dashboard() {
           <Typography variant="h6" fontWeight={700} sx={{ mb: 3 }}>
             My Tenancy
           </Typography>
+
+          {contractEndDate && (() => {
+            const daysRemaining = Math.ceil((contractEndDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+            if (daysRemaining <= 30 && daysRemaining >= 0) {
+              return (
+                <Card
+                  elevation={0}
+                  sx={{
+                    mb: 3,
+                    borderRadius: 3,
+                    border: `1px solid ${theme.palette.warning.main}`,
+                    bgcolor: alpha(theme.palette.warning.main, 0.05),
+                  }}
+                >
+                  <CardContent sx={{ p: 3, display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 2 }}>
+                    <Box>
+                      <Typography variant="subtitle1" fontWeight={700} color="warning.main" sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                        Lease Ending Soon ({daysRemaining} Day{daysRemaining === 1 ? '' : 's'} Remaining)
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        Your tenancy contract is scheduled to end on <strong>{format(contractEndDate, 'MMMM dd, yyyy')}</strong>. Please discuss renewal options with your landlord or prepare for checkout.
+                      </Typography>
+                    </Box>
+                    <Button
+                      variant="contained"
+                      color="warning"
+                      onClick={() => navigate('/u/contracts')}
+                      sx={{ borderRadius: 2, fontWeight: 700, textTransform: 'none' }}
+                    >
+                      View Contracts
+                    </Button>
+                  </CardContent>
+                </Card>
+              );
+            }
+            return null;
+          })()}
+
           <Grid container spacing={3}>
             {/* My Room summary card */}
             <Grid size={{ xs: 12, md: 6 }}>
@@ -251,7 +298,7 @@ export default function Dashboard() {
                     </Box>
                     {currentBill && <StatusBadge status={currentBill.status} />}
                   </Box>
-                  
+
                   {currentBill ? (
                     <>
                       <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
