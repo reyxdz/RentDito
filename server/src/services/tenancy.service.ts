@@ -527,4 +527,105 @@ export const getTenancyById = async (userId: string, tenancyId: string) => {
   return tenancy;
 };
 
+// ─────────────────────────────────────────────────────────────
+//  Comments & Roommates
+// ─────────────────────────────────────────────────────────────
+
+/**
+ * Add a comment to a tenancy.
+ */
+export const addComment = async (userId: string, tenancyId: string, text: string) => {
+  const tenancy = await Tenancy.findById(tenancyId).populate('propertyId');
+  if (!tenancy) {
+    throw Object.assign(new Error('Tenancy not found'), { statusCode: 404 });
+  }
+
+  const user = await User.findById(userId);
+  if (!user) {
+    throw Object.assign(new Error('User not found'), { statusCode: 404 });
+  }
+
+  // Determine role
+  let role: 'tenant' | 'caretaker' | 'admin' = 'tenant';
+  if (user.role === 'super_admin') {
+    role = 'admin';
+  } else if (user.role === 'landlord' || user.role === 'staff') {
+    role = 'caretaker';
+    // Verify access
+    const propertyId = (tenancy.propertyId as any)._id.toString();
+    await verifyManagementAccess(userId, propertyId);
+  } else {
+    // Must be the tenant
+    if (tenancy.userId.toString() !== userId) {
+      throw Object.assign(new Error('Access denied'), { statusCode: 403 });
+    }
+  }
+
+  tenancy.comments.push({
+    userId: user._id as any,
+    role,
+    text,
+    createdAt: new Date()
+  });
+
+  await tenancy.save();
+
+  // Create notification for the other party
+  if (role === 'tenant') {
+    await Notification.create({
+      userId: (tenancy.propertyId as any).landlordId,
+      type: 'tenancy',
+      title: 'New Tenancy Comment',
+      message: `${user.name} added a comment to their check-in/tenancy record.`,
+      link: `/hub/tenants/${tenancy._id}`,
+      metadata: { tenancyId: tenancy._id.toString() }
+    });
+  } else {
+    await Notification.create({
+      userId: tenancy.userId,
+      type: 'tenancy',
+      title: 'New Tenancy Comment',
+      message: `Your caretaker or admin added a comment to your tenancy record.`,
+      link: `/u/my-unit`,
+      metadata: { tenancyId: tenancy._id.toString() }
+    });
+  }
+
+  return tenancy.comments[tenancy.comments.length - 1];
+};
+
+/**
+ * Get comments for a tenancy.
+ */
+export const getComments = async (userId: string, tenancyId: string) => {
+  const tenancy = await getTenancyById(userId, tenancyId); // This does access control
+  
+  // To populate user info in comments, we can do it via a separate query since getTenancyById returns a lean object
+  const populatedTenancy: any = await Tenancy.findById(tenancyId)
+    .select('comments')
+    .populate('comments.userId', 'name avatar')
+    .lean();
+    
+  return populatedTenancy?.comments || [];
+};
+
+/**
+ * Get roommates (other checked-in tenancies on the same unit).
+ */
+export const getRoommates = async (userId: string, tenancyId: string) => {
+  const tenancy = await getTenancyById(userId, tenancyId); // Does access control
+  
+  if (!tenancy.unitId) return [];
+
+  const roommates = await Tenancy.find({
+    unitId: tenancy.unitId._id,
+    status: 'checked_in',
+    _id: { $ne: tenancy._id }
+  })
+    .populate('userId', 'name avatar phone')
+    .select('userId slotNumber isPrimary checkInDate')
+    .lean();
+
+  return roommates;
+};
 

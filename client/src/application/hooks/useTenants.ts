@@ -62,5 +62,41 @@ export function useTenantDetail(tenancyId?: string) {
     }
   };
 
-  return { tenancy, loading, error, fetchTenancy, confirmCheckIn, checkout };
+  const getComments = async () => {
+    if (!tenancyId) return [];
+    return tenantService.getComments(tenancyId);
+  };
+
+  const addComment = async (text: string) => {
+    if (!tenancyId) return;
+    return tenantService.addComment(tenancyId, text);
+  };
+
+  const getRoommates = async () => {
+    if (!tenancyId) return [];
+    return tenantService.getRoommates(tenancyId);
+  };
+
+  return { tenancy, loading, error, fetchTenancy, confirmCheckIn, checkout, getComments, addComment, getRoommates };
+}
+
+export function useMyTenancies() {
+  const [tenancies, setTenancies] = useState<Tenancy[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchTenancies = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await tenantService.getMyTenancies();
+      setTenancies(data);
+    } catch (err: any) {
+      setError(err.response?.data?.message || err.message || 'Failed to map my tenancies');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  return { tenancies, loading, error, fetchTenancies };
 }

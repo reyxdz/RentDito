@@ -129,3 +129,67 @@ export const initiateCheckout = async (req: AuthRequest, res: Response): Promise
     });
   }
 };
+
+/**
+ * POST /api/tenancies/:id/comments - Add a comment to a tenancy
+ */
+export const addComment = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const { text } = req.body;
+    if (!text) {
+      res.status(400).json({ status: 'error', message: 'Comment text is required' });
+      return;
+    }
+
+    const comment = await tenancyService.addComment(req.user!.id, req.params.id as string, text);
+
+    res.status(201).json({
+      status: 'success',
+      message: 'Comment added successfully',
+      data: comment
+    });
+  } catch (error: any) {
+    res.status(error.statusCode || 500).json({
+      status: 'error',
+      message: error.message
+    });
+  }
+};
+
+/**
+ * GET /api/tenancies/:id/comments - Get comments for a tenancy
+ */
+export const getComments = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const comments = await tenancyService.getComments(req.user!.id, req.params.id as string);
+
+    res.status(200).json({
+      status: 'success',
+      data: comments
+    });
+  } catch (error: any) {
+    res.status(error.statusCode || 500).json({
+      status: 'error',
+      message: error.message
+    });
+  }
+};
+
+/**
+ * GET /api/tenancies/:id/roommates - Get roommates for a tenancy
+ */
+export const getRoommates = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const roommates = await tenancyService.getRoommates(req.user!.id, req.params.id as string);
+
+    res.status(200).json({
+      status: 'success',
+      data: roommates
+    });
+  } catch (error: any) {
+    res.status(error.statusCode || 500).json({
+      status: 'error',
+      message: error.message
+    });
+  }
+};

@@ -82,6 +82,7 @@ export const USER_MENU_ITEMS: MenuItem[] = [
   { text: 'Become Landlord', icon: Storefront,            path: '/u/become-landlord' },
   // Tenancy-conditional section
   { text: 'My Unit',         icon: Home,                  path: '/u/my-unit',         requiresTenancy: true, sectionLabel: 'Tenancy' },
+  { text: 'My Contracts',    icon: Description,           path: '/u/contracts',       requiresTenancy: true },
   { text: 'My Bills',        icon: Receipt,               path: '/u/bills',           requiresTenancy: true },
   { text: 'Maintenance',     icon: Handyman,              path: '/u/maintenance',     requiresTenancy: true },
 ];
