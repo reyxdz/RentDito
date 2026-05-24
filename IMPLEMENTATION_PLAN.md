@@ -637,12 +637,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 
 **________________________________________ D O N E ________________________________________**
 ---
-<<<<<<< marcxdev-development
-**________________________________________ D O N E ________________________________________**
-=======
-
->>>>>>> development
-#### 🔧 Emanuel — User Dashboard + Notification Bell
+**________________________________________ D O N E ________________________________________**#### 🔧 Emanuel — User Dashboard + Notification Bell
 **🤖 Gemini**
 
 | # | Task | Files |
@@ -679,16 +674,9 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 5 | Test edge cases: expired token, duplicate email, invalid JWT |
 | 6 | Create `server/API_REFERENCE.md` documenting all endpoints |
 | 7 | Fix all bugs found | -->
-<<<<<<< marcxdev-development
 **________________________________________ D O N E ________________________________________**
 ---
-**________________________________________ D O N E ________________________________________**
-=======
-**________________________________________ D O N E ________________________________________**
----
-
->>>>>>> development
-#### 🔧 Paul — Frontend Auth Flow Polish
+**________________________________________ D O N E ________________________________________**#### 🔧 Paul — Frontend Auth Flow Polish
 **🤖 Gemini**
 
 | # | Task |
@@ -699,16 +687,9 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 4 | Test sidebar collapse/expand on desktop, drawer on mobile |
 | 5 | Verify role-based redirects after login |
 | 6 | Fix all bugs found |
-<<<<<<< marcxdev-development
 **________________________________________ D O N E ________________________________________**
 ---
-**________________________________________ D O N E ________________________________________**
-=======
-
----
-
->>>>>>> development
-<!-- #### 🔧 Emanuel — E2E Seed & Component Polish
+**________________________________________ D O N E ________________________________________**<!-- #### 🔧 Emanuel — E2E Seed & Component Polish
 **🤖 Gemini**
 
 | # | Task |
@@ -718,16 +699,9 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 3 | Test: team management flow (invite → permissions → login → sidebar) |
 | 4 | Test: landlord onboarding flow (verify → apply → admin approve) |
 | 5 | Polish all shared components: DataTable sorting/filtering, FormDialog animations |
-<<<<<<< marcxdev-development
 | 6 | Fix all bugs found | --->
 **________________________________________ D O N E ________________________________________**
 --- 
-=======
-| 6 | Fix all bugs found |
-
---- -->
->>>>>>> development
-
 #### 🏁 Day 5 Standup Checkpoint
 > **Combined demo:** Run seed script → login with every role type → demonstrate full permission isolation. Staff sees only assigned features. Unverified user cannot apply as landlord. Dark mode works everywhere. No console errors.
 
@@ -752,17 +726,10 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 4 | Auto-scope: queries filtered by landlordId for landlord, assignedPropertyIds for staff | inside service |
 
 **✅ Verify:** POST create property → GET returns it → PATCH update → DELETE removes. Staff only sees assigned.
-<<<<<<< marcxdev-development
 --->
 **________________________________________ D O N E ________________________________________**
 --- 
-**________________________________________ D O N E ________________________________________**
-=======
-
---- -->
-
->>>>>>> development
-<!-- #### 🔧 Paul — Property Frontend (List + Detail)
+**________________________________________ D O N E ________________________________________**<!-- #### 🔧 Paul — Property Frontend (List + Detail)
 **🤖 Gemini**
 
 | # | Task | Files |
@@ -773,16 +740,9 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 4 | `hub/properties/PropertyDetail.tsx` — header with name + status, tabs: Overview \| Units \| Documents \| Settings. Overview: description, address, inclusions, venues, image gallery. Settings tab: billing config, emergency contacts. | new |
 
 **✅ Verify:** Navigate to `/hub/properties` → see seeded properties. Click one → detail page loads with correct data.
-<<<<<<< marcxdev-development
 --->
 **________________________________________ D O N E ________________________________________**
 --- 
-
-=======
-
---- -->
-
->>>>>>> development
 <!-- #### 🔧 Emanuel — Property Form (Create/Edit)
 **🤖 Gemini**
 
@@ -793,15 +753,9 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 3 | `presentation/components/VenueEditor.tsx` — add/remove nearby venue rows (name, walking time, commute time) | new |
 
 **✅ Verify:** Click "Add Property" → fill all steps → upload images → submit → property appears in list with images.
-<<<<<<< marcxdev-development
 --->
 **________________________________________ D O N E ________________________________________**
 --- 
-=======
-
---- -->
->>>>>>> development
-
 #### 🏁 Day 6 Standup Checkpoint
 > **Combined demo:** Landlord creates a new property with images, inclusions, and nearby venues → it appears in the property list → click it → detail page shows everything. Edit property description → saved. Staff sees only their assigned properties.
 
@@ -810,29 +764,8 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 ### Day 7 — Unit Management
 
 > **Goal:** Units can be created within properties. Bedspace and room modes supported.
-<<<<<<< marcxdev-development
 
-**________________________________________ D O N E ________________________________________**
-=======
->>>>>>> development
-<!-- 
-#### 👑 Rey — Unit Backend
-**🤖 Gemini**
-
-| # | Task | Files |
-|---|---|---|
-| 1 | Enhance `models/Unit.ts` — propertyId, unitIdentifier, accommodationType: 'room'\|'bedspace', roomRent?, bedspaceRent?, perHeadRate?, deposit, capacity, maxOccupants, sizeSqm?, features[], images[], status: 'vacant'\|'occupied'\|'reserved'\|'maintenance', slots?: [{slotNumber, status, tenancyId?}] (for bedspace mode) | `server/src/models/Unit.ts` |
-| 2 | `routes/unit.routes.ts` — full CRUD. GET list (filter by propertyId, status, type), GET /:id, POST, PATCH, DELETE, PATCH /:id/status, POST /:id/images, GET /property/:propertyId/units | routes + controller + service + validator |
-| 3 | Auto-update property metrics (totalUnits, vacantUnits, etc.) when unit is created/updated/deleted — use Mongoose post-save hooks or service logic | inside service/model |
-
-**✅ Verify:** Create unit under a property → GET returns it → property metrics update. -->
-**________________________________________ D O N E ________________________________________**
----
-<<<<<<< marcxdev-development
-
-=======
->>>>>>> development
-<!-- 
+**________________________________________ D O N E ________________________________________**<!-- 
 #### 🔧 Paul — Unit Frontend (List + Detail)
 **🤖 Gemini**
 
@@ -843,17 +776,10 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 3 | `hub/units/UnitDetail.tsx` — header, tabs: Overview \| Tenants \| Billing History \| Inventory. Overview: photos, features, pricing display (room rent / bedspace rent per spec). For bedspace: show slot grid with vacancy. | new |
 
 **✅ Verify:** `/hub/units` → list all units. Filter by property → correct subset. Click unit → detail with pricing.
-<<<<<<< marcxdev-development
 --->
 **________________________________________ D O N E ________________________________________**
 ---
-**________________________________________ D O N E ________________________________________**
-=======
-
---- -->
-
->>>>>>> development
-<!-- #### 🔧 Emanuel — Unit Form + Occupancy Modes
+**________________________________________ D O N E ________________________________________**<!-- #### 🔧 Emanuel — Unit Form + Occupancy Modes
 **🤖 Gemini**
 
 | # | Task | Files |
@@ -863,11 +789,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 3 | Seed properties + units into seed script — 3 properties with 4-5 units each, mix of room and bedspace. | modify `seeds/seed.ts` |
 
 **✅ Verify:** Create a bedspace unit with 4 slots → detail page shows 4 slot tiles (all green/vacant). Create a room unit → pricing shows room rent. -->
-<<<<<<< marcxdev-development
 **________________________________________ D O N E ________________________________________**
-=======
-
->>>>>>> development
 ---
 
 #### 🏁 Day 7 Standup Checkpoint
@@ -878,31 +800,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 ### Day 8 — Public Listings & User Verification
 
 > **Goal:** Public listing pages use real data. Users can verify their identity.
-<<<<<<< marcxdev-development
-**________________________________________ D O N E ________________________________________**
-=======
->>>>>>> development
-<!-- 
-#### 👑 Rey — Public API + Verification Backend
-**🤖 Gemini**
-
-| # | Task | Files |
-|---|---|---|
-| 1 | `routes/public.routes.ts` — NO auth required. GET /listings (active properties with metrics), GET /listings/:id (property + units), GET /listings/unit/:id (unit detail) | new routes/controller/service |
-| 2 | User verification: POST /users/me/verify → upload ID photos → set verificationStatus to 'pending'. Admin: GET /admin/verifications (pending list), PATCH /admin/verifications/:userId/approve, PATCH reject | add to user routes + admin routes |
-
-<<<<<<< marcxdev-development
-**✅ Verify:** Public GET `/api/public/listings` → returns only active properties with unit counts + price ranges. No auth token needed. --->
-**________________________________________ D O N E ________________________________________**
---- 
-**________________________________________ D O N E ________________________________________**
-=======
-**✅ Verify:** Public GET `/api/public/listings` → returns only active properties with unit counts + price ranges. No auth token needed.
-
---- -->
-
->>>>>>> development
-<!-- #### 🔧 Paul — Connect Listings to Real API
+**________________________________________ D O N E ________________________________________**<!-- #### 🔧 Paul — Connect Listings to Real API
 **🤖 Gemini**
 
 | # | Task | Files |
@@ -916,30 +814,18 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 **✅ Verify:** Visit `/listings` (no login) → see real properties from DB. Click property → real detail. Click unit → real unit detail. Filters still work. -->
 **________________________________________ D O N E ________________________________________**
 ---
-<<<<<<< marcxdev-development
-**________________________________________ D O N E ________________________________________**
-=======
-
->>>>>>> development
-<!-- #### 🔧 Emanuel — Verification UI + Listings Enhancement
+<!-- **________________________________________ D O N E ________________________________________**<!-- #### 🔧 Emanuel — Verification UI + Listings Enhancement
 **🤖 Gemini**
 
 | # | Task | Files |
 |---|---|---|
 | 1 | Update `user/VerifyAccount.tsx` — upload front & back of valid ID, show pending/verified status badge | modify |
 | 2 | `admin/UserVerifications.tsx` — list of pending verifications, view ID photos, approve/reject buttons | new |
-| 3 | Add "Inquire" / "Schedule Visit" CTA buttons to public PropertyDetailPage and UnitDetailPage — these buttons check if user is logged in + verified. If not logged in → prompt login. If not verified → prompt verification. | modify listing pages |
+| 3 | Add "Inquire" / "Schedule Visit" CTA buttons to public PropertyDetailPage and UnitDetailPage — these buttons check if user is logged in + verified. If not logged in → prompt login. If not verified → prompt verification. | modify listing pages | -->
 
-<<<<<<< marcxdev-development
 **✅ Verify:** User uploads ID → status becomes "Pending". Admin sees verification in queue → approves → user is now verified. "Inquire" button on listing → if not logged in → redirects to login.--->
 **________________________________________ D O N E ________________________________________**
 --- 
-=======
-**✅ Verify:** User uploads ID → status becomes "Pending". Admin sees verification in queue → approves → user is now verified. "Inquire" button on listing → if not logged in → redirects to login.
-
---- -->
->>>>>>> development
-
 #### 🏁 Day 8 Standup Checkpoint
 > **Combined demo:** Visitor browses `/listings` → sees real properties → clicks one → real detail page with images → clicks "Inquire" → prompted to login/register → registers → sees "Verify Your Account" prompt → uploads ID → super admin approves verification → user is now verified and can proceed to inquiry.
 
@@ -963,18 +849,10 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 3 | `routes/message.routes.ts` — GET /conversation/:id/messages (paginated), POST /conversation/:id/messages (send message, with optional attachment upload) | route + controller + service |
 | 4 | When inquiry is created → auto-create Conversation with participants = [userId, landlordId]. Create Notification for landlord. | inside service |
 
-<<<<<<< marcxdev-development
 **✅ Verify:** User POSTs inquiry → conversation auto-created → POST message → GET messages returns it. Landlord receives notification.--->
 **________________________________________ D O N E ________________________________________**
 --- 
-**________________________________________ D O N E ________________________________________**
-=======
-**✅ Verify:** User POSTs inquiry → conversation auto-created → POST message → GET messages returns it. Landlord receives notification.
-
---- -->
-
->>>>>>> development
-<!-- #### 🔧 Paul — Inquiry Inbox (Landlord/Staff Side)
+**________________________________________ D O N E ________________________________________**<!-- #### 🔧 Paul — Inquiry Inbox (Landlord/Staff Side)
 **🤖 Gemini**
 
 | # | Task | Files |
@@ -982,18 +860,10 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 1 | `hub/pipeline/InquiryList.tsx` — DataTable: user name, property, unit, subject, status badge, last message preview, date. Filter by property, status. Sort by newest. | new |
 | 2 | `hub/pipeline/InquiryDetail.tsx` — header (user info, property, status), conversation thread below (chat-style: messages with avatars, timestamps, left/right alignment), reply input at bottom with attachment button, status change dropdown (close/convert). | new |
 
-<<<<<<< marcxdev-development
 **✅ Verify:** Login as landlord → Pipeline → Inquiries → see inquiry → open → chat thread → reply → message appears. --->
 **________________________________________ D O N E ________________________________________**
---- 
-**________________________________________ D O N E ________________________________________**
-=======
-**✅ Verify:** Login as landlord → Pipeline → Inquiries → see inquiry → open → chat thread → reply → message appears.
-
---- -->
-
->>>>>>> development
-<!-- #### 🔧 Emanuel — Inquiry Submission (User Side)
+<!-- --- 
+**________________________________________ D O N E ________________________________________**<!-- #### 🔧 Emanuel — Inquiry Submission (User Side)
 **🤖 Gemini**
 
 | # | Task | Files |
@@ -1002,18 +872,11 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 2 | `user/InquiryConversation.tsx` — same chat thread UI but from user's perspective. Reply input. Attachment upload. | new |
 | 3 | `presentation/components/ChatThread.tsx` — reusable chat message list component (sender avatar, name, timestamp, content, attachments). Used by both landlord and user inquiry views. | new |
 | 4 | Wire "Inquire" button on listing pages → opens inquiry form dialog (pre-filled property/unit) → submit → redirects to conversation | modify listing pages |
-| 5 | `infrastructure/services/InquiryService.ts` + `hooks/useInquiries.ts` | new |
+| 5 | `infrastructure/services/InquiryService.ts` + `hooks/useInquiries.ts` | new | -->
 
-<<<<<<< marcxdev-development
 **✅ Verify:** User on listing → "Inquire" → submit message → redirected to conversation → landlord sees it in inbox → replies → user sees reply in their "My Inquiries" list. --->
 **________________________________________ D O N E ________________________________________**
 --- 
-=======
-**✅ Verify:** User on listing → "Inquire" → submit message → redirected to conversation → landlord sees it in inbox → replies → user sees reply in their "My Inquiries" list.
-
---- -->
->>>>>>> development
-
 #### 🏁 Day 9 Standup Checkpoint
 > **Combined demo:** Full inquiry loop: User browses listing → clicks Inquire → submits question → Landlord sees notification + new inquiry in Pipeline inbox → Landlord opens and replies → User sees reply in My Inquiries → conversation continues back and forth.
 
@@ -1036,67 +899,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 **✅ Verify:** User requests visit → landlord approves → sets schedule → assigns caretaker staff → marks complete. Double-booking rejected. -->
 **________________________________________ D O N E ________________________________________**
 ---
-<<<<<<< marcxdev-development
-**________________________________________ D O N E ________________________________________**
-=======
->>>>>>> development
-<!-- 
-#### 🔧 Paul — Visit Management (Landlord Side)
-**🤖 Gemini**
-
-| # | Task | Files |
-|---|---|---|
-| 1 | `hub/bookings/VisitList.tsx` — DataTable: visitor name, property, unit, requested date, scheduled date, status (color-coded: pending=yellow, scheduled=blue, completed=green, cancelled=gray, no-show=red), assigned staff, actions | new |
-| 2 | `hub/bookings/VisitCalendar.tsx` — calendar view (month/week). Color-coded visit events. Click event → details popup. Click empty slot → schedule. Show available time slots per unit. Install `@fullcalendar/react` or build a date grid. | new |
-| 3 | `hub/bookings/VisitDetail.tsx` — request info, approve/reject buttons, schedule date/time picker, assign staff dropdown, status actions (complete/cancel/no-show), notes field | new |
-
-**✅ Verify:** Visit list shows visits. Calendar view plots them. Approve → schedule → complete flow works. Assigning staff reflected. -->
-**________________________________________ D O N E ________________________________________**
----
-
-#### 🔧 Emanuel — Visit Request (User Side) + Available Slots ✅ DONE
-**🤖 Gemini**
-
-| # | Task | Files | Status |
-|---|---|---|---|
-| 1 | `user/MyVisits.tsx` — list of user's visit requests with status, scheduled date/time, property. Slide-up detail dialog with full visit info. **Cancel button** for `pending`, `approved`, and `scheduled` visits. | `client/src/presentation/pages/user/MyVisits.tsx` | ✅ |
-| 2 | Visit creation integrated into listing pages — property/unit pre-filled, preferred date/time, purpose selector. Submit → status pending. | via `MyVisits.tsx` + listing page wiring | ✅ |
-| 3 | Wire "Schedule Visit" button on listing pages → opens visit form → submit → user redirected to My Visits. | listing pages | ✅ |
-| 4 | `infrastructure/services/MockVisitService.ts` — mock CRUD with double-booking prevention + slot freeing on cancel. `hooks/useVisits.ts` — `fetchVisits`, `createVisit`, `cancelVisit`. | `MockVisitService.ts`, `useVisits.ts` | ✅ |
-| 5 | `presentation/components/TimeSlotPicker.tsx` — shows available time slots for a unit on a given date (checks against existing bookings). User picks a slot. | `TimeSlotPicker.tsx` | ✅ |
-| 6 | **Cancel Visit** — users can cancel visits with status `pending`, `approved`, or `scheduled`. Cancellation frees the booked time slot and updates visit status to `cancelled`. | `MyVisits.tsx`, `useVisits.ts`, `MockVisitService.ts` | ✅ |
-
-**✅ Verify:** User on listing → "Schedule Visit" → picks date/time → submit → appears in My Visits as "Pending" → Landlord approves + schedules → user's visit status updates to "Scheduled" with date/time. User can cancel any active visit (pending/approved/scheduled) via the detail dialog.
-
----
-
-#### 🏁 Day 10 Standup Checkpoint
-> **Combined demo:** User submits visit request from listing page → Landlord sees it in Visit list → approves and schedules → assigns caretaker staff → Visit appears on calendar → Staff can view assigned visit → Mark visit as complete. User's "My Visits" shows final status.
-
----
-
-### Day 11 — Rental Application (Ready-to-Check-In)
-
-> **Goal:** Interested users submit formal rental applications. Landlords review and approve.
-
-#### 👑 Rey — Application Backend
-**🤖 Gemini**
-
-| # | Task | Files |
-|---|---|---|
-| 1 | `models/RentalApplication.ts` per Section 3 | model |
-| 2 | `routes/application.routes.ts` — POST apply (user, verified, target unit must be vacant), GET /my (user's applications), GET / (landlord/staff: applications for their properties), GET /:id, PATCH /:id/review (set under_review), PATCH /:id/approve (sets status, does NOT create tenancy yet), PATCH /:id/reject (with review notes) | routes + controller + service + validator |
-| 3 | Validation: user cannot apply if unit is not vacant. User cannot have multiple pending applications for same unit. | inside service |
-| 4 | Notifications: on submit → notify landlord. On approve/reject → notify user. | inside service |
-
-**✅ Verify:** User applies → landlord sees it → approves → user notified. Rejected application → user sees rejection with notes.
-
----
-<<<<<<< marcxdev-development
-**________________________________________ D O N E ________________________________________**
-=======
->>>>>>> development
-<!-- 
+**________________________________________ D O N E ________________________________________**<!-- 
 #### 🔧 Paul — Application Review (Landlord Side)
 **🤖 Gemini**
 
@@ -1108,12 +911,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 **✅ Verify:** Applications list loads. Click one → detail with full profile + documents. Approve → status changes. Reject with notes → status changes. -->
 **________________________________________ D O N E ________________________________________**
 ---
-<<<<<<< marcxdev-development
-**________________________________________ D O N E ________________________________________**
-=======
-
->>>>>>> development
-<!-- #### 🔧 Emanuel — Application Submission (User Side) ✅ DONE
+<!-- **________________________________________ D O N E ________________________________________**<!-- #### 🔧 Emanuel — Application Submission (User Side) ✅ DONE
 **🤖 Gemini**
 
 | # | Task | Files | Status |
@@ -1123,14 +921,10 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 3 | `UnitDetailPage.tsx` refactored — "Apply Now" button (only for vacant units + verified users) now opens the shared `ApplicationFormDialog`. ~120 lines of inline form code replaced with a single `<ApplicationFormDialog />` call. | `UnitDetailPage.tsx` | ✅ |
 | 4 | **"Apply Now" in InquiryConversation** — floating green action button (Assignment icon) placed next to the message input box. Tooltip: "Apply for this unit". Auto-populates property/unit context from the inquiry data. User can apply without leaving the conversation. Disabled when inquiry is resolved. On success → navigates to `/u/applications`. | `client/src/presentation/pages/user/InquiryConversation.tsx` | ✅ |
 | 5 | `infrastructure/services/MockApplicationService.ts` — mock CRUD with duplicate-check (no double pending apps for same unit) + withdraw capability. `hooks/useApplications.ts` — `fetchApplications`, `createApplication`, `withdrawApplication`. | `MockApplicationService.ts`, `useApplications.ts` | ✅ |
-| 6 | Added route `/u/applications` in `App.tsx` and "My Applications" sidebar entry in `menuConfig.ts`. | `App.tsx`, `menuConfig.ts` | ✅ |
+| 6 | Added route `/u/applications` in `App.tsx` and "My Applications" sidebar entry in `menuConfig.ts`. | `App.tsx`, `menuConfig.ts` | ✅ | -->
 
 **✅ Verify:** User on unit page → "Apply Now" → fill form + submit → appears as Pending in My Applications → Can view details in slide-up dialog → Can withdraw pending applications. **Additionally:** User in inquiry conversation → clicks green "Apply Now" button next to message input → application form opens pre-filled with inquiry's property/unit context → submit → redirects to My Applications. -->
-<<<<<<< marcxdev-development
 **________________________________________ D O N E ________________________________________**
-=======
-
->>>>>>> development
 ---
 
 #### 🏁 Day 11 Standup Checkpoint
@@ -1141,30 +935,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 ### Day 12 — Contract System
 
 > **Goal:** Approved applications generate contract drafts. Both parties sign digitally. PDF generated and downloadable.
-<<<<<<< marcxdev-development
-**________________________________________ D O N E ________________________________________**
-=======
->>>>>>> development
-<!-- 
-#### 👑 Rey — Contract Backend + PDF Generation
-**🤖 Claude Opus** ⚡ (complex: PDF template with variable interpolation + multi-step state machine + signature handling)
-
-| # | Task | Files |
-|---|---|---|
-| 1 | `models/Contract.ts` per Section 3 | model |
-| 2 | `routes/contract.routes.ts` — POST create-from-application (auto-fill from application + unit data), GET /my (user's contracts), GET / (landlord), GET /:id, PATCH /:id (edit draft), POST /:id/sign (body: signatureData + role), PATCH /:id/status, POST /:id/generate-pdf, GET /:id/download. Status flow: draft → pending_review → pending_signature → signed → active | routes + controller + service + validator |
-| 3 | `services/contract.service.ts` — `createFromApplication(applicationId)`: auto-populate contract fields from application + unit + property. `addSignature(contractId, role,  signatureBase64)`: save signature, if both signed → status = signed. `generatePDF(contractId)`: render HTML template with all contract data + signatures → PDF via Puppeteer → upload to Cloudinary → save URL. | service |
-| 4 | `services/templates/contractTemplate.ts` — professional lease agreement HTML. Variables: property name+address, unit, landlord name, tenant name, monthly rent, deposit, advance, dates, lock-in, utility config, terms, signatures. | new |
-| 5 | Install `puppeteer` for PDF generation | server/package.json |
-
-**✅ Verify:** Create contract from approved application → fields auto-populated. Sign (both sides) → generate PDF → download → PDF looks professional with signatures. -->
-**________________________________________ D O N E ________________________________________**
----
-<<<<<<< marcxdev-development
-**________________________________________ D O N E ________________________________________**
-=======
->>>>>>> development
-<!-- 
+**________________________________________ D O N E ________________________________________**<!-- 
 #### 🔧 Paul — Contract Management (Landlord Side) + SignaturePad
 **🤖 Gemini**
 
@@ -1180,14 +951,14 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 **________________________________________ D O N E ________________________________________**
 ---
 
-#### 🔧 Emanuel — Contract View (User Side) + Lock-in Display
+<!-- #### 🔧 Emanuel — Contract View (User Side) + Lock-in Display
 **🤖 Gemini**
 
 | # | Task | Files |
 |---|---|---|
 | 1 | `user/MyContracts.tsx` — list: property, unit, dates, status. Click → detail. | new |
 | 2 | `user/ContractView.tsx` — read-only contract display. If pending_signature → show SignaturePad for user to sign. Download PDF button (once generated). Lock-in period progress bar (months elapsed / total). | new |
-| 3 | `presentation/components/LockInTracker.tsx` — visual progress bar: "Month 3 of 12", color changes (green→yellow→red as approaching end). Reusable for both landlord and user views. | new |
+| 3 | `presentation/components/LockInTracker.tsx` — visual progress bar: "Month 3 of 12", color changes (green→yellow→red as approaching end). Reusable for both landlord and user views. | new | -->
 
 **✅ Verify:** User sees contract in My Contracts → "Pending Signature" → signs with canvas → status changes to "Signed". Downloads PDF. Lock-in tracker shows correct progress.
 
@@ -1220,12 +991,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 -->
 
 ---
-<<<<<<< marcxdev-development
-**________________________________________ D O N E ________________________________________**
-=======
-
->>>>>>> development
-<!-- #### 🔧 Paul — Check-In UI (Landlord Side) ✅ DONE
+**________________________________________ D O N E ________________________________________**<!-- #### 🔧 Paul — Check-In UI (Landlord Side) ✅ DONE
 **🤖 Gemini**
 
 | # | Task | Files | Status |
@@ -1234,7 +1000,6 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 2 | Add check-in action to contract detail page — if status=signed, show "Proceed to Check-In" button | `client/src/presentation/pages/hub/contracts/ContractDetail.tsx` | ✅ |
 | 3 | `hub/tenants/TenantList.tsx` — DataTable of all active tenancies: tenant name, unit, property, check-in date, contract status, actions. Filter by property, status. This is the post-check-in tenant management view. | `client/src/presentation/pages/hub/tenants/TenantList.tsx` | ✅ |
 | 4 | `hub/tenants/TenantDetail.tsx` — tenant profile, unit info, contract summary, billing summary, inventory tab, activity/comments tab, checkout button | `client/src/presentation/pages/hub/tenants/TenantDetail.tsx` | ✅ |
-<<<<<<< marcxdev-development
 =======
 
 **✅ Verify:** Signed contract → "Proceed to Check-In" → Complete → Tenant appears in Tenants list. Tenant detail shows all info. -->
@@ -1244,7 +1009,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 **________________________________________ D O N E ________________________________________**
 ---
 
-#### 🔧 Emanuel — Tenant Dashboard Activation + Post-Check-In
+<!-- #### 🔧 Emanuel — Tenant Dashboard Activation + Post-Check-In
 **🤖 Gemini**
 
 | # | Task | Files |
@@ -1257,7 +1022,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 
 **✅ Verify:** After check-in → login as that user → Dashboard now shows tenant section with My Room, Bill, Contract cards. "My Room" → shows unit + roommates (if bedspace). Comments can be posted by caretaker and tenant.
 
----
+--- -->
 
 #### 🏁 Day 13 Standup Checkpoint
 > **Combined demo:** THE FULL PIPELINE: User inquired → visited → applied → contract signed → Landlord clicks "Complete Check-In" → User's dashboard instantly shows tenant section with My Room card → User opens My Room → sees their unit. Slot grid on bedspace unit shows their slot as occupied. Post-check-in comments posted by caretaker and tenant. THIS IS THE MOST IMPORTANT DEMO DAY.
@@ -1287,12 +1052,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 -->
 
 ---
-<<<<<<< marcxdev-development
-**________________________________________ D O N E ________________________________________**
-=======
-
->>>>>>> development
-<!-- #### 🔧 Paul — Bill Management (Landlord Side)
+**________________________________________ D O N E ________________________________________**<!-- #### 🔧 Paul — Bill Management (Landlord Side)
 **🤖 Gemini**
 
 | # | Task | Files |
@@ -1304,13 +1064,9 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 5 | `infrastructure/services/BillingService.ts`, `hooks/useBilling.ts` | new |
 
 **✅ Verify:** Bill list shows bills. "Generate Bills" → auto-create for current month. Open bill → Record Payment → status updates. Generate receipt → PDF downloads. -->
-<<<<<<< marcxdev-development
 **________________________________________ D O N E ________________________________________**
-=======
-
->>>>>>> development
 ---
-
+<!-- 
 #### 🔧 Emanuel — Bill View (User/Tenant Side)
 **🤖 Gemini**
 
@@ -1322,8 +1078,8 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 4 | `infrastructure/services/TenantBillingService.ts` (user-facing API calls) | new |
 
 **✅ Verify:** Login as checked-in tenant → Dashboard shows bill card with real amount → "My Bills" → see current + past bills → click one → see breakdown → download receipt if paid.
-
----
+<!--  -->
+--- -->
 
 #### 🏁 Day 14 Standup Checkpoint
 > **Combined demo:** Landlord auto-generates monthly bills → Bills appear in list → Tenant sees bill in their dashboard → Landlord records payment (uploads proof photo) → Bill status changes to Paid → Receipt generated → Both landlord and tenant can download the receipt PDF.
@@ -1347,29 +1103,10 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 -->
 
 ---
-<<<<<<< marcxdev-development
 **________________________________________ D O N E ________________________________________**
-=======
->>>>>>> development
-<!-- 
-#### 🔧 Paul — Utility Dashboard (Landlord Side)
-**🤖 Gemini**
-
-| # | Task | Files |
-|---|---|---|
-| 1 | `hub/utilities/UtilityDashboard.tsx` — monthly consumption line/bar chart (Recharts), highest usage room report (ranked list), overconsumption alert cards (orange/red), expense summary (donut by type), property + period selectors | new |
-| 2 | `hub/utilities/MeterReadingForm.tsx` — unit selector, reading type, previous reading (auto-filled), current reading → auto-compute consumption + cost | new |
-| 3 | `infrastructure/services/UtilityService.ts`, `hooks/useUtilities.ts` | new |
-
-**✅ Verify:** Submit readings → utility dashboard charts update. Highest usage unit displayed. Overconsumption alert fires. -->
-<<<<<<< marcxdev-development
-**________________________________________ D O N E ________________________________________**
-=======
-
->>>>>>> development
 ---
 
-#### 🔧 Emanuel — Tenant Utility View + Bill Breakdown
+<!-- #### 🔧 Emanuel — Tenant Utility View + Bill Breakdown
 **🤖 Gemini**
 
 | # | Task | Files |
@@ -1383,7 +1120,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 ---
 
 #### 🏁 Day 15 Standup Checkpoint
-> **Combined demo:** Landlord submits meter readings for 3 units → utility bills created → Combined bill (rent + utility) generated → Dashboard shows consumption charts + highest usage unit → Tenant sees detailed utility breakdown with per-head calculation.
+> **Combined demo:** Landlord submits meter readings for 3 units → utility bills created → Combined bill (rent + utility) generated → Dashboard shows consumption charts + highest usage unit → Tenant sees detailed utility breakdown with per-head calculation. -->
 
 ---
 
@@ -1403,12 +1140,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 -->
 
 ---
-<<<<<<< marcxdev-development
-**________________________________________ D O N E ________________________________________**
-=======
-
->>>>>>> development
-<!-- #### 🔧 Paul — Inventory Management (Landlord/Staff Side)
+**________________________________________ D O N E ________________________________________**<!-- #### 🔧 Paul — Inventory Management (Landlord/Staff Side)
 **🤖 Gemini**
 
 | # | Task | Files |
@@ -1422,14 +1154,10 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 7 | `infrastructure/services/InventoryService.ts`, `hooks/useInventory.ts` | new |
 
 **✅ Verify:** Add item → issue to tenant → return with damage → penalty shown. Monthly report reflects data. -->
-<<<<<<< marcxdev-development
 **________________________________________ D O N E ________________________________________**
-=======
-
->>>>>>> development
 ---
 
-#### 🔧 Emanuel — Inventory (Tenant View) + Signed Form
+<!-- #### 🔧 Emanuel — Inventory (Tenant View) + Signed Form
 **🤖 Gemini**
 
 | # | Task | Files |
@@ -1439,7 +1167,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 3 | Update Dashboard tenant section: add "My Inventory" card showing item count | modify Dashboard |
 | 4 | Seed: add inventory items to seeded properties + issue some to tenancies | modify seed |
 
-**✅ Verify:** Tenant → My Inventory → sees issued items. Landlord issues new item → tenant's list updates. Damage penalty shows on tenant detail.
+**✅ Verify:** Tenant → My Inventory → sees issued items. Landlord issues new item → tenant's list updates. Damage penalty shows on tenant detail. -->
 
 ---
 
@@ -1479,7 +1207,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 **________________________________________ D O N E ________________________________________**
 ---
 
-#### 🔧 Emanuel — Ticket Submission (Tenant Side)
+<!-- #### 🔧 Emanuel — Ticket Submission (Tenant Side)
 **🤖 Gemini**
 
 | # | Task | Files |
@@ -1491,7 +1219,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 
 **✅ Verify:** Tenant submits ticket with photo → landlord sees it → assigns staff → staff updates progress → tenant sees updates in real-time. Dashboard shows open ticket count.
 
----
+--- -->
 
 #### 🏁 Day 17 Standup Checkpoint
 > **Combined demo:** Tenant submits maintenance ticket (plumbing issue with photo) → Landlord assigns caretaker → Caretaker posts "investigating" update → Tenant sees update → Landlord reassigns to plumber staff → Plumber resolves → Tenant notified "Your issue has been resolved!".
