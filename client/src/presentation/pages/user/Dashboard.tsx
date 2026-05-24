@@ -21,10 +21,12 @@ import {
   Home as HomeIcon,
   Receipt as ReceiptIcon,
   Inventory as InventoryIcon,
+  Build as BuildIcon,
 } from '@mui/icons-material';
 import { useAuth } from '../../../application/context/AuthContext';
 import { tenantBillingService } from '../../../infrastructure/services/TenantBillingService';
 import { inventoryService } from '../../../infrastructure/services/InventoryService';
+import { ticketService } from '../../../infrastructure/services/TicketService';
 import type { Bill } from '../../../domain/entities/Bill';
 import { format } from 'date-fns';
 import StatusBadge from '../../components/StatusBadge';
@@ -52,6 +54,7 @@ export default function Dashboard() {
 
   const [currentBill, setCurrentBill] = useState<Bill | null>(null);
   const [inventoryCount, setInventoryCount] = useState<number>(0);
+  const [openTicketCount, setOpenTicketCount] = useState<number>(0);
 
   useEffect(() => {
     if (hasTenancy) {
@@ -67,6 +70,10 @@ export default function Dashboard() {
         inventoryService.getRecords({ tenancyId }).then((records) => {
           setInventoryCount(records.filter(r => r.status === 'active').length);
         }).catch(err => console.error("Failed to load inventory on dashboard", err));
+
+        ticketService.getTickets({}).then((tickets) => {
+          setOpenTicketCount(tickets.filter(t => ['open', 'assigned', 'in_progress'].includes(t.status)).length);
+        }).catch(err => console.error("Failed to load tickets on dashboard", err));
       }
     }
   }, [hasTenancy, user?.activeTenancy]);
@@ -308,6 +315,46 @@ export default function Dashboard() {
                 <CardActions sx={{ p: 2, pt: 0 }}>
                   <Button size="small" onClick={() => navigate('/u/inventory')} sx={{ fontWeight: 600 }}>
                     View Inventory
+                  </Button>
+                </CardActions>
+              </Card>
+            </Grid>
+
+            {/* Maintenance Tickets card */}
+            <Grid size={{ xs: 12, md: 6 }}>
+              <Card
+                elevation={0}
+                sx={{
+                  borderRadius: 3,
+                  border: `1px solid ${openTicketCount > 0 ? theme.palette.warning.main : theme.palette.divider}`,
+                  height: '100%',
+                }}
+              >
+                <CardContent sx={{ p: 3 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+                    <BuildIcon color={openTicketCount > 0 ? 'warning' : 'action'} />
+                    <Typography variant="subtitle1" fontWeight={700}>
+                      Maintenance
+                    </Typography>
+                  </Box>
+                  {openTicketCount > 0 ? (
+                    <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                      You have <strong>{openTicketCount}</strong> open ticket{openTicketCount === 1 ? '' : 's'}.
+                    </Typography>
+                  ) : (
+                    <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                      No open maintenance requests. Everything looks good!
+                    </Typography>
+                  )}
+                </CardContent>
+                <CardActions sx={{ p: 2, pt: 0 }}>
+                  <Button
+                    size="small"
+                    variant={openTicketCount > 0 ? 'text' : 'contained'}
+                    onClick={() => navigate(openTicketCount > 0 ? '/u/maintenance' : '/u/maintenance/new')}
+                    sx={{ fontWeight: 600 }}
+                  >
+                    {openTicketCount > 0 ? 'View Tickets' : 'Report an Issue'}
                   </Button>
                 </CardActions>
               </Card>

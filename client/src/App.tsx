@@ -93,7 +93,9 @@ import MyInquiries from './presentation/pages/user/MyInquiries';
 import InquiryConversation from './presentation/pages/user/InquiryConversation';
 import MyVisits from './presentation/pages/user/MyVisits';
 import MyApplications from './presentation/pages/user/MyApplications';
-import { UserMaintenance } from './presentation/pages/user/Placeholders';
+import MyTickets from './presentation/pages/user/MyTickets';
+import SubmitTicket from './presentation/pages/user/SubmitTicket';
+import UserTicketDetail from './presentation/pages/user/TicketDetail';
 import MyBills from './presentation/pages/user/MyBills';
 import BillDetail from './presentation/pages/user/BillDetail';
 
@@ -208,7 +210,11 @@ function App() {
               <Route path=":contractId" element={<ContractView />} />
             </Route>
             <Route path="inventory" element={<MyInventory />} />
-            <Route path="maintenance" element={<UserMaintenance />} />
+            <Route path="maintenance">
+              <Route index element={<MyTickets />} />
+              <Route path="new" element={<SubmitTicket />} />
+              <Route path=":ticketId" element={<UserTicketDetail />} />
+            </Route>
             <Route path="profile" element={<Profile />} />
           </Route>
 
