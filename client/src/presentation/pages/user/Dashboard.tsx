@@ -20,9 +20,11 @@ import {
   Assignment as AssignmentIcon,
   Home as HomeIcon,
   Receipt as ReceiptIcon,
+  Inventory as InventoryIcon,
 } from '@mui/icons-material';
 import { useAuth } from '../../../application/context/AuthContext';
 import { tenantBillingService } from '../../../infrastructure/services/TenantBillingService';
+import { inventoryService } from '../../../infrastructure/services/InventoryService';
 import type { Bill } from '../../../domain/entities/Bill';
 import { format } from 'date-fns';
 import StatusBadge from '../../components/StatusBadge';
@@ -49,6 +51,7 @@ export default function Dashboard() {
   ];
 
   const [currentBill, setCurrentBill] = useState<Bill | null>(null);
+  const [inventoryCount, setInventoryCount] = useState<number>(0);
 
   useEffect(() => {
     if (hasTenancy) {
@@ -58,8 +61,15 @@ export default function Dashboard() {
           setCurrentBill(outstandingBills[0]);
         }
       }).catch(err => console.error("Failed to load bills on dashboard", err));
+
+      const tenancyId = typeof user?.activeTenancy === 'string' ? user?.activeTenancy : (user?.activeTenancy as any)?._id;
+      if (tenancyId) {
+        inventoryService.getRecords({ tenancyId }).then((records) => {
+          setInventoryCount(records.filter(r => r.status === 'active').length);
+        }).catch(err => console.error("Failed to load inventory on dashboard", err));
+      }
     }
-  }, [hasTenancy]);
+  }, [hasTenancy, user?.activeTenancy]);
 
   return (
     <Box sx={{ maxWidth: 1200, mx: 'auto', p: { xs: 2, md: 3 } }}>
@@ -270,6 +280,35 @@ export default function Dashboard() {
                       Billing History
                     </Button>
                   )}
+                </CardActions>
+              </Card>
+            </Grid>
+
+            {/* My Inventory summary card */}
+            <Grid size={{ xs: 12, md: 6 }}>
+              <Card
+                elevation={0}
+                sx={{
+                  borderRadius: 3,
+                  border: `1px solid ${theme.palette.divider}`,
+                  height: '100%',
+                }}
+              >
+                <CardContent sx={{ p: 3 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+                    <InventoryIcon color="info" />
+                    <Typography variant="subtitle1" fontWeight={700}>
+                      My Inventory
+                    </Typography>
+                  </Box>
+                  <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                    You currently have <strong>{inventoryCount}</strong> active item{inventoryCount === 1 ? '' : 's'} issued to your unit.
+                  </Typography>
+                </CardContent>
+                <CardActions sx={{ p: 2, pt: 0 }}>
+                  <Button size="small" onClick={() => navigate('/u/inventory')} sx={{ fontWeight: 600 }}>
+                    View Inventory
+                  </Button>
                 </CardActions>
               </Card>
             </Grid>

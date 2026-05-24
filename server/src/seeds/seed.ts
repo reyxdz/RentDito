@@ -7,6 +7,8 @@ import { Unit } from '../models/Unit';
 import { Contract } from '../models/Contract';
 import { Tenancy } from '../models/Tenancy';
 import { Bill } from '../models/Bill';
+import { Inventory } from '../models/Inventory';
+import { InventoryRecord } from '../models/InventoryRecord';
 import { hash } from '../utils/password';
 import { MOCK_PROPERTIES, MOCK_UNITS } from './seedData';
 
@@ -241,6 +243,93 @@ const seedContractsAndTenancies = async (users: any[], properties: any[]) => {
   }
 };
 
+const seedInventory = async (users: any[], properties: any[]) => {
+  console.log('Seeding inventory...');
+  
+  const staff1 = users.find((u: any) => u.email === 'manager@rentdito.com');
+  const property = properties[0]; // First property
+  const tenancy1 = await Tenancy.findOne({ propertyId: property._id });
+
+  // Clear existing to avoid unique constraint issues
+  await Inventory.deleteMany();
+  await InventoryRecord.deleteMany();
+
+  // Create Inventory Items
+  const itemsData = [
+    {
+      propertyId: property._id,
+      itemName: 'Samsung Split-type AC 1HP',
+      serialNumber: 'SMC-9921-AC',
+      condition: 'good',
+      quantity: 5,
+      availableQuantity: 4,
+      status: 'available',
+      purchaseDate: new Date('2023-01-15'),
+      purchaseCost: 25000,
+    },
+    {
+      propertyId: property._id,
+      itemName: 'Office Desk Chair (Ergo)',
+      condition: 'new',
+      quantity: 10,
+      availableQuantity: 8,
+      status: 'available',
+      purchaseDate: new Date('2025-11-10'),
+      purchaseCost: 3500,
+    },
+    {
+      propertyId: property._id,
+      itemName: 'Microwave Oven (LG)',
+      serialNumber: 'LG-MW-005',
+      condition: 'damaged',
+      quantity: 2,
+      availableQuantity: 2,
+      status: 'maintenance',
+      purchaseDate: new Date('2022-05-20'),
+      purchaseCost: 4500,
+    }
+  ];
+
+  const createdItems = await Inventory.insertMany(itemsData);
+
+  if (tenancy1 && staff1) {
+    // Issue some items to the tenancy
+    const acItem = createdItems.find(i => i.itemName.includes('Samsung'));
+    const chairItem = createdItems.find(i => i.itemName.includes('Chair'));
+
+    if (acItem && chairItem) {
+      await InventoryRecord.insertMany([
+        {
+          inventoryItemId: acItem._id,
+          tenancyId: tenancy1._id,
+          propertyId: property._id,
+          unitId: tenancy1.unitId,
+          issuedByUserId: staff1._id,
+          issuedDate: new Date(),
+          quantityIssued: 1,
+          issuedCondition: 'good',
+          status: 'active'
+        },
+        {
+          inventoryItemId: chairItem._id,
+          tenancyId: tenancy1._id,
+          propertyId: property._id,
+          unitId: tenancy1.unitId,
+          issuedByUserId: staff1._id,
+          issuedDate: new Date(),
+          quantityIssued: 2,
+          issuedCondition: 'new',
+          status: 'active'
+        }
+      ]);
+
+      // Update available quantities
+      await Inventory.findByIdAndUpdate(acItem._id, { $inc: { availableQuantity: -1 }, status: 'issued' });
+      await Inventory.findByIdAndUpdate(chairItem._id, { $inc: { availableQuantity: -2 }, status: 'issued' });
+    }
+  }
+};
+
 const seedPayments = async (leases: any[]) => {
   console.log('Seeding payments...');
   // Placeholder logic
@@ -267,6 +356,7 @@ const runSeeder = async () => {
     const properties = await seedProperties(users);
     await seedUnits(properties);
     await seedContractsAndTenancies(users, properties);
+    await seedInventory(users, properties);
     // const leases = await seedLeases(users, properties);
     // await seedPayments(leases);
     await seedMaintenanceRequests(properties, users);

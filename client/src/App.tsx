@@ -100,6 +100,7 @@ import BillDetail from './presentation/pages/user/BillDetail';
 import MyContracts from './presentation/pages/user/MyContracts';
 import ContractView from './presentation/pages/user/ContractView';
 import MyRoom from './presentation/pages/user/MyRoom';
+import MyInventory from './presentation/pages/user/MyInventory';
 
 function App() {
   return (
@@ -206,6 +207,7 @@ function App() {
               <Route index element={<MyContracts />} />
               <Route path=":contractId" element={<ContractView />} />
             </Route>
+            <Route path="inventory" element={<MyInventory />} />
             <Route path="maintenance" element={<UserMaintenance />} />
             <Route path="profile" element={<Profile />} />
           </Route>
