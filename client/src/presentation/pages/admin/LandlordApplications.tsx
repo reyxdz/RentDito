@@ -59,7 +59,7 @@ export default function LandlordApplications() {
       align: 'right' as const,
       format: (_: any, row: ApplicationRow) => (
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
-          <Button size="small" variant="outlined" onClick={() => console.log('View Docs', row.id)}>
+          <Button size="small" variant="outlined" onClick={() => { /* TODO: Navigate to document viewer */ }}>
             View Docs
           </Button>
           {row.status === 'pending' && (

@@ -1,14 +1,12 @@
 import { Box, Typography, Button, Chip } from '@mui/material';
 import { Add as AddIcon } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../../../application/context/AuthContext';
 import DataTable from '../../../components/DataTable';
 import type { Column } from '../../../components/DataTable';
 import type { Property } from '../../../../domain/entities/Property';
 import { useProperties } from '../../../../application/hooks/useProperties';
 
 export default function PropertyList() {
-  useAuth();
   const navigate = useNavigate();
   const { properties, loading } = useProperties();
 
@@ -56,7 +54,7 @@ export default function PropertyList() {
 
   return (
     <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4, flexWrap: 'wrap', gap: 2 }}>
         <Box>
           <Typography variant="h4" fontWeight={800}>
             Properties

@@ -8,22 +8,8 @@ import DataTable from '../../../components/DataTable';
 import type { Column } from '../../../components/DataTable';
 import StatusBadge from '../../../components/StatusBadge';
 import type { Ticket, TicketPriority } from '../../../../domain/entities/Ticket';
+import { formatRelativeDate } from '../../../../infrastructure/utils/formatRelativeDate';
 
-/** Helper to format relative dates */
-function formatRelativeDate(date: string | Date): string {
-  const now = new Date();
-  const d = new Date(date);
-  const diffMs = now.getTime() - d.getTime();
-  const diffMinutes = Math.floor(diffMs / 60000);
-  const diffHours = Math.floor(diffMs / 3600000);
-  const diffDays = Math.floor(diffMs / 86400000);
-
-  if (diffMinutes < 1) return 'Just now';
-  if (diffMinutes < 60) return `${diffMinutes}m ago`;
-  if (diffHours < 24) return `${diffHours}h ago`;
-  if (diffDays < 7) return `${diffDays}d ago`;
-  return d.toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric' });
-}
 
 /** Map ticket status to a display-friendly label */
 function getStatusLabel(status: string): string {
@@ -60,6 +46,13 @@ export default function TicketList() {
   useEffect(() => {
     fetchTickets();
   }, [fetchTickets]);
+
+  // Pre-compute a Map for O(1) property lookups instead of O(n) Array.find per row
+  const propertyMap = useMemo(() => {
+    const map = new Map<string, string>();
+    properties.forEach(p => map.set(p.id, p.name));
+    return map;
+  }, [properties]);
 
   const displayData = useMemo(() => {
     let data = tickets;
@@ -99,11 +92,10 @@ export default function TicketList() {
       id: 'propertyId',
       label: 'Location',
       format: (_: any, row: Ticket) => {
-         const prop = properties.find(p => p.id === row.propertyId);
          return (
             <Box>
                <Typography variant="body2" fontWeight={500}>
-                  {prop?.name || 'Unknown Property'}
+                  {propertyMap.get(row.propertyId) || 'Unknown Property'}
                </Typography>
                <Typography variant="caption" color="text.secondary">
                   Unit: {row.unitId}

@@ -7,24 +7,10 @@ import { useProperties } from '../../../../application/hooks/useProperties';
 import DataTable from '../../../components/DataTable';
 import type { Column } from '../../../components/DataTable';
 import StatusBadge from '../../../components/StatusBadge';
+import { formatRelativeDate } from '../../../../infrastructure/utils/formatRelativeDate';
 
 type MockInquiry = any;
 
-/** Helper to format relative dates */
-function formatRelativeDate(date: string | Date): string {
-  const now = new Date();
-  const d = new Date(date);
-  const diffMs = now.getTime() - d.getTime();
-  const diffMinutes = Math.floor(diffMs / 60000);
-  const diffHours = Math.floor(diffMs / 3600000);
-  const diffDays = Math.floor(diffMs / 86400000);
-
-  if (diffMinutes < 1) return 'Just now';
-  if (diffMinutes < 60) return `${diffMinutes}m ago`;
-  if (diffHours < 24) return `${diffHours}h ago`;
-  if (diffDays < 7) return `${diffDays}d ago`;
-  return d.toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric' });
-}
 
 /** Map inquiry status to a display-friendly label */
 function getStatusLabel(status: string): string {

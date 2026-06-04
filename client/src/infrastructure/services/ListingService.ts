@@ -1,5 +1,6 @@
 import { apiClient } from '../api/apiClient';
 import { ENDPOINTS } from '../api/endpoints';
+import { mapMongoId } from '../utils/mapMongoId';
 import type { Property } from '../../domain/entities/Property';
 import type { Unit } from '../../domain/entities/Unit';
 
@@ -30,8 +31,7 @@ const mapBackendPropertyToClient = (p: any): Property => {
     }));
 
   return {
-    ...p,
-    id: p._id || p.id,
+    ...mapMongoId(p),
     address: {
       ...p.address,
       province: p.address?.province || p.address?.state || '',
@@ -76,7 +76,7 @@ export class ListingService {
       const mappedProp = mapBackendPropertyToClient(propData);
       
       if (propData.units) {
-        (mappedProp as any).units = propData.units.map((u: any) => ({ ...u, id: u._id || u.id }));
+        (mappedProp as any).units = propData.units.map((u: any) => mapMongoId<Unit>(u));
       }
       
       return mappedProp as PublicPropertyResponse;

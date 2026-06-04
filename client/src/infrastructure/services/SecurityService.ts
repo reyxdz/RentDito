@@ -5,14 +5,9 @@ import type { SecurityRepository, IncidentQueryFilters } from '../../domain/repo
 
 export class SecurityService implements SecurityRepository {
   async getIncidentReports(filters?: IncidentQueryFilters): Promise<IncidentReport[]> {
-    const params = new URLSearchParams();
-    if (filters) {
-      Object.entries(filters).forEach(([key, value]) => {
-        if (value) params.append(key, value);
-      });
-    }
     const response = await apiClient.get<{ status: string; data: IncidentReport[] }>(
-      `${ENDPOINTS.SECURITY.INCIDENTS}?${params.toString()}`
+      ENDPOINTS.SECURITY.INCIDENTS,
+      { params: filters }
     );
     return response.data.data;
   }

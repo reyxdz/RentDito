@@ -16,7 +16,7 @@ export default function UserVerifications() {
     // Visually remove the user from the pending queue
     setPendingUsers(prev => prev.filter(u => u.id !== userId));
     // Simulation: API call to update verification status would happen here
-    console.log(`User ${userId} verification was ${action}d.`);
+    // TODO: Call verification API — e.g. verificationService.updateStatus(userId, action)
   };
 
   return (

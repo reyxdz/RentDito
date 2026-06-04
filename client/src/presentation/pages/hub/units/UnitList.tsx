@@ -27,10 +27,17 @@ export default function UnitList() {
     }
   }, [selectedPropertyId, fetchUnits]);
 
+  // Pre-compute a Map for O(1) property lookups instead of O(n) Array.find per row
+  const propertyMap = useMemo(() => {
+    const map = new Map<string, string>();
+    properties.forEach(p => map.set(p.id, p.name));
+    return map;
+  }, [properties]);
+
   const getPropertyName = (propId: string | any) => {
     // propId may be a populated object (from server .populate()) or a string
     if (typeof propId === 'object' && propId?.name) return propId.name;
-    return properties.find(p => p.id === propId)?.name || 'Unknown Property';
+    return propertyMap.get(propId) || 'Unknown Property';
   };
 
   const columns: Column<Unit>[] = [
@@ -104,7 +111,7 @@ export default function UnitList() {
 
   return (
     <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4, flexWrap: 'wrap', gap: 2 }}>
         <Box>
           <Typography variant="h4" fontWeight={800}>
             Units

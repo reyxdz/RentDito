@@ -349,7 +349,17 @@ export default function PropertyForm() {
         {isEditMode ? 'Update the details of your property.' : 'Fill out the details below to list your property.'}
       </Typography>
 
-      <Stepper activeStep={activeStep} alternativeLabel sx={{ mb: 4 }}>
+      <Stepper
+        activeStep={activeStep}
+        alternativeLabel
+        sx={{
+          mb: 4,
+          // On mobile, switch to vertical-like compact layout
+          '& .MuiStepLabel-label': {
+            display: { xs: 'none', sm: 'block' },
+          },
+        }}
+      >
         {steps.map((label) => (
           <Step key={label}>
             <StepLabel>{label}</StepLabel>

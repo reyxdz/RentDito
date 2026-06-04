@@ -24,6 +24,28 @@ export const upload = multer({
   },
 });
 
+// ─── Document Upload Config (images + PDFs) ─────────────────
+
+const documentFileFilter = (req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
+  const allowedMimes = [
+    'image/jpeg', 'image/png', 'image/webp', 'image/gif',
+    'application/pdf',
+  ];
+  if (allowedMimes.includes(file.mimetype)) {
+    cb(null, true);
+  } else {
+    cb(new Error('Only JPEG, PNG, WebP, GIF, and PDF files are allowed.'));
+  }
+};
+
+const documentUpload = multer({
+  storage,
+  fileFilter: documentFileFilter,
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10 MB
+  },
+});
+
 // ─── Cloudinary Upload Helper ───────────────────────────────
 
 /**
@@ -31,14 +53,15 @@ export const upload = multer({
  */
 export const uploadToCloudinary = (
   buffer: Buffer,
-  folder: string
+  folder: string,
+  resourceType: 'image' | 'raw' | 'auto' = 'image'
 ): Promise<string> => {
   return new Promise((resolve, reject) => {
     const uploadStream = cloudinary.uploader.upload_stream(
       {
         folder: `rentdito/${folder}`,
-        resource_type: 'image',
-        transformation: [{ quality: 'auto', fetch_format: 'auto' }],
+        resource_type: resourceType,
+        transformation: resourceType === 'image' ? [{ quality: 'auto', fetch_format: 'auto' }] : undefined,
       },
       (error, result) => {
         if (error) return reject(error);
@@ -108,3 +131,32 @@ export const uploadMultiple = (fieldName: string, folder: string, maxCount = 10)
     },
   ];
 };
+
+/**
+ * Middleware that uploads a single document file (image or PDF) to Cloudinary
+ * and attaches the URL to req.body.fileUrl.
+ */
+export const uploadDocumentSingle = (fieldName: string, folder: string) => {
+  return [
+    documentUpload.single(fieldName),
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      try {
+        if (!req.file) {
+          next();
+          return;
+        }
+        const isPdf = req.file.mimetype === 'application/pdf';
+        const resourceType = isPdf ? 'raw' as const : 'image' as const;
+        const url = await uploadToCloudinary(req.file.buffer, folder, resourceType);
+        req.body.fileUrl = url;
+        next();
+      } catch (error: any) {
+        res.status(400).json({
+          status: 'error',
+          message: error.message || 'Document upload failed.',
+        });
+      }
+    },
+  ];
+};
+

@@ -31,10 +31,16 @@ export default function ProtectedRoute({ children, allowedRoles, requiredPermiss
 
   // Permission logic for hub routes
   if (requiredPermission && user) {
-    if (user.role === 'staff') {
+    // super_admin bypasses all permission checks
+    if (user.role === 'super_admin') {
+      // Allow access
+    } else if (user.role === 'staff' || user.role === 'landlord') {
       if (!user.permissions || !user.permissions.includes(requiredPermission)) {
         return <Navigate to="/unauthorized" replace />;
       }
+    } else {
+      // Regular users should not be in permission-gated routes
+      return <Navigate to="/unauthorized" replace />;
     }
   }
 

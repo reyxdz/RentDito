@@ -1,13 +1,8 @@
 import { apiClient } from '../api/apiClient';
 import { ENDPOINTS } from '../api/endpoints';
+import { mapMongoId } from '../utils/mapMongoId';
 import type { Property } from '../../domain/entities/Property';
 import type { PropertyRepository } from '../../domain/repositories/PropertyRepository';
-
-/** Map MongoDB _id to client-side id */
-const mapProperty = (p: any): Property => ({
-  ...p,
-  id: p._id || p.id,
-});
 
 export class PropertyService implements PropertyRepository {
   async getPropertiesByLandlord(landlordId: string): Promise<Property[]> {
@@ -15,27 +10,27 @@ export class PropertyService implements PropertyRepository {
       params: { landlordId }
     });
     const raw = data.data || data;
-    return raw.map(mapProperty);
+    return raw.map((p: any) => mapMongoId<Property>(p));
   }
 
   async getPropertyById(propertyId: string): Promise<Property | null> {
     try {
       const { data } = await apiClient.get(ENDPOINTS.PROPERTIES.DETAILS(propertyId));
-      return mapProperty(data.data || data);
+      return mapMongoId<Property>(data.data || data);
     } catch (error: any) {
-      if (error.statusCode === 404) return null;
+      if (error.response?.status === 404) return null;
       throw error;
     }
   }
 
   async createProperty(propertyParams: Omit<Property, 'id' | 'createdAt' | 'updatedAt' | 'metrics'>): Promise<Property> {
     const { data } = await apiClient.post(ENDPOINTS.PROPERTIES.ROOT, propertyParams);
-    return mapProperty(data.data || data);
+    return mapMongoId<Property>(data.data || data);
   }
 
   async updateProperty(propertyId: string, updates: Partial<Property>): Promise<Property> {
     const { data } = await apiClient.patch(ENDPOINTS.PROPERTIES.DETAILS(propertyId), updates);
-    return mapProperty(data.data || data);
+    return mapMongoId<Property>(data.data || data);
   }
 
   async deleteProperty(propertyId: string): Promise<void> {

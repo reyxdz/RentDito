@@ -14,7 +14,7 @@ export class ContractService implements ContractRepository {
       const { data } = await apiClient.get(ENDPOINTS.CONTRACTS.DETAILS(contractId));
       return data.data || data;
     } catch (error: any) {
-      if (error.statusCode === 404) return null;
+      if (error.response?.status === 404) return null;
       throw error;
     }
   }

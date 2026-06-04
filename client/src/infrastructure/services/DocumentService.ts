@@ -5,45 +5,40 @@ import type { DocumentRepository, DocumentQueryFilters } from '../../domain/repo
 
 export class DocumentService implements DocumentRepository {
   async getDocuments(filters?: DocumentQueryFilters): Promise<DocumentEntity[]> {
-    const params = new URLSearchParams();
-    if (filters) {
-      Object.entries(filters).forEach(([key, value]) => {
-        if (value) params.append(key, value);
-      });
-    }
-    const response = await apiClient.get<{ status: string; data: DocumentEntity[] }>(
-      `${ENDPOINTS.DOCUMENTS.ROOT}?${params.toString()}`
+    const { data } = await apiClient.get<{ status: string; data: DocumentEntity[] }>(
+      ENDPOINTS.DOCUMENTS.ROOT,
+      { params: filters }
     );
-    return response.data.data;
+    return data.data;
   }
 
   async getDocumentById(id: string): Promise<DocumentEntity | null> {
-    const response = await apiClient.get<{ status: string; data: DocumentEntity }>(
-      ENDPOINTS.DOCUMENTS.DETAILS(id)
-    );
-    return response.data.data;
+    try {
+      const response = await apiClient.get<{ status: string; data: DocumentEntity }>(
+        ENDPOINTS.DOCUMENTS.DETAILS(id)
+      );
+      return response.data.data;
+    } catch (error: any) {
+      if (error.response?.status === 404) return null;
+      throw error;
+    }
   }
 
   async createDocument(data: Partial<DocumentEntity>, file: File): Promise<DocumentEntity> {
-    // We would normally use FormData for file upload. For now, since the backend model 
-    // expects a fileUrl, we'll simulate an upload or just send it as json.
-    // In a real scenario, this would post to a Cloudinary route, get the URL, then save the document.
-    // Since we don't have the Cloudinary route setup here, we'll just mock the fileUrl temporarily.
-    
-    const payload = {
-      ...data,
-      fileUrl: URL.createObjectURL(file) // Mock URL for frontend display until backend saves it
-    };
-    
-    // In reality:
-    // const formData = new FormData();
-    // formData.append('file', file);
-    // Object.entries(data).forEach(([key, value]) => formData.append(key, value as string));
-    // const response = await apiClient.post(ENDPOINTS.DOCUMENTS.ROOT, formData, { headers: { 'Content-Type': 'multipart/form-data' }});
-    
+    const formData = new FormData();
+    formData.append('file', file);
+
+    // Append all document metadata fields
+    if (data.propertyId) formData.append('propertyId', data.propertyId);
+    if (data.unitId) formData.append('unitId', data.unitId);
+    if (data.tenancyId) formData.append('tenancyId', data.tenancyId);
+    if (data.type) formData.append('type', data.type);
+    if (data.title) formData.append('title', data.title);
+
     const response = await apiClient.post<{ status: string; data: DocumentEntity }>(
       ENDPOINTS.DOCUMENTS.ROOT,
-      payload
+      formData,
+      { headers: { 'Content-Type': 'multipart/form-data' } }
     );
     return response.data.data;
   }

@@ -1,6 +1,10 @@
 import { useState, useCallback } from 'react';
 import type { TransferRequest } from '../../domain/entities/TransferRequest';
 
+// ⚠️ TODO: This hook uses in-memory mock data. All data is lost on page refresh.
+// Replace with a real TransferService + API integration when the backend transfer
+// endpoints are implemented. See audit item #4 (TicketService pattern).
+
 const MOCK_TRANSFERS: TransferRequest[] = [
   {
     id: 'trf_1',
