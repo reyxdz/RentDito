@@ -109,6 +109,11 @@ export const getProperties = async (
  * Get single property by ID with auto-scoping
  */
 export const getPropertyById = async (userId: string, propertyId: string) => {
+  // Validate ObjectId format
+  if (!mongoose.Types.ObjectId.isValid(propertyId)) {
+    throw Object.assign(new Error('Invalid property ID'), { statusCode: 400 });
+  }
+
   // Apply role-based scoping
   const scopedFilter = await getScopedFilter(userId, { _id: propertyId });
 
@@ -173,6 +178,11 @@ export const updateProperty = async (
   propertyId: string,
   data: Partial<IProperty>
 ) => {
+  // Validate ObjectId format
+  if (!mongoose.Types.ObjectId.isValid(propertyId)) {
+    throw Object.assign(new Error('Invalid property ID'), { statusCode: 400 });
+  }
+
   // Apply role-based scoping
   const scopedFilter = await getScopedFilter(userId, { _id: propertyId });
 

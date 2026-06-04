@@ -2,7 +2,11 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   Box, Typography, Button, Paper, CircularProgress,
+<<<<<<< marcxdev-development
   Grid, Card, CardContent, Dialog, DialogTitle, DialogContent
+=======
+  Grid, Card, CardContent, Dialog, DialogTitle, DialogContent, DialogActions, Alert
+>>>>>>> development
 } from '@mui/material';
 import {
   ArrowBack, Person as PersonIcon, Home as HomeIcon,
@@ -11,7 +15,10 @@ import {
 } from '@mui/icons-material';
 import { useTenantDetail } from '../../../../application/hooks/useTenants';
 import StatusBadge from '../../../components/StatusBadge';
+<<<<<<< marcxdev-development
 import CheckoutFlow from '../pipeline/CheckoutFlow';
+=======
+>>>>>>> development
 
 export default function TenantDetail() {
   const { tenancyId } = useParams<{ tenancyId: string }>();
@@ -19,7 +26,11 @@ export default function TenantDetail() {
   const { tenancy, loading, error, fetchTenancy, checkout } = useTenantDetail(tenancyId);
 
   const [checkoutOpen, setCheckoutOpen] = useState(false);
+<<<<<<< marcxdev-development
   const [_actionLoading, setActionLoading] = useState(false);
+=======
+  const [actionLoading, setActionLoading] = useState(false);
+>>>>>>> development
 
   useEffect(() => {
     fetchTenancy();
@@ -199,6 +210,7 @@ export default function TenantDetail() {
           <CheckoutIcon color="error" />
           Initiate Checkout
         </DialogTitle>
+<<<<<<< marcxdev-development
         <DialogContent dividers sx={{ p: 0 }}>
           <Box sx={{ p: 3 }}>
             <CheckoutFlow 
@@ -208,6 +220,28 @@ export default function TenantDetail() {
             />
           </Box>
         </DialogContent>
+=======
+        <DialogContent dividers>
+          <Alert severity="warning" sx={{ mb: 2 }}>
+            You are about to check out this tenant. This action will release the unit slot and expire the active contract.
+          </Alert>
+          <Typography variant="body2">
+            Please ensure all bills are settled and inventory items are returned before finalizing.
+          </Typography>
+        </DialogContent>
+        <DialogActions sx={{ p: 3 }}>
+          <Button onClick={() => setCheckoutOpen(false)} disabled={actionLoading} sx={{ textTransform: 'none' }}>Cancel</Button>
+          <Button
+            variant="contained"
+            color="error"
+            onClick={handleCheckout}
+            disabled={actionLoading}
+            sx={{ fontWeight: 700, borderRadius: 2, textTransform: 'none' }}
+          >
+            {actionLoading ? <CircularProgress size={20} color="inherit" /> : 'Confirm Checkout'}
+          </Button>
+        </DialogActions>
+>>>>>>> development
       </Dialog>
     </Box>
   );

@@ -95,7 +95,18 @@ export const uploadUnitImages = async (req: AuthRequest, res: Response): Promise
   try {
     const userId = req.user!.id;
 
-    const unit = await unitService.uploadUnitImages(userId, req.params.id as string, req.body.images);
+    // imageUrls is set by the uploadMultiple middleware after Cloudinary/local upload
+    const imageUrls: string[] = req.body.imageUrls;
+
+    if (!imageUrls || imageUrls.length === 0) {
+      res.status(400).json({
+        status: 'error',
+        message: 'No images provided. Upload image files using multipart/form-data.',
+      });
+      return;
+    }
+
+    const unit = await unitService.uploadUnitImages(userId, req.params.id as string, imageUrls);
     res.status(200).json({ status: 'success', message: 'Images uploaded successfully', data: unit });
   } catch (error: any) {
     res.status(error.statusCode || 500).json({ status: 'error', message: error.message });

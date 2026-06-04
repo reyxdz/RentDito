@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import { Box, IconButton, Dialog, Typography } from '@mui/material';
 import { ChevronLeft, ChevronRight, Fullscreen, Close } from '@mui/icons-material';
+import { getImageUrl } from '../../infrastructure/api/apiClient';
 
 interface ImageCarouselProps {
   images: string[];
@@ -135,7 +136,7 @@ export default function ImageCarousel({
 
           <Box
             component="img"
-            src={images[currentIndex]}
+            src={getImageUrl(images[currentIndex])}
             alt={`Slide ${currentIndex + 1}`}
             sx={{
               maxWidth: '100%',
@@ -283,7 +284,7 @@ if (arrowPosition === 'outside') {
               <Box
                 key={i}
                 component="img"
-                src={src}
+                src={getImageUrl(src)}
                 alt={`Slide ${i + 1}`}
                 loading="lazy"
                 sx={{
@@ -398,7 +399,7 @@ if (arrowPosition === 'outside') {
           <Box
             key={i}
             component="img"
-            src={src}
+            src={getImageUrl(src)}
             alt={`Slide ${i + 1}`}
             loading="lazy"
             sx={{
