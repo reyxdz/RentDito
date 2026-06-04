@@ -81,7 +81,7 @@ export class ListingService {
       
       return mappedProp as PublicPropertyResponse;
     } catch (error: any) {
-      if (error.statusCode === 404 || error.response?.status === 404) return null;
+      if (error.response?.status === 404) return null;
       throw error;
     }
   }
@@ -94,10 +94,9 @@ export class ListingService {
       const { data } = await apiClient.get(ENDPOINTS.PUBLIC.UNIT_DETAILS(unitId));
       const unitData = data.data;
       if (!unitData) return null;
-      if (unitData._id && !unitData.id) unitData.id = unitData._id;
-      return unitData;
+      return mapMongoId<Unit>(unitData);
     } catch (error: any) {
-      if (error.statusCode === 404 || error.response?.status === 404) return null;
+      if (error.response?.status === 404) return null;
       throw error;
     }
   }
