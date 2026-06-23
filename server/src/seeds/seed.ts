@@ -9,6 +9,7 @@ import { Tenancy } from '../models/Tenancy';
 import { Bill } from '../models/Bill';
 import { Inventory } from '../models/Inventory';
 import { InventoryRecord } from '../models/InventoryRecord';
+import { Notification } from '../models/Notification';
 import { hash } from '../utils/password';
 import { MOCK_PROPERTIES, MOCK_UNITS } from './seedData';
 
@@ -258,10 +259,32 @@ const seedContractsAndTenancies = async (users: any[], properties: any[]) => {
     monthlyRent: 8000,
     securityDeposit: 8000,
     advancePayment: 8000,
-    status: 'completed',
+    status: 'expired',
     landlordSignature: 'mock-signature-base64',
     userSignature: 'mock-signature-base64',
     signedAt: pastStartDate
+  });
+
+  const user3 = users.find((u: any) => u.email === 'user3@rentdito.com');
+  const expiringStartDate = new Date(new Date().setMonth(new Date().getMonth() - 10));
+  const expiringEndDate = new Date(new Date().setMonth(new Date().getMonth() + 2));
+  await Contract.create({
+    applicationId: new mongoose.Types.ObjectId(),
+    landlordId: landlord1._id,
+    userId: user3._id,
+    propertyId: property._id,
+    unitId: unit1?._id,
+    rateType: 'fixed',
+    startDate: expiringStartDate,
+    endDate: expiringEndDate,
+    lockInPeriod: 6,
+    monthlyRent: 9000,
+    securityDeposit: 9000,
+    advancePayment: 9000,
+    status: 'active',
+    landlordSignature: 'mock-signature-base64',
+    userSignature: 'mock-signature-base64',
+    signedAt: expiringStartDate
   });
 
   await Tenancy.create({
@@ -278,6 +301,11 @@ const seedContractsAndTenancies = async (users: any[], properties: any[]) => {
       phone: user2.phone,
       occupation: 'Designer',
       address: '456 Old St.',
+      emergencyContact: {
+        name: 'Emergency Contact 2',
+        phone: '09111111111',
+        relationship: 'Parent'
+      }
     },
     comments: [
       {
@@ -389,7 +417,24 @@ const seedMaintenanceRequests = async (properties: any[], users: any[]) => {
 
 const seedNotifications = async (users: any[]) => {
   console.log('Seeding notifications...');
-  // Placeholder logic
+  const landlord1 = users.find((u: any) => u.email === 'landlord1@rentdito.com');
+  
+  await Notification.create([
+    {
+      userId: landlord1._id,
+      type: 'inquiry',
+      title: 'New Inquiry Received',
+      message: 'You have a new inquiry for unit 101.',
+      isRead: false,
+    },
+    {
+      userId: landlord1._id,
+      type: 'contract',
+      title: 'Contract Expiring Soon',
+      message: 'A contract for user3 is expiring in 2 months.',
+      isRead: false,
+    }
+  ]);
 };
 
 const runSeeder = async () => {

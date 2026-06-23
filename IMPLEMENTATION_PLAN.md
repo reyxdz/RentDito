@@ -1259,7 +1259,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 **________________________________________ D O N E ________________________________________**
 ---
 
-#### 🔧 Emanuel — Transfer/Checkout (Tenant Side) + Pre-Checkout Reminders
+<!-- #### 🔧 Emanuel — Transfer/Checkout (Tenant Side) + Pre-Checkout Reminders
 **🤖 Gemini**
 
 | # | Task | Files |
@@ -1270,7 +1270,7 @@ Each day has a **connected theme**. All 3 developers work on the same module fro
 | 4 | Pre-checkout reminder service (backend): `scheduleCheckoutReminders(tenancyId)` — creates notifications at 7/3/1 day before contract end for landlord, staff, and tenant. (Function only; cron wiring in Phase 5.) | `server/src/services/reminder.service.ts` |
 | 5 | Seed: add some completed tenancies (checked_out) to seed for historical data | modify seed |
 
-**✅ Verify:** Tenant requests transfer → landlord sees it → approves → tenant now in new unit. Dashboard shows contract countdown. Checked-out seeded data appears in historical views.
+**✅ Verify:** Tenant requests transfer → landlord sees it → approves → tenant now in new unit. Dashboard shows contract countdown. Checked-out seeded data appears in historical views. -->
 
 ---
 

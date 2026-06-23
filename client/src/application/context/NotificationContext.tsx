@@ -1,4 +1,6 @@
-import React, { createContext, useContext, useState, type ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
+import { NotificationService } from '../../infrastructure/services/NotificationService';
+import { useAuth } from './AuthContext';
 
 export interface Notification {
   id: string;
@@ -7,54 +9,71 @@ export interface Notification {
   read: boolean;
   createdAt: string;
   type?: 'info' | 'success' | 'warning' | 'error';
+  link?: string;
 }
-
-const mockNotifications: Notification[] = [
-  {
-    id: '1',
-    title: 'Welcome to RentDito!',
-    message: 'We are glad to have you on board. Please complete your profile.',
-    read: false,
-    createdAt: new Date().toISOString(),
-    type: 'info',
-  },
-  {
-    id: '2',
-    title: 'New Listing Alert',
-    message: 'A new property matching your criteria has been listed.',
-    read: false,
-    createdAt: new Date(Date.now() - 3600000).toISOString(),
-    type: 'success',
-  },
-];
 
 interface NotificationContextProps {
   notifications: Notification[];
   unreadCount: number;
-  markAsRead: (id: string) => void;
-  markAllAsRead: () => void;
+  markAsRead: (id: string) => Promise<void>;
+  markAllAsRead: () => Promise<void>;
+  fetchNotifications: () => Promise<void>;
 }
 
 const NotificationContext = createContext<NotificationContextProps | undefined>(undefined);
 
 export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [notifications, setNotifications] = useState<Notification[]>(mockNotifications);
+  const { isAuthenticated } = useAuth();
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [unreadCount, setUnreadCount] = useState(0);
 
-  const unreadCount = notifications.filter((n) => !n.read).length;
-
-  const markAsRead = (id: string) => {
-    setNotifications((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, read: true } : n))
-    );
+  const fetchNotifications = async () => {
+    if (!isAuthenticated) {
+      setNotifications([]);
+      setUnreadCount(0);
+      return;
+    }
+    try {
+      const [data, count] = await Promise.all([
+        NotificationService.getNotifications(50),
+        NotificationService.getUnreadCount()
+      ]);
+      setNotifications(data as Notification[]);
+      setUnreadCount(count);
+    } catch (err) {
+      console.error('Failed to fetch notifications', err);
+    }
   };
 
-  const markAllAsRead = () => {
-    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+  useEffect(() => {
+    fetchNotifications();
+  }, [isAuthenticated]);
+
+  const markAsRead = async (id: string) => {
+    try {
+      await NotificationService.markAsRead(id);
+      setNotifications((prev) =>
+        prev.map((n) => (n.id === id ? { ...n, read: true } : n))
+      );
+      setUnreadCount((prev) => Math.max(0, prev - 1));
+    } catch (err) {
+      console.error('Failed to mark notification as read', err);
+    }
+  };
+
+  const markAllAsRead = async () => {
+    try {
+      await NotificationService.markAllAsRead();
+      setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+      setUnreadCount(0);
+    } catch (err) {
+      console.error('Failed to mark all notifications as read', err);
+    }
   };
 
   return (
     <NotificationContext.Provider
-      value={{ notifications, unreadCount, markAsRead, markAllAsRead }}
+      value={{ notifications, unreadCount, markAsRead, markAllAsRead, fetchNotifications }}
     >
       {children}
     </NotificationContext.Provider>

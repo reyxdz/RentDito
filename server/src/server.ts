@@ -22,6 +22,7 @@ import tenancyRoutes from './routes/tenancy.routes';
 import reportRoutes from './routes/report.routes';
 import documentRoutes from './routes/document.routes';
 import securityRoutes from './routes/security.routes';
+import notificationRoutes from './routes/notification.routes';
 
 dotenv.config();
 
@@ -63,6 +64,7 @@ app.use('/api/tenancies', tenancyRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/documents', documentRoutes);
 app.use('/api/security', securityRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 const server = app.listen(PORT, () => {
   console.log(`Server is running in development mode on port ${PORT}`);

@@ -22,3 +22,25 @@ export const getCheckoutForecast = async (req: Request, res: Response) => {
     res.status(statusCode).json({ status: 'error', message: error.message });
   }
 };
+
+export const getVacancyForecast = async (req: Request, res: Response) => {
+  try {
+    const userId = req.user!.id;
+    const forecast = await reportService.getVacancyForecast(userId);
+    res.status(200).json({ status: 'success', data: forecast });
+  } catch (error: any) {
+    const statusCode = error.statusCode || 500;
+    res.status(statusCode).json({ status: 'error', message: error.message });
+  }
+};
+
+export const getReservationForecast = async (req: Request, res: Response) => {
+  try {
+    const userId = req.user!.id;
+    const forecast = await reportService.getReservationForecast(userId);
+    res.status(200).json({ status: 'success', data: forecast });
+  } catch (error: any) {
+    const statusCode = error.statusCode || 500;
+    res.status(statusCode).json({ status: 'error', message: error.message });
+  }
+};
