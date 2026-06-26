@@ -18,6 +18,7 @@ import ImageUploader from '../../components/ImageUploader';
 import { ticketService } from '../../../infrastructure/services/TicketService';
 import { useAuth } from '../../../application/context/AuthContext';
 import { useNotification } from '../../../application/context/NotificationContext';
+import { getTenancyContext } from '../../utils/tenancyHelpers';
 
 const CATEGORIES = [
   { value: 'plumbing', label: 'Plumbing' },
@@ -41,10 +42,7 @@ export default function SubmitTicket() {
   const { user } = useAuth();
   const { showNotification } = useNotification();
 
-  const tenancy = user?.activeTenancy as any;
-  const tenancyId = typeof tenancy === 'string' ? tenancy : tenancy?._id;
-  const propertyId = tenancy?.propertyId?._id || tenancy?.propertyId || '';
-  const unitId = tenancy?.unitId?._id || tenancy?.unitId || '';
+  const { tenancyId, propertyId = '', unitId = '' } = getTenancyContext(user?.activeTenancy);
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -67,7 +65,7 @@ export default function SubmitTicket() {
         title: title.trim(),
         description: description.trim(),
         category,
-        priority: priority as any,
+        priority,
         images: [], // In real implementation, images would be uploaded first
       });
 

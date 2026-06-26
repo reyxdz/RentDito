@@ -72,10 +72,14 @@ export default function MyContracts() {
                   >
                     <TableCell>
                       <Typography variant="body2" fontWeight={600}>
-                        Property: {contract.propertyId}
+                        {typeof contract.propertyId === 'object' && contract.propertyId !== null
+                          ? (contract.propertyId as any).name
+                          : `Property ${String(contract.propertyId).slice(-6)}`}
                       </Typography>
                       <Typography variant="caption" color="text.secondary">
-                        Unit: {contract.unitId}
+                        {typeof contract.unitId === 'object' && contract.unitId !== null
+                          ? `Unit: ${(contract.unitId as any).unitIdentifier}`
+                          : `Unit ${String(contract.unitId).slice(-6)}`}
                       </Typography>
                     </TableCell>
                     <TableCell>

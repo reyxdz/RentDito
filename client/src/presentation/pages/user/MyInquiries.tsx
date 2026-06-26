@@ -4,6 +4,7 @@ import { ChatBubbleOutline, ChevronRight, HomeWork } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../application/context/AuthContext';
 import { useInquiries } from '../../../application/hooks/useInquiries';
+import { getStatusColor } from '../../utils/statusColors';
 import { format } from 'date-fns';
 
 export default function MyInquiries() {
@@ -15,14 +16,7 @@ export default function MyInquiries() {
     fetchInquiries();
   }, [fetchInquiries]);
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'pending': return 'warning';
-      case 'responded': return 'success';
-      case 'resolved': return 'default';
-      default: return 'default';
-    }
-  };
+
 
   return (
     <Box sx={{ maxWidth: 900, mx: 'auto', py: 4, px: 2 }}>
@@ -86,7 +80,7 @@ export default function MyInquiries() {
                     <Chip 
                       label={inquiry.status} 
                       size="small" 
-                      color={getStatusColor(inquiry.status) as any}
+                      color={getStatusColor(inquiry.status)}
                       sx={{ textTransform: 'capitalize', fontWeight: 600, height: 20 }}
                     />
                   </Box>

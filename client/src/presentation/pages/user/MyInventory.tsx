@@ -10,6 +10,7 @@ import InventorySignOff from '../../components/InventorySignOff';
 import { inventoryService } from '../../../infrastructure/services/InventoryService';
 import { useAuth } from '../../../application/context/AuthContext';
 import { useNotification } from '../../../application/context/NotificationContext';
+import { getTenancyId } from '../../utils/tenancyHelpers';
 import type { InventoryRecord } from '../../../domain/entities/InventoryRecord';
 
 export default function MyInventory() {
@@ -20,7 +21,7 @@ export default function MyInventory() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const hasTenancy = !!user?.activeTenancy;
-  const tenancyId = typeof user?.activeTenancy === 'string' ? user?.activeTenancy : (user?.activeTenancy as any)?._id;
+  const tenancyId = getTenancyId(user?.activeTenancy);
 
   useEffect(() => {
     if (hasTenancy && tenancyId) {

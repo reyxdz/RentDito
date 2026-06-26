@@ -3,10 +3,12 @@ import {
   Box, Typography, Card, CardContent, CircularProgress, Button,
   TextField, Divider, IconButton, Chip, Tooltip,
 } from '@mui/material';
-import { ArrowBack, Send, AttachFile, Assignment } from '@mui/icons-material';
+import { ArrowBack, Send, Assignment } from '@mui/icons-material';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../application/context/AuthContext';
+import { useNotification } from '../../../application/context/NotificationContext';
 import { useInquiryDetail } from '../../../application/hooks/useInquiries';
+import { getStatusColor } from '../../utils/statusColors';
 import ChatThread from '../../components/ChatThread';
 import ApplicationFormDialog from '../../components/ApplicationFormDialog';
 import type { ApplicationContext } from '../../components/ApplicationFormDialog';
@@ -16,6 +18,7 @@ export default function InquiryConversation() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { inquiry, loading, error, fetchInquiry, sendMessage } = useInquiryDetail(inquiryId);
+  const { showNotification } = useNotification();
   const [draft, setDraft] = useState('');
   const [sending, setSending] = useState(false);
 
@@ -37,7 +40,7 @@ export default function InquiryConversation() {
       setDraft('');
       // In a real app we'd scroll to bottom
     } catch (err: any) {
-      alert(err.message || 'Failed to send message');
+      showNotification(err.message || 'Failed to send message', 'error');
     } finally {
       setSending(false);
     }
@@ -54,14 +57,7 @@ export default function InquiryConversation() {
     setAppDialogOpen(true);
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'pending': return 'warning';
-      case 'responded': return 'success';
-      case 'resolved': return 'default';
-      default: return 'default';
-    }
-  };
+
 
   if (loading && !inquiry) {
     return (
@@ -97,7 +93,7 @@ export default function InquiryConversation() {
         </Box>
         <Chip 
           label={inquiry.status} 
-          color={getStatusColor(inquiry.status) as any}
+          color={getStatusColor(inquiry.status)}
           sx={{ textTransform: 'capitalize', fontWeight: 600 }}
         />
       </Box>
@@ -113,9 +109,6 @@ export default function InquiryConversation() {
         {/* Reply Box + Apply Now */}
         <CardContent sx={{ p: 2, bgcolor: 'background.paper', '&:last-child': { pb: 2 } }}>
           <Box component="form" onSubmit={handleSend} sx={{ display: 'flex', gap: 1, alignItems: 'flex-end' }}>
-            <IconButton color="primary" sx={{ mb: 0.5 }}>
-              <AttachFile />
-            </IconButton>
             <TextField
               fullWidth
               multiline

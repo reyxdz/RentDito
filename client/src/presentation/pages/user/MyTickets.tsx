@@ -10,6 +10,8 @@ import StatusBadge from '../../components/StatusBadge';
 import { ticketService } from '../../../infrastructure/services/TicketService';
 import { useAuth } from '../../../application/context/AuthContext';
 import { useNotification } from '../../../application/context/NotificationContext';
+import { getPriorityColor } from '../../utils/statusColors';
+import { getTenancyId } from '../../utils/tenancyHelpers';
 import type { Ticket } from '../../../domain/entities/Ticket';
 
 export default function MyTickets() {
@@ -21,7 +23,7 @@ export default function MyTickets() {
   const [isLoading, setIsLoading] = useState(true);
 
   const hasTenancy = !!user?.activeTenancy;
-  const tenancyId = typeof user?.activeTenancy === 'string' ? user?.activeTenancy : (user?.activeTenancy as any)?._id;
+  const tenancyId = getTenancyId(user?.activeTenancy);
 
   useEffect(() => {
     if (hasTenancy && tenancyId) {
@@ -47,15 +49,7 @@ export default function MyTickets() {
     }
   };
 
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case 'emergency': return 'error';
-      case 'high': return 'warning';
-      case 'medium': return 'info';
-      case 'low': return 'success';
-      default: return 'default';
-    }
-  };
+
 
   const columns = [
     { 
@@ -79,7 +73,7 @@ export default function MyTickets() {
         <Chip 
           label={row.priority} 
           size="small" 
-          color={getPriorityColor(row.priority) as any} 
+          color={getPriorityColor(row.priority)} 
           sx={{ textTransform: 'capitalize', fontWeight: 600 }}
         />
       )

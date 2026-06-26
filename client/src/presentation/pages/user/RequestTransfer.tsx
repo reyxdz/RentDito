@@ -19,6 +19,7 @@ import PageHeader from '../../components/PageHeader';
 import { useAuth } from '../../../application/context/AuthContext';
 import { useNotification } from '../../../application/context/NotificationContext';
 import { useTransfers } from '../../../application/hooks/useTransfers';
+import { getTenancyContext } from '../../utils/tenancyHelpers';
 import { unitService } from '../../../infrastructure/services/UnitService';
 import { propertyService } from '../../../infrastructure/services/PropertyService';
 import type { Unit } from '../../../domain/entities/Unit';
@@ -31,9 +32,7 @@ export default function RequestTransfer() {
   const { showNotification } = useNotification();
   const { requestTransfer, loading: isSubmitting } = useTransfers();
 
-  const tenancy = user?.activeTenancy as any;
-  const tenancyId = typeof tenancy === 'string' ? tenancy : tenancy?._id;
-  const currentUnitId = tenancy?.unitId?._id || tenancy?.unitId || '';
+  const { tenancyId, unitId: currentUnitId = '' } = getTenancyContext(user?.activeTenancy);
 
   const [vacantUnits, setVacantUnits] = useState<Unit[]>([]);
   const [properties, setProperties] = useState<Property[]>([]);

@@ -99,6 +99,7 @@ export const ADMIN_MENU_ITEMS: MenuItem[] = [
   { text: 'Reporting & Analytics', icon: BarChart, path: '/admin/reports' },
   { text: 'Moderation', icon: Gavel, path: '/admin/moderation' },
   { text: 'Communications', icon: Forum, path: '/admin/communications' },
+  { text: 'Activity Log', icon: EventNote, path: '/admin/activity' },
   { text: 'System', icon: Settings, path: '/admin/system' },
   { text: 'Security', icon: Security, path: '/admin/security' },
 ];

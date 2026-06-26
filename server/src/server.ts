@@ -23,6 +23,7 @@ import reportRoutes from './routes/report.routes';
 import documentRoutes from './routes/document.routes';
 import securityRoutes from './routes/security.routes';
 import notificationRoutes from './routes/notification.routes';
+import { auditLog } from './middleware/auditLog';
 
 dotenv.config();
 
@@ -47,6 +48,7 @@ app.get('/api/health', (req, res) => {
 });
 
 // Route mounts
+app.use(auditLog); // Attach audit log middleware before routes (it listens to res.on('finish'))
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/landlord-applications', landlordApplicationRoutes);

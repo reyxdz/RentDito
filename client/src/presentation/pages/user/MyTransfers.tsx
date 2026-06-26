@@ -9,6 +9,7 @@ import DataTable from '../../components/DataTable';
 import StatusBadge from '../../components/StatusBadge';
 import { useAuth } from '../../../application/context/AuthContext';
 import { useTransfers } from '../../../application/hooks/useTransfers';
+import { getTenancyId } from '../../utils/tenancyHelpers';
 import type { TransferRequest } from '../../../domain/entities/TransferRequest';
 
 export default function MyTransfers() {
@@ -16,8 +17,7 @@ export default function MyTransfers() {
   const { user } = useAuth();
   const { transfers, loading, fetchTransfers } = useTransfers();
 
-  const tenancy = user?.activeTenancy as any;
-  const tenancyId = typeof tenancy === 'string' ? tenancy : tenancy?._id;
+  const tenancyId = getTenancyId(user?.activeTenancy);
 
   useEffect(() => {
     fetchTransfers();

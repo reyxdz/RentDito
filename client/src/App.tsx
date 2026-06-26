@@ -31,6 +31,7 @@ import AdminOverview from './presentation/pages/admin/Overview';
 import AdminUsers from './presentation/pages/admin/Users';
 import LandlordApplications from './presentation/pages/admin/LandlordApplications';
 import UserVerifications from './presentation/pages/admin/UserVerifications';
+import ActivityLog from './presentation/pages/admin/ActivityLog';
 import {
   PropertiesPlaceholder as AdminProperties,
   FinancialsPlaceholder as AdminFinancials,
@@ -97,7 +98,7 @@ import MyTickets from './presentation/pages/user/MyTickets';
 import SubmitTicket from './presentation/pages/user/SubmitTicket';
 import UserTicketDetail from './presentation/pages/user/TicketDetail';
 import MyBills from './presentation/pages/user/MyBills';
-import BillDetail from './presentation/pages/user/BillDetail';
+import UserBillDetail from './presentation/pages/user/BillDetail';
 
 import MyContracts from './presentation/pages/user/MyContracts';
 import ContractView from './presentation/pages/user/ContractView';
@@ -129,6 +130,7 @@ function App() {
             <Route path="users" element={<AdminUsers />} />
             <Route path="applications" element={<LandlordApplications />} />
             <Route path="verifications" element={<UserVerifications />} />
+            <Route path="activity" element={<ActivityLog />} />
             <Route path="properties" element={<AdminProperties />} />
             <Route path="financials" element={<AdminFinancials />} />
             <Route path="reports" element={<AdminReports />} />
@@ -205,7 +207,7 @@ function App() {
             <Route path="my-unit" element={<MyRoom />} />
             <Route path="bills">
               <Route index element={<MyBills />} />
-              <Route path=":billId" element={<BillDetail />} />
+              <Route path=":billId" element={<UserBillDetail />} />
             </Route>
             <Route path="contracts">
               <Route index element={<MyContracts />} />

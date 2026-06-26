@@ -1,11 +1,9 @@
 import { useEffect, useState } from 'react';
 import {
   Box, Typography, Card, CardContent, Chip, CircularProgress, Button,
-  Dialog, DialogTitle, DialogContent, DialogActions, IconButton, Divider, Slide,
+  Dialog, DialogTitle, DialogContent, DialogActions, IconButton, Divider,
   Alert,
 } from '@mui/material';
-import type { TransitionProps } from '@mui/material/transitions';
-import React from 'react';
 import {
   Assignment, ChevronRight, HomeWork, Close, Person, Phone, School,
   LocationOn, ContactEmergency, Description, CheckCircle, Cancel, HourglassTop,
@@ -13,15 +11,12 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../application/context/AuthContext';
 import { useApplications } from '../../../application/hooks/useApplications';
+import { getStatusColor } from '../../utils/statusColors';
+import SlideUpTransition from '../../utils/SlideUpTransition';
 import type { RentalApplication } from '../../../infrastructure/services/MockApplicationService';
 import { format } from 'date-fns';
 
-const SlideUp = React.forwardRef(function SlideUp(
-  props: TransitionProps & { children: React.ReactElement<any, any> },
-  ref: React.Ref<unknown>,
-) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
+
 
 export default function MyApplications() {
   const { user } = useAuth();
@@ -34,15 +29,7 @@ export default function MyApplications() {
     fetchApplications();
   }, [fetchApplications]);
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'pending': return 'warning';
-      case 'under_review': return 'info';
-      case 'approved': return 'success';
-      case 'rejected': return 'error';
-      default: return 'default';
-    }
-  };
+
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -126,7 +113,7 @@ export default function MyApplications() {
                       icon={getStatusIcon(app.status) || undefined}
                       label={getStatusLabel(app.status)}
                       size="small"
-                      color={getStatusColor(app.status) as any}
+                      color={getStatusColor(app.status)}
                       sx={{ textTransform: 'capitalize', fontWeight: 600, height: 24 }}
                     />
                   </Box>
@@ -151,7 +138,7 @@ export default function MyApplications() {
         onClose={() => setSelected(null)}
         maxWidth="sm"
         fullWidth
-        TransitionComponent={SlideUp}
+        TransitionComponent={SlideUpTransition}
         PaperProps={{ sx: { borderRadius: 3, boxShadow: '0 8px 32px rgba(0,0,0,0.08)' } }}
       >
         {selected && (
@@ -184,7 +171,7 @@ export default function MyApplications() {
                   <Chip
                     icon={getStatusIcon(selected.status) || undefined}
                     label={getStatusLabel(selected.status)}
-                    color={getStatusColor(selected.status) as any}
+                    color={getStatusColor(selected.status)}
                     sx={{ textTransform: 'capitalize', fontWeight: 600 }}
                   />
                 </Box>

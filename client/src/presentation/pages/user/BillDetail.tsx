@@ -8,12 +8,14 @@ import PageHeader from '../../components/PageHeader';
 import StatusBadge from '../../components/StatusBadge';
 import UtilityBreakdownTable from '../../components/UtilityBreakdownTable';
 import { tenantBillingService } from '../../../infrastructure/services/TenantBillingService';
+import { useNotification } from '../../../application/context/NotificationContext';
 import type { Bill } from '../../../domain/entities/Bill';
 
 export default function BillDetail() {
   const { billId } = useParams<{ billId: string }>();
   const navigate = useNavigate();
   const theme = useTheme();
+  const { showNotification } = useNotification();
   
   const [bill, setBill] = useState<Bill | null>(null);
   const [loading, setLoading] = useState(true);
@@ -40,7 +42,7 @@ export default function BillDetail() {
       await tenantBillingService.downloadReceipt(billId);
     } catch (error) {
       console.error('Failed to download receipt', error);
-      alert('Failed to download receipt. Please try again.');
+      showNotification('Failed to download receipt. Please try again.', 'error');
     }
   };
 
@@ -112,7 +114,7 @@ export default function BillDetail() {
 
       <Grid container spacing={3}>
         {/* Left Col - Breakdown */}
-        <Grid item xs={12} md={7}>
+        <Grid size={{ xs: 12, md: 7 }}>
           <Paper variant="outlined" sx={{ p: { xs: 2, md: 3 }, borderRadius: 3, height: '100%' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
               <ReceiptIcon color="primary" />
@@ -153,9 +155,9 @@ export default function BillDetail() {
         </Grid>
 
         {/* Right Col - Summary */}
-        <Grid item xs={12} md={5}>
+        <Grid size={{ xs: 12, md: 5 }}>
           <Grid container spacing={3} direction="column">
-            <Grid item>
+            <Grid size={12}>
               <Paper 
                 variant="outlined" 
                 sx={{ 
@@ -187,7 +189,7 @@ export default function BillDetail() {
               </Paper>
             </Grid>
 
-            <Grid item>
+            <Grid size={12}>
               <Paper variant="outlined" sx={{ p: 3, borderRadius: 3 }}>
                 <Typography variant="h6" fontWeight={700} mb={2}>Payment History</Typography>
                 {bill.paidAmount === 0 ? (

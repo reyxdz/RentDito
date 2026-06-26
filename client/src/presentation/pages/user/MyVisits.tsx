@@ -1,23 +1,18 @@
 import { useEffect, useState } from 'react';
 import {
   Box, Typography, Card, CardContent, Chip, CircularProgress, Button,
-  Dialog, DialogTitle, DialogContent, DialogActions, IconButton, Divider, Slide,
+  Dialog, DialogTitle, DialogContent, DialogActions, IconButton, Divider,
 } from '@mui/material';
-import type { TransitionProps } from '@mui/material/transitions';
-import React from 'react';
 import { CalendarMonth, ChevronRight, HomeWork, Close, AccessTime, EventNote, Notes } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../application/context/AuthContext';
 import { useVisits } from '../../../application/hooks/useVisits';
+import { getStatusColor } from '../../utils/statusColors';
+import SlideUpTransition from '../../utils/SlideUpTransition';
 import type { Visit } from '../../../infrastructure/services/MockVisitService';
 import { format } from 'date-fns';
 
-const SlideUp = React.forwardRef(function SlideUp(
-  props: TransitionProps & { children: React.ReactElement<any, any> },
-  ref: React.Ref<unknown>,
-) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
+
 
 export default function MyVisits() {
   const { user } = useAuth();
@@ -30,17 +25,7 @@ export default function MyVisits() {
     fetchVisits();
   }, [fetchVisits]);
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'pending': return 'warning';
-      case 'approved': return 'info';
-      case 'scheduled': return 'success';
-      case 'completed': return 'default';
-      case 'cancelled': return 'error';
-      case 'no_show': return 'error';
-      default: return 'default';
-    }
-  };
+
 
   const getStatusLabel = (status: string) => {
     switch (status) {
@@ -113,7 +98,7 @@ export default function MyVisits() {
                     <Chip
                       label={getStatusLabel(visit.status)}
                       size="small"
-                      color={getStatusColor(visit.status) as any}
+                      color={getStatusColor(visit.status)}
                       sx={{ textTransform: 'capitalize', fontWeight: 600, height: 20 }}
                     />
                   </Box>
@@ -150,7 +135,7 @@ export default function MyVisits() {
         onClose={() => setSelected(null)}
         maxWidth="sm"
         fullWidth
-        TransitionComponent={SlideUp}
+        TransitionComponent={SlideUpTransition}
         PaperProps={{ sx: { borderRadius: 3, boxShadow: '0 8px 32px rgba(0,0,0,0.08)' } }}
       >
         {selected && (
@@ -184,7 +169,7 @@ export default function MyVisits() {
                 <Box sx={{ ml: 'auto' }}>
                   <Chip
                     label={getStatusLabel(selected.status)}
-                    color={getStatusColor(selected.status) as any}
+                    color={getStatusColor(selected.status)}
                     sx={{ textTransform: 'capitalize', fontWeight: 600 }}
                   />
                 </Box>

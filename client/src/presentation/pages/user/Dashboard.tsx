@@ -28,6 +28,7 @@ import { tenantBillingService } from '../../../infrastructure/services/TenantBil
 import { inventoryService } from '../../../infrastructure/services/InventoryService';
 import { ticketService } from '../../../infrastructure/services/TicketService';
 import { tenantService } from '../../../infrastructure/services/TenantService';
+import { getTenancyId } from '../../utils/tenancyHelpers';
 import type { Bill } from '../../../domain/entities/Bill';
 import { format } from 'date-fns';
 import StatusBadge from '../../components/StatusBadge';
@@ -37,20 +38,13 @@ export default function Dashboard() {
   const theme = useTheme();
   const navigate = useNavigate();
 
-  // Mock stats
-  const stats = {
-    inquiries: 0,
-    visits: 0,
-    applications: 0,
-  };
 
   const hasTenancy = !!user?.activeTenancy;
-  const tenancy = user?.activeTenancy as any;
 
   const statCards = [
-    { label: 'My Inquiries', value: stats.inquiries, icon: <MessageIcon />, color: theme.palette.info.main },
-    { label: 'My Visits', value: stats.visits, icon: <VisibilityIcon />, color: theme.palette.secondary.main },
-    { label: 'My Applications', value: stats.applications, icon: <AssignmentIcon />, color: theme.palette.success.main },
+    { label: 'My Inquiries', value: 0, icon: <MessageIcon />, color: theme.palette.info.main },
+    { label: 'My Visits', value: 0, icon: <VisibilityIcon />, color: theme.palette.secondary.main },
+    { label: 'My Applications', value: 0, icon: <AssignmentIcon />, color: theme.palette.success.main },
   ];
 
   const [currentBill, setCurrentBill] = useState<Bill | null>(null);
@@ -59,32 +53,38 @@ export default function Dashboard() {
   const [contractEndDate, setContractEndDate] = useState<Date | null>(null);
 
   useEffect(() => {
-    if (hasTenancy) {
-      tenantBillingService.getMyBills().then((bills) => {
-        const outstandingBills = bills.filter((b) => ['unpaid', 'partial', 'overdue'].includes(b.status));
-        if (outstandingBills.length > 0) {
-          setCurrentBill(outstandingBills[0]);
-        }
-      }).catch(err => console.error("Failed to load bills on dashboard", err));
+    if (!hasTenancy) return;
 
-      const tenancyId = typeof user?.activeTenancy === 'string' ? user?.activeTenancy : (user?.activeTenancy as any)?._id || (user?.activeTenancy as any)?.id;
-      if (tenancyId) {
+    const tenancyId = getTenancyId(user?.activeTenancy);
+
+    // Fire all dashboard data fetches concurrently
+    const billsPromise = tenantBillingService.getMyBills().then((bills) => {
+      const outstandingBills = bills.filter((b) => ['unpaid', 'partial', 'overdue'].includes(b.status));
+      if (outstandingBills.length > 0) {
+        setCurrentBill(outstandingBills[0]);
+      }
+    });
+
+    const promises: Promise<void>[] = [billsPromise];
+
+    if (tenancyId) {
+      promises.push(
         inventoryService.getRecords({ tenancyId }).then((records) => {
           setInventoryCount(records.filter(r => r.status === 'active').length);
-        }).catch(err => console.error("Failed to load inventory on dashboard", err));
-
+        }),
         ticketService.getTickets({}).then((tickets) => {
           setOpenTicketCount(tickets.filter(t => ['open', 'assigned', 'in_progress'].includes(t.status)).length);
-        }).catch(err => console.error("Failed to load tickets on dashboard", err));
-
+        }),
         tenantService.getMyTenancies().then((tenancies) => {
           const active = tenancies.find(t => t.id === tenancyId || (t as any)._id === tenancyId);
           if (active && active.contractId && (active.contractId as any).endDate) {
             setContractEndDate(new Date((active.contractId as any).endDate));
           }
-        }).catch(err => console.error("Failed to load tenancy details on dashboard", err));
-      }
+        }),
+      );
     }
+
+    Promise.all(promises).catch(err => console.error('Dashboard data fetch error:', err));
   }, [hasTenancy, user?.activeTenancy]);
 
   return (

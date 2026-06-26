@@ -30,6 +30,7 @@ import StatusBadge from '../../components/StatusBadge';
 import { ticketService } from '../../../infrastructure/services/TicketService';
 import { useAuth } from '../../../application/context/AuthContext';
 import { useNotification } from '../../../application/context/NotificationContext';
+import { getPriorityColor } from '../../utils/statusColors';
 import type { Ticket } from '../../../domain/entities/Ticket';
 
 export default function UserTicketDetail() {
@@ -75,15 +76,7 @@ export default function UserTicketDetail() {
     }
   };
 
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case 'urgent': return 'error';
-      case 'high': return 'warning';
-      case 'medium': return 'info';
-      case 'low': return 'success';
-      default: return 'default';
-    }
-  };
+
 
   if (isLoading) {
     return (
@@ -131,7 +124,7 @@ export default function UserTicketDetail() {
                 <Chip
                   label={ticket.priority}
                   size="small"
-                  color={getPriorityColor(ticket.priority) as any}
+                  color={getPriorityColor(ticket.priority)}
                   sx={{ textTransform: 'capitalize', fontWeight: 600 }}
                 />
                 <Chip

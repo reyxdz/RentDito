@@ -7,6 +7,7 @@ import StatusBadge from '../../components/StatusBadge';
 import SignaturePad from '../../components/SignaturePad';
 import LockInTracker from '../../components/LockInTracker';
 import { ArrowBack, PictureAsPdf, AccountCircle, RealEstateAgent } from '@mui/icons-material';
+import { differenceInMonths } from 'date-fns';
 
 // Format currency
 const formatCurrency = (amount: number) => {
@@ -63,10 +64,9 @@ export default function ContractView() {
     );
   }
 
-  // Calculate elapsed months
+  // Calculate elapsed months using date-fns for accuracy
   const startD = new Date(contract.startDate);
-  const currentD = new Date();
-  const elapsedMonths = Math.max(0, Math.floor((currentD.getTime() - startD.getTime()) / (1000 * 60 * 60 * 24 * 30)));
+  const elapsedMonths = Math.max(0, differenceInMonths(new Date(), startD));
 
   const needsSignature = contract.status === 'pending_signature' && !contract.userSignature;
 

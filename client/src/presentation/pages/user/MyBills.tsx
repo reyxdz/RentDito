@@ -17,15 +17,18 @@ import {
   Warning as WarningIcon,
 } from '@mui/icons-material';
 import PageHeader from '../../components/PageHeader';
-import DataTable, { Column } from '../../components/DataTable';
+import DataTable from '../../components/DataTable';
+import type { Column } from '../../components/DataTable';
 import StatusBadge from '../../components/StatusBadge';
 import { tenantBillingService } from '../../../infrastructure/services/TenantBillingService';
+import { useNotification } from '../../../application/context/NotificationContext';
 import type { Bill } from '../../../domain/entities/Bill';
 import { format } from 'date-fns';
 
 export default function MyBills() {
   const theme = useTheme();
   const navigate = useNavigate();
+  const { showNotification } = useNotification();
   const [bills, setBills] = useState<Bill[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -51,7 +54,7 @@ export default function MyBills() {
       await tenantBillingService.downloadReceipt(id);
     } catch (error) {
       console.error('Failed to download receipt', error);
-      alert('Failed to download receipt. Please try again.');
+      showNotification('Failed to download receipt. Please try again.', 'error');
     }
   };
 
@@ -137,7 +140,7 @@ export default function MyBills() {
         >
           <CardContent sx={{ p: { xs: 3, md: 4 } }}>
             <Grid container spacing={3} alignItems="center">
-              <Grid item xs={12} md={8}>
+              <Grid size={{ xs: 12, md: 8 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
                   {currentBill.status === 'overdue' ? (
                     <WarningIcon color="error" />
@@ -155,7 +158,7 @@ export default function MyBills() {
                   Due by: <strong>{format(new Date(currentBill.dueDate), 'MMM dd, yyyy')}</strong>
                 </Typography>
               </Grid>
-              <Grid item xs={12} md={4} sx={{ textAlign: { xs: 'left', md: 'right' } }}>
+              <Grid size={{ xs: 12, md: 4 }} sx={{ textAlign: { xs: 'left', md: 'right' } }}>
                 <Typography variant="h4" fontWeight={800} color={currentBill.status === 'overdue' ? 'error.main' : 'primary.main'} sx={{ mb: 2 }}>
                   ₱{Number(currentBill.balanceAmount).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                 </Typography>
