@@ -6,6 +6,7 @@ import { format } from 'date-fns';
 
 import PageHeader from '../../components/PageHeader';
 import DataTable from '../../components/DataTable';
+import type { Column } from '../../components/DataTable';
 import StatusBadge from '../../components/StatusBadge';
 import { ticketService } from '../../../infrastructure/services/TicketService';
 import { useAuth } from '../../../application/context/AuthContext';
@@ -51,11 +52,11 @@ export default function MyTickets() {
 
 
 
-  const columns = [
+  const columns: Column<Ticket>[] = [
     { 
-      key: 'title', 
-      header: 'Issue',
-      render: (row: Ticket) => (
+      id: 'title', 
+      label: 'Issue',
+      format: (_, row: Ticket) => (
         <Box>
           <Typography variant="body2" fontWeight={600}>
             {row.title}
@@ -67,9 +68,9 @@ export default function MyTickets() {
       )
     },
     { 
-      key: 'priority', 
-      header: 'Priority',
-      render: (row: Ticket) => (
+      id: 'priority', 
+      label: 'Priority',
+      format: (_, row: Ticket) => (
         <Chip 
           label={row.priority} 
           size="small" 
@@ -79,23 +80,23 @@ export default function MyTickets() {
       )
     },
     { 
-      key: 'status', 
-      header: 'Status',
-      render: (row: Ticket) => <StatusBadge status={row.status} />
+      id: 'status', 
+      label: 'Status',
+      format: (_, row: Ticket) => <StatusBadge status={row.status} />
     },
     { 
-      key: 'assignedTo', 
-      header: 'Assigned To',
-      render: (row: Ticket) => (
+      id: 'assignedToUserId', 
+      label: 'Assigned To',
+      format: (_, row: Ticket) => (
         <Typography variant="body2" color={row.assignedToUser ? 'text.primary' : 'text.secondary'}>
           {row.assignedToUser?.name || 'Unassigned'}
         </Typography>
       )
     },
     { 
-      key: 'createdAt', 
-      header: 'Date Reported',
-      render: (row: Ticket) => format(new Date(row.createdAt), 'MMM dd, yyyy'),
+      id: 'createdAt', 
+      label: 'Date Reported',
+      format: (_, row: Ticket) => format(new Date(row.createdAt), 'MMM dd, yyyy'),
       sortable: true 
     }
   ];
@@ -130,10 +131,7 @@ export default function MyTickets() {
         <DataTable
           columns={columns}
           data={tickets}
-          keyExtractor={(row) => row.id}
-          isLoading={isLoading}
-          searchPlaceholder="Search tickets..."
-          onRowClick={(row) => navigate(`/u/maintenance/${row.id}`)}
+          loading={isLoading}
         />
       </Box>
     </Box>

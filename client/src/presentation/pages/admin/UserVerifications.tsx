@@ -16,7 +16,7 @@ interface PendingUser {
 
 export default function UserVerifications() {
   const [pendingUsers, setPendingUsers] = useState<PendingUser[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [, setLoading] = useState(true);
   const [viewerOpen, setViewerOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<PendingUser | null>(null);
   const [rejectDialogOpen, setRejectDialogOpen] = useState(false);

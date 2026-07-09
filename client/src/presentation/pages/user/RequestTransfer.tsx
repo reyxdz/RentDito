@@ -4,7 +4,6 @@ import {
   Box,
   Card,
   CardContent,
-  Typography,
   TextField,
   MenuItem,
   Button,
@@ -46,7 +45,7 @@ export default function RequestTransfer() {
       try {
         const unitsData = await unitService.getUnits();
         const vacant = unitsData.filter(
-          (u) => (u.status === 'vacant' || u.status === 'available') && u.id !== currentUnitId
+          (u) => u.status === 'vacant' && u.id !== currentUnitId
         );
         setVacantUnits(vacant);
 

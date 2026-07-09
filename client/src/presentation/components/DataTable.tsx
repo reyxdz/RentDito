@@ -29,7 +29,7 @@ export interface DataTableProps<T> {
   onSort?: (columnId: string) => void;
 }
 
-export default function DataTable<T extends { id: string | number }>({
+export default function DataTable<T extends Record<string, any>>({
   columns,
   data,
   loading = false,
@@ -105,12 +105,12 @@ export default function DataTable<T extends { id: string | number }>({
                 </TableCell>
               </TableRow>
             ) : (
-              data.map((row) => (
+              data.map((row, index) => (
                 <TableRow
                   hover
                   role="checkbox"
                   tabIndex={-1}
-                  key={row.id}
+                  key={row.id ?? row._id ?? index}
                   sx={{
                     transition: 'background-color 0.2s ease',
                     '&:hover': {

@@ -32,9 +32,9 @@ export default function InventorySignOff({ records, onSubmit, isSubmitting = fal
   };
 
   const columns = [
-    { key: 'itemName', header: 'Item Name', render: (row: InventoryRecord) => row.inventoryItem?.itemName || 'Unknown Item' },
-    { key: 'quantityIssued', header: 'Qty' },
-    { key: 'issuedCondition', header: 'Condition', render: (row: InventoryRecord) => <StatusBadge status={row.issuedCondition} /> },
+    { id: 'itemName' as const, label: 'Item Name', format: (_: any, row: InventoryRecord) => row.inventoryItem?.itemName || 'Unknown Item' },
+    { id: 'inventoryItemId' as const, label: 'Qty' },
+    { id: 'status' as const, label: 'Condition', format: (_: any, row: InventoryRecord) => <StatusBadge status={row.status} /> },
   ];
 
   if (isSigned) {
@@ -64,9 +64,6 @@ export default function InventorySignOff({ records, onSubmit, isSubmitting = fal
         <DataTable
           columns={columns}
           data={records}
-          keyExtractor={(row) => row.id}
-          isLoading={false}
-          pagination={false}
         />
       </Box>
 

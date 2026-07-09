@@ -10,21 +10,21 @@ export interface InventoryRecord {
   inventoryItem?: Inventory;
   tenancyId: string;
   tenancy?: Tenancy;
-  
+
   issuedByUserId: string;
   issuedByUser?: User;
   issuedDate: string | Date;
-  
+
   returnDate?: string | Date;
   returnCondition?: InventoryCondition;
-  
+
   damageNotes?: string;
   penaltyAmount?: number;
   deductedFromDeposit?: boolean;
-  
+
   signedFormUrl?: string;
   status: InventoryRecordStatus;
-  
+
   createdAt: string | Date;
   updatedAt: string | Date;
 }

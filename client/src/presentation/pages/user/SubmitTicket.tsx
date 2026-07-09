@@ -19,6 +19,7 @@ import { ticketService } from '../../../infrastructure/services/TicketService';
 import { useAuth } from '../../../application/context/AuthContext';
 import { useNotification } from '../../../application/context/NotificationContext';
 import { getTenancyContext } from '../../utils/tenancyHelpers';
+import type { TicketPriority } from '../../../domain/entities/Ticket';
 
 const CATEGORIES = [
   { value: 'plumbing', label: 'Plumbing' },
@@ -65,7 +66,7 @@ export default function SubmitTicket() {
         title: title.trim(),
         description: description.trim(),
         category,
-        priority,
+        priority: priority as TicketPriority,
         images: [], // In real implementation, images would be uploaded first
       });
 

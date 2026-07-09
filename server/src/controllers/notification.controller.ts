@@ -1,7 +1,8 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
+import { AuthRequest } from '../middleware/auth';
 import { Notification } from '../models/Notification';
 
-export const getNotifications = async (req: Request, res: Response) => {
+export const getNotifications = async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user!.id;
     const limit = parseInt(req.query.limit as string) || 50;
@@ -29,7 +30,7 @@ export const getNotifications = async (req: Request, res: Response) => {
   }
 };
 
-export const getUnreadCount = async (req: Request, res: Response) => {
+export const getUnreadCount = async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user!.id;
     const count = await Notification.countDocuments({ userId, isRead: false });
@@ -39,7 +40,7 @@ export const getUnreadCount = async (req: Request, res: Response) => {
   }
 };
 
-export const markAsRead = async (req: Request, res: Response) => {
+export const markAsRead = async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user!.id;
     const { id } = req.params;
@@ -60,7 +61,7 @@ export const markAsRead = async (req: Request, res: Response) => {
   }
 };
 
-export const markAllAsRead = async (req: Request, res: Response) => {
+export const markAllAsRead = async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user!.id;
 

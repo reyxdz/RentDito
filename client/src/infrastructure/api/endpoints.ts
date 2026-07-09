@@ -91,6 +91,11 @@ export const ENDPOINTS = {
     GENERATE: '/api/bills/generate',
     PAY: (id: string) => `/api/bills/${id}/pay`,
   },
+  FINANCIALS: {
+    SUMMARY: '/api/financials/summary',
+    MONTHLY: '/api/financials/monthly',
+    BY_PROPERTY: '/api/financials/by-property',
+  },
   TICKETS: {
     ROOT: '/api/tickets',
     DETAILS: (id: string) => `/api/tickets/${id}`,

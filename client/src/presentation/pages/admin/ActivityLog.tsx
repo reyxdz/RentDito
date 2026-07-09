@@ -1,17 +1,17 @@
 import { useState, useEffect } from 'react';
-import { Container, Box, Typography, Chip, TextField, MenuItem } from '@mui/material';
+import { Container, Box, Chip, TextField, MenuItem } from '@mui/material';
 import PageHeader from '../../components/PageHeader';
 import DataTable from '../../components/DataTable';
 import AdminService from '../../../infrastructure/services/AdminService';
 import { useNotification } from '../../../application/context/NotificationContext';
-import { AuditLog } from '../../../infrastructure/services/AdminService';
+import type { AuditLog } from '../../../infrastructure/services/AdminService';
 
 export default function ActivityLog() {
   const [data, setData] = useState<AuditLog[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(30);
-  const [totalCount, setTotalCount] = useState(0);
+  const [rowsPerPage] = useState(30);
+  const [, setTotalCount] = useState(0);
   const [actionFilter, setActionFilter] = useState('');
   const { showNotification } = useNotification();
 

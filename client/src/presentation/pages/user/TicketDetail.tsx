@@ -19,7 +19,6 @@ import {
 import {
   ArrowBack as BackIcon,
   Send as SendIcon,
-  Schedule as ScheduleIcon,
   CheckCircle as ResolvedIcon,
   FiberManualRecord as DotIcon,
 } from '@mui/icons-material';

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { Box, Button, Typography, Alert, CircularProgress } from '@mui/material';
 import { Add as AddIcon } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
@@ -6,6 +6,7 @@ import { format } from 'date-fns';
 
 import PageHeader from '../../components/PageHeader';
 import DataTable from '../../components/DataTable';
+import type { Column } from '../../components/DataTable';
 import StatusBadge from '../../components/StatusBadge';
 import { useAuth } from '../../../application/context/AuthContext';
 import { useTransfers } from '../../../application/hooks/useTransfers';
@@ -23,35 +24,35 @@ export default function MyTransfers() {
     fetchTransfers();
   }, [fetchTransfers]);
 
-  const columns = [
+  const columns: Column<TransferRequest>[] = [
     {
-      key: 'createdAt',
-      header: 'Date Requested',
-      render: (row: TransferRequest) => format(new Date(row.createdAt), 'MMM dd, yyyy'),
+      id: 'createdAt',
+      label: 'Date Requested',
+      format: (_, row: TransferRequest) => format(new Date(row.createdAt), 'MMM dd, yyyy'),
       sortable: true,
     },
     {
-      key: 'fromUnit',
-      header: 'Current Unit',
-      render: (row: TransferRequest) => (
+      id: 'fromUnitId',
+      label: 'Current Unit',
+      format: (_, row: TransferRequest) => (
         <Typography variant="body2" fontWeight={600}>
           {row.fromUnit?.unitIdentifier ? `Unit ${row.fromUnit.unitIdentifier}` : row.fromUnitId.slice(-6)}
         </Typography>
       ),
     },
     {
-      key: 'toUnit',
-      header: 'Target Unit',
-      render: (row: TransferRequest) => (
+      id: 'toUnitId',
+      label: 'Target Unit',
+      format: (_, row: TransferRequest) => (
         <Typography variant="body2" fontWeight={600}>
           {row.toUnit?.unitIdentifier ? `Unit ${row.toUnit.unitIdentifier}` : row.toUnitId.slice(-6)}
         </Typography>
       ),
     },
     {
-      key: 'reason',
-      header: 'Reason',
-      render: (row: TransferRequest) => (
+      id: 'reason',
+      label: 'Reason',
+      format: (_, row: TransferRequest) => (
         <Typography
           variant="body2"
           sx={{
@@ -66,9 +67,9 @@ export default function MyTransfers() {
       ),
     },
     {
-      key: 'status',
-      header: 'Status',
-      render: (row: TransferRequest) => <StatusBadge status={row.status} />,
+      id: 'status',
+      label: 'Status',
+      format: (_, row: TransferRequest) => <StatusBadge status={row.status} />,
     },
   ];
 
@@ -107,9 +108,7 @@ export default function MyTransfers() {
           <DataTable
             columns={columns}
             data={transfers}
-            keyExtractor={(row) => row.id}
-            isLoading={loading}
-            searchPlaceholder="Search transfers..."
+            loading={loading}
           />
         </Box>
       )}

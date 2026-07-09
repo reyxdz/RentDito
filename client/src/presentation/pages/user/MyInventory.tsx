@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
-import { Box, Typography, Button, Divider, Alert } from '@mui/material';
+import { Box, Typography, Button, Alert } from '@mui/material';
 import { Download as DownloadIcon } from '@mui/icons-material';
 import { format } from 'date-fns';
 
 import PageHeader from '../../components/PageHeader';
 import DataTable from '../../components/DataTable';
+import type { Column } from '../../components/DataTable';
 import StatusBadge from '../../components/StatusBadge';
 import InventorySignOff from '../../components/InventorySignOff';
 import { inventoryService } from '../../../infrastructure/services/InventoryService';
@@ -43,7 +44,7 @@ export default function MyInventory() {
     }
   };
 
-  const handleSignOffSubmit = async (signatureData: string) => {
+  const handleSignOffSubmit = async (_signatureData: string) => {
     setIsSubmitting(true);
     try {
       // Mock API call to save signature for these records
@@ -61,11 +62,11 @@ export default function MyInventory() {
     }
   };
 
-  const columns = [
+  const columns: Column<InventoryRecord>[] = [
     { 
-      key: 'itemName', 
-      header: 'Item',
-      render: (row: InventoryRecord) => (
+      id: 'inventoryItemId', 
+      label: 'Item',
+      format: (_, row: InventoryRecord) => (
         <Box>
           <Typography variant="body2" fontWeight={600}>
             {row.inventoryItem?.itemName || 'Unknown Item'}
@@ -78,22 +79,22 @@ export default function MyInventory() {
         </Box>
       )
     },
-    { key: 'quantityIssued', header: 'Qty', sortable: true },
+    { id: 'status' as keyof InventoryRecord, label: 'Qty' },
     { 
-      key: 'issuedDate', 
-      header: 'Issued Date',
-      render: (row: InventoryRecord) => format(new Date(row.issuedDate), 'MMM dd, yyyy'),
+      id: 'issuedDate', 
+      label: 'Issued Date',
+      format: (_, row: InventoryRecord) => format(new Date(row.issuedDate), 'MMM dd, yyyy'),
       sortable: true 
     },
     { 
-      key: 'issuedCondition', 
-      header: 'Condition at Issue',
-      render: (row: InventoryRecord) => <StatusBadge status={row.issuedCondition} />
+      id: 'inventoryItem', 
+      label: 'Condition at Issue',
+      format: (_, row: InventoryRecord) => <StatusBadge status={row.inventoryItem?.condition || 'unknown'} />
     },
     {
-      key: 'status',
-      header: 'Current Status',
-      render: (row: InventoryRecord) => <StatusBadge status={row.status} />
+      id: 'status',
+      label: 'Current Status',
+      format: (_, row: InventoryRecord) => <StatusBadge status={row.status} />
     }
   ];
 
@@ -152,9 +153,7 @@ export default function MyInventory() {
           <DataTable
             columns={columns}
             data={records}
-            keyExtractor={(row) => row.id}
-            isLoading={isLoading}
-            searchPlaceholder="Search items..."
+            loading={isLoading}
           />
         </Box>
       )}

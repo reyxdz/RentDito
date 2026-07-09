@@ -8,11 +8,11 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  SelectChangeEvent,
   Typography,
   Alert,
   CircularProgress
 } from '@mui/material';
+import type { SelectChangeEvent } from '@mui/material';
 import {
   AccountBalanceWallet,
   ElectricBolt,
@@ -33,7 +33,8 @@ import {
 } from 'recharts';
 import PageHeader from '../../../components/PageHeader';
 import StatCard from '../../../components/StatCard';
-import { useFinancialDashboard, FinancialPeriod } from '../../../../application/hooks/useFinancialDashboard';
+import { useFinancialDashboard } from '../../../../application/hooks/useFinancialDashboard';
+import type { FinancialPeriod } from '../../../../application/hooks/useFinancialDashboard';
 
 const formatCurrency = (value: number) =>
   new Intl.NumberFormat('en-PH', {

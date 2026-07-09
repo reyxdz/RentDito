@@ -266,7 +266,7 @@ export default function Dashboard() {
                     </Typography>
                   </Box>
                   <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                    You are currently a resident at <strong>{tenancy?.property?.name || 'Property'}</strong>, Unit <strong>{tenancy?.unit?.unitIdentifier || 'Unknown'}</strong>.
+                    You are currently a resident at <strong>{(user?.activeTenancy as any)?.property?.name || 'Property'}</strong>, Unit <strong>{(user?.activeTenancy as any)?.unit?.unitIdentifier || 'Unknown'}</strong>.
                   </Typography>
                   {/* You could add more mock details here */}
                 </CardContent>

@@ -9,7 +9,6 @@ import {
   Grid,
   Divider,
   useTheme,
-  Alert,
 } from '@mui/material';
 import {
   Receipt as ReceiptIcon,

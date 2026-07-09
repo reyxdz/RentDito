@@ -18,6 +18,7 @@ interface NotificationContextProps {
   markAsRead: (id: string) => Promise<void>;
   markAllAsRead: () => Promise<void>;
   fetchNotifications: () => Promise<void>;
+  showNotification: (message: string, severity?: 'info' | 'success' | 'warning' | 'error') => void;
 }
 
 const NotificationContext = createContext<NotificationContextProps | undefined>(undefined);
@@ -26,6 +27,7 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
   const { isAuthenticated } = useAuth();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [toastNotifications, setToastNotifications] = useState<Notification[]>([]);
 
   const fetchNotifications = async () => {
     if (!isAuthenticated) {
@@ -71,9 +73,28 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
     }
   };
 
+  const showNotification = (message: string, severity: 'info' | 'success' | 'warning' | 'error' = 'info') => {
+    const toast: Notification = {
+      id: `toast-${Date.now()}`,
+      title: severity.charAt(0).toUpperCase() + severity.slice(1),
+      message,
+      read: false,
+      createdAt: new Date().toISOString(),
+      type: severity,
+    };
+    setToastNotifications((prev) => [...prev, toast]);
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+      setToastNotifications((prev) => prev.filter((n) => n.id !== toast.id));
+    }, 5000);
+  };
+
+  // Merge persistent and toast notifications for consumers
+  const allNotifications = [...notifications, ...toastNotifications];
+
   return (
     <NotificationContext.Provider
-      value={{ notifications, unreadCount, markAsRead, markAllAsRead, fetchNotifications }}
+      value={{ notifications: allNotifications, unreadCount, markAsRead, markAllAsRead, fetchNotifications, showNotification }}
     >
       {children}
     </NotificationContext.Provider>

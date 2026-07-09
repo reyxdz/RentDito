@@ -1,7 +1,8 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
+import { AuthRequest } from '../middleware/auth';
 import * as reportService from '../services/report.service';
 
-export const getOccupancy = async (req: Request, res: Response) => {
+export const getOccupancy = async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user!.id;
     const stats = await reportService.getOccupancyStats(userId);
@@ -12,7 +13,7 @@ export const getOccupancy = async (req: Request, res: Response) => {
   }
 };
 
-export const getCheckoutForecast = async (req: Request, res: Response) => {
+export const getCheckoutForecast = async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user!.id;
     const forecast = await reportService.getCheckoutForecast(userId);
@@ -23,7 +24,7 @@ export const getCheckoutForecast = async (req: Request, res: Response) => {
   }
 };
 
-export const getVacancyForecast = async (req: Request, res: Response) => {
+export const getVacancyForecast = async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user!.id;
     const forecast = await reportService.getVacancyForecast(userId);
@@ -34,7 +35,7 @@ export const getVacancyForecast = async (req: Request, res: Response) => {
   }
 };
 
-export const getReservationForecast = async (req: Request, res: Response) => {
+export const getReservationForecast = async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user!.id;
     const forecast = await reportService.getReservationForecast(userId);
