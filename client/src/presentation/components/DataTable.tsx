@@ -55,7 +55,7 @@ export default function DataTable<T extends Record<string, any>>({
 
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden', boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.05)', border: '1px solid', borderColor: 'divider', borderRadius: 4 }}>
-      <TableContainer sx={{ maxHeight: 600 }}>
+      <TableContainer sx={{ maxHeight: { xs: 400, sm: 500, md: 600 }, overflowX: 'auto' }}>
         <Table stickyHeader aria-label="data table">
           <TableHead>
             <TableRow>

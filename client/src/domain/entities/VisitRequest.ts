@@ -1,3 +1,4 @@
+import type { Ref } from './shared';
 import type { User } from './User';
 import type { Property } from './Property';
 import type { Unit } from './Unit';
@@ -7,11 +8,14 @@ export type VisitStatus = 'pending' | 'approved' | 'scheduled' | 'completed' | '
 
 export interface VisitRequest {
   id: string;
-  userId: string;
+  userId: Ref<User>;
+  /** Populated convenience alias */
   user?: User;
-  propertyId: string;
+  propertyId: Ref<Property>;
+  /** Populated convenience alias */
   property?: Property;
-  unitId?: string;
+  unitId?: Ref<Unit>;
+  /** Populated convenience alias */
   unit?: Unit;
   
   requestedDate: string;
@@ -22,7 +26,8 @@ export interface VisitRequest {
   purpose: VisitPurpose;
   status: VisitStatus;
   
-  assignedStaffId?: string;
+  assignedStaffId?: Ref<User>;
+  /** Populated convenience alias */
   assignedStaff?: User;
   notes?: string;
   

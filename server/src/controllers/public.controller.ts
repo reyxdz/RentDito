@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
+import { catchAsync } from '../utils/catchAsync';
 import * as publicService from '../services/public.service';
 
 /**
  * GET /api/public/listings - Get all active properties (no auth)
  */
-export const getPublicListings = async (req: Request, res: Response): Promise<void> => {
-  try {
+export const getPublicListings = catchAsync(async (req: Request, res: Response): Promise<void> => {
     const filters = {
       city: req.query.city as string,
       propertyType: req.query.propertyType as string,
@@ -22,48 +22,28 @@ export const getPublicListings = async (req: Request, res: Response): Promise<vo
       data: result.properties,
       pagination: result.pagination,
     });
-  } catch (error: any) {
-    res.status(error.statusCode || 500).json({
-      status: 'error',
-      message: error.message,
-    });
-  }
-};
+});
 
 /**
  * GET /api/public/listings/:id - Get single property with units (no auth)
  */
-export const getPublicPropertyById = async (req: Request, res: Response): Promise<void> => {
-  try {
+export const getPublicPropertyById = catchAsync(async (req: Request, res: Response): Promise<void> => {
     const property = await publicService.getPublicPropertyById(req.params.id as string);
 
     res.status(200).json({
       status: 'success',
       data: property,
     });
-  } catch (error: any) {
-    res.status(error.statusCode || 500).json({
-      status: 'error',
-      message: error.message,
-    });
-  }
-};
+});
 
 /**
  * GET /api/public/listings/unit/:id - Get single unit detail (no auth)
  */
-export const getPublicUnitById = async (req: Request, res: Response): Promise<void> => {
-  try {
+export const getPublicUnitById = catchAsync(async (req: Request, res: Response): Promise<void> => {
     const unit = await publicService.getPublicUnitById(req.params.id as string);
 
     res.status(200).json({
       status: 'success',
       data: unit,
     });
-  } catch (error: any) {
-    res.status(error.statusCode || 500).json({
-      status: 'error',
-      message: error.message,
-    });
-  }
-};
+});

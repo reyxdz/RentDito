@@ -1,24 +1,20 @@
 import { Response } from 'express';
 import { AuthRequest } from '../middleware/auth';
+import { catchAsync } from '../utils/catchAsync';
 import * as adminService from '../services/admin.service';
 
 /**
  * GET /api/admin/stats - Platform KPIs
  */
-export const getPlatformStats = async (req: AuthRequest, res: Response): Promise<void> => {
-  try {
+export const getPlatformStats = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
     const stats = await adminService.getPlatformStats(req.user!.id);
     res.status(200).json({ status: 'success', data: stats });
-  } catch (error: any) {
-    res.status(error.statusCode || 500).json({ status: 'error', message: error.message });
-  }
-};
+});
 
 /**
  * GET /api/admin/users - Get all users (filterable)
  */
-export const getUsers = async (req: AuthRequest, res: Response): Promise<void> => {
-  try {
+export const getUsers = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
     const filters = {
       role: req.query.role as string,
       status: req.query.status as string,
@@ -33,16 +29,12 @@ export const getUsers = async (req: AuthRequest, res: Response): Promise<void> =
       data: result.users,
       pagination: result.pagination,
     });
-  } catch (error: any) {
-    res.status(error.statusCode || 500).json({ status: 'error', message: error.message });
-  }
-};
+});
 
 /**
  * PATCH /api/admin/users/:id/status - Suspend or activate a user
  */
-export const updateUserStatus = async (req: AuthRequest, res: Response): Promise<void> => {
-  try {
+export const updateUserStatus = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
     const { status } = req.body;
     const user = await adminService.updateUserStatus(req.user!.id, req.params.id as string, status);
     res.status(200).json({
@@ -50,16 +42,12 @@ export const updateUserStatus = async (req: AuthRequest, res: Response): Promise
       message: `User ${status === 'suspended' ? 'suspended' : 'activated'} successfully.`,
       data: user,
     });
-  } catch (error: any) {
-    res.status(error.statusCode || 500).json({ status: 'error', message: error.message });
-  }
-};
+});
 
 /**
  * GET /api/admin/activity - Audit log
  */
-export const getActivityLog = async (req: AuthRequest, res: Response): Promise<void> => {
-  try {
+export const getActivityLog = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
     const filters = {
       action: req.query.action as string,
       resourceType: req.query.resourceType as string,
@@ -73,16 +61,12 @@ export const getActivityLog = async (req: AuthRequest, res: Response): Promise<v
       data: result.logs,
       pagination: result.pagination,
     });
-  } catch (error: any) {
-    res.status(error.statusCode || 500).json({ status: 'error', message: error.message });
-  }
-};
+});
 
 /**
  * GET /api/admin/verifications - Get pending verifications
  */
-export const getPendingVerifications = async (req: AuthRequest, res: Response): Promise<void> => {
-  try {
+export const getPendingVerifications = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
     const filters = {
       page: req.query.page ? parseInt(req.query.page as string) : undefined,
       limit: req.query.limit ? parseInt(req.query.limit as string) : undefined,
@@ -93,16 +77,12 @@ export const getPendingVerifications = async (req: AuthRequest, res: Response): 
       data: result.users,
       pagination: result.pagination,
     });
-  } catch (error: any) {
-    res.status(error.statusCode || 500).json({ status: 'error', message: error.message });
-  }
-};
+});
 
 /**
  * GET /api/admin/verifications/all - Get all verifications
  */
-export const getAllVerifications = async (req: AuthRequest, res: Response): Promise<void> => {
-  try {
+export const getAllVerifications = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
     const filters = {
       verificationStatus: req.query.verificationStatus as string,
       page: req.query.page ? parseInt(req.query.page as string) : undefined,
@@ -114,32 +94,24 @@ export const getAllVerifications = async (req: AuthRequest, res: Response): Prom
       data: result.users,
       pagination: result.pagination,
     });
-  } catch (error: any) {
-    res.status(error.statusCode || 500).json({ status: 'error', message: error.message });
-  }
-};
+});
 
 /**
  * PATCH /api/admin/verifications/:userId/approve - Approve verification
  */
-export const approveVerification = async (req: AuthRequest, res: Response): Promise<void> => {
-  try {
+export const approveVerification = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
     const user = await adminService.approveVerification(req.user!.id, req.params.userId as string);
     res.status(200).json({
       status: 'success',
       message: 'User verification approved',
       data: user,
     });
-  } catch (error: any) {
-    res.status(error.statusCode || 500).json({ status: 'error', message: error.message });
-  }
-};
+});
 
 /**
  * PATCH /api/admin/verifications/:userId/reject - Reject verification
  */
-export const rejectVerification = async (req: AuthRequest, res: Response): Promise<void> => {
-  try {
+export const rejectVerification = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
     const { reason } = req.body;
     const user = await adminService.rejectVerification(req.user!.id, req.params.userId as string, reason);
     res.status(200).json({
@@ -147,7 +119,4 @@ export const rejectVerification = async (req: AuthRequest, res: Response): Promi
       message: 'User verification rejected',
       data: user,
     });
-  } catch (error: any) {
-    res.status(error.statusCode || 500).json({ status: 'error', message: error.message });
-  }
-};
+});

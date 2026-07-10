@@ -30,7 +30,11 @@ const auth = (req: AuthRequest, res: Response, next: NextFunction): void => {
   const token = authHeader.split(' ')[1];
 
   try {
-    const secret = process.env.JWT_ACCESS_SECRET || 'fallback_access_secret';
+    const secret = process.env.JWT_ACCESS_SECRET;
+    if (!secret) {
+      res.status(500).json({ status: 'error', message: 'Server misconfiguration: JWT secret not set' });
+      return;
+    }
     const decoded = verifyToken(token, secret) as { id: string; role: string };
     req.user = { id: decoded.id, role: decoded.role };
     next();

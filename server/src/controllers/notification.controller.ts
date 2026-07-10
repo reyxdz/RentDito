@@ -1,9 +1,9 @@
 import { Response } from 'express';
 import { AuthRequest } from '../middleware/auth';
+import { catchAsync } from '../utils/catchAsync';
 import { Notification } from '../models/Notification';
 
-export const getNotifications = async (req: AuthRequest, res: Response) => {
-  try {
+export const getNotifications = catchAsync(async (req: AuthRequest, res: Response) => {
     const userId = req.user!.id;
     const limit = parseInt(req.query.limit as string) || 50;
 
@@ -25,23 +25,15 @@ export const getNotifications = async (req: AuthRequest, res: Response) => {
         createdAt: n.createdAt
       }))
     });
-  } catch (error: any) {
-    res.status(500).json({ status: 'error', message: error.message });
-  }
-};
+});
 
-export const getUnreadCount = async (req: AuthRequest, res: Response) => {
-  try {
+export const getUnreadCount = catchAsync(async (req: AuthRequest, res: Response) => {
     const userId = req.user!.id;
     const count = await Notification.countDocuments({ userId, isRead: false });
     res.status(200).json({ status: 'success', data: { count } });
-  } catch (error: any) {
-    res.status(500).json({ status: 'error', message: error.message });
-  }
-};
+});
 
-export const markAsRead = async (req: AuthRequest, res: Response) => {
-  try {
+export const markAsRead = catchAsync(async (req: AuthRequest, res: Response) => {
     const userId = req.user!.id;
     const { id } = req.params;
 
@@ -56,13 +48,9 @@ export const markAsRead = async (req: AuthRequest, res: Response) => {
     }
 
     res.status(200).json({ status: 'success', data: notification });
-  } catch (error: any) {
-    res.status(500).json({ status: 'error', message: error.message });
-  }
-};
+});
 
-export const markAllAsRead = async (req: AuthRequest, res: Response) => {
-  try {
+export const markAllAsRead = catchAsync(async (req: AuthRequest, res: Response) => {
     const userId = req.user!.id;
 
     await Notification.updateMany(
@@ -71,7 +59,4 @@ export const markAllAsRead = async (req: AuthRequest, res: Response) => {
     );
 
     res.status(200).json({ status: 'success', message: 'All notifications marked as read' });
-  } catch (error: any) {
-    res.status(500).json({ status: 'error', message: error.message });
-  }
-};
+});

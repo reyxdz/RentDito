@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef, type ReactNode } from 'react';
 import { NotificationService } from '../../infrastructure/services/NotificationService';
 import { useAuth } from './AuthContext';
 
@@ -28,6 +28,14 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [toastNotifications, setToastNotifications] = useState<Notification[]>([]);
+  const toastTimeouts = useRef<ReturnType<typeof setTimeout>[]>([]);
+
+  // Cleanup toast timeouts on unmount
+  useEffect(() => {
+    return () => {
+      toastTimeouts.current.forEach(clearTimeout);
+    };
+  }, []);
 
   const fetchNotifications = async () => {
     if (!isAuthenticated) {
@@ -49,6 +57,10 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
 
   useEffect(() => {
     fetchNotifications();
+    if (!isAuthenticated) return;
+    // Poll for new notifications every 60 seconds
+    const interval = setInterval(fetchNotifications, 60_000);
+    return () => clearInterval(interval);
   }, [isAuthenticated]);
 
   const markAsRead = async (id: string) => {
@@ -83,10 +95,11 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
       type: severity,
     };
     setToastNotifications((prev) => [...prev, toast]);
-    // Auto-remove after 5 seconds
-    setTimeout(() => {
+    // Auto-remove after 5 seconds (tracked for cleanup)
+    const timeoutId = setTimeout(() => {
       setToastNotifications((prev) => prev.filter((n) => n.id !== toast.id));
     }, 5000);
+    toastTimeouts.current.push(timeoutId);
   };
 
   // Merge persistent and toast notifications for consumers

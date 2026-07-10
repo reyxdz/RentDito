@@ -81,7 +81,7 @@ export default function NotificationBell() {
         }}
         PaperProps={{
           sx: {
-            width: 360,
+            width: { xs: '92vw', sm: 360 },
             maxHeight: 480,
             mt: 1.5,
             borderRadius: 2,

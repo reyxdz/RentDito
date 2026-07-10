@@ -1,3 +1,4 @@
+import type { Ref } from './shared';
 import type { Tenancy } from './Tenancy';
 import type { RentalApplication } from './RentalApplication';
 
@@ -6,9 +7,11 @@ export type ContractStatus = 'draft' | 'pending_review' | 'pending_signature' | 
 
 export interface Contract {
   id: string;
-  applicationId: string;
+  applicationId: Ref<RentalApplication>;
+  /** Populated convenience alias */
   application?: RentalApplication;
-  tenancyId?: string;
+  tenancyId?: Ref<Tenancy>;
+  /** Populated convenience alias */
   tenancy?: Tenancy;
   propertyId: string;
   unitId: string;

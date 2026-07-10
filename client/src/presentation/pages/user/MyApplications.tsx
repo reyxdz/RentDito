@@ -13,7 +13,7 @@ import { useAuth } from '../../../application/context/AuthContext';
 import { useApplications } from '../../../application/hooks/useApplications';
 import { getStatusColor } from '../../utils/statusColors';
 import SlideUpTransition from '../../utils/SlideUpTransition';
-import type { RentalApplication } from '../../../infrastructure/services/MockApplicationService';
+import type { RentalApplication } from '../../../domain/entities/RentalApplication';
 import { format } from 'date-fns';
 
 

@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import mongoSanitize from 'express-mongo-sanitize';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
@@ -32,9 +33,14 @@ const PORT = process.env.PORT || 5000;
 
 // Middleware chain
 app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
-app.use(cors());
+app.use(cors({
+  origin: process.env.CLIENT_URL || 'http://localhost:5173',
+  credentials: true,
+}));
 app.use(morgan('dev'));
-app.use(express.json());
+app.use(express.json({ limit: '1mb' }));
+app.use(express.urlencoded({ extended: true, limit: '1mb' }));
+app.use(mongoSanitize());
 
 // Serve locally-uploaded files (fallback when Cloudinary is unavailable)
 app.use('/uploads', express.static(path.resolve(__dirname, '../uploads')));
@@ -67,6 +73,10 @@ app.use('/api/reports', reportRoutes);
 app.use('/api/documents', documentRoutes);
 app.use('/api/security', securityRoutes);
 app.use('/api/notifications', notificationRoutes);
+
+// Global error handler — must be registered after all routes
+import { errorHandler } from './middleware/errorHandler';
+app.use(errorHandler);
 
 const server = app.listen(PORT, () => {
   console.log(`Server is running in development mode on port ${PORT}`);

@@ -16,13 +16,17 @@ const sanitizeUser = (user: IUser) => {
   return obj;
 };
 
+/** Hash a token with SHA-256 (one-way, for safe DB storage) */
+const hashToken = (token: string): string =>
+  crypto.createHash('sha256').update(token).digest('hex');
+
 /** Generate an access + refresh token pair and persist the refresh token */
 const generateTokenPair = async (user: IUser) => {
   const accessToken = signAccess(user._id.toString(), user.role);
   const refreshToken = signRefresh(user._id.toString());
 
   // Persist hashed refresh token on the user document
-  user.refreshToken = refreshToken;
+  user.refreshToken = hashToken(refreshToken);
   await user.save();
 
   return { accessToken, refreshToken };
@@ -90,7 +94,8 @@ export const login = async (email: string, password: string) => {
  * Validates the incoming refresh token, issues a new pair, and invalidates the old one.
  */
 export const refreshToken = async (incomingRefreshToken: string) => {
-  const secret = process.env.JWT_REFRESH_SECRET || 'fallback_refresh_secret';
+  const secret = process.env.JWT_REFRESH_SECRET;
+  if (!secret) throw Object.assign(new Error('Server misconfiguration: JWT_REFRESH_SECRET not set'), { statusCode: 500 });
   let decoded: any;
   try {
     decoded = verifyToken(incomingRefreshToken, secret);
@@ -99,7 +104,7 @@ export const refreshToken = async (incomingRefreshToken: string) => {
   }
 
   const user = await User.findById(decoded.id).select('+refreshToken');
-  if (!user || user.refreshToken !== incomingRefreshToken) {
+  if (!user || user.refreshToken !== hashToken(incomingRefreshToken)) {
     // Possible token reuse attack — clear all refresh tokens
     if (user) {
       user.refreshToken = undefined;
