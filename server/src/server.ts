@@ -57,6 +57,9 @@ app.use(mongoSanitize());
 // Serve locally-uploaded files (fallback when Cloudinary is unavailable)
 app.use('/uploads', express.static(path.resolve(__dirname, '../uploads')));
 
+// Serve locally-uploaded files (fallback when Cloudinary is unavailable)
+app.use('/uploads', express.static(path.resolve(__dirname, '../uploads')));
+
 // Database connection
 connectDB();
 
@@ -80,7 +83,9 @@ app.use('/api/messages', messageRoutes);
 app.use('/api/visits', visitRoutes);
 app.use('/api/applications', applicationRoutes);
 app.use('/api/contracts', contractRoutes);
-app.use('/api/tenancies', tenancyRoutes);
+app.use('/api/reports', reportRoutes);
+app.use('/api/documents', documentRoutes);
+app.use('/api/security', securityRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/documents', documentRoutes);
 app.use('/api/security', securityRoutes);
@@ -89,6 +94,7 @@ app.use('/api/notifications', notificationRoutes);
 // Global error handler — must be registered after all routes
 import { errorHandler } from './middleware/errorHandler';
 app.use(errorHandler);
+
 
 const server = app.listen(PORT, () => {
   console.log(`Server is running in development mode on port ${PORT}`);

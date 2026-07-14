@@ -52,6 +52,12 @@ import {
 import DocumentList from './presentation/pages/hub/documents/DocumentList';
 import SecurityDashboard from './presentation/pages/hub/security/SecurityDashboard';
 
+  HubFinancialsPlaceholder,
+} from './presentation/pages/hub/Placeholders';
+
+import DocumentList from './presentation/pages/hub/documents/DocumentList';
+import SecurityDashboard from './presentation/pages/hub/security/SecurityDashboard';
+
 import BillList from './presentation/pages/hub/billing/BillList';
 import BillDetail from './presentation/pages/hub/billing/BillDetail';
 import UtilityDashboard from './presentation/pages/hub/utilities/UtilityDashboard';
@@ -85,6 +91,9 @@ import TenantList from './presentation/pages/hub/tenants/TenantList';
 import TenantDetail from './presentation/pages/hub/tenants/TenantDetail';
 
 import ReportsDashboard from './presentation/pages/hub/reports/ReportsDashboard';
+
+import ReportsDashboard from './presentation/pages/hub/reports/ReportsDashboard';
+
 
 // ─── User pages ──────────────────────────────────────────────────────
 import VerifyAccount from './presentation/pages/user/VerifyAccount';
@@ -167,6 +176,9 @@ function App() {
               <Route path="applications/:applicationId" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="pipeline"><ApplicationDetail /></ProtectedRoute>} />
               <Route path="transfers" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="pipeline"><TransferList /></ProtectedRoute>} />
               <Route path="transfers/:transferId" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="pipeline"><TransferDetail /></ProtectedRoute>} />
+              <Route path="transfers" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="pipeline"><TransferList /></ProtectedRoute>} />
+              <Route path="transfers/:transferId" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="pipeline"><TransferDetail /></ProtectedRoute>} />
+
             </Route>
             <Route path="bookings">
               <Route index element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="bookings"><VisitList /></ProtectedRoute>} />
@@ -183,6 +195,8 @@ function App() {
             </Route>
             <Route path="utilities" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="utilities"><UtilityDashboard /></ProtectedRoute>} />
             <Route path="financials" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="financials"><HubFinancialsPlaceholder /></ProtectedRoute>} />
+            <Route path="financials" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="financials"><HubFinancialsPlaceholder /></ProtectedRoute>} />
+
             <Route path="inventory" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="inventory"><InventoryDashboard /></ProtectedRoute>} />
             <Route path="maintenance">
               <Route index element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="maintenance"><TicketList /></ProtectedRoute>} />
@@ -191,6 +205,10 @@ function App() {
             <Route path="documents" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="documents"><DocumentList /></ProtectedRoute>} />
             <Route path="reports" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="reports"><ReportsDashboard /></ProtectedRoute>} />
             <Route path="security" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="security"><SecurityDashboard /></ProtectedRoute>} />
+            <Route path="documents" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="documents"><DocumentList /></ProtectedRoute>} />
+            <Route path="reports" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="reports"><ReportsDashboard /></ProtectedRoute>} />
+            <Route path="security" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="security"><SecurityDashboard /></ProtectedRoute>} />
+
             <Route path="team" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="team"><TeamManagement /></ProtectedRoute>} />
             <Route path="profile" element={<Profile />} />
           </Route>
