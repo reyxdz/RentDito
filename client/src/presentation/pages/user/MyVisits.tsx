@@ -9,23 +9,27 @@ import { useAuth } from '../../../application/context/AuthContext';
 import { useVisits } from '../../../application/hooks/useVisits';
 import { getStatusColor } from '../../utils/statusColors';
 import SlideUpTransition from '../../utils/SlideUpTransition';
-import type { Visit } from '../../../infrastructure/services/MockVisitService';
+import type { VisitRequest } from '../../../domain/entities/VisitRequest';
 import { format } from 'date-fns';
 
+/** Safely get the property name from a populated visit */
+const getPropertyName = (visit: VisitRequest): string =>
+  (visit.property as any)?.name || '—';
 
+/** Safely get the unit identifier from a populated visit */
+const getUnitIdentifier = (visit: VisitRequest): string | undefined =>
+  (visit.unit as any)?.unitIdentifier;
 
 export default function MyVisits() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { visits, loading, error, fetchVisits, cancelVisit } = useVisits(user?.id);
-  const [selected, setSelected] = useState<Visit | null>(null);
+  const [selected, setSelected] = useState<VisitRequest | null>(null);
   const [cancelling, setCancelling] = useState(false);
 
   useEffect(() => {
     fetchVisits();
   }, [fetchVisits]);
-
-
 
   const getStatusLabel = (status: string) => {
     switch (status) {
@@ -93,7 +97,7 @@ export default function MyVisits() {
                 <Box sx={{ flexGrow: 1 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 0.5 }}>
                     <Typography variant="h6" sx={{ fontWeight: 700 }}>
-                      {visit.propertyName}
+                      {getPropertyName(visit)}
                     </Typography>
                     <Chip
                       label={getStatusLabel(visit.status)}
@@ -102,15 +106,15 @@ export default function MyVisits() {
                       sx={{ textTransform: 'capitalize', fontWeight: 600, height: 20 }}
                     />
                   </Box>
-                  {visit.unitIdentifier && (
+                  {getUnitIdentifier(visit) && (
                     <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 500 }}>
-                      Unit: {visit.unitIdentifier}
+                      Unit: {getUnitIdentifier(visit)}
                     </Typography>
                   )}
                   <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
                     {visit.scheduledDate
                       ? `Scheduled: ${format(new Date(visit.scheduledDate), 'MMM d, yyyy')} at ${visit.scheduledTime}`
-                      : `Preferred: ${format(new Date(visit.preferredDate), 'MMM d, yyyy')} at ${visit.preferredTime}`}
+                      : `Preferred: ${format(new Date(visit.requestedDate), 'MMM d, yyyy')} at ${visit.requestedTime}`}
                   </Typography>
                 </Box>
 
@@ -158,11 +162,11 @@ export default function MyVisits() {
                 </Box>
                 <Box>
                   <Typography variant="h6" sx={{ fontWeight: 700, lineHeight: 1.2 }}>
-                    {selected.propertyName}
+                    {getPropertyName(selected)}
                   </Typography>
-                  {selected.unitIdentifier && (
+                  {getUnitIdentifier(selected) && (
                     <Typography variant="body2" color="text.secondary">
-                      Unit: {selected.unitIdentifier}
+                      Unit: {getUnitIdentifier(selected)}
                     </Typography>
                   )}
                 </Box>
@@ -186,7 +190,7 @@ export default function MyVisits() {
                       {selected.scheduledDate ? 'Scheduled Date' : 'Preferred Date'}
                     </Typography>
                     <Typography variant="body1" sx={{ fontWeight: 600 }}>
-                      {format(new Date(selected.scheduledDate || selected.preferredDate), 'EEEE, MMMM d, yyyy')}
+                      {format(new Date(selected.scheduledDate || selected.requestedDate), 'EEEE, MMMM d, yyyy')}
                     </Typography>
                   </Box>
                 </Box>
@@ -198,7 +202,7 @@ export default function MyVisits() {
                       {selected.scheduledTime ? 'Scheduled Time' : 'Preferred Time'}
                     </Typography>
                     <Typography variant="body1" sx={{ fontWeight: 600 }}>
-                      {selected.scheduledTime || selected.preferredTime}
+                      {selected.scheduledTime || selected.requestedTime}
                     </Typography>
                   </Box>
                 </Box>

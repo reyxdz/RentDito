@@ -50,9 +50,9 @@ export default function InquiryConversation() {
     if (!inquiry) return;
     setAppContext({
       propertyId: inquiry.propertyId,
-      propertyName: inquiry.propertyName,
-      unitId: inquiry.unitId,
-      unitIdentifier: inquiry.unitIdentifier,
+      propertyName: inquiry.property?.name || 'Property',
+      unitId: inquiry.unitId || '',
+      unitIdentifier: inquiry.unit?.unitIdentifier || 'Unit',
     });
     setAppDialogOpen(true);
   };
@@ -85,10 +85,10 @@ export default function InquiryConversation() {
         </IconButton>
         <Box sx={{ flexGrow: 1 }}>
           <Typography variant="h5" sx={{ fontWeight: 800, lineHeight: 1.2 }}>
-            {inquiry.propertyName}
+            {inquiry.property?.name || 'Property'}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Unit: {inquiry.unitIdentifier}
+            Unit: {inquiry.unit?.unitIdentifier || '—'}
           </Typography>
         </Box>
         <Chip 
@@ -101,7 +101,7 @@ export default function InquiryConversation() {
       {/* Chat Area */}
       <Card variant="outlined" sx={{ borderRadius: 3, flexGrow: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         <Box sx={{ flexGrow: 1, overflowY: 'auto', bgcolor: 'background.default' }}>
-          <ChatThread messages={inquiry.messages} currentUserId={user?.id || ''} />
+          <ChatThread messages={inquiry.messages || []} currentUserId={user?.id || ''} />
         </Box>
         
         <Divider />
@@ -119,14 +119,14 @@ export default function InquiryConversation() {
               variant="outlined"
               size="small"
               sx={{ '& .MuiOutlinedInput-root': { borderRadius: 3 } }}
-              disabled={sending || inquiry.status === 'resolved'}
+              disabled={sending || inquiry.status === 'closed'}
             />
             <Tooltip title="Apply for this unit" arrow placement="top">
               <Button
                 variant="contained"
                 color="success"
                 onClick={handleApplyNow}
-                disabled={inquiry.status === 'resolved'}
+                disabled={inquiry.status === 'closed'}
                 sx={{
                   borderRadius: 3,
                   minWidth: 48,
@@ -149,7 +149,7 @@ export default function InquiryConversation() {
               type="submit"
               variant="contained"
               color="primary"
-              disabled={!draft.trim() || sending || inquiry.status === 'resolved'}
+              disabled={!draft.trim() || sending || inquiry.status === 'closed'}
               sx={{ borderRadius: 3, minWidth: 48, width: 48, height: 40, mb: 0.5, p: 0 }}
             >
               {sending ? <CircularProgress size={20} color="inherit" /> : <Send fontSize="small" />}

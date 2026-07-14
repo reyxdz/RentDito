@@ -141,7 +141,11 @@ export default function TenantDetail() {
                 </Box>
                 <Box>
                   <Typography variant="caption" color="text.secondary" fontWeight={600} textTransform="uppercase">Emergency Contact</Typography>
-                  <Typography variant="body1" fontWeight={500}>{personalDetails?.emergencyContact || '—'}</Typography>
+                  <Typography variant="body1" fontWeight={500}>
+                    {typeof personalDetails?.emergencyContact === 'object' && personalDetails?.emergencyContact
+                      ? `${personalDetails.emergencyContact.name} (${personalDetails.emergencyContact.relationship || (personalDetails.emergencyContact as any).relation || ''}) — ${personalDetails.emergencyContact.phone}`
+                      : (typeof personalDetails?.emergencyContact === 'string' ? personalDetails.emergencyContact : '—')}
+                  </Typography>
                 </Box>
               </Box>
             </CardContent>

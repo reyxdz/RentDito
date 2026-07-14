@@ -40,6 +40,18 @@ app.use(cors({
 app.use(morgan('dev'));
 app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: true, limit: '1mb' }));
+// Workaround Express 5 read-only query getter for express-mongo-sanitize compatibility
+app.use((req, res, next) => {
+  if (req.query) {
+    Object.defineProperty(req, 'query', {
+      value: { ...req.query },
+      writable: true,
+      configurable: true,
+      enumerable: true,
+    });
+  }
+  next();
+});
 app.use(mongoSanitize());
 
 // Serve locally-uploaded files (fallback when Cloudinary is unavailable)

@@ -11,7 +11,11 @@ export interface ApplicationPersonalDetails {
   occupation: string;
   school?: string;
   address: string;
-  emergencyContact: string;
+  emergencyContact: string | {
+    name: string;
+    phone: string;
+    relationship: string;
+  };
 }
 
 export interface RentalApplication {

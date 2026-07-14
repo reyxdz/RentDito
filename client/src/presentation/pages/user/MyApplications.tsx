@@ -107,7 +107,7 @@ export default function MyApplications() {
                 <Box sx={{ flexGrow: 1 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 0.5 }}>
                     <Typography variant="h6" sx={{ fontWeight: 700 }}>
-                      {app.propertyName}
+                      {(app.property as any)?.name || '—'}
                     </Typography>
                     <Chip
                       icon={getStatusIcon(app.status) || undefined}
@@ -118,7 +118,7 @@ export default function MyApplications() {
                     />
                   </Box>
                   <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 500 }}>
-                    Unit: {app.unitIdentifier}
+                    Unit: {(app.unit as any)?.unitIdentifier || '—'}
                   </Typography>
                   <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
                     Applied: {format(new Date(app.createdAt), 'MMM d, yyyy')}
@@ -161,10 +161,10 @@ export default function MyApplications() {
                 </Box>
                 <Box>
                   <Typography variant="h6" sx={{ fontWeight: 700, lineHeight: 1.2 }}>
-                    {selected.propertyName}
+                    {(selected.property as any)?.name || '—'}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    Unit: {selected.unitIdentifier}
+                    Unit: {(selected.unit as any)?.unitIdentifier || '—'}
                   </Typography>
                 </Box>
                 <Box sx={{ ml: 'auto' }}>
@@ -246,14 +246,11 @@ export default function MyApplications() {
               </Typography>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
                 <ContactEmergency sx={{ color: 'error.main' }} />
-                <Box>
                   <Typography variant="body1" sx={{ fontWeight: 600 }}>
-                    {selected.personalDetails.emergencyContact.name}
+                    {typeof selected.personalDetails.emergencyContact === 'object' && selected.personalDetails.emergencyContact
+                      ? `${selected.personalDetails.emergencyContact.name} (${selected.personalDetails.emergencyContact.relationship || (selected.personalDetails.emergencyContact as any).relation || ''}) — ${selected.personalDetails.emergencyContact.phone}`
+                      : (typeof selected.personalDetails.emergencyContact === 'string' ? selected.personalDetails.emergencyContact : '—')}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {selected.personalDetails.emergencyContact.relation} — {selected.personalDetails.emergencyContact.phone}
-                  </Typography>
-                </Box>
               </Box>
 
 

@@ -13,7 +13,11 @@ export interface HouseholdMember {
 export interface PersonalDetails {
   fullName: string;
   phone: string;
-  emergencyContact: string;
+  emergencyContact: string | {
+    name: string;
+    phone: string;
+    relationship: string;
+  };
   idDetails: string;
   address: string;
   occupation: string;

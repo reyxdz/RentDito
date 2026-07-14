@@ -75,7 +75,7 @@ export default function MyInquiries() {
                 <Box sx={{ flexGrow: 1 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 0.5 }}>
                     <Typography variant="h6" sx={{ fontWeight: 700 }}>
-                      {inquiry.propertyName}
+                      {inquiry.property?.name || 'Property'}
                     </Typography>
                     <Chip 
                       label={inquiry.status} 
@@ -85,7 +85,7 @@ export default function MyInquiries() {
                     />
                   </Box>
                   <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 500 }}>
-                    Unit: {inquiry.unitIdentifier}
+                    Unit: {inquiry.unit?.unitIdentifier || '—'}
                   </Typography>
                 </Box>
 

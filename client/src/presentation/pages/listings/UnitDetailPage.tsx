@@ -127,11 +127,8 @@ export default function UnitDetailPage() {
     try {
       const newInq = await createInquiry({
         propertyId: unit.propertyId,
-        propertyName: unit.propertyId.replace('prop-', '').replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase()), // Quick format
         unitId: unit.id,
-        unitIdentifier: unit.unitIdentifier,
-        userId: user.id,
-        userName: user.name || 'User',
+        subject: `Inquiry for ${unit.unitIdentifier}`,
         initialMessage: inquiryMessage
       });
       setInquiryDialogOpen(false);
@@ -493,13 +490,9 @@ export default function UnitDetailPage() {
           try {
             await createVisit({
               propertyId: unit.propertyId,
-              propertyName: unit.propertyId.replace('prop-', '').replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
               unitId: unit.id,
-              unitIdentifier: unit.unitIdentifier,
-              userId: user.id,
-              userName: user.name || 'User',
-              preferredDate: visitDate,
-              preferredTime: visitTime,
+              requestedDate: visitDate,
+              requestedTime: visitTime,
               purpose: visitPurpose,
               notes: visitNotes || undefined,
             });

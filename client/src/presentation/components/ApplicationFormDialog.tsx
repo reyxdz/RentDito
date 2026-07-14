@@ -83,11 +83,7 @@ export default function ApplicationFormDialog({
     try {
       const newApp = await createApplication({
         propertyId: context.propertyId,
-        propertyName: context.propertyName,
         unitId: context.unitId,
-        unitIdentifier: context.unitIdentifier,
-        userId: user.id,
-        userName: user.name || 'User',
         personalDetails: {
           fullName: form.fullName,
           phone: form.phone,
@@ -97,7 +93,7 @@ export default function ApplicationFormDialog({
           emergencyContact: {
             name: form.ecName,
             phone: form.ecPhone,
-            relation: form.ecRelation,
+            relationship: form.ecRelation,
           },
         },
         documents: ['valid_id.jpg'], // Mock document upload

@@ -1,5 +1,5 @@
 import { Box, Typography, Chip, CircularProgress } from '@mui/material';
-import type { TimeSlot } from '../../infrastructure/services/MockVisitService';
+import type { TimeSlot } from '../../application/hooks/useVisits';
 
 export interface TimeSlotPickerProps {
   slots: TimeSlot[];
