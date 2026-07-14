@@ -1,12 +1,12 @@
 import { Response } from 'express';
 import { AuthRequest } from '../middleware/auth';
+import { catchAsync } from '../utils/catchAsync';
 import * as inquiryService from '../services/inquiry.service';
 
 /**
  * POST /api/inquiries - Create inquiry
  */
-export const createInquiry = async (req: AuthRequest, res: Response): Promise<void> => {
-  try {
+export const createInquiry = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
     const inquiry = await inquiryService.createInquiry(req.user!.id, req.body);
 
     res.status(201).json({
@@ -14,38 +14,24 @@ export const createInquiry = async (req: AuthRequest, res: Response): Promise<vo
       message: 'Inquiry submitted successfully',
       data: inquiry
     });
-  } catch (error: any) {
-    res.status(error.statusCode || 500).json({
-      status: 'error',
-      message: error.message
-    });
-  }
-};
+});
 
 /**
  * GET /api/inquiries/my - Get user's own inquiries
  */
-export const getMyInquiries = async (req: AuthRequest, res: Response): Promise<void> => {
-  try {
+export const getMyInquiries = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
     const inquiries = await inquiryService.getMyInquiries(req.user!.id);
 
     res.status(200).json({
       status: 'success',
       data: inquiries
     });
-  } catch (error: any) {
-    res.status(error.statusCode || 500).json({
-      status: 'error',
-      message: error.message
-    });
-  }
-};
+});
 
 /**
  * GET /api/inquiries/property/:propertyId - Get inquiries for a property
  */
-export const getPropertyInquiries = async (req: AuthRequest, res: Response): Promise<void> => {
-  try {
+export const getPropertyInquiries = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
     const filters = {
       status: req.query.status as string
     };
@@ -60,38 +46,24 @@ export const getPropertyInquiries = async (req: AuthRequest, res: Response): Pro
       status: 'success',
       data: inquiries
     });
-  } catch (error: any) {
-    res.status(error.statusCode || 500).json({
-      status: 'error',
-      message: error.message
-    });
-  }
-};
+});
 
 /**
  * GET /api/inquiries/:id - Get inquiry detail
  */
-export const getInquiryById = async (req: AuthRequest, res: Response): Promise<void> => {
-  try {
+export const getInquiryById = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
     const inquiry = await inquiryService.getInquiryById(req.user!.id, req.params.id as string);
 
     res.status(200).json({
       status: 'success',
       data: inquiry
     });
-  } catch (error: any) {
-    res.status(error.statusCode || 500).json({
-      status: 'error',
-      message: error.message
-    });
-  }
-};
+});
 
 /**
  * PATCH /api/inquiries/:id/status - Update inquiry status
  */
-export const updateInquiryStatus = async (req: AuthRequest, res: Response): Promise<void> => {
-  try {
+export const updateInquiryStatus = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
     const inquiry = await inquiryService.updateInquiryStatus(
       req.user!.id,
       req.params.id as string,
@@ -103,10 +75,4 @@ export const updateInquiryStatus = async (req: AuthRequest, res: Response): Prom
       message: 'Inquiry status updated',
       data: inquiry
     });
-  } catch (error: any) {
-    res.status(error.statusCode || 500).json({
-      status: 'error',
-      message: error.message
-    });
-  }
-};
+});

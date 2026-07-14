@@ -3,11 +3,19 @@ import type { Tenancy } from './Tenancy';
 export type BillType = 'rent' | 'utility' | 'penalty' | 'combined';
 export type BillStatus = 'unpaid' | 'partial' | 'paid' | 'overdue';
 
+export interface ReadingBreakdown {
+  previousReading?: number;
+  currentReading?: number;
+  consumption?: number;
+  rate?: number;
+  amount: number;
+}
+
 export interface UtilityBreakdown {
-  electricity?: number;
-  water?: number;
-  internet?: number;
-  others?: number;
+  electricity?: ReadingBreakdown;
+  water?: ReadingBreakdown;
+  internet?: { amount: number };
+  others?: { description?: string; amount: number };
 }
 
 export interface Bill {

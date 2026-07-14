@@ -16,15 +16,5 @@ const PlaceholderView = ({ title, description }: { title: string, description: s
   </Box>
 );
 
-export const HubPropertiesPlaceholder = () => <PlaceholderView title="Properties" description="Manage all your rental properties in one place." />;
-export const HubUnitsPlaceholder = () => <PlaceholderView title="Units & Rooms" description="Configure rooms, bedspaces, pricing, and slot allocations." />;
-export const HubTenantsPlaceholder = () => <PlaceholderView title="Tenants" description="View and manage your active tenants and their records." />;
-export const HubPipelinePlaceholder = () => <PlaceholderView title="Pipeline" description="Track inquiries, visit requests, and rental applications." />;
-export const HubBookingsPlaceholder = () => <PlaceholderView title="Bookings" description="Manage pending and confirmed bookings across properties." />;
-export const HubBillingPlaceholder = () => <PlaceholderView title="Billing" description="Generate and track bills for all active tenancies." />;
-export const HubContractsPlaceholder = () => <PlaceholderView title="Contracts" description="Create and manage rental contracts and agreements." />;
-export const HubUtilitiesPlaceholder = () => <PlaceholderView title="Utilities" description="Track utility meters and configure reading schedules." />;
+// Only HubFinancialsPlaceholder is actively used in App.tsx
 export const HubFinancialsPlaceholder = () => <PlaceholderView title="Financials" description="Monitor revenue, expenses, and generate financial reports." />;
-export const HubInventoryPlaceholder = () => <PlaceholderView title="Inventory" description="Track property assets, appliances, and furniture records." />;
-export const HubMaintenancePlaceholder = () => <PlaceholderView title="Maintenance" description="Manage maintenance tickets and work orders." />;
-export const HubReportsPlaceholder = () => <PlaceholderView title="Reports" description="Generate business analytics and performance reports." />;

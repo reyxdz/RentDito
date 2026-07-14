@@ -12,9 +12,12 @@ export const registerSchema = Joi.object({
       'any.required': 'Email is required',
     }),
   phone: Joi.string().trim().allow('').optional(),
-  password: Joi.string().min(8).max(128).required()
+  password: Joi.string().min(8).max(128)
+    .pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/)
+    .required()
     .messages({
       'string.min': 'Password must be at least 8 characters',
+      'string.pattern.base': 'Password must contain at least one uppercase letter, one lowercase letter, and one number',
       'any.required': 'Password is required',
     }),
   confirmPassword: Joi.string().valid(Joi.ref('password')).required()
@@ -56,9 +59,12 @@ export const resetPasswordSchema = Joi.object({
     .messages({
       'any.required': 'Reset token is required',
     }),
-  password: Joi.string().min(8).max(128).required()
+  password: Joi.string().min(8).max(128)
+    .pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/)
+    .required()
     .messages({
       'string.min': 'Password must be at least 8 characters',
+      'string.pattern.base': 'Password must contain at least one uppercase letter, one lowercase letter, and one number',
       'any.required': 'Password is required',
     }),
   confirmPassword: Joi.string().valid(Joi.ref('password')).required()

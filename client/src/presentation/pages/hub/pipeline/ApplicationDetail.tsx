@@ -137,7 +137,7 @@ export default function ApplicationDetail() {
   const appProperty = (application as any).property || { name: (application as any).propertyName };
   const appUnit = (application as any).unit || { unitIdentifier: (application as any).unitIdentifier };
   const pd = application.personalDetails as any;
-  const statusConfig = STATUS_CONFIG[application.status] || { label: application.status, color: '#6b7280' };
+  const statusConfig = STATUS_CONFIG[application.status as ApplicationStatus] || { label: application.status, color: '#6b7280' };
 
   const isTerminal = ['approved', 'rejected'].includes(application.status);
   const canReview = application.status === 'pending';
@@ -329,7 +329,7 @@ export default function ApplicationDetail() {
                   label="Emergency Contact"
                   value={
                     typeof pd?.emergencyContact === 'object' && pd?.emergencyContact
-                      ? `${pd.emergencyContact.name} (${pd.emergencyContact.relation}) — ${pd.emergencyContact.phone}`
+                      ? `${pd.emergencyContact.name} (${pd.emergencyContact.relationship || pd.emergencyContact.relation || ''}) — ${pd.emergencyContact.phone}`
                       : (pd?.emergencyContact || '—')
                   }
                   highlight

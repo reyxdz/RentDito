@@ -12,6 +12,7 @@ import cloudinary from '../config/cloudinary';
 import fs from 'fs';
 import path from 'path';
 import os from 'os';
+import { paginate } from '../utils/paginate';
 
 // ─────────────────────────────────────────────────────────────
 //  Helpers
@@ -664,6 +665,7 @@ export const generateReceipt = async (userId: string, billId: string) => {
 
 export const getBills = async (userId: string, filters: {
   status?: string; propertyId?: string; tenancyId?: string; type?: string;
+  page?: number; limit?: number;
 } = {}) => {
   const user = await User.findById(userId);
   if (!user) throw Object.assign(new Error('User not found'), { statusCode: 404 });
@@ -674,10 +676,10 @@ export const getBills = async (userId: string, filters: {
     const properties = await Property.find({ landlordId: userId }).select('_id');
     propertyFilter = { propertyId: { $in: properties.map(p => p._id) } };
   } else if (user.role === 'staff') {
-    if (!user.assignedPropertyIds || user.assignedPropertyIds.length === 0) return [];
+    if (!user.assignedPropertyIds || user.assignedPropertyIds.length === 0)
+      return { data: [], pagination: { page: 1, limit: 25, total: 0, pages: 0 } };
     propertyFilter = { propertyId: { $in: user.assignedPropertyIds } };
   } else if (user.role === 'user') {
-    // Users can only see their own bills via tenancy
     const tenancies = await Tenancy.find({ userId }).select('_id');
     propertyFilter = { tenancyId: { $in: tenancies.map(t => t._id) } };
   } else if (user.role !== 'super_admin') {
@@ -690,13 +692,22 @@ export const getBills = async (userId: string, filters: {
   if (filters.tenancyId) query.tenancyId = filters.tenancyId;
   if (filters.type) query.type = filters.type;
 
-  return Bill.find(query)
-    .populate({ path: 'tenancyId', populate: { path: 'userId', select: 'name email avatar' } })
-    .populate('propertyId', 'name address')
-    .populate('unitId', 'unitIdentifier accommodationType')
-    .populate('contractId', 'monthlyRent startDate endDate')
-    .sort({ createdAt: -1 })
-    .lean();
+  const { skip, limit, buildMeta } = paginate({ page: filters.page, limit: filters.limit });
+
+  const [data, total] = await Promise.all([
+    Bill.find(query)
+      .populate({ path: 'tenancyId', populate: { path: 'userId', select: 'name email avatar' } })
+      .populate('propertyId', 'name address')
+      .populate('unitId', 'unitIdentifier accommodationType')
+      .populate('contractId', 'monthlyRent startDate endDate')
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .lean(),
+    Bill.countDocuments(query),
+  ]);
+
+  return { data, pagination: buildMeta(total) };
 };
 
 export const getBillsByTenancy = async (userId: string, tenancyId: string) => {

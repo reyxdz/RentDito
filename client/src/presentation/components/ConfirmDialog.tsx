@@ -1,9 +1,10 @@
+import type { ReactNode } from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button } from '@mui/material';
 
 export interface ConfirmDialogProps {
   open: boolean;
   title: string;
-  message: string;
+  message: ReactNode;
   confirmText?: string;
   cancelText?: string;
   onConfirm: () => void;
@@ -25,7 +26,11 @@ export default function ConfirmDialog({
     <Dialog open={open} onClose={onCancel} maxWidth="sm" fullWidth>
       <DialogTitle sx={{ fontWeight: 'bold' }}>{title}</DialogTitle>
       <DialogContent>
-        <DialogContentText>{message}</DialogContentText>
+        {typeof message === 'string' ? (
+          <DialogContentText>{message}</DialogContentText>
+        ) : (
+          message
+        )}
       </DialogContent>
       <DialogActions sx={{ p: 2, pt: 0 }}>
         <Button onClick={onCancel} color="inherit" sx={{ fontWeight: 'medium' }}>

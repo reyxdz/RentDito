@@ -3,10 +3,12 @@ import {
   Box, Typography, Card, CardContent, CircularProgress, Button,
   TextField, Divider, IconButton, Chip, Tooltip,
 } from '@mui/material';
-import { ArrowBack, Send, AttachFile, Assignment } from '@mui/icons-material';
+import { ArrowBack, Send, Assignment } from '@mui/icons-material';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../application/context/AuthContext';
+import { useNotification } from '../../../application/context/NotificationContext';
 import { useInquiryDetail } from '../../../application/hooks/useInquiries';
+import { getStatusColor } from '../../utils/statusColors';
 import ChatThread from '../../components/ChatThread';
 import ApplicationFormDialog from '../../components/ApplicationFormDialog';
 import type { ApplicationContext } from '../../components/ApplicationFormDialog';
@@ -16,6 +18,7 @@ export default function InquiryConversation() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { inquiry, loading, error, fetchInquiry, sendMessage } = useInquiryDetail(inquiryId);
+  const { showNotification } = useNotification();
   const [draft, setDraft] = useState('');
   const [sending, setSending] = useState(false);
 
@@ -37,7 +40,7 @@ export default function InquiryConversation() {
       setDraft('');
       // In a real app we'd scroll to bottom
     } catch (err: any) {
-      alert(err.message || 'Failed to send message');
+      showNotification(err.message || 'Failed to send message', 'error');
     } finally {
       setSending(false);
     }
@@ -47,21 +50,14 @@ export default function InquiryConversation() {
     if (!inquiry) return;
     setAppContext({
       propertyId: inquiry.propertyId,
-      propertyName: inquiry.propertyName,
-      unitId: inquiry.unitId,
-      unitIdentifier: inquiry.unitIdentifier,
+      propertyName: inquiry.property?.name || 'Property',
+      unitId: inquiry.unitId || '',
+      unitIdentifier: inquiry.unit?.unitIdentifier || 'Unit',
     });
     setAppDialogOpen(true);
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'pending': return 'warning';
-      case 'responded': return 'success';
-      case 'resolved': return 'default';
-      default: return 'default';
-    }
-  };
+
 
   if (loading && !inquiry) {
     return (
@@ -89,15 +85,15 @@ export default function InquiryConversation() {
         </IconButton>
         <Box sx={{ flexGrow: 1 }}>
           <Typography variant="h5" sx={{ fontWeight: 800, lineHeight: 1.2 }}>
-            {inquiry.propertyName}
+            {inquiry.property?.name || 'Property'}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Unit: {inquiry.unitIdentifier}
+            Unit: {inquiry.unit?.unitIdentifier || '—'}
           </Typography>
         </Box>
         <Chip 
           label={inquiry.status} 
-          color={getStatusColor(inquiry.status) as any}
+          color={getStatusColor(inquiry.status)}
           sx={{ textTransform: 'capitalize', fontWeight: 600 }}
         />
       </Box>
@@ -105,7 +101,7 @@ export default function InquiryConversation() {
       {/* Chat Area */}
       <Card variant="outlined" sx={{ borderRadius: 3, flexGrow: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         <Box sx={{ flexGrow: 1, overflowY: 'auto', bgcolor: 'background.default' }}>
-          <ChatThread messages={inquiry.messages} currentUserId={user?.id || ''} />
+          <ChatThread messages={inquiry.messages || []} currentUserId={user?.id || ''} />
         </Box>
         
         <Divider />
@@ -113,9 +109,6 @@ export default function InquiryConversation() {
         {/* Reply Box + Apply Now */}
         <CardContent sx={{ p: 2, bgcolor: 'background.paper', '&:last-child': { pb: 2 } }}>
           <Box component="form" onSubmit={handleSend} sx={{ display: 'flex', gap: 1, alignItems: 'flex-end' }}>
-            <IconButton color="primary" sx={{ mb: 0.5 }}>
-              <AttachFile />
-            </IconButton>
             <TextField
               fullWidth
               multiline
@@ -126,14 +119,14 @@ export default function InquiryConversation() {
               variant="outlined"
               size="small"
               sx={{ '& .MuiOutlinedInput-root': { borderRadius: 3 } }}
-              disabled={sending || inquiry.status === 'resolved'}
+              disabled={sending || inquiry.status === 'closed'}
             />
             <Tooltip title="Apply for this unit" arrow placement="top">
               <Button
                 variant="contained"
                 color="success"
                 onClick={handleApplyNow}
-                disabled={inquiry.status === 'resolved'}
+                disabled={inquiry.status === 'closed'}
                 sx={{
                   borderRadius: 3,
                   minWidth: 48,
@@ -156,7 +149,7 @@ export default function InquiryConversation() {
               type="submit"
               variant="contained"
               color="primary"
-              disabled={!draft.trim() || sending || inquiry.status === 'resolved'}
+              disabled={!draft.trim() || sending || inquiry.status === 'closed'}
               sx={{ borderRadius: 3, minWidth: 48, width: 48, height: 40, mb: 0.5, p: 0 }}
             >
               {sending ? <CircularProgress size={20} color="inherit" /> : <Send fontSize="small" />}

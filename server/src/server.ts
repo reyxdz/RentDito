@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import mongoSanitize from 'express-mongo-sanitize';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
@@ -19,14 +20,11 @@ import visitRoutes from './routes/visit.routes';
 import applicationRoutes from './routes/application.routes';
 import contractRoutes from './routes/contract.routes';
 import tenancyRoutes from './routes/tenancy.routes';
-import billingRoutes from './routes/billing.routes';
-import paymentRoutes from './routes/payment.routes';
-import utilityRoutes from './routes/utility.routes';
-import inventoryRoutes from './routes/inventory.routes';
-import ticketRoutes from './routes/ticket.routes';
-import transferRoutes from './routes/transfer.routes';
-import financialRoutes from './routes/financial.routes';
-import { initScheduler } from './services/scheduler.service';
+import reportRoutes from './routes/report.routes';
+import documentRoutes from './routes/document.routes';
+import securityRoutes from './routes/security.routes';
+import notificationRoutes from './routes/notification.routes';
+import { auditLog } from './middleware/auditLog';
 
 dotenv.config();
 
@@ -35,9 +33,29 @@ const PORT = process.env.PORT || 5000;
 
 // Middleware chain
 app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
-app.use(cors());
+app.use(cors({
+  origin: process.env.CLIENT_URL || 'http://localhost:5173',
+  credentials: true,
+}));
 app.use(morgan('dev'));
-app.use(express.json());
+app.use(express.json({ limit: '1mb' }));
+app.use(express.urlencoded({ extended: true, limit: '1mb' }));
+// Workaround Express 5 read-only query getter for express-mongo-sanitize compatibility
+app.use((req, res, next) => {
+  if (req.query) {
+    Object.defineProperty(req, 'query', {
+      value: { ...req.query },
+      writable: true,
+      configurable: true,
+      enumerable: true,
+    });
+  }
+  next();
+});
+app.use(mongoSanitize());
+
+// Serve locally-uploaded files (fallback when Cloudinary is unavailable)
+app.use('/uploads', express.static(path.resolve(__dirname, '../uploads')));
 
 // Serve locally-uploaded files (fallback when Cloudinary is unavailable)
 app.use('/uploads', express.static(path.resolve(__dirname, '../uploads')));
@@ -51,6 +69,7 @@ app.get('/api/health', (req, res) => {
 });
 
 // Route mounts
+app.use(auditLog); // Attach audit log middleware before routes (it listens to res.on('finish'))
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/landlord-applications', landlordApplicationRoutes);
@@ -64,26 +83,21 @@ app.use('/api/messages', messageRoutes);
 app.use('/api/visits', visitRoutes);
 app.use('/api/applications', applicationRoutes);
 app.use('/api/contracts', contractRoutes);
-<<<<<<< marcxdev-development
 app.use('/api/reports', reportRoutes);
 app.use('/api/documents', documentRoutes);
 app.use('/api/security', securityRoutes);
-=======
-app.use('/api/tenancies', tenancyRoutes);
-app.use('/api/billing', billingRoutes);
-app.use('/api/payments', paymentRoutes);
-app.use('/api/utilities', utilityRoutes);
-app.use('/api/inventory', inventoryRoutes);
-app.use('/api/tickets', ticketRoutes);
-app.use('/api/transfers', transferRoutes);
-app.use('/api/financials', financialRoutes);
->>>>>>> development
+app.use('/api/reports', reportRoutes);
+app.use('/api/documents', documentRoutes);
+app.use('/api/security', securityRoutes);
+app.use('/api/notifications', notificationRoutes);
+
+// Global error handler — must be registered after all routes
+import { errorHandler } from './middleware/errorHandler';
+app.use(errorHandler);
+
 
 const server = app.listen(PORT, () => {
   console.log(`Server is running in development mode on port ${PORT}`);
-
-  // Initialize cron scheduler (gated by ENABLE_CRON=true)
-  initScheduler();
 });
 
 export default server;

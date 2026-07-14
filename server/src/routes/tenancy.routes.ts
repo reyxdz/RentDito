@@ -31,4 +31,13 @@ router.get('/:id', tenancyController.getTenancyById);
 // PATCH /api/tenancies/:id/checkout - Initiate checkout
 router.patch('/:id/checkout', tenancyController.initiateCheckout);
 
+// POST /api/tenancies/:id/comments - Add a comment to a tenancy
+router.post('/:id/comments', tenancyController.addComment);
+
+// GET /api/tenancies/:id/comments - Get comments for a tenancy
+router.get('/:id/comments', tenancyController.getComments);
+
+// GET /api/tenancies/:id/roommates - Get roommates for a tenancy
+router.get('/:id/roommates', tenancyController.getRoommates);
+
 export default router;

@@ -134,7 +134,26 @@ export function useTransfers() {
     setLoading(false);
   }, []);
 
-  return { transfers, loading, fetchTransfers };
+  const requestTransfer = useCallback(async (data: { fromUnitId: string; toUnitId: string; tenancyId: string; reason: string }) => {
+    setLoading(true);
+    await new Promise(res => setTimeout(res, 500));
+    const newRequest: TransferRequest = {
+      id: `trf_${Date.now()}`,
+      tenancyId: data.tenancyId,
+      fromUnitId: data.fromUnitId,
+      toUnitId: data.toUnitId,
+      reason: data.reason,
+      status: 'pending',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    transferDb = [newRequest, ...transferDb];
+    setTransfers([...transferDb]);
+    setLoading(false);
+    return newRequest;
+  }, []);
+
+  return { transfers, loading, fetchTransfers, requestTransfer };
 }
 
 export function useTransferDetail(transferId?: string) {

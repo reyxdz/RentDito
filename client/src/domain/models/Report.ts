@@ -39,4 +39,40 @@ export interface CheckoutForecast {
   monthlyForecast: CheckoutForecastMonth[];
   peakMonth: string | null;
   expiringContracts: ExpiringContract[];
+  historicalTrend: HistoricalCheckout[];
+  totalRevenueLoss: number;
+}
+
+export interface HistoricalCheckout {
+  month: string;
+  year: number;
+  checkouts: number;
+}
+
+export interface VacancyPropertyBreakdown {
+  propertyId: string;
+  propertyName: string;
+  totalUnits: number;
+  currentVacant: number;
+  predictedVacant: number;
+  currentVacancyRate: number;
+  predictedVacancyRate: number;
+}
+
+export interface VacancyForecast {
+  totalUnits: number;
+  currentVacant: number;
+  predictedVacant: number;
+  currentVacancyRate: number;
+  predictedVacancyRate: number;
+  propertyBreakdown: VacancyPropertyBreakdown[];
+}
+
+export interface ReservationForecast {
+  pendingInquiries: number;
+  scheduledVisits: number;
+  pendingApplications: number;
+  totalApplications: number;
+  approvedApplications: number;
+  conversionRate: number;
 }

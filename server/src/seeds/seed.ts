@@ -4,6 +4,12 @@ import path from 'path';
 import { User } from '../models/User';
 import { Property } from '../models/Property';
 import { Unit } from '../models/Unit';
+import { Contract } from '../models/Contract';
+import { Tenancy } from '../models/Tenancy';
+import { Bill } from '../models/Bill';
+import { Inventory } from '../models/Inventory';
+import { InventoryRecord } from '../models/InventoryRecord';
+import { Notification } from '../models/Notification';
 import { hash } from '../utils/password';
 import { MOCK_PROPERTIES, MOCK_UNITS } from './seedData';
 
@@ -26,7 +32,8 @@ const clearDatabase = async () => {
   await User.deleteMany();
   await Property.deleteMany();
   await Unit.deleteMany();
-  // await Lease.deleteMany();
+  await Contract.deleteMany();
+  await Tenancy.deleteMany();
   console.log('Database cleared!');
 };
 
@@ -103,10 +110,299 @@ const seedUnits = async (properties: any[]) => {
   }
 };
 
-const seedLeases = async (users: any[], properties: any[]) => {
-  console.log('Seeding leases...');
-  // Placeholder logic
-  return []; // Return created leases
+const seedContractsAndTenancies = async (users: any[], properties: any[]) => {
+  console.log('Seeding contracts & tenancies...');
+  
+  const user1 = users.find((u: any) => u.email === 'user1@rentdito.com');
+  const user2 = users.find((u: any) => u.email === 'user2@rentdito.com');
+  const landlord1 = users.find((u: any) => u.email === 'landlord1@rentdito.com');
+
+  const property = properties[0];
+  const unit1 = await Unit.findOne({ propertyId: property._id }); // First unit
+
+  // Create contract for user1
+  // Mock application first (optional but required by schema)
+  const contract1 = await Contract.create({
+    applicationId: new mongoose.Types.ObjectId(), // Mock ID since we don't seed applications yet
+    landlordId: landlord1._id,
+    userId: user1._id,
+    propertyId: property._id,
+    unitId: unit1?._id,
+    rateType: 'fixed',
+    startDate: new Date(),
+    endDate: new Date(new Date().setFullYear(new Date().getFullYear() + 1)),
+    lockInPeriod: 6,
+    monthlyRent: 8500,
+    securityDeposit: 8500,
+    advancePayment: 8500,
+    status: 'active',
+    landlordSignature: 'mock-signature-base64',
+    userSignature: 'mock-signature-base64',
+    signedAt: new Date()
+  });
+
+  // Create tenancy for user1
+  const tenancy1 = await Tenancy.create({
+    userId: user1._id,
+    propertyId: property._id,
+    unitId: unit1?._id,
+    contractId: contract1._id,
+    status: 'checked_in',
+    checkInDate: new Date(),
+    isPrimary: true,
+    personalDetails: {
+      fullName: user1.name,
+      phone: user1.phone,
+      occupation: 'Software Engineer',
+      address: '123 Test St.',
+      emergencyContact: {
+        name: 'Emergency Contact 1',
+        phone: '09000000000',
+        relationship: 'Sibling'
+      }
+    },
+    comments: [
+      {
+        userId: landlord1._id,
+        role: 'caretaker',
+        text: 'Tenant checked in successfully. Gave keys.',
+        createdAt: new Date()
+      },
+      {
+        userId: user1._id,
+        role: 'tenant',
+        text: 'Moved in, the room is clean. Thank you!',
+        createdAt: new Date()
+      }
+    ]
+  });
+
+  // Set activeTenancy on user1
+  await User.findByIdAndUpdate(user1._id, { activeTenancy: tenancy1._id });
+
+  // Seed Utility Bills for tenancy1
+  const today = new Date();
+  for (let m = 0; m < 3; m++) {
+    const month = today.getMonth() - m;
+    const periodStart = new Date(today.getFullYear(), month, 1);
+    const periodEnd = new Date(today.getFullYear(), month + 1, 0);
+    const dueDate = new Date(today.getFullYear(), month + 1, 5);
+    
+    // Varying readings
+    const elecPrev = 1500 + (m * 120);
+    const elecCurr = elecPrev + 120 + Math.floor(Math.random() * 30);
+    const elecCons = elecCurr - elecPrev;
+    const elecRate = 12.5;
+    const elecAmount = elecCons * elecRate;
+
+    const waterPrev = 100 + (m * 15);
+    const waterCurr = waterPrev + 15 + Math.floor(Math.random() * 5);
+    const waterCons = waterCurr - waterPrev;
+    const waterRate = 45;
+    const waterAmount = waterCons * waterRate;
+
+    const internetAmount = 1500;
+
+    const totalUtility = elecAmount + waterAmount + internetAmount;
+    const perHeadAmount = totalUtility / 2; // Assuming 2 occupants for bedspace example
+
+    await Bill.create({
+      tenancyId: tenancy1._id,
+      propertyId: property._id,
+      unitId: unit1?._id,
+      contractId: contract1._id,
+      type: 'utility',
+      billingPeriod: { start: periodStart, end: periodEnd },
+      rentAmount: 0,
+      utilityAmount: perHeadAmount,
+      penaltyAmount: 0,
+      totalAmount: perHeadAmount,
+      paidAmount: 0,
+      balanceAmount: perHeadAmount,
+      status: 'unpaid',
+      dueDate,
+      utilityBreakdown: {
+        electricity: {
+          previousReading: elecPrev,
+          currentReading: elecCurr,
+          consumption: elecCons,
+          rate: elecRate,
+          amount: elecAmount
+        },
+        water: {
+          previousReading: waterPrev,
+          currentReading: waterCurr,
+          consumption: waterCons,
+          rate: waterRate,
+          amount: waterAmount
+        },
+        internet: { amount: internetAmount }
+      },
+      notes: `Shared utility: total ₱${totalUtility.toLocaleString()} divided by 2 occupant(s) = ₱${perHeadAmount.toLocaleString()} per occupant`,
+      isAutoGenerated: false
+    });
+  }
+
+  // Create a historical checked_out contract & tenancy for user2
+  const pastStartDate = new Date(new Date().setFullYear(new Date().getFullYear() - 2));
+  const pastEndDate = new Date(new Date().setFullYear(new Date().getFullYear() - 1));
+  const pastContract = await Contract.create({
+    applicationId: new mongoose.Types.ObjectId(),
+    landlordId: landlord1._id,
+    userId: user2._id,
+    propertyId: property._id,
+    unitId: unit1?._id,
+    rateType: 'fixed',
+    startDate: pastStartDate,
+    endDate: pastEndDate,
+    lockInPeriod: 6,
+    monthlyRent: 8000,
+    securityDeposit: 8000,
+    advancePayment: 8000,
+    status: 'expired',
+    landlordSignature: 'mock-signature-base64',
+    userSignature: 'mock-signature-base64',
+    signedAt: pastStartDate
+  });
+
+  const user3 = users.find((u: any) => u.email === 'user3@rentdito.com');
+  const expiringStartDate = new Date(new Date().setMonth(new Date().getMonth() - 10));
+  const expiringEndDate = new Date(new Date().setMonth(new Date().getMonth() + 2));
+  await Contract.create({
+    applicationId: new mongoose.Types.ObjectId(),
+    landlordId: landlord1._id,
+    userId: user3._id,
+    propertyId: property._id,
+    unitId: unit1?._id,
+    rateType: 'fixed',
+    startDate: expiringStartDate,
+    endDate: expiringEndDate,
+    lockInPeriod: 6,
+    monthlyRent: 9000,
+    securityDeposit: 9000,
+    advancePayment: 9000,
+    status: 'active',
+    landlordSignature: 'mock-signature-base64',
+    userSignature: 'mock-signature-base64',
+    signedAt: expiringStartDate
+  });
+
+  await Tenancy.create({
+    userId: user2._id,
+    propertyId: property._id,
+    unitId: unit1?._id,
+    contractId: pastContract._id,
+    status: 'checked_out',
+    checkInDate: pastStartDate,
+    checkOutDate: pastEndDate,
+    isPrimary: true,
+    personalDetails: {
+      fullName: user2.name,
+      phone: user2.phone,
+      occupation: 'Designer',
+      address: '456 Old St.',
+      emergencyContact: {
+        name: 'Emergency Contact 2',
+        phone: '09111111111',
+        relationship: 'Parent'
+      }
+    },
+    comments: [
+      {
+        userId: landlord1._id,
+        role: 'caretaker',
+        text: 'Tenant checked out successfully. Unit left in good condition.',
+        createdAt: pastEndDate
+      }
+    ]
+  });
+};
+
+const seedInventory = async (users: any[], properties: any[]) => {
+  console.log('Seeding inventory...');
+  
+  const staff1 = users.find((u: any) => u.email === 'manager@rentdito.com');
+  const property = properties[0]; // First property
+  const tenancy1 = await Tenancy.findOne({ propertyId: property._id });
+
+  // Clear existing to avoid unique constraint issues
+  await Inventory.deleteMany();
+  await InventoryRecord.deleteMany();
+
+  // Create Inventory Items
+  const itemsData = [
+    {
+      propertyId: property._id,
+      itemName: 'Samsung Split-type AC 1HP',
+      serialNumber: 'SMC-9921-AC',
+      condition: 'good',
+      quantity: 5,
+      availableQuantity: 4,
+      status: 'available',
+      purchaseDate: new Date('2023-01-15'),
+      purchaseCost: 25000,
+    },
+    {
+      propertyId: property._id,
+      itemName: 'Office Desk Chair (Ergo)',
+      condition: 'new',
+      quantity: 10,
+      availableQuantity: 8,
+      status: 'available',
+      purchaseDate: new Date('2025-11-10'),
+      purchaseCost: 3500,
+    },
+    {
+      propertyId: property._id,
+      itemName: 'Microwave Oven (LG)',
+      serialNumber: 'LG-MW-005',
+      condition: 'damaged',
+      quantity: 2,
+      availableQuantity: 2,
+      status: 'maintenance',
+      purchaseDate: new Date('2022-05-20'),
+      purchaseCost: 4500,
+    }
+  ];
+
+  const createdItems = await Inventory.insertMany(itemsData);
+
+  if (tenancy1 && staff1) {
+    // Issue some items to the tenancy
+    const acItem = createdItems.find(i => i.itemName.includes('Samsung'));
+    const chairItem = createdItems.find(i => i.itemName.includes('Chair'));
+
+    if (acItem && chairItem) {
+      await InventoryRecord.insertMany([
+        {
+          inventoryItemId: acItem._id,
+          tenancyId: tenancy1._id,
+          propertyId: property._id,
+          unitId: tenancy1.unitId,
+          issuedByUserId: staff1._id,
+          issuedDate: new Date(),
+          quantityIssued: 1,
+          issuedCondition: 'good',
+          status: 'active'
+        },
+        {
+          inventoryItemId: chairItem._id,
+          tenancyId: tenancy1._id,
+          propertyId: property._id,
+          unitId: tenancy1.unitId,
+          issuedByUserId: staff1._id,
+          issuedDate: new Date(),
+          quantityIssued: 2,
+          issuedCondition: 'new',
+          status: 'active'
+        }
+      ]);
+
+      // Update available quantities
+      await Inventory.findByIdAndUpdate(acItem._id, { $inc: { availableQuantity: -1 }, status: 'issued' });
+      await Inventory.findByIdAndUpdate(chairItem._id, { $inc: { availableQuantity: -2 }, status: 'issued' });
+    }
+  }
 };
 
 const seedPayments = async (leases: any[]) => {
@@ -121,7 +417,24 @@ const seedMaintenanceRequests = async (properties: any[], users: any[]) => {
 
 const seedNotifications = async (users: any[]) => {
   console.log('Seeding notifications...');
-  // Placeholder logic
+  const landlord1 = users.find((u: any) => u.email === 'landlord1@rentdito.com');
+  
+  await Notification.create([
+    {
+      userId: landlord1._id,
+      type: 'inquiry',
+      title: 'New Inquiry Received',
+      message: 'You have a new inquiry for unit 101.',
+      isRead: false,
+    },
+    {
+      userId: landlord1._id,
+      type: 'contract',
+      title: 'Contract Expiring Soon',
+      message: 'A contract for user3 is expiring in 2 months.',
+      isRead: false,
+    }
+  ]);
 };
 
 const runSeeder = async () => {
@@ -134,8 +447,10 @@ const runSeeder = async () => {
     const users = await seedUsers();
     const properties = await seedProperties(users);
     await seedUnits(properties);
-    const leases = await seedLeases(users, properties);
-    await seedPayments(leases);
+    await seedContractsAndTenancies(users, properties);
+    await seedInventory(users, properties);
+    // const leases = await seedLeases(users, properties);
+    // await seedPayments(leases);
     await seedMaintenanceRequests(properties, users);
     await seedNotifications(users);
 

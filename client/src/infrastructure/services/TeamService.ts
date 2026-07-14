@@ -1,6 +1,5 @@
 import { apiClient } from '../api/apiClient';
 import { ENDPOINTS } from '../api/endpoints';
-import type { User } from '../../domain/entities/User';
 
 export interface StaffMember {
   id: string;

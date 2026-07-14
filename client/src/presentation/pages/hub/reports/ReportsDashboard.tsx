@@ -17,10 +17,11 @@ import {
 } from '@mui/icons-material';
 
 import { ReportService } from '../../../../application/services/ReportService';
-import type { OccupancyStats, CheckoutForecast as ForecastModel } from '../../../../domain/models/Report';
+import type { OccupancyStats, CheckoutForecast as ForecastModel, VacancyForecast as VacancyModel } from '../../../../domain/models/Report';
 
 import OccupancyReport from './OccupancyReport';
 import CheckoutForecast from './CheckoutForecast';
+import VacancyForecast from './VacancyForecast';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -63,6 +64,7 @@ export default function ReportsDashboard() {
   
   const [occupancyData, setOccupancyData] = useState<OccupancyStats | null>(null);
   const [forecastData, setForecastData] = useState<ForecastModel | null>(null);
+  const [vacancyData, setVacancyData] = useState<VacancyModel | null>(null);
 
   useEffect(() => {
     fetchData();
@@ -72,12 +74,14 @@ export default function ReportsDashboard() {
     setLoading(true);
     setError(null);
     try {
-      const [occStats, checkoutFC] = await Promise.all([
+      const [occStats, checkoutFC, vacancyFC] = await Promise.all([
         ReportService.getOccupancyStats(),
-        ReportService.getCheckoutForecast()
+        ReportService.getCheckoutForecast(),
+        ReportService.getVacancyForecast()
       ]);
       setOccupancyData(occStats);
       setForecastData(checkoutFC);
+      setVacancyData(vacancyFC);
     } catch (err: any) {
       console.error('Error fetching reports data:', err);
       setError('Failed to load report data. Please try again later.');
@@ -115,7 +119,7 @@ export default function ReportsDashboard() {
             <Tab icon={<PieChartIcon />} iconPosition="start" label="Occupancy" {...a11yProps(0)} />
             <Tab icon={<MoneyIcon />} iconPosition="start" label="Financial (Soon)" {...a11yProps(1)} />
             <Tab icon={<ForecastIcon />} iconPosition="start" label="Checkout Forecast" {...a11yProps(2)} />
-            <Tab icon={<VacancyIcon />} iconPosition="start" label="Vacancy (Soon)" {...a11yProps(3)} />
+            <Tab icon={<VacancyIcon />} iconPosition="start" label="Vacancy Forecast" {...a11yProps(3)} />
           </Tabs>
         </Box>
 
@@ -146,11 +150,7 @@ export default function ReportsDashboard() {
             </CustomTabPanel>
             
             <CustomTabPanel value={tabValue} index={3}>
-              <Box sx={{ p: 4, textAlign: 'center' }}>
-                <Typography variant="h6" color="textSecondary">
-                  Vacancy forecasting is coming soon.
-                </Typography>
-              </Box>
+              {vacancyData && <VacancyForecast forecast={vacancyData} />}
             </CustomTabPanel>
           </Box>
         )}

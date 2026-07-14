@@ -1,12 +1,12 @@
 import { Response } from 'express';
 import { AuthRequest } from '../middleware/auth';
+import { catchAsync } from '../utils/catchAsync';
 import * as financialService from '../services/financial.service';
 
 /**
  * GET /api/financials/summary - Financial summary
  */
-export const getSummary = async (req: AuthRequest, res: Response): Promise<void> => {
-  try {
+export const getSummary = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
     const summary = await financialService.getFinancialSummary(req.user!.id, {
       from: req.query.from as string,
       to: req.query.to as string,
@@ -17,16 +17,12 @@ export const getSummary = async (req: AuthRequest, res: Response): Promise<void>
       status: 'success',
       data: summary
     });
-  } catch (error: any) {
-    res.status(error.statusCode || 500).json({ status: 'error', message: error.message });
-  }
-};
+});
 
 /**
  * GET /api/financials/monthly - Monthly trend
  */
-export const getMonthly = async (req: AuthRequest, res: Response): Promise<void> => {
-  try {
+export const getMonthly = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
     const year = req.query.year ? Number(req.query.year) : undefined;
     const monthly = await financialService.getMonthlyFinancialTrend(req.user!.id, {
       year,
@@ -37,16 +33,12 @@ export const getMonthly = async (req: AuthRequest, res: Response): Promise<void>
       status: 'success',
       data: monthly
     });
-  } catch (error: any) {
-    res.status(error.statusCode || 500).json({ status: 'error', message: error.message });
-  }
-};
+});
 
 /**
  * GET /api/financials/by-property - Income grouped by property
  */
-export const getByProperty = async (req: AuthRequest, res: Response): Promise<void> => {
-  try {
+export const getByProperty = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
     const byProperty = await financialService.getFinancialByProperty(req.user!.id, {
       from: req.query.from as string,
       to: req.query.to as string,
@@ -57,7 +49,4 @@ export const getByProperty = async (req: AuthRequest, res: Response): Promise<vo
       status: 'success',
       data: byProperty
     });
-  } catch (error: any) {
-    res.status(error.statusCode || 500).json({ status: 'error', message: error.message });
-  }
-};
+});

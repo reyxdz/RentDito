@@ -1,6 +1,8 @@
 import { useState, useCallback } from 'react';
-import { MockInquiryService } from '../../infrastructure/services/MockInquiryService';
-import type { Inquiry } from '../../infrastructure/services/MockInquiryService';
+import { apiClient } from '../../infrastructure/api/apiClient';
+import { ENDPOINTS } from '../../infrastructure/api/endpoints';
+import type { Inquiry } from '../../domain/entities/Inquiry';
+import type { Message } from '../../domain/entities/Message';
 
 export function useInquiries(userId?: string) {
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
@@ -12,8 +14,8 @@ export function useInquiries(userId?: string) {
     setLoading(true);
     setError(null);
     try {
-      const data = await MockInquiryService.getInquiriesByUser(userId);
-      setInquiries(data);
+      const { data } = await apiClient.get(ENDPOINTS.INQUIRIES.ROOT);
+      setInquiries(data.data || data || []);
     } catch (err: any) {
       setError(err.message || 'Failed to fetch inquiries');
     } finally {
@@ -21,19 +23,17 @@ export function useInquiries(userId?: string) {
     }
   }, [userId]);
 
-  const createInquiry = async (data: {
+  const createInquiry = async (inquiryData: {
     propertyId: string;
-    propertyName: string;
-    unitId: string;
-    unitIdentifier: string;
-    userId: string;
-    userName: string;
+    unitId?: string;
+    subject: string;
     initialMessage: string;
   }) => {
     setLoading(true);
     try {
-      const newInquiry = await MockInquiryService.createInquiry(data);
-      setInquiries(prev => [newInquiry, ...prev]);
+      const { data } = await apiClient.post(ENDPOINTS.INQUIRIES.ROOT, inquiryData);
+      const newInquiry = data.data || data;
+      setInquiries((prev: Inquiry[]) => [newInquiry, ...prev]);
       return newInquiry;
     } catch (err: any) {
       setError(err.message || 'Failed to create inquiry');
@@ -47,7 +47,7 @@ export function useInquiries(userId?: string) {
 }
 
 export function useInquiryDetail(inquiryId?: string) {
-  const [inquiry, setInquiry] = useState<Inquiry | null>(null);
+  const [inquiry, setInquiry] = useState<(Inquiry & { conversationId?: string; messages?: Message[] }) | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -56,9 +56,24 @@ export function useInquiryDetail(inquiryId?: string) {
     setLoading(true);
     setError(null);
     try {
-      const data = await MockInquiryService.getInquiryById(inquiryId);
-      if (!data) throw new Error('Inquiry not found');
-      setInquiry(data);
+      const { data } = await apiClient.get(ENDPOINTS.INQUIRIES.DETAILS(inquiryId));
+      const result = data.data || data;
+      if (!result) throw new Error('Inquiry not found');
+
+      let messages: Message[] = [];
+      if (result.conversationId) {
+        try {
+          const msgRes = await apiClient.get(ENDPOINTS.MESSAGES.CONVERSATION(result.conversationId));
+          messages = msgRes.data?.data || msgRes.data || [];
+        } catch (msgErr) {
+          console.error('Failed to fetch messages:', msgErr);
+        }
+      }
+
+      setInquiry({
+        ...result,
+        messages
+      });
     } catch (err: any) {
       setError(err.message || 'Failed to fetch inquiry');
     } finally {
@@ -66,19 +81,22 @@ export function useInquiryDetail(inquiryId?: string) {
     }
   }, [inquiryId]);
 
-  const sendMessage = async (senderId: string, senderName: string, content: string) => {
-    if (!inquiryId) return;
+  const sendMessage = async (_senderId: string, _senderName: string, content: string) => {
+    if (!inquiry?.conversationId) return;
     try {
-      const newMessage = await MockInquiryService.addMessage(inquiryId, senderId, senderName, content);
-      setInquiry(prev => {
-        if (!prev) return prev;
+      const { data } = await apiClient.post(
+        ENDPOINTS.MESSAGES.CONVERSATION(inquiry.conversationId),
+        { content }
+      );
+      const newMsg = data.data || data;
+      setInquiry((prev) => {
+        if (!prev) return null;
         return {
           ...prev,
-          messages: [...prev.messages, newMessage],
-          updatedAt: new Date().toISOString()
+          messages: [...(prev.messages || []), newMsg]
         };
       });
-      return newMessage;
+      return newMsg;
     } catch (err: any) {
       setError(err.message || 'Failed to send message');
       throw err;

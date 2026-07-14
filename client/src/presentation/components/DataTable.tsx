@@ -29,7 +29,7 @@ export interface DataTableProps<T> {
   onSort?: (columnId: string) => void;
 }
 
-export default function DataTable<T extends { id: string | number }>({
+export default function DataTable<T extends Record<string, any>>({
   columns,
   data,
   loading = false,
@@ -55,7 +55,7 @@ export default function DataTable<T extends { id: string | number }>({
 
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden', boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.05)', border: '1px solid', borderColor: 'divider', borderRadius: 4 }}>
-      <TableContainer sx={{ maxHeight: 600 }}>
+      <TableContainer sx={{ maxHeight: { xs: 400, sm: 500, md: 600 }, overflowX: 'auto' }}>
         <Table stickyHeader aria-label="data table">
           <TableHead>
             <TableRow>
@@ -105,12 +105,12 @@ export default function DataTable<T extends { id: string | number }>({
                 </TableCell>
               </TableRow>
             ) : (
-              data.map((row) => (
+              data.map((row, index) => (
                 <TableRow
                   hover
                   role="checkbox"
                   tabIndex={-1}
-                  key={row.id}
+                  key={row.id ?? row._id ?? index}
                   sx={{
                     transition: 'background-color 0.2s ease',
                     '&:hover': {

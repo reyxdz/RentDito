@@ -1,12 +1,12 @@
 import { Response } from 'express';
 import { AuthRequest } from '../middleware/auth';
+import { catchAsync } from '../utils/catchAsync';
 import * as visitService from '../services/visit.service';
 
 /**
  * POST /api/visits - Create visit request
  */
-export const createVisitRequest = async (req: AuthRequest, res: Response): Promise<void> => {
-  try {
+export const createVisitRequest = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
     const visit = await visitService.createVisitRequest(req.user!.id, req.body);
 
     res.status(201).json({
@@ -14,38 +14,24 @@ export const createVisitRequest = async (req: AuthRequest, res: Response): Promi
       message: 'Visit request submitted successfully',
       data: visit
     });
-  } catch (error: any) {
-    res.status(error.statusCode || 500).json({
-      status: 'error',
-      message: error.message
-    });
-  }
-};
+});
 
 /**
  * GET /api/visits/my - Get user's own visit requests
  */
-export const getMyVisits = async (req: AuthRequest, res: Response): Promise<void> => {
-  try {
+export const getMyVisits = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
     const visits = await visitService.getMyVisits(req.user!.id);
 
     res.status(200).json({
       status: 'success',
       data: visits
     });
-  } catch (error: any) {
-    res.status(error.statusCode || 500).json({
-      status: 'error',
-      message: error.message
-    });
-  }
-};
+});
 
 /**
  * GET /api/visits/property/:propertyId - Get visits for a property
  */
-export const getPropertyVisits = async (req: AuthRequest, res: Response): Promise<void> => {
-  try {
+export const getPropertyVisits = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
     const filters = {
       status: req.query.status as string
     };
@@ -60,19 +46,12 @@ export const getPropertyVisits = async (req: AuthRequest, res: Response): Promis
       status: 'success',
       data: visits
     });
-  } catch (error: any) {
-    res.status(error.statusCode || 500).json({
-      status: 'error',
-      message: error.message
-    });
-  }
-};
+});
 
 /**
  * PATCH /api/visits/:id/approve - Approve visit request
  */
-export const approveVisit = async (req: AuthRequest, res: Response): Promise<void> => {
-  try {
+export const approveVisit = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
     const visit = await visitService.approveVisit(req.user!.id, req.params.id as string);
 
     res.status(200).json({
@@ -80,19 +59,12 @@ export const approveVisit = async (req: AuthRequest, res: Response): Promise<voi
       message: 'Visit request approved',
       data: visit
     });
-  } catch (error: any) {
-    res.status(error.statusCode || 500).json({
-      status: 'error',
-      message: error.message
-    });
-  }
-};
+});
 
 /**
  * PATCH /api/visits/:id/schedule - Schedule visit
  */
-export const scheduleVisit = async (req: AuthRequest, res: Response): Promise<void> => {
-  try {
+export const scheduleVisit = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
     const visit = await visitService.scheduleVisit(req.user!.id, req.params.id as string, req.body);
 
     res.status(200).json({
@@ -100,19 +72,12 @@ export const scheduleVisit = async (req: AuthRequest, res: Response): Promise<vo
       message: 'Visit scheduled successfully',
       data: visit
     });
-  } catch (error: any) {
-    res.status(error.statusCode || 500).json({
-      status: 'error',
-      message: error.message
-    });
-  }
-};
+});
 
 /**
  * PATCH /api/visits/:id/assign - Assign staff to visit
  */
-export const assignStaff = async (req: AuthRequest, res: Response): Promise<void> => {
-  try {
+export const assignStaff = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
     const visit = await visitService.assignStaff(req.user!.id, req.params.id as string, req.body.staffId);
 
     res.status(200).json({
@@ -120,19 +85,12 @@ export const assignStaff = async (req: AuthRequest, res: Response): Promise<void
       message: 'Staff assigned successfully',
       data: visit
     });
-  } catch (error: any) {
-    res.status(error.statusCode || 500).json({
-      status: 'error',
-      message: error.message
-    });
-  }
-};
+});
 
 /**
  * PATCH /api/visits/:id/complete - Mark visit as completed
  */
-export const completeVisit = async (req: AuthRequest, res: Response): Promise<void> => {
-  try {
+export const completeVisit = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
     const visit = await visitService.completeVisit(req.user!.id, req.params.id as string);
 
     res.status(200).json({
@@ -140,19 +98,12 @@ export const completeVisit = async (req: AuthRequest, res: Response): Promise<vo
       message: 'Visit marked as completed',
       data: visit
     });
-  } catch (error: any) {
-    res.status(error.statusCode || 500).json({
-      status: 'error',
-      message: error.message
-    });
-  }
-};
+});
 
 /**
  * PATCH /api/visits/:id/cancel - Cancel visit
  */
-export const cancelVisit = async (req: AuthRequest, res: Response): Promise<void> => {
-  try {
+export const cancelVisit = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
     const visit = await visitService.cancelVisit(req.user!.id, req.params.id as string);
 
     res.status(200).json({
@@ -160,19 +111,12 @@ export const cancelVisit = async (req: AuthRequest, res: Response): Promise<void
       message: 'Visit cancelled',
       data: visit
     });
-  } catch (error: any) {
-    res.status(error.statusCode || 500).json({
-      status: 'error',
-      message: error.message
-    });
-  }
-};
+});
 
 /**
  * PATCH /api/visits/:id/no-show - Mark visit as no-show
  */
-export const markNoShow = async (req: AuthRequest, res: Response): Promise<void> => {
-  try {
+export const markNoShow = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
     const visit = await visitService.markNoShow(req.user!.id, req.params.id as string);
 
     res.status(200).json({
@@ -180,10 +124,4 @@ export const markNoShow = async (req: AuthRequest, res: Response): Promise<void>
       message: 'Visit marked as no-show',
       data: visit
     });
-  } catch (error: any) {
-    res.status(error.statusCode || 500).json({
-      status: 'error',
-      message: error.message
-    });
-  }
-};
+});

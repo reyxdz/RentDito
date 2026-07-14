@@ -44,8 +44,11 @@ export const ENDPOINTS = {
   TENANCIES: {
     ROOT: '/api/tenancies',
     DETAILS: (id: string) => `/api/tenancies/${id}`,
+    MY: '/api/tenancies/my',
     CONFIRM_CHECKIN: '/api/tenancies/confirm-checkin',
     CHECKOUT: (id: string) => `/api/tenancies/${id}/checkout`,
+    COMMENTS: (id: string) => `/api/tenancies/${id}/comments`,
+    ROOMMATES: (id: string) => `/api/tenancies/${id}/roommates`,
   },
   INQUIRIES: {
     ROOT: '/api/inquiries',
@@ -88,6 +91,11 @@ export const ENDPOINTS = {
     GENERATE: '/api/bills/generate',
     PAY: (id: string) => `/api/bills/${id}/pay`,
   },
+  FINANCIALS: {
+    SUMMARY: '/api/financials/summary',
+    MONTHLY: '/api/financials/monthly',
+    BY_PROPERTY: '/api/financials/by-property',
+  },
   TICKETS: {
     ROOT: '/api/tickets',
     DETAILS: (id: string) => `/api/tickets/${id}`,
@@ -112,7 +120,6 @@ export const ENDPOINTS = {
     PROPERTY_DETAILS: (id: string) => `/api/public/listings/${id}`,
     UNIT_DETAILS: (id: string) => `/api/public/listings/unit/${id}`,
   },
-<<<<<<< marcxdev-development
   DOCUMENTS: {
     ROOT: '/api/documents',
     DETAILS: (id: string) => `/api/documents/${id}`,
@@ -121,12 +128,5 @@ export const ENDPOINTS = {
     INCIDENTS: '/api/security/incidents',
     INCIDENT_DETAILS: (id: string) => `/api/security/incidents/${id}`,
     CONTACTS: (propertyId: string) => `/api/security/contacts/${propertyId}`,
-=======
-  FINANCIALS: {
-    ROOT: '/api/financials',
-    SUMMARY: '/api/financials/summary',
-    MONTHLY: '/api/financials/monthly',
-    BY_PROPERTY: '/api/financials/by-property',
->>>>>>> development
   }
 } as const;

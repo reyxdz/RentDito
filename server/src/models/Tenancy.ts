@@ -34,6 +34,13 @@ export interface ITenancy extends Document {
   householdMembers?: IHouseholdMember[];
   // Copied from RentalApplication at check-in time
   personalDetails: IPersonalDetails;
+  // Comments thread for post-check-in observation
+  comments: Array<{
+    userId: mongoose.Types.ObjectId;
+    role: 'tenant' | 'caretaker' | 'admin';
+    text: string;
+    createdAt: Date;
+  }>;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -103,7 +110,13 @@ const TenancySchema = new Schema<ITenancy>(
     personalDetails: {
       type: PersonalDetailsSchema,
       required: true
-    }
+    },
+    comments: [{
+      userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+      role: { type: String, enum: ['tenant', 'caretaker', 'admin'], required: true },
+      text: { type: String, required: true },
+      createdAt: { type: Date, default: Date.now }
+    }]
   },
   { timestamps: true }
 );

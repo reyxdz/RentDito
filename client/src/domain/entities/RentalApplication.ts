@@ -1,3 +1,4 @@
+import type { Ref } from './shared';
 import type { User } from './User';
 import type { Property } from './Property';
 import type { Unit } from './Unit';
@@ -10,23 +11,31 @@ export interface ApplicationPersonalDetails {
   occupation: string;
   school?: string;
   address: string;
-  emergencyContact: string;
+  emergencyContact: string | {
+    name: string;
+    phone: string;
+    relationship: string;
+  };
 }
 
 export interface RentalApplication {
   id: string;
-  userId: string;
+  userId: Ref<User>;
+  /** Populated convenience alias */
   user?: User;
-  propertyId: string;
+  propertyId: Ref<Property>;
+  /** Populated convenience alias */
   property?: Property;
-  unitId: string;
+  unitId: Ref<Unit>;
+  /** Populated convenience alias */
   unit?: Unit;
   
   personalDetails: ApplicationPersonalDetails;
   documents: string[];
   status: ApplicationStatus;
   
-  reviewedBy?: string;
+  reviewedBy?: Ref<User>;
+  /** Populated convenience alias */
   reviewer?: User;
   reviewNotes?: string;
   reviewedAt?: string | Date;

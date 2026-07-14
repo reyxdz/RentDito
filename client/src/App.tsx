@@ -31,6 +31,7 @@ import AdminOverview from './presentation/pages/admin/Overview';
 import AdminUsers from './presentation/pages/admin/Users';
 import LandlordApplications from './presentation/pages/admin/LandlordApplications';
 import UserVerifications from './presentation/pages/admin/UserVerifications';
+import ActivityLog from './presentation/pages/admin/ActivityLog';
 import {
   PropertiesPlaceholder as AdminProperties,
   FinancialsPlaceholder as AdminFinancials,
@@ -44,22 +45,19 @@ import {
 // ─── Hub pages (Landlord + Staff) ────────────────────────────────────
 import HubOverview from './presentation/pages/hub/overview/Overview';
 import TeamManagement from './presentation/pages/hub/team/TeamManagement';
-import FinancialDashboard from './presentation/pages/hub/financials/FinancialDashboard';
 import {
-<<<<<<< marcxdev-development
   HubFinancialsPlaceholder,
 } from './presentation/pages/hub/Placeholders';
 
 import DocumentList from './presentation/pages/hub/documents/DocumentList';
 import SecurityDashboard from './presentation/pages/hub/security/SecurityDashboard';
 
-=======
-  HubDocumentsPlaceholder,
-  HubReportsPlaceholder,
-  HubSecurityPlaceholder,
+  HubFinancialsPlaceholder,
 } from './presentation/pages/hub/Placeholders';
 
->>>>>>> development
+import DocumentList from './presentation/pages/hub/documents/DocumentList';
+import SecurityDashboard from './presentation/pages/hub/security/SecurityDashboard';
+
 import BillList from './presentation/pages/hub/billing/BillList';
 import BillDetail from './presentation/pages/hub/billing/BillDetail';
 import UtilityDashboard from './presentation/pages/hub/utilities/UtilityDashboard';
@@ -92,11 +90,11 @@ import ContractForm from './presentation/pages/hub/contracts/ContractForm';
 import TenantList from './presentation/pages/hub/tenants/TenantList';
 import TenantDetail from './presentation/pages/hub/tenants/TenantDetail';
 
-<<<<<<< marcxdev-development
 import ReportsDashboard from './presentation/pages/hub/reports/ReportsDashboard';
 
-=======
->>>>>>> development
+import ReportsDashboard from './presentation/pages/hub/reports/ReportsDashboard';
+
+
 // ─── User pages ──────────────────────────────────────────────────────
 import VerifyAccount from './presentation/pages/user/VerifyAccount';
 import BecomeLandlord from './presentation/pages/user/BecomeLandlord';
@@ -105,14 +103,18 @@ import MyInquiries from './presentation/pages/user/MyInquiries';
 import InquiryConversation from './presentation/pages/user/InquiryConversation';
 import MyVisits from './presentation/pages/user/MyVisits';
 import MyApplications from './presentation/pages/user/MyApplications';
-import {
-  UserMyUnit,
-  UserBills,
-  UserMaintenance,
-} from './presentation/pages/user/Placeholders';
+import MyTickets from './presentation/pages/user/MyTickets';
+import SubmitTicket from './presentation/pages/user/SubmitTicket';
+import UserTicketDetail from './presentation/pages/user/TicketDetail';
+import MyBills from './presentation/pages/user/MyBills';
+import UserBillDetail from './presentation/pages/user/BillDetail';
 
 import MyContracts from './presentation/pages/user/MyContracts';
 import ContractView from './presentation/pages/user/ContractView';
+import MyRoom from './presentation/pages/user/MyRoom';
+import MyInventory from './presentation/pages/user/MyInventory';
+import RequestTransfer from './presentation/pages/user/RequestTransfer';
+import MyTransfers from './presentation/pages/user/MyTransfers';
 
 function App() {
   return (
@@ -137,6 +139,7 @@ function App() {
             <Route path="users" element={<AdminUsers />} />
             <Route path="applications" element={<LandlordApplications />} />
             <Route path="verifications" element={<UserVerifications />} />
+            <Route path="activity" element={<ActivityLog />} />
             <Route path="properties" element={<AdminProperties />} />
             <Route path="financials" element={<AdminFinancials />} />
             <Route path="reports" element={<AdminReports />} />
@@ -162,8 +165,8 @@ function App() {
               <Route path=":unitId/edit" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="units"><UnitForm /></ProtectedRoute>} />
             </Route>
             <Route path="tenants">
-               <Route index element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="tenants"><TenantList /></ProtectedRoute>} />
-               <Route path=":tenancyId" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="tenants"><TenantDetail /></ProtectedRoute>} />
+              <Route index element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="tenants"><TenantList /></ProtectedRoute>} />
+              <Route path=":tenancyId" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="tenants"><TenantDetail /></ProtectedRoute>} />
             </Route>
             <Route path="pipeline">
               <Route index element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="pipeline"><InquiryList /></ProtectedRoute>} />
@@ -171,11 +174,11 @@ function App() {
               <Route path="inquiries/:inquiryId" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="pipeline"><InquiryDetail /></ProtectedRoute>} />
               <Route path="applications" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="pipeline"><ApplicationList /></ProtectedRoute>} />
               <Route path="applications/:applicationId" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="pipeline"><ApplicationDetail /></ProtectedRoute>} />
-<<<<<<< marcxdev-development
               <Route path="transfers" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="pipeline"><TransferList /></ProtectedRoute>} />
               <Route path="transfers/:transferId" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="pipeline"><TransferDetail /></ProtectedRoute>} />
-=======
->>>>>>> development
+              <Route path="transfers" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="pipeline"><TransferList /></ProtectedRoute>} />
+              <Route path="transfers/:transferId" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="pipeline"><TransferDetail /></ProtectedRoute>} />
+
             </Route>
             <Route path="bookings">
               <Route index element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="bookings"><VisitList /></ProtectedRoute>} />
@@ -191,25 +194,21 @@ function App() {
               <Route path=":contractId" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="contracts"><ContractDetail /></ProtectedRoute>} />
             </Route>
             <Route path="utilities" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="utilities"><UtilityDashboard /></ProtectedRoute>} />
-<<<<<<< marcxdev-development
             <Route path="financials" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="financials"><HubFinancialsPlaceholder /></ProtectedRoute>} />
-=======
-            <Route path="financials" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="financials"><FinancialDashboard /></ProtectedRoute>} />
->>>>>>> development
+            <Route path="financials" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="financials"><HubFinancialsPlaceholder /></ProtectedRoute>} />
+
             <Route path="inventory" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="inventory"><InventoryDashboard /></ProtectedRoute>} />
             <Route path="maintenance">
-               <Route index element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="maintenance"><TicketList /></ProtectedRoute>} />
-               <Route path=":ticketId" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="maintenance"><TicketDetail /></ProtectedRoute>} />
+              <Route index element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="maintenance"><TicketList /></ProtectedRoute>} />
+              <Route path=":ticketId" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="maintenance"><TicketDetail /></ProtectedRoute>} />
             </Route>
-<<<<<<< marcxdev-development
             <Route path="documents" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="documents"><DocumentList /></ProtectedRoute>} />
             <Route path="reports" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="reports"><ReportsDashboard /></ProtectedRoute>} />
             <Route path="security" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="security"><SecurityDashboard /></ProtectedRoute>} />
-=======
-            <Route path="documents" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="documents"><HubDocumentsPlaceholder /></ProtectedRoute>} />
-            <Route path="reports" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="reports"><HubReportsPlaceholder /></ProtectedRoute>} />
-            <Route path="security" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="security"><HubSecurityPlaceholder /></ProtectedRoute>} />
->>>>>>> development
+            <Route path="documents" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="documents"><DocumentList /></ProtectedRoute>} />
+            <Route path="reports" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="reports"><ReportsDashboard /></ProtectedRoute>} />
+            <Route path="security" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="security"><SecurityDashboard /></ProtectedRoute>} />
+
             <Route path="team" element={<ProtectedRoute allowedRoles={['landlord', 'staff']} requiredPermission="team"><TeamManagement /></ProtectedRoute>} />
             <Route path="profile" element={<Profile />} />
           </Route>
@@ -223,13 +222,25 @@ function App() {
             <Route path="applications" element={<MyApplications />} />
             <Route path="verify" element={<VerifyAccount />} />
             <Route path="become-landlord" element={<BecomeLandlord />} />
-            <Route path="my-unit" element={<UserMyUnit />} />
-            <Route path="bills" element={<UserBills />} />
+            <Route path="my-unit" element={<MyRoom />} />
+            <Route path="bills">
+              <Route index element={<MyBills />} />
+              <Route path=":billId" element={<UserBillDetail />} />
+            </Route>
             <Route path="contracts">
               <Route index element={<MyContracts />} />
               <Route path=":contractId" element={<ContractView />} />
             </Route>
-            <Route path="maintenance" element={<UserMaintenance />} />
+            <Route path="inventory" element={<MyInventory />} />
+            <Route path="transfers">
+              <Route index element={<MyTransfers />} />
+              <Route path="new" element={<RequestTransfer />} />
+            </Route>
+            <Route path="maintenance">
+              <Route index element={<MyTickets />} />
+              <Route path="new" element={<SubmitTicket />} />
+              <Route path=":ticketId" element={<UserTicketDetail />} />
+            </Route>
             <Route path="profile" element={<Profile />} />
           </Route>
 

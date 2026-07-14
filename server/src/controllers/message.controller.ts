@@ -1,12 +1,12 @@
 import { Response } from 'express';
 import { AuthRequest } from '../middleware/auth';
+import { catchAsync } from '../utils/catchAsync';
 import * as messageService from '../services/message.service';
 
 /**
  * GET /api/messages/conversation/:id/messages - Get messages for a conversation
  */
-export const getConversationMessages = async (req: AuthRequest, res: Response): Promise<void> => {
-  try {
+export const getConversationMessages = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 50;
 
@@ -22,19 +22,12 @@ export const getConversationMessages = async (req: AuthRequest, res: Response): 
       data: result.messages,
       pagination: result.pagination
     });
-  } catch (error: any) {
-    res.status(error.statusCode || 500).json({
-      status: 'error',
-      message: error.message
-    });
-  }
-};
+});
 
 /**
  * POST /api/messages/conversation/:id/messages - Send message
  */
-export const sendMessage = async (req: AuthRequest, res: Response): Promise<void> => {
-  try {
+export const sendMessage = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
     const message = await messageService.sendMessage(
       req.user!.id,
       req.params.id as string,
@@ -46,10 +39,4 @@ export const sendMessage = async (req: AuthRequest, res: Response): Promise<void
       message: 'Message sent',
       data: message
     });
-  } catch (error: any) {
-    res.status(error.statusCode || 500).json({
-      status: 'error',
-      message: error.message
-    });
-  }
-};
+});
