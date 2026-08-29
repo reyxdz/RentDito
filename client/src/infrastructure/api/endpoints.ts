@@ -128,5 +128,11 @@ export const ENDPOINTS = {
     INCIDENTS: '/api/security/incidents',
     INCIDENT_DETAILS: (id: string) => `/api/security/incidents/${id}`,
     CONTACTS: (propertyId: string) => `/api/security/contacts/${propertyId}`,
+  },
+  FINANCIALS: {
+    ROOT: '/api/financials',
+    SUMMARY: '/api/financials/summary',
+    MONTHLY: '/api/financials/monthly',
+    BY_PROPERTY: '/api/financials/by-property',
   }
 } as const;

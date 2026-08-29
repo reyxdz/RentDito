@@ -20,11 +20,20 @@ import visitRoutes from './routes/visit.routes';
 import applicationRoutes from './routes/application.routes';
 import contractRoutes from './routes/contract.routes';
 import tenancyRoutes from './routes/tenancy.routes';
+import billingRoutes from './routes/billing.routes';
+import paymentRoutes from './routes/payment.routes';
+import utilityRoutes from './routes/utility.routes';
+import inventoryRoutes from './routes/inventory.routes';
+import ticketRoutes from './routes/ticket.routes';
+import transferRoutes from './routes/transfer.routes';
+import financialRoutes from './routes/financial.routes';
 import reportRoutes from './routes/report.routes';
 import documentRoutes from './routes/document.routes';
 import securityRoutes from './routes/security.routes';
 import notificationRoutes from './routes/notification.routes';
 import { auditLog } from './middleware/auditLog';
+import { errorHandler } from './middleware/errorHandler';
+import { initScheduler } from './services/scheduler.service';
 
 dotenv.config();
 
@@ -57,9 +66,6 @@ app.use(mongoSanitize());
 // Serve locally-uploaded files (fallback when Cloudinary is unavailable)
 app.use('/uploads', express.static(path.resolve(__dirname, '../uploads')));
 
-// Serve locally-uploaded files (fallback when Cloudinary is unavailable)
-app.use('/uploads', express.static(path.resolve(__dirname, '../uploads')));
-
 // Database connection
 connectDB();
 
@@ -83,21 +89,27 @@ app.use('/api/messages', messageRoutes);
 app.use('/api/visits', visitRoutes);
 app.use('/api/applications', applicationRoutes);
 app.use('/api/contracts', contractRoutes);
-app.use('/api/reports', reportRoutes);
-app.use('/api/documents', documentRoutes);
-app.use('/api/security', securityRoutes);
+app.use('/api/tenancies', tenancyRoutes);
+app.use('/api/billing', billingRoutes);
+app.use('/api/payments', paymentRoutes);
+app.use('/api/utilities', utilityRoutes);
+app.use('/api/inventory', inventoryRoutes);
+app.use('/api/tickets', ticketRoutes);
+app.use('/api/transfers', transferRoutes);
+app.use('/api/financials', financialRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/documents', documentRoutes);
 app.use('/api/security', securityRoutes);
 app.use('/api/notifications', notificationRoutes);
 
 // Global error handler — must be registered after all routes
-import { errorHandler } from './middleware/errorHandler';
 app.use(errorHandler);
-
 
 const server = app.listen(PORT, () => {
   console.log(`Server is running in development mode on port ${PORT}`);
+
+  // Initialize cron scheduler (gated by ENABLE_CRON=true)
+  initScheduler();
 });
 
 export default server;

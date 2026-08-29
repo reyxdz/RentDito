@@ -58,7 +58,12 @@ apiClient.interceptors.response.use(
   async (error: AxiosError) => {
     const originalRequest = error.config as any;
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    const isAuthRoute =
+      originalRequest.url?.includes('/api/auth/login') ||
+      originalRequest.url?.includes('/api/auth/register') ||
+      originalRequest.url?.includes('/api/auth/refresh');
+
+    if (error.response?.status === 401 && !originalRequest._retry && !isAuthRoute) {
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
@@ -84,15 +89,22 @@ apiClient.interceptors.response.use(
           refreshToken,
         });
 
-        localStorage.setItem('accessToken', data.accessToken);
-        if (data.refreshToken) {
-          localStorage.setItem('refreshToken', data.refreshToken);
+        const newAccessToken = data?.data?.accessToken;
+        const newRefreshToken = data?.data?.refreshToken;
+
+        if (!newAccessToken) {
+          throw new Error('Refresh endpoint did not return an access token');
         }
 
-        apiClient.defaults.headers.common['Authorization'] = `Bearer ${data.accessToken}`;
-        originalRequest.headers['Authorization'] = `Bearer ${data.accessToken}`;
+        localStorage.setItem('accessToken', newAccessToken);
+        if (newRefreshToken) {
+          localStorage.setItem('refreshToken', newRefreshToken);
+        }
 
-        processQueue(null, data.accessToken);
+        apiClient.defaults.headers.common['Authorization'] = `Bearer ${newAccessToken}`;
+        originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
+
+        processQueue(null, newAccessToken);
         return apiClient(originalRequest);
       } catch (refreshError) {
         processQueue(refreshError, null);
