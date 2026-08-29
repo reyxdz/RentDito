@@ -28,12 +28,16 @@ const connectDB = async () => {
 
 const clearDatabase = async () => {
   console.log('Clearing database...');
-  // Clear all collections
+  // Clear all collections written by this seeder
   await User.deleteMany();
   await Property.deleteMany();
   await Unit.deleteMany();
   await Contract.deleteMany();
   await Tenancy.deleteMany();
+  await Bill.deleteMany();
+  await Notification.deleteMany();
+  await Inventory.deleteMany();
+  await InventoryRecord.deleteMany();
   console.log('Database cleared!');
 };
 
@@ -323,11 +327,7 @@ const seedInventory = async (users: any[], properties: any[]) => {
   
   const staff1 = users.find((u: any) => u.email === 'manager@rentdito.com');
   const property = properties[0]; // First property
-  const tenancy1 = await Tenancy.findOne({ propertyId: property._id });
-
-  // Clear existing to avoid unique constraint issues
-  await Inventory.deleteMany();
-  await InventoryRecord.deleteMany();
+  const tenancy1 = await Tenancy.findOne({ propertyId: property._id, status: 'checked_in' });
 
   // Create Inventory Items
   const itemsData = [
