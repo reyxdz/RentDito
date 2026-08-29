@@ -363,7 +363,7 @@ model Property {
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
   updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
 
-  landlord      Profile                   @relation(fields: [landlordId], references: [id], onDelete: Cascade)
+  landlord      Profile                   @relation(fields: [landlordId], references: [id], onDelete: Restrict)
   units         Unit[]
   assignedStaff StaffPropertyAssignment[]
 
@@ -1068,7 +1068,7 @@ model LandlordApplication {
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
   updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
 
-  user     Profile  @relation("LandlordApplicationApplicant", fields: [userId], references: [id], onDelete: Cascade)
+  user     Profile  @relation("LandlordApplicationApplicant", fields: [userId], references: [id], onDelete: Restrict)
   reviewer Profile? @relation("LandlordApplicationReviewer", fields: [reviewedBy], references: [id], onDelete: SetNull)
 
   @@index([userId])
