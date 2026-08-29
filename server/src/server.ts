@@ -66,9 +66,6 @@ app.use(mongoSanitize());
 // Serve locally-uploaded files (fallback when Cloudinary is unavailable)
 app.use('/uploads', express.static(path.resolve(__dirname, '../uploads')));
 
-// Database connection
-connectDB();
-
 // Basic health check
 app.get('/api/health', (req, res) => {
   res.status(200).json({ status: 'success', message: 'RentDito API is active' });
@@ -105,11 +102,23 @@ app.use('/api/notifications', notificationRoutes);
 // Global error handler — must be registered after all routes
 app.use(errorHandler);
 
-const server = app.listen(PORT, () => {
-  console.log(`Server is running in development mode on port ${PORT}`);
+// eslint-disable-next-line import/no-mutable-exports
+let server: import('http').Server | undefined;
 
-  // Initialize cron scheduler (gated by ENABLE_CRON=true)
-  initScheduler();
-});
+// Only bind a port and connect to the database when this file is run
+// directly (`npm run dev` / `npm start`), not when it is imported (e.g. by
+// tests via supertest). Importing must be side-effect free.
+if (require.main === module) {
+  // Database connection
+  connectDB();
 
+  server = app.listen(PORT, () => {
+    console.log(`Server is running in development mode on port ${PORT}`);
+
+    // Initialize cron scheduler (gated by ENABLE_CRON=true)
+    initScheduler();
+  });
+}
+
+export { app };
 export default server;
