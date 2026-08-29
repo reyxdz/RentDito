@@ -17,6 +17,8 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "@prisma/client": "^6.19.3",
+    "@supabase/supabase-js": "^2.112.4",
     "bcryptjs": "^3.0.3",
     "cloudinary": "^2.9.0",
     "cors": "^2.8.6",
@@ -32,6 +34,7 @@
     "multer": "^2.1.1",
     "node-cron": "^4.6.0",
     "nodemailer": "^8.0.4",
+    "prisma": "^6.19.3",
     "puppeteer": "^23.11.1"
   },
   "devDependencies": {
