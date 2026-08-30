@@ -26,8 +26,17 @@ import mongoose from 'mongoose';
 // dotenv.config() is a no-op here (no server/.env exists) and signAccess/verifyToken only read
 // process.env when an actual request is handled, which happens later, after this module's
 // synchronous top-level code (including these three lines) has already run.
-process.env.JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET || 'golden-capture-access-secret';
-process.env.JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'golden-capture-refresh-secret';
+//
+// These are FORCED, unconditionally overwriting whatever is already in process.env — do NOT
+// change this to a `process.env.X || 'fallback'` pattern. This script signs tokens (both via
+// real POST /api/auth/login and via the direct signAccess() mint below), and those tokens get
+// written into committed fixture files. If a developer re-runs this script on a machine that
+// happens to have a real server/.env (the normal state for local development), an env-aware
+// fallback would silently sign with the *real* JWT secrets and commit real-secret-signed tokens
+// to git history. Forcing dummy, single-purpose secrets unconditionally — even when real ones
+// are present in the environment — makes that impossible.
+process.env.JWT_ACCESS_SECRET = 'golden-capture-access-secret';
+process.env.JWT_REFRESH_SECRET = 'golden-capture-refresh-secret';
 process.env.MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/rentdito';
 
 // IMPORTANT: named import. `server.ts` only calls connectDB()/app.listen() under
@@ -99,6 +108,22 @@ async function loginRaw(email: string, password = 'password123') {
   return request(app).post('/api/auth/login').send({ email, password });
 }
 
+/**
+ * Real login responses embed live, signed JWTs (accessToken/refreshToken) carrying iat/exp
+ * claims. Those can never reproduce byte-for-byte across captures, and pinning them is not the
+ * point of this fixture anyway — the point is the response *shape*: that accessToken and
+ * refreshToken are present, that user is returned, that status is 200. Replace the actual
+ * values with stable placeholders before anything is written to disk, so re-running this
+ * script can never regress a redacted fixture back into embedding a live token (real or,
+ * per the forced dummy JWT secrets above, at least never a *real-secret*-signed one).
+ */
+function redactTokens<T>(body: T): T {
+  const anyBody = body as any;
+  if (anyBody?.data?.accessToken) anyBody.data.accessToken = '<ACCESS_TOKEN>';
+  if (anyBody?.data?.refreshToken) anyBody.data.refreshToken = '<REFRESH_TOKEN>';
+  return body;
+}
+
 // ─────────────────────────────────────────────────────────────
 //  Main
 // ─────────────────────────────────────────────────────────────
@@ -140,39 +165,39 @@ async function main() {
   // Real HTTP login captures (7 requests total — well under the 10/15min cap).
   {
     const res = await loginRaw(emails.superAdmin);
-    authRecords.push({ name: 'login-superAdmin', method: 'post', path: '/api/auth/login', status: res.status, body: res.body });
+    authRecords.push({ name: 'login-superAdmin', method: 'post', path: '/api/auth/login', status: res.status, body: redactTokens(res.body) });
   }
   {
     const res = await loginRaw(emails.landlord1);
-    authRecords.push({ name: 'login-landlord1', method: 'post', path: '/api/auth/login', status: res.status, body: res.body });
+    authRecords.push({ name: 'login-landlord1', method: 'post', path: '/api/auth/login', status: res.status, body: redactTokens(res.body) });
   }
   {
     const res = await loginRaw(emails.user1);
-    authRecords.push({ name: 'login-user1', method: 'post', path: '/api/auth/login', status: res.status, body: res.body });
+    authRecords.push({ name: 'login-user1', method: 'post', path: '/api/auth/login', status: res.status, body: redactTokens(res.body) });
   }
   {
     // Non-verified users must be rejected with 403 at login (never reach a token) — pins this
     // authorization behaviour for the Prisma port.
     const res = await loginRaw('user4@rentdito.com');
-    authRecords.push({ name: 'login-user4-unverified-rejected', method: 'post', path: '/api/auth/login', status: res.status, body: res.body });
+    authRecords.push({ name: 'login-user4-unverified-rejected', method: 'post', path: '/api/auth/login', status: res.status, body: redactTokens(res.body) });
   }
   {
     // Pending verification is likewise rejected at login.
     const res = await loginRaw('user6@rentdito.com');
-    authRecords.push({ name: 'login-user6-pending-rejected', method: 'post', path: '/api/auth/login', status: res.status, body: res.body });
+    authRecords.push({ name: 'login-user6-pending-rejected', method: 'post', path: '/api/auth/login', status: res.status, body: redactTokens(res.body) });
   }
   {
     const res = await loginRaw(emails.user1, 'wrong-password');
-    authRecords.push({ name: 'login-wrong-password', method: 'post', path: '/api/auth/login', status: res.status, body: res.body });
+    authRecords.push({ name: 'login-wrong-password', method: 'post', path: '/api/auth/login', status: res.status, body: redactTokens(res.body) });
   }
   {
     const res = await loginRaw('nobody@rentdito.com');
-    authRecords.push({ name: 'login-unknown-email', method: 'post', path: '/api/auth/login', status: res.status, body: res.body });
+    authRecords.push({ name: 'login-unknown-email', method: 'post', path: '/api/auth/login', status: res.status, body: redactTokens(res.body) });
   }
   {
     // No-auth GET, recorded here as the health check for this file.
     const res = await request(app).get('/api/health');
-    authRecords.push({ name: 'health-check', method: 'get', path: '/api/health', status: res.status, body: res.body });
+    authRecords.push({ name: 'health-check', method: 'get', path: '/api/health', status: res.status, body: redactTokens(res.body) });
   }
 
   fs.mkdirSync(OUT_DIR, { recursive: true });
