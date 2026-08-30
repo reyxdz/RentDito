@@ -22,6 +22,25 @@ const UNORDERED_ARRAY_SORT_KEY: Record<string, string> = {
 };
 
 /**
+ * Keys whose value is an array of raw id strings but whose name does not
+ * end in "Id" (so the generic id-collapse rule below never catches it),
+ * and whose raw value genuinely differs between the Mongo-captured fixture
+ * and a Postgres-served replay purely because of WHICH id space identifies
+ * the same real user -- not because of any behavioral difference.
+ * `message.service.ts`'s ported `readBy` (Task 17, promoted from an
+ * embedded `ObjectId[]` to the `message_reads` join table) is the first --
+ * and, per a corpus-wide grep of tests/golden/*.json, only -- fixture value
+ * shaped this way: it's an array of user ids, but "readBy" doesn't end in
+ * "Id"/"Ids". Canonicalizing its elements to the same `'<ID>'` placeholder
+ * every other id-shaped field already gets keeps the check "is this the
+ * same set of readers", not "is it the byte-identical id across two
+ * different id spaces" -- exactly the existing policy this file already
+ * applies to `_id`/`...Id` keys, just extended to this one differently-named
+ * field.
+ */
+const RAW_ID_ARRAY_KEYS = new Set(['readBy']);
+
+/**
  * Strip fields that legitimately differ between runs or engines, and
  * canonicalise IDs to a placeholder so Mongo ObjectIds and Postgres UUIDs
  * compare equal by position rather than by value.
@@ -66,6 +85,10 @@ export function normalizeBody(input: unknown): unknown {
       if (VOLATILE.has(k)) continue;
       if (k === 'id' || k === '_id' || k.endsWith('Id')) {
         out[k] = typeof v === 'string' ? '<ID>' : normalizeBody(v);
+        continue;
+      }
+      if (RAW_ID_ARRAY_KEYS.has(k) && Array.isArray(v)) {
+        out[k] = (v as unknown[]).map((el) => (typeof el === 'string' ? '<ID>' : normalizeBody(el)));
         continue;
       }
       if (Array.isArray(v) && UNORDERED_ARRAY_SORT_KEY[k]) {
