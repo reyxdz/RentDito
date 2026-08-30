@@ -40,6 +40,7 @@ import { app } from '../../src/server';
 import { normalizeBody } from '../helpers/normalize';
 import { tokenForEmail } from '../helpers/auth';
 import { EMAILS, CASE_AUTH, CASE_QUERY, AUTH_LOGIN_BODIES, ALLOW_ID_ONLY } from './replay.meta';
+import { resolveAllCaseIds, ResolvedIdOverrides } from './replay-id-resolver';
 
 const GOLDEN_DIR = path.resolve(__dirname, '../golden');
 
@@ -176,12 +177,32 @@ function redactTokens(body: any): any {
   return body;
 }
 
+// Populated once, in beforeAll below -- see replay-id-resolver.ts's module
+// docstring for why this must never be resolved per-case (186 cases must
+// not mean 186 extra round trips to a hosted Postgres instance in
+// ap-southeast-1).
+let RESOLVED_IDS: ResolvedIdOverrides;
+
+// A resolved id/value is always either a 24-hex-char Mongo ObjectId (still-
+// Mongo-backed service) or a Postgres UUID (ported service) -- neither
+// contains a literal '/', so this is safe to use unescaped in both a path
+// segment and a query-string value.
+const MONGO_OBJECT_ID_RE = /[0-9a-f]{24}/;
+
 beforeAll(async () => {
   // Importing `app` does not connect to MongoDB (see docstring above) — the
   // suite must connect itself. MongoDB is expected already running and
   // seeded at 127.0.0.1:27017/rentdito (same seed the fixtures were
   // captured against). No server/.env is required or created.
   await mongoose.connect('mongodb://127.0.0.1:27017/rentdito');
+});
+
+beforeAll(async () => {
+  // Requires the Mongo connection above (Mongo-backed natural-key lookups)
+  // and reads server/.env for Postgres/Supabase connectivity (Postgres-
+  // backed lookups, for whichever services are in PORTED_SERVICES). Runs
+  // exactly once for the whole suite -- see replay-id-resolver.ts.
+  RESOLVED_IDS = await resolveAllCaseIds();
 });
 
 afterAll(async () => {
@@ -221,7 +242,24 @@ describe.each(suites.map(({ file, cases }) => [file, cases] as const))(
   'golden replay: %s',
   (_file, cases) => {
     it.each(cases)('$name', async (c: GoldenCase) => {
-      let req = (request(app) as any)[c.method](c.path);
+      // Substitute a resolved id into the fixture's frozen `path`/`query` for
+      // any case registered in replay-id-resolver.ts (see its module
+      // docstring). Cases with no registry entry (including every
+      // '*-not-found' sentinel-id case) replay their fixture's literal path
+      // unchanged, exactly as before.
+      let effectivePath = c.path;
+      const resolvedPathId = RESOLVED_IDS.pathIds[c.name];
+      if (resolvedPathId !== undefined) {
+        if (!MONGO_OBJECT_ID_RE.test(effectivePath)) {
+          throw new Error(
+            `replay: case "${c.name}" is registered in replay-id-resolver.ts's CASE_PATH_IDS, but its ` +
+              `fixture path "${effectivePath}" contains no Mongo-ObjectId-shaped substring to substitute.`
+          );
+        }
+        effectivePath = effectivePath.replace(MONGO_OBJECT_ID_RE, resolvedPathId);
+      }
+
+      let req = (request(app) as any)[c.method](effectivePath);
 
       const loginBody = AUTH_LOGIN_BODIES[c.name];
       if (loginBody) {
@@ -233,7 +271,12 @@ describe.each(suites.map(({ file, cases }) => [file, cases] as const))(
           req = req.set('Authorization', `Bearer ${token}`);
         }
         const query = CASE_QUERY[c.name];
-        if (query) req = req.query(query);
+        const queryIdOverride = RESOLVED_IDS.queryIds[c.name];
+        if (query || queryIdOverride) {
+          const effectiveQuery = { ...(query ?? {}) };
+          if (queryIdOverride) effectiveQuery[queryIdOverride.field] = queryIdOverride.value;
+          req = req.query(effectiveQuery);
+        }
       }
 
       const res = await req;
