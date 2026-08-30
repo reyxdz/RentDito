@@ -7,7 +7,7 @@ import * as teamService from '../services/team.service';
  * GET /api/team — Get all staff for the current landlord
  */
 export const getStaff = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
-    const result = await teamService.getStaff(req.user!.id);
+    const result = await teamService.getStaff(req.user!.pgId);
     res.status(200).json({
       status: 'success',
       data: result,
@@ -18,7 +18,7 @@ export const getStaff = catchAsync(async (req: AuthRequest, res: Response): Prom
  * POST /api/team — Invite a new staff member
  */
 export const inviteStaff = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
-    const result = await teamService.inviteStaff(req.user!.id, req.body);
+    const result = await teamService.inviteStaff(req.user!.pgId, req.body);
     res.status(201).json({
       status: 'success',
       message: 'Staff member invited successfully.',
@@ -32,7 +32,7 @@ export const inviteStaff = catchAsync(async (req: AuthRequest, res: Response): P
 export const updatePermissions = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
     const result = await teamService.updatePermissions(
       req.params.id as string,
-      req.user!.id,
+      req.user!.pgId,
       req.body.permissions
     );
     res.status(200).json({
@@ -48,7 +48,7 @@ export const updatePermissions = catchAsync(async (req: AuthRequest, res: Respon
 export const updateProperties = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
     const result = await teamService.updateAssignedProperties(
       req.params.id as string,
-      req.user!.id,
+      req.user!.pgId,
       req.body.propertyIds
     );
     res.status(200).json({
@@ -62,7 +62,7 @@ export const updateProperties = catchAsync(async (req: AuthRequest, res: Respons
  * DELETE /api/team/:id — Remove a staff member
  */
 export const removeStaff = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
-    await teamService.removeStaff(req.params.id as string, req.user!.id);
+    await teamService.removeStaff(req.params.id as string, req.user!.pgId);
     res.status(200).json({
       status: 'success',
       message: 'Staff member removed.',
