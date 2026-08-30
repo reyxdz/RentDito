@@ -8,7 +8,17 @@ import prisma from '../config/prisma';
  */
 export interface AuthRequest extends Request {
   user?: {
+    // TRANSITIONAL: during the strangler migration this holds the legacy
+    // MongoDB ObjectId (falling back to the Postgres UUID for profiles that
+    // have no legacy id), because all 24 not-yet-ported services still
+    // query MongoDB by this value. As each service is ported to Prisma it
+    // switches from reading `id` to reading `pgId`. At final cutover — once
+    // every service is ported — `id` becomes the Postgres UUID directly and
+    // `pgId` is deleted.
     id: string;
+    // The Postgres/Supabase profile UUID, always present. Ported (Prisma)
+    // services should read this instead of `id`.
+    pgId: string;
     role: string;
   };
 }
@@ -42,6 +52,66 @@ const jwksClient = jwksUri
  */
 export const isJwksInfraFailure = (err: any): boolean =>
   err?.isEndpointUnavailable === true || err?.name === 'JwksRateLimitError';
+
+/**
+ * In-process cache of the profile lookup, keyed on the JWT `sub` (the
+ * Supabase/Postgres profile id). Every request otherwise pays a full Prisma
+ * round-trip to the (remote, Singapore-hosted) Postgres instance —
+ * 200-400ms each — purely to resolve id/pgId/role, which is what turned the
+ * 186-case golden replay suite from seconds into minutes. TTL is short
+ * (60s) and deliberately simple: a plain Map keyed by sub, storing the
+ * resolved payload plus the time it was cached, with a bounded size so a
+ * long-running process can't grow this unbounded from churn through many
+ * distinct users.
+ *
+ * Staleness note: a role or status change made directly in the database
+ * takes up to TTL_MS to be reflected in `req.user`. That's acceptable here
+ * because every route still re-checks authorization per request against
+ * whatever `req.user.role` says — worst case is a slightly stale role for
+ * up to a minute, not a permanently wrong one.
+ */
+// Overridable via AUTH_PROFILE_CACHE_TTL_MS so tests can prove expiry
+// deterministically (e.g. 200ms) instead of sleeping a real 60s.
+const PROFILE_CACHE_TTL_MS = Number(process.env.AUTH_PROFILE_CACHE_TTL_MS) || 60 * 1000;
+const PROFILE_CACHE_MAX_SIZE = 500;
+
+interface CachedProfile {
+  id: string;
+  pgId: string;
+  role: string;
+}
+
+const profileCache = new Map<string, { value: CachedProfile; cachedAt: number }>();
+
+function getCachedProfile(sub: string): CachedProfile | undefined {
+  const entry = profileCache.get(sub);
+  if (!entry) return undefined;
+  if (Date.now() - entry.cachedAt > PROFILE_CACHE_TTL_MS) {
+    profileCache.delete(sub);
+    return undefined;
+  }
+  return entry.value;
+}
+
+function setCachedProfile(sub: string, value: CachedProfile): void {
+  // Bound the cache: evict the oldest entry (Map preserves insertion order)
+  // before inserting a new one once we're at capacity, rather than growing
+  // unbounded.
+  if (!profileCache.has(sub) && profileCache.size >= PROFILE_CACHE_MAX_SIZE) {
+    const oldestKey = profileCache.keys().next().value;
+    if (oldestKey !== undefined) profileCache.delete(oldestKey);
+  }
+  profileCache.set(sub, { value, cachedAt: Date.now() });
+}
+
+/**
+ * Test-only escape hatch: clears the profile cache. Exported so tests can
+ * demonstrate TTL expiry and cache invalidation deterministically without
+ * waiting on a real clock or reaching into module-private state.
+ */
+export function __clearProfileCacheForTests(): void {
+  profileCache.clear();
+}
 
 /**
  * Middleware that verifies the Supabase-issued (ES256) access token from the
@@ -98,15 +168,28 @@ const auth = async (req: AuthRequest, res: Response, next: NextFunction): Promis
 
   try {
     const decoded = jwt.verify(token, signingKey, { algorithms: ['ES256'] }) as { sub: string };
-    const profile = await prisma.profile.findUnique({
-      where: { id: decoded.sub },
-      select: { id: true, role: true },
-    });
-    if (!profile) {
-      res.status(401).json({ status: 'error', message: 'Invalid token.' });
-      return;
+
+    let cached = getCachedProfile(decoded.sub);
+    if (!cached) {
+      const profile = await prisma.profile.findUnique({
+        where: { id: decoded.sub },
+        select: { id: true, role: true, legacyMongoId: true },
+      });
+      if (!profile) {
+        res.status(401).json({ status: 'error', message: 'Invalid token.' });
+        return;
+      }
+      // TRANSITIONAL: `id` reverts to the Mongo ObjectId (falling back to
+      // the Postgres UUID when a profile has no legacy id, e.g. one created
+      // after the migration) so the 24 not-yet-ported services — which all
+      // still query MongoDB by this value — keep working untouched. `pgId`
+      // is always the Postgres UUID. At final cutover, `id` becomes the
+      // UUID directly and `pgId` is removed.
+      cached = { id: profile.legacyMongoId ?? profile.id, pgId: profile.id, role: profile.role };
+      setCachedProfile(decoded.sub, cached);
     }
-    req.user = { id: profile.id, role: profile.role };
+
+    req.user = cached;
     next();
   } catch (error: any) {
     if (error.name === 'TokenExpiredError') {
