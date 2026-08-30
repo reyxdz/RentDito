@@ -7,7 +7,7 @@ import * as inquiryService from '../services/inquiry.service';
  * POST /api/inquiries - Create inquiry
  */
 export const createInquiry = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
-    const inquiry = await inquiryService.createInquiry(req.user!.id, req.body);
+    const inquiry = await inquiryService.createInquiry(req.user!.pgId, req.body);
 
     res.status(201).json({
       status: 'success',
@@ -20,7 +20,7 @@ export const createInquiry = catchAsync(async (req: AuthRequest, res: Response):
  * GET /api/inquiries/my - Get user's own inquiries
  */
 export const getMyInquiries = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
-    const inquiries = await inquiryService.getMyInquiries(req.user!.id);
+    const inquiries = await inquiryService.getMyInquiries(req.user!.pgId);
 
     res.status(200).json({
       status: 'success',
@@ -37,7 +37,7 @@ export const getPropertyInquiries = catchAsync(async (req: AuthRequest, res: Res
     };
 
     const inquiries = await inquiryService.getPropertyInquiries(
-      req.user!.id,
+      req.user!.pgId,
       req.params.propertyId as string,
       filters
     );
@@ -52,7 +52,7 @@ export const getPropertyInquiries = catchAsync(async (req: AuthRequest, res: Res
  * GET /api/inquiries/:id - Get inquiry detail
  */
 export const getInquiryById = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
-    const inquiry = await inquiryService.getInquiryById(req.user!.id, req.params.id as string);
+    const inquiry = await inquiryService.getInquiryById(req.user!.pgId, req.params.id as string);
 
     res.status(200).json({
       status: 'success',
@@ -65,7 +65,7 @@ export const getInquiryById = catchAsync(async (req: AuthRequest, res: Response)
  */
 export const updateInquiryStatus = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
     const inquiry = await inquiryService.updateInquiryStatus(
-      req.user!.id,
+      req.user!.pgId,
       req.params.id as string,
       req.body.status
     );
