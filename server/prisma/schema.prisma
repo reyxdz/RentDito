@@ -260,7 +260,7 @@ enum IncidentStatus {
 model Profile {
   id                 String             @id @db.Uuid
   name               String
-  email              String             @unique
+  email              String             @unique @db.Citext
   phone              String?
   role               UserRole           @default(user)
   status             UserStatus         @default(active)
