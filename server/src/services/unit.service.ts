@@ -1,13 +1,75 @@
-import { Unit, IUnit } from '../models/Unit';
-import { Property } from '../models/Property';
-import { User } from '../models/User';
-import mongoose from 'mongoose';
+import prisma from '../config/prisma';
+import { Prisma } from '@prisma/client';
+import { serializeDoc, serializeList } from '../utils/serialize';
+import { toHttpError } from '../utils/prismaErrors';
+import { PROPERTY_REF_SELECT, shapePropertyRef } from '../utils/propertyRef.mapper';
+import type { IUnit } from '../models/Unit';
+
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const isValidId = (id: string): boolean => UUID_RE.test(id);
+
+const UNIT_INCLUDE = {
+  property: { select: PROPERTY_REF_SELECT },
+  slots: { orderBy: { slotNumber: 'asc' as const } },
+} satisfies Prisma.UnitInclude;
 
 /**
- * Get scoped property filter based on user role
+ * Rebuilds the Mongoose-shaped Unit document:
+ *  - `roomRent`/`bedspaceRent`/`perHeadRate`/`sizeSqm` are optional paths in
+ *    the original schema -- Mongoose omits an unset optional path entirely
+ *    rather than emitting `null`, so each is only re-attached when non-null
+ *    (same convention as property.service.ts/user.service.ts).
+ *  - `slots` (now the `unit_slots` child table) is remapped back onto the
+ *    `slots` key, sorted by `slotNumber` for a deterministic response
+ *    regardless of the caller's own query-level ordering. Mongoose's
+ *    `SlotSchema` used `{ _id: false }`, so entries are picked field-by-field
+ *    (no id minted) rather than routed through a "give every element a
+ *    fresh id" helper like Property's venues/emergencyContacts.
+ *  - `propertyId` is remapped onto the populated `{ name, address }` shape
+ *    ONLY when `property` was actually included in the query (mirrors
+ *    property.service.ts's `remapLandlord`: a shallow-populate-shaped key is
+ *    a no-op when the relation wasn't included, e.g. `getUnitsByProperty`,
+ *    which never populated `propertyId` in the original code either).
  */
-const getScopedPropertyFilter = async (userId: string) => {
-  const user = await User.findById(userId);
+function shapeUnit(row: Record<string, any>): Record<string, unknown> {
+  const { roomRent, bedspaceRent, perHeadRate, sizeSqm, slots, property, ...rest } = row;
+
+  const out: Record<string, unknown> = { ...rest };
+  if (roomRent !== null && roomRent !== undefined) out.roomRent = roomRent;
+  if (bedspaceRent !== null && bedspaceRent !== undefined) out.bedspaceRent = bedspaceRent;
+  if (perHeadRate !== null && perHeadRate !== undefined) out.perHeadRate = perHeadRate;
+  if (sizeSqm !== null && sizeSqm !== undefined) out.sizeSqm = sizeSqm;
+
+  if (slots !== undefined) {
+    out.slots = (slots as Array<Record<string, any>>)
+      .slice()
+      .sort((a, b) => a.slotNumber - b.slotNumber)
+      .map((s) => ({
+        slotNumber: s.slotNumber,
+        status: s.status,
+        ...(s.tenancyId !== null && s.tenancyId !== undefined ? { tenancyId: s.tenancyId } : {}),
+      }));
+  }
+
+  if (property !== undefined) {
+    out.propertyId = shapePropertyRef(property);
+  }
+
+  return out;
+}
+
+/**
+ * Get scoped property filter based on user role. Returns a Prisma
+ * `PropertyWhereInput` used to resolve the caller's accessible property ids
+ * -- the direct replacement for the original's
+ * `{ _id: { $in: assignedIds.map(id => new mongoose.Types.ObjectId(id)) } }`,
+ * which under Prisma is just `{ id: { in: assignedIds } }` over plain UUID
+ * strings (assigned properties now come from the `staff_property_assignments`
+ * join table -- same query shape as property.service.ts's `getScopedFilter`
+ * and user.service.ts/team.service.ts's `getAssignedPropertyIds`).
+ */
+const getScopedPropertyFilter = async (userId: string): Promise<Prisma.PropertyWhereInput> => {
+  const user = await prisma.profile.findUnique({ where: { id: userId } });
   if (!user) {
     throw Object.assign(new Error('User not found'), { statusCode: 404 });
   }
@@ -21,8 +83,11 @@ const getScopedPropertyFilter = async (userId: string) => {
   }
 
   if (user.role === 'staff') {
-    const assignedIds = user.assignedPropertyIds || [];
-    return { _id: { $in: assignedIds.map(id => new mongoose.Types.ObjectId(id)) } };
+    const assignments = await prisma.staffPropertyAssignment.findMany({
+      where: { staffId: userId },
+      select: { propertyId: true },
+    });
+    return { id: { in: assignments.map((a) => a.propertyId) } };
   }
 
   throw Object.assign(new Error('Insufficient permissions'), { statusCode: 403 });
@@ -45,33 +110,44 @@ export const getUnits = async (
 
   // Get accessible properties
   const propertyFilter = await getScopedPropertyFilter(userId);
-  const accessibleProperties = await Property.find(propertyFilter).select('_id').lean();
-  const accessiblePropertyIds = accessibleProperties.map(p => p._id);
+  const accessibleProperties = await prisma.property.findMany({
+    where: propertyFilter,
+    select: { id: true },
+  });
+  const accessiblePropertyIds = accessibleProperties.map((p) => p.id);
 
-  // Build unit filter
-  const unitFilter: any = { propertyId: { $in: accessiblePropertyIds } };
+  // Build unit filter (preserving the original's behavior of an explicit
+  // `propertyId` filter overwriting the accessible-ids scoping entirely,
+  // rather than intersecting with it)
+  const unitFilter: Prisma.UnitWhereInput = { propertyId: { in: accessiblePropertyIds } };
   if (propertyId) unitFilter.propertyId = propertyId;
-  if (status) unitFilter.status = status;
-  if (accommodationType) unitFilter.accommodationType = accommodationType;
+  if (status) unitFilter.status = status as Prisma.UnitWhereInput['status'];
+  if (accommodationType) {
+    unitFilter.accommodationType = accommodationType as Prisma.UnitWhereInput['accommodationType'];
+  }
 
   const skip = (page - 1) * limit;
-  const units = await Unit.find(unitFilter)
-    .populate('propertyId', 'name address')
-    .sort({ createdAt: -1 })
-    .skip(skip)
-    .limit(limit)
-    .lean();
+  const [rows, total] = await Promise.all([
+    prisma.unit.findMany({
+      where: unitFilter,
+      include: UNIT_INCLUDE,
+      orderBy: { createdAt: 'desc' },
+      skip,
+      take: limit,
+    }),
+    prisma.unit.count({ where: unitFilter }),
+  ]);
 
-  const total = await Unit.countDocuments(unitFilter);
+  const units = rows.map((row) => shapeUnit(row));
 
   return {
-    units,
+    units: serializeList(units),
     pagination: {
       page,
       limit,
       total,
-      pages: Math.ceil(total / limit)
-    }
+      pages: Math.ceil(total / limit),
+    },
   };
 };
 
@@ -79,83 +155,195 @@ export const getUnits = async (
  * Get single unit by ID with auto-scoping
  */
 export const getUnitById = async (userId: string, unitId: string) => {
+  if (!isValidId(unitId)) {
+    throw Object.assign(new Error('Invalid unit ID'), { statusCode: 400 });
+  }
+
   const propertyFilter = await getScopedPropertyFilter(userId);
-  const accessibleProperties = await Property.find(propertyFilter).select('_id').lean();
-  const accessiblePropertyIds = accessibleProperties.map(p => p._id.toString());
+  const accessibleProperties = await prisma.property.findMany({
+    where: propertyFilter,
+    select: { id: true },
+  });
+  const accessiblePropertyIds = accessibleProperties.map((p) => p.id);
 
-  const unit = await Unit.findById(unitId).populate('propertyId', 'name address').lean();
+  const row = await prisma.unit.findUnique({ where: { id: unitId }, include: UNIT_INCLUDE });
 
-  if (!unit) {
+  if (!row) {
     throw Object.assign(new Error('Unit not found'), { statusCode: 404 });
   }
 
-  if (!accessiblePropertyIds.includes(unit.propertyId._id.toString())) {
+  if (!accessiblePropertyIds.includes(row.propertyId)) {
     throw Object.assign(new Error('Access denied'), { statusCode: 403 });
   }
 
-  return unit;
+  return serializeDoc(shapeUnit(row));
 };
 
 /**
  * Get units by property ID
  */
 export const getUnitsByProperty = async (userId: string, propertyId: string) => {
+  if (!isValidId(propertyId)) {
+    throw Object.assign(new Error('Invalid property ID'), { statusCode: 400 });
+  }
+
   const propertyFilter = await getScopedPropertyFilter(userId);
-  const property = await Property.findOne({ ...propertyFilter, _id: propertyId });
+  const property = await prisma.property.findFirst({ where: { ...propertyFilter, id: propertyId } });
 
   if (!property) {
     throw Object.assign(new Error('Property not found or access denied'), { statusCode: 404 });
   }
 
-  const units = await Unit.find({ propertyId }).sort({ unitIdentifier: 1 }).lean();
-  return units;
+  // Never populated `propertyId` in the original code either -- omit the
+  // `property` relation entirely so shapeUnit leaves the scalar FK as-is.
+  const rows = await prisma.unit.findMany({
+    where: { propertyId },
+    include: { slots: { orderBy: { slotNumber: 'asc' } } },
+    orderBy: { unitIdentifier: 'asc' },
+  });
+
+  return serializeList(rows.map((row) => shapeUnit(row)));
 };
 
 /**
  * Create new unit
  */
 export const createUnit = async (userId: string, data: Partial<IUnit>) => {
+  const body = data as any;
+
+  if (!isValidId(body.propertyId)) {
+    throw Object.assign(new Error('Invalid property ID'), { statusCode: 400 });
+  }
+
   const propertyFilter = await getScopedPropertyFilter(userId);
-  const property = await Property.findOne({ ...propertyFilter, _id: data.propertyId });
+  const property = await prisma.property.findFirst({ where: { ...propertyFilter, id: body.propertyId } });
 
   if (!property) {
     throw Object.assign(new Error('Property not found or access denied'), { statusCode: 404 });
   }
 
-  // Auto-generate slots for bedspace units if not provided
-  if (data.accommodationType === 'bedspace' && (!data.slots || data.slots.length === 0)) {
-    const capacity = data.capacity || 1;
-    data.slots = Array.from({ length: capacity }, (_, i) => ({
+  // Auto-generate slots for bedspace units if not provided -- sequence and
+  // default status preserved exactly from the original.
+  let slotsInput: Array<{ slotNumber: number; status?: string; tenancyId?: string }> | undefined =
+    body.slots;
+  if (body.accommodationType === 'bedspace' && (!slotsInput || slotsInput.length === 0)) {
+    const capacity = body.capacity || 1;
+    slotsInput = Array.from({ length: capacity }, (_, i) => ({
       slotNumber: i + 1,
       status: 'vacant' as const,
     }));
   }
 
-  const unit = await Unit.create(data);
-  return unit.populate('propertyId', 'name address');
+  try {
+    const row = await prisma.unit.create({
+      data: {
+        propertyId: body.propertyId,
+        unitIdentifier: body.unitIdentifier,
+        accommodationType: body.accommodationType,
+        roomRent: body.roomRent ?? null,
+        bedspaceRent: body.bedspaceRent ?? null,
+        perHeadRate: body.perHeadRate ?? null,
+        deposit: body.deposit,
+        capacity: body.capacity,
+        maxOccupants: body.maxOccupants,
+        sizeSqm: body.sizeSqm ?? null,
+        features: body.features ?? [],
+        images: body.images ?? [],
+        status: body.status ?? 'vacant',
+        ...(slotsInput && slotsInput.length > 0
+          ? {
+              slots: {
+                create: slotsInput.map((s) => ({
+                  slotNumber: s.slotNumber,
+                  status: (s.status ?? 'vacant') as Prisma.UnitSlotCreateWithoutUnitInput['status'],
+                  tenancyId: s.tenancyId ?? null,
+                })),
+              },
+            }
+          : {}),
+      },
+      include: UNIT_INCLUDE,
+    });
+
+    return serializeDoc(shapeUnit(row));
+  } catch (e) {
+    throw toHttpError(e);
+  }
 };
 
 /**
  * Update unit
  */
 export const updateUnit = async (userId: string, unitId: string, data: Partial<IUnit>) => {
-  const propertyFilter = await getScopedPropertyFilter(userId);
-  const accessibleProperties = await Property.find(propertyFilter).select('_id').lean();
-  const accessiblePropertyIds = accessibleProperties.map(p => p._id.toString());
+  if (!isValidId(unitId)) {
+    throw Object.assign(new Error('Invalid unit ID'), { statusCode: 400 });
+  }
 
-  const unit = await Unit.findById(unitId);
-  if (!unit) {
+  const propertyFilter = await getScopedPropertyFilter(userId);
+  const accessibleProperties = await prisma.property.findMany({
+    where: propertyFilter,
+    select: { id: true },
+  });
+  const accessiblePropertyIds = accessibleProperties.map((p) => p.id);
+
+  const existing = await prisma.unit.findUnique({ where: { id: unitId } });
+  if (!existing) {
     throw Object.assign(new Error('Unit not found'), { statusCode: 404 });
   }
 
-  if (!accessiblePropertyIds.includes(unit.propertyId.toString())) {
+  if (!accessiblePropertyIds.includes(existing.propertyId)) {
     throw Object.assign(new Error('Access denied'), { statusCode: 403 });
   }
 
-  Object.assign(unit, data);
-  await unit.save();
+  const body = data as any;
+  const updateData: Prisma.UnitUpdateInput = {};
 
-  return unit.populate('propertyId', 'name address');
+  if (body.unitIdentifier !== undefined) updateData.unitIdentifier = body.unitIdentifier;
+  if (body.accommodationType !== undefined) updateData.accommodationType = body.accommodationType;
+  if (body.roomRent !== undefined) updateData.roomRent = body.roomRent;
+  if (body.bedspaceRent !== undefined) updateData.bedspaceRent = body.bedspaceRent;
+  if (body.perHeadRate !== undefined) updateData.perHeadRate = body.perHeadRate;
+  if (body.deposit !== undefined) updateData.deposit = body.deposit;
+  if (body.capacity !== undefined) updateData.capacity = body.capacity;
+  if (body.maxOccupants !== undefined) updateData.maxOccupants = body.maxOccupants;
+  if (body.sizeSqm !== undefined) updateData.sizeSqm = body.sizeSqm;
+  if (body.features !== undefined) updateData.features = body.features;
+  if (body.images !== undefined) updateData.images = body.images;
+  if (body.status !== undefined) updateData.status = body.status;
+
+  try {
+    // `data.slots`, when provided, mirrors the original's `Object.assign`
+    // wholesale-replace semantics for the embedded array: delete every
+    // existing child row and recreate the new set, both inside one
+    // transaction so a partial write is never observable (same
+    // delete-then-insert pattern as team.service.ts's
+    // `updateAssignedProperties` for its own child table).
+    const row = await prisma.$transaction(async (tx) => {
+      if (body.slots !== undefined) {
+        await tx.unitSlot.deleteMany({ where: { unitId } });
+        if (Array.isArray(body.slots) && body.slots.length > 0) {
+          await tx.unitSlot.createMany({
+            data: body.slots.map((s: any) => ({
+              unitId,
+              slotNumber: s.slotNumber,
+              status: s.status ?? 'vacant',
+              tenancyId: s.tenancyId ?? null,
+            })),
+          });
+        }
+      }
+
+      return tx.unit.update({
+        where: { id: unitId },
+        data: updateData,
+        include: UNIT_INCLUDE,
+      });
+    });
+
+    return serializeDoc(shapeUnit(row));
+  } catch (e) {
+    throw toHttpError(e);
+  }
 };
 
 /**
@@ -169,20 +357,30 @@ export const updateUnitStatus = async (userId: string, unitId: string, status: s
  * Delete unit
  */
 export const deleteUnit = async (userId: string, unitId: string) => {
-  const propertyFilter = await getScopedPropertyFilter(userId);
-  const accessibleProperties = await Property.find(propertyFilter).select('_id').lean();
-  const accessiblePropertyIds = accessibleProperties.map(p => p._id.toString());
+  if (!isValidId(unitId)) {
+    throw Object.assign(new Error('Invalid unit ID'), { statusCode: 400 });
+  }
 
-  const unit = await Unit.findById(unitId);
-  if (!unit) {
+  const propertyFilter = await getScopedPropertyFilter(userId);
+  const accessibleProperties = await prisma.property.findMany({
+    where: propertyFilter,
+    select: { id: true },
+  });
+  const accessiblePropertyIds = accessibleProperties.map((p) => p.id);
+
+  const existing = await prisma.unit.findUnique({ where: { id: unitId } });
+  if (!existing) {
     throw Object.assign(new Error('Unit not found'), { statusCode: 404 });
   }
 
-  if (!accessiblePropertyIds.includes(unit.propertyId.toString())) {
+  if (!accessiblePropertyIds.includes(existing.propertyId)) {
     throw Object.assign(new Error('Access denied'), { statusCode: 403 });
   }
 
-  await unit.deleteOne();
+  // `unit_slots` rows cascade-delete via the FK (onDelete: Cascade); the
+  // Task 6 trigger refreshes the parent property's metrics off this delete,
+  // no manual update needed here.
+  await prisma.unit.delete({ where: { id: unitId } });
   return { message: 'Unit deleted successfully' };
 };
 
@@ -190,21 +388,31 @@ export const deleteUnit = async (userId: string, unitId: string) => {
  * Upload unit images
  */
 export const uploadUnitImages = async (userId: string, unitId: string, imageUrls: string[]) => {
-  const propertyFilter = await getScopedPropertyFilter(userId);
-  const accessibleProperties = await Property.find(propertyFilter).select('_id').lean();
-  const accessiblePropertyIds = accessibleProperties.map(p => p._id.toString());
+  if (!isValidId(unitId)) {
+    throw Object.assign(new Error('Invalid unit ID'), { statusCode: 400 });
+  }
 
-  const unit = await Unit.findById(unitId);
-  if (!unit) {
+  const propertyFilter = await getScopedPropertyFilter(userId);
+  const accessibleProperties = await prisma.property.findMany({
+    where: propertyFilter,
+    select: { id: true },
+  });
+  const accessiblePropertyIds = accessibleProperties.map((p) => p.id);
+
+  const existing = await prisma.unit.findUnique({ where: { id: unitId } });
+  if (!existing) {
     throw Object.assign(new Error('Unit not found'), { statusCode: 404 });
   }
 
-  if (!accessiblePropertyIds.includes(unit.propertyId.toString())) {
+  if (!accessiblePropertyIds.includes(existing.propertyId)) {
     throw Object.assign(new Error('Access denied'), { statusCode: 403 });
   }
 
-  unit.images.push(...imageUrls);
-  await unit.save();
+  const row = await prisma.unit.update({
+    where: { id: unitId },
+    data: { images: { push: imageUrls } },
+    include: UNIT_INCLUDE,
+  });
 
-  return unit.populate('propertyId', 'name address');
+  return serializeDoc(shapeUnit(row));
 };
