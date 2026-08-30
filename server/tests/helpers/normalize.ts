@@ -37,8 +37,32 @@ const UNORDERED_ARRAY_SORT_KEY: Record<string, string> = {
 export function normalizeBody(input: unknown): unknown {
   if (Array.isArray(input)) return input.map(normalizeBody);
   if (input && typeof input === 'object') {
+    const record = input as Record<string, unknown>;
+    // Additive-alias handling: src/utils/serialize.ts's serializeDoc() (used
+    // by every Prisma-ported service, starting with auth.service.ts) mirrors
+    // Prisma's `id` into `_id` for backward compatibility with Mongo-shaped
+    // consumers. The golden fixtures, however, were captured from raw
+    // Mongoose output, which never emits `id` at all -- only `_id`. Once a
+    // service is ported, every one of its entities gains this additive `id`
+    // alongside the fixture's pre-existing `_id`, and a naive deep-equal
+    // would fail on that extra key for a reason that has nothing to do with
+    // whether the port itself is correct. So: when `_id` is present on this
+    // object, treat `id` as a pure alias and drop it from the value
+    // comparison entirely (never emitted into `out`).
+    //
+    // This does NOT weaken the "id and _id must both be present and equal"
+    // Global Constraint -- that invariant is enforced separately, and
+    // BEFORE this function ever runs, by tests/contract/replay.test.ts's
+    // assertDualId() against the RAW (pre-normalize) response body (see
+    // that function's call site and this file's header comment). By the
+    // time a body reaches normalizeBody, assertDualId has already thrown if
+    // `id` was present without a matching `_id`, or if the two disagreed --
+    // this function only has to worry about `id` being an uninteresting
+    // extra key once that structural check has already passed.
+    const hasUnderscoreId = Object.prototype.hasOwnProperty.call(record, '_id');
     const out: Record<string, unknown> = {};
-    for (const [k, v] of Object.entries(input as Record<string, unknown>)) {
+    for (const [k, v] of Object.entries(record)) {
+      if (k === 'id' && hasUnderscoreId) continue;
       if (VOLATILE.has(k)) continue;
       if (k === 'id' || k === '_id' || k.endsWith('Id')) {
         out[k] = typeof v === 'string' ? '<ID>' : normalizeBody(v);
