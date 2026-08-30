@@ -11,7 +11,7 @@ export const getConversationMessages = catchAsync(async (req: AuthRequest, res: 
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 50;
 
     const result = await messageService.getConversationMessages(
-      req.user!.id,
+      req.user!.pgId,
       req.params.id as string,
       page,
       limit
@@ -29,7 +29,7 @@ export const getConversationMessages = catchAsync(async (req: AuthRequest, res: 
  */
 export const sendMessage = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
     const message = await messageService.sendMessage(
-      req.user!.id,
+      req.user!.pgId,
       req.params.id as string,
       req.body
     );
