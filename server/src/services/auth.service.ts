@@ -1,6 +1,6 @@
 import { supabaseAdmin } from '../config/supabase';
 import prisma from '../config/prisma';
-import { serializeDoc } from '../utils/serialize';
+import { serializeProfile } from '../utils/serialize';
 import { toHttpError } from '../utils/prismaErrors';
 
 // ─── Helpers ────────────────────────────────────────────────
@@ -15,6 +15,28 @@ const signIn = async (email: string, password: string) => {
     throw Object.assign(new Error('Invalid email or password'), { statusCode: 401 });
   }
   return { accessToken: data.session.access_token, refreshToken: data.session.refresh_token };
+};
+
+/**
+ * Serialize a `Profile` row for an auth response, resolving
+ * `assignedPropertyIds` from the `staff_property_assignments` join table.
+ * Only staff profiles can have assignments at all (see
+ * schema.prisma/StaffPropertyAssignment), so the query is skipped entirely
+ * for every other role -- landlords, admins, and tenants always get `[]`,
+ * matching what Mongo's `User.assignedPropertyIds` returned for them too.
+ */
+const serializeAuthProfile = async (profile: { id: string; role: string } & Record<string, unknown>) => {
+  const assignedPropertyIds =
+    profile.role === 'staff'
+      ? (
+          await prisma.staffPropertyAssignment.findMany({
+            where: { staffId: profile.id },
+            select: { propertyId: true },
+          })
+        ).map((a) => a.propertyId)
+      : [];
+
+  return serializeProfile(profile, { assignedPropertyIds });
 };
 
 // ─── Public Service Methods ─────────────────────────────────
@@ -61,7 +83,7 @@ export const register = async (data: {
     });
 
     const session = await signIn(email, data.password);
-    return { user: serializeDoc(profile), ...session };
+    return { user: await serializeAuthProfile(profile), ...session };
   } catch (err) {
     // Roll back the orphaned auth user so a retry with the same email works.
     await supabaseAdmin.auth.admin.deleteUser(created.user.id).catch(() => {
@@ -92,7 +114,7 @@ export const login = async (email: string, password: string) => {
   }
 
   const session = await signIn(normalized, password);
-  return { user: serializeDoc(profile), ...session };
+  return { user: await serializeAuthProfile(profile), ...session };
 };
 
 /**
@@ -108,7 +130,7 @@ export const refreshToken = async (incomingRefreshToken: string) => {
 
   const profile = await prisma.profile.findUnique({ where: { id: data.user.id } });
   return {
-    user: profile ? serializeDoc(profile) : undefined,
+    user: profile ? await serializeAuthProfile(profile) : undefined,
     accessToken: data.session.access_token,
     refreshToken: data.session.refresh_token,
   };
