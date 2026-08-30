@@ -16,20 +16,21 @@
  * on import (see tests/server-import.test.ts). Importing `app` here does
  * NOT connect to MongoDB — this file owns its own connection below.
  *
- * KNOWN CAPTURED BUG — do not "fix" the fixture: GET /api/tickets/:id
- * currently returns 403 even to the ticket's own reporter. In
- * src/services/ticket.service.ts's canAccessTicket() (around line 109):
+ * RESOLVED BUG (commits 7264f23 / cc03c83) — GET /api/tickets/:id used to
+ * return 403 even to the ticket's own reporter. In
+ * src/services/ticket.service.ts's canAccessTicket(), the ownership check
+ * used to be:
  *
  *     const isOwner = ticket.reportedByUserId.toString() === userId;
  *
  * `ticket.reportedByUserId` is a populated user document by the time this
- * runs, so `.toString()` yields "[object Object]", never the raw userId —
- * `isOwner` is always false. tests/golden/ticket.json's `ticket-by-id-
- * owner-user1` case (403, "Access denied") captures exactly this: it is
- * what the app genuinely does today, not what it should do. If that
- * comparison is ever fixed, THIS SPECIFIC CASE WILL GO RED, and that is
- * correct — re-capture the fixture deliberately at that point, do not
- * silently edit it (or this test) to keep the old expectation.
+ * runs (getTicketById populates it first), so `.toString()` yielded
+ * "[object Object]", never the raw userId — `isOwner` was always false.
+ * Fixed in 7264f23 by reading `reportedByUserId._id` first, falling back to
+ * the raw value (the same idiom already used for `propertyId`).
+ * tests/golden/ticket.json's `ticket-by-id-owner-user1` case was
+ * deliberately re-captured in cc03c83 and now expects 200, not 403 — this
+ * is a genuine behaviour fix, not a loosened assertion.
  */
 import fs from 'fs';
 import path from 'path';

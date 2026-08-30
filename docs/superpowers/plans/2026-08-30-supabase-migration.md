@@ -743,9 +743,9 @@ afterAll(async () => {
   await mongoose.disconnect();
 });
 
-// KNOWN CAPTURED BUG — do not "fix" the fixture in passing: see the
-// "Known Issues" section right after this task for GET /api/tickets/:id
-// returning 403 to the ticket's own reporter.
+// RESOLVED — GET /api/tickets/:id used to return 403 to the ticket's own
+// reporter; see the "Known Issues" section right after this task, fixed in
+// commits 7264f23 / cc03c83.
 
 describe.each(files)('golden replay: %s', (file) => {
   const cases: GoldenCase[] = JSON.parse(fs.readFileSync(path.join(GOLDEN_DIR, file), 'utf8'));
@@ -793,9 +793,9 @@ git commit -m "test: add golden-fixture replay contract tests"
 
 ### Known Issues (carried by the golden fixtures)
 
-**`GET /api/tickets/:id` returns 403 to the ticket's own reporter — a real, pre-existing production bug, captured as-is.** In `ticket.service.ts`'s `canAccessTicket()` (around line 109), `ticket.reportedByUserId.toString() === userId` is evaluated against an already-populated object (`populateTicket` runs first), so `.toString()` yields the string `"[object Object]"` and never matches the raw `userId` — the comparison is always false. `tests/golden/ticket.json`'s `ticket-by-id-owner-user1` case freezes the resulting 403 as expected behaviour: it records what the app genuinely does today, not what it should do.
+**RESOLVED — see commits `7264f23` / `cc03c83`.** `GET /api/tickets/:id` used to return 403 to the ticket's own reporter: `ticket.service.ts`'s `canAccessTicket()` compared `ticket.reportedByUserId.toString() === userId` against an already-populated object (`populateTicket` runs first), so `.toString()` yielded the string `"[object Object]"` and never matched the raw `userId`. This was fixed in `7264f23` by reading `reportedByUserId._id` first and falling back to the raw value — the same populated-or-raw idiom already used for `propertyId` one line below. `tests/golden/ticket.json`'s `ticket-by-id-owner-user1` case was deliberately re-captured in `cc03c83` and now reflects the corrected 200. A new regression test at `server/tests/contract/ticket-access.test.ts` proves the ticket's own reporter gets 200 and was confirmed to fail (403) against the pre-`7264f23` code.
 
-**Do not silently "fix" the fixture or the app in passing.** If a future change corrects this comparison, this specific replay case will go red — that is correct, it means the bug is fixed. When it happens, deliberately re-run `capture-golden.ts` to re-capture `ticket-by-id-owner-user1` (and check for any other case relying on the old 403), rather than editing the fixture or loosening the assertion to preserve the old expectation. The application-level fix belongs in a separate change, not in this migration.
+`ticket-by-id-assigned` was investigated as part of the same fix and is unaffected — it stays 403 for an unrelated reason: that request is made by the *assigned staff member*, not the reporter, so the `isOwner` branch never applied to it; its denial comes from `verifyPropertyManagementAccess()`'s `assignedPropertyIds` check, which the seed never populates for staff users. That is a separate, pre-existing characteristic of the seeded data, not this bug class, and was left untouched.
 
 ---
 
