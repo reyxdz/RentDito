@@ -106,7 +106,9 @@ const canAccessTicket = async (
     return { user, property: null };
   }
 
-  const isOwner = ticket.reportedByUserId.toString() === userId;
+  const reportedByUserId =
+    ticket.reportedByUserId?._id?.toString?.() || ticket.reportedByUserId?.toString?.();
+  const isOwner = reportedByUserId === userId;
   if (!options.managementOnly && isOwner) {
     return { user, property: null };
   }
