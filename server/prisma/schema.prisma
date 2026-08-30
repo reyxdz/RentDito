@@ -270,6 +270,7 @@ model Profile {
   landlordId         String?            @map("landlord_id") @db.Uuid
   permissions        String[]
   positionName       String?            @map("position_name")
+  legacyMongoId      String?            @unique @map("legacy_mongo_id")
   createdAt          DateTime           @default(now()) @map("created_at") @db.Timestamptz
   updatedAt          DateTime           @updatedAt @map("updated_at") @db.Timestamptz
 
