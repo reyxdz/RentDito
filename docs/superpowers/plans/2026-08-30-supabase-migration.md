@@ -12,6 +12,57 @@
 
 ---
 
+## Status
+
+*A resuming executor should trust this section over the raw task numbering below — it reflects what has actually landed, not just what was planned.*
+
+- **Done and reviewed clean:** Task 2 (Jest harness), Task 3a (extended Mongo seed), Task 3 (golden fixture capture), Task 4 (golden-fixture replay contract tests), Task 5 (Prisma schema for all 27 tables, batched with Task 1a below), Task 8 (dual `id`/`_id` serializer), Task 9 (Prisma error mapping). On this subset: `npm test` passes (4 suites), `npx tsc --noEmit` exits 0.
+- **Task 1 is split into two:**
+  - **Task 1a (done):** installing `prisma`, `@prisma/client`, `@supabase/supabase-js` (Step 3), the `schema.prisma` generator/datasource skeleton (Step 4), the `server/src/config/prisma.ts` singleton (Step 5), and `server/.env.example` with placeholder values (part of Step 2). None of this needs credentials, so it was executed batched into the Task 5 dispatch — both edit `server/prisma/schema.prisma`.
+  - **Task 1b (blocked):** creating the actual Supabase project (Step 1), writing real values into `server/.env` (Step 2), and the `prisma db pull` connectivity check (Step 6). These need the repository owner's Supabase account and cannot be synthesized by an executor.
+- **Blocked on Supabase credentials:** Task 1b, and Tasks 6, 7, and 10 through 32. None of these can be meaningfully dispatched until a real Supabase project exists and `SUPABASE_URL` / `SUPABASE_SERVICE_ROLE_KEY` / `SUPABASE_JWT_SECRET` / `DATABASE_URL` / `DIRECT_URL` are set in `server/.env`.
+
+---
+
+## Execution Order
+
+Task numbers are fixed and are **not** renumbered as work proceeds (Task 3a is inserted with that name for exactly this reason). But the numeric order is not the execution order — three corrections apply, discovered during dispatch:
+
+1. **Task 5 precedes Tasks 8 and 9.** `serializeDoc`/`serializeList` (Task 8) and `toHttpError` (Task 9) both `import { Prisma } from '@prisma/client'`, which only exists once `npx prisma generate` has run — that happens in Task 5 Step 4. Dispatching 8 or 9 first fails on a missing module.
+2. **Task 8 precedes Task 7.** `auth.service.ts` (Task 7) calls `serializeDoc` on every profile it returns. Task 8 must land first or Task 7 has nothing to import.
+3. **Task 3a precedes Task 3.** Task 3a extends the seed data Task 3 captures fixtures from (see Task 3a below); running Task 3 first would freeze fixtures against thin, unrepresentative data.
+
+The real dependency order:
+
+```
+Task 2 (jest harness)
+  -> Task 1a + Task 5 (schema skeleton + all 27 models, batched — generates @prisma/client)
+    -> Task 8 (serializer) -> Task 9 (error mapping)
+  -> Task 3a (extend Mongo seed) -> Task 3 (capture golden fixtures) -> Task 4 (replay harness)
+  -> Task 1b (Supabase provisioning — needs credentials)
+    -> Task 6 (apply migration)
+    -> Task 7 (Supabase Auth proxy — needs Task 8's serializeDoc)
+  -> Tasks 10-29 (service port — needs 5, 6, 7, 8, 9 landed, and 4 to verify against)
+  -> Task 30 (seed rewrite — Task 3a is its equivalence spec)
+  -> Task 31 (cutover)
+  -> Task 32 (RLS)
+```
+
+Tasks 2, 1a+5, 8, and 9 need no credentials and no reachable database at all. Tasks 3a, 3, and 4 need a live, reachable MongoDB but no Supabase credentials — this chain can run independently of, and in parallel with, the Prisma/Supabase chain above it. Everything from Task 1b onward needs real Supabase credentials.
+
+This supersedes the ordering originally stated only in this document's own Self-Review (which named `Task 8 -> Task 9 -> Task 7` for Phase 3 but omitted Task 5's precedence over 8 and 9, and did not yet account for Task 3a).
+
+---
+
+## Known Coverage Gaps
+
+- **The golden corpus (Tasks 3 and 4) is GET-only** (plus login and the health check). Task 3 deliberately excluded 83 mutating routes (POST/PATCH/PUT/DELETE) — a one-shot capture script cannot safely replay writes without side effects compounding on every run, so exclusion was correct for capture. The consequence: any `.populate()` call site reachable **only** through a write path has zero replay coverage. When a Phase 4 task touches such a site, the golden replay alone does not prove it correct — verify those sites with a hand-written test against the write path itself, or manual verification against the running app, before trusting the port.
+- **The normalizer (`server/tests/helpers/normalize.ts`) has two known blind spots**, accepted as-is rather than fixed because closing them needs path-aware normalization the harness does not have:
+  1. It strips the key `to` by bare name rather than scoping it to the one path it legitimately appears on (`financial.json`'s `summary.range.to`, a live `new Date()` value). A future, unrelated top-level `to` field elsewhere in the API would be silently stripped and never actually compared.
+  2. Collapsing every `...Id`-suffixed value to the placeholder `<ID>` means a foreign key repointed at a **wrong-but-valid-shaped** entity (e.g. a bill's `tenancyId` silently pointing at the wrong tenancy after a botched Prisma `include`) will not be caught — both sides normalize to `<ID>` regardless of which real ID is underneath. The structural `assertDualId` check (Task 4 Step 2) closes a related but different gap (missing `_id`); it does not catch this one.
+
+---
+
 ## Global Constraints
 
 - **Postgres version:** 15 (Supabase default). Do not use syntax requiring 16+.
@@ -115,9 +166,14 @@ CREATE UNIQUE INDEX rental_applications_active_uniq
   WHERE status IN ('pending', 'under_review');
 
 CREATE UNIQUE INDEX inventory_serial_uniq
-  ON inventory (property_id, serial_number)
+  ON inventories (property_id, serial_number)
   WHERE serial_number IS NOT NULL AND serial_number <> '';
 ```
+
+**Table name note:** the `Inventory` model maps to table `inventories` (`@@map("inventories")` in Task 5's schema, following the plural-table naming convention), not `inventory`. The statement above was originally written against the bare singular table name and would fail with `relation "inventory" does not exist` — the `bills` and `rental_applications` statements were already correct.
+
+### `properties.landlord_id` is `Restrict`, not `Cascade`
+Deleting a `Profile` that owns properties must **not** cascade-delete those properties. The consequence is data-dependent and dangerous in both directions: a landlord who already has any contract/payment/audit row is blocked from deletion by those rows' own `Restrict` FKs regardless of this setting, but a landlord with properties and none of those rows would have the delete **succeed** under `Cascade` — silently destroying properties → units → tenancies → bills with no confirmation step. `Restrict` forces an explicit decision (archive the properties, or explicitly tear them down first) instead of a silent cascade. Task 30's seed teardown already deletes in reverse FK order, so it is unaffected by this choice.
 
 ### The Contract ↔ Tenancy cycle is not a cycle
 `Tenancy.contractId` is required; `Contract.tenancyId` is optional. The real creation order is Contract (from an approved application) → Tenancy → backfill `contracts.tenancy_id`. So `tenancies.contract_id` is `NOT NULL` and `contracts.tenancy_id` is nullable. **No deferrable constraints are needed.** Do not add them.
@@ -150,7 +206,7 @@ All Mongoose string enums become native Postgres enums via Prisma `enum`. Values
 - `server/src/utils/jwt.ts` — reduced to Supabase token verification
 - `server/src/seeds/seed.ts` — rewritten against Prisma + Supabase Admin API
 - `server/src/config/db.ts` — Mongo connector deleted at Task 30
-- `server/src/server.ts` — swap `connectDB()` for Prisma connect
+- `server/src/server.ts` — first modified at Task 2 (guard boot side effects behind `require.main === module`, add named `{ app }` export); modified again at Task 31 to swap `connectDB()` for Prisma connect
 - `server/package.json` — dependency swap
 
 **Deleted (Task 30 only, never earlier):**
@@ -260,9 +316,10 @@ This phase produces the regression net. Nothing in Phase 4 is safe without it.
 
 **Files:**
 - Create: `server/jest.config.js`, `server/tests/smoke.test.ts`
+- Modify: `server/src/server.ts`
 
 **Interfaces:**
-- Produces: a working `npm test` in `server/`.
+- Produces: a working `npm test` in `server/`; a side-effect-free named export `{ app }` from `server/src/server.ts` that Tasks 3, 4, and 7 import via supertest.
 
 - [ ] **Step 1: Write the failing test**
 
@@ -307,18 +364,82 @@ cd server && npm test
 ```
 Expected: PASS, 1 test.
 
+- [ ] **Step 5: Make `server.ts` safely importable by tests**
+
+`server.ts` currently calls `connectDB()` and `app.listen()` at module load, and does not export `app` at all — only the listening `Server`. Tasks 3, 4, and 7 all need to `import { app }` and pass it to `supertest`'s `request(app)` without binding a port or opening a MongoDB connection on every test run. Guard the boot side effects and add the named export:
+
+```typescript
+// eslint-disable-next-line import/no-mutable-exports
+let server: import('http').Server | undefined;
+
+// Only bind a port and connect to the database when this file is run
+// directly (`npm run dev` / `npm start`), not when it is imported (e.g. by
+// tests via supertest). Importing must be side-effect free.
+if (require.main === module) {
+  connectDB();
+
+  server = app.listen(PORT, () => {
+    console.log(`Server is running in development mode on port ${PORT}`);
+    initScheduler();
+  });
+}
+
+export { app };
+export default server;
+```
+
+`npm start` / `npm run dev` behaviour is unchanged, since both invoke this file directly (`require.main === module` is true). Every later consumer (Task 3's `capture-golden.ts`, Task 4's `replay.test.ts`, Task 7's `auth.test.ts`) **must** use the named import `import { app } from '...'` — the default export is `undefined` on import from this point on, and a default import would silently call `request(undefined)`.
+
+- [ ] **Step 6: Commit**
+
+```bash
+git add server/jest.config.js server/tests/smoke.test.ts server/src/server.ts
+git commit -m "test: add jest configuration, smoke test, and guard server.ts boot side effects"
+```
+
+---
+
+### Task 3a: Extend the Mongo seed before capturing fixtures
+
+Inserted ahead of Task 3 (see "Execution Order" near the top) once the live Mongo database was inspected: the seed left roughly 100 of the 235 populate call sites with **zero rows to populate** — `transfer` (41 sites, 0 rows), `visit` (20, 0), `application` (18, 0), `inquiry` (10, 0), `ticket` (8, 0), `message` (3, 0), and `payment` (0 rows). Capturing golden fixtures (Task 3) against that seed would freeze empty arrays for exactly the six highest-populate-density services this plan calls out as the port-effort ranking — a regression net with a hole precisely where the risk concentrates. This task exists to close that hole before Task 3 records anything.
+
+**Files:**
+- Modify: `server/src/seeds/seed.ts`
+
+**Interfaces:**
+- Produces: seed data for every previously-empty domain above; consumed by Task 3's capture and, later, by Task 30's Postgres seed rewrite as its equivalence spec.
+
+- [ ] **Step 1: Add seed data for the six under-seeded domains**
+
+Add representative rows — enough to exercise every status value each domain's routes branch on (e.g. `pending`/`under_review`/`approved`/`rejected` for applications, `pending`/`approved`/`scheduled`/`completed`/`cancelled`/`no_show` for visits) — for `RentalApplication`, `VisitRequest`, `TransferRequest`, `Inquiry` (with its `Conversation`), `Message`, `Ticket`, and `Payment`. Wire each new record to the existing seeded users/properties/units/tenancies rather than inventing new top-level entities, so the six services' relations are exercised the same way production data would exercise them.
+
+- [ ] **Step 2: Fix `clearDatabase()`'s incomplete teardown**
+
+`clearDatabase()` omits `Bill` and `Notification`, so a second `npm run seed` run accumulates duplicate rows instead of replacing them (masking the same idempotency requirement Task 30 Step 3 later re-establishes against Postgres). Add both models to the teardown list.
+
+- [ ] **Step 3: Fix dangling `Contract.applicationId` references**
+
+Three seeded `Contract` records point `applicationId` at an existing but **wrong** `RentalApplication` — a real bug, not a migration artifact: it breaks `contract.service.ts`'s `generatePDF` (around line 396) with a `TypeError` under Mongo today, independently of this migration. Re-point every seeded contract's `applicationId` at an application sharing the same `userId` and `unitId` as the contract itself, and verify this by cross-checking each `Contract.create()` call's own `userId`/`unitId` against the application it references.
+
+- [ ] **Step 4: Run the seed twice and inspect counts**
+
+```bash
+cd server && npm run seed && npm run seed
+```
+Expected: both runs exit 0 with identical resulting counts (proves Step 2's fix). Record the final counts — **Task 30's Postgres seed rewrite must reproduce at least this much data, split the same way across statuses:** `rentalapplications` 7, `visitrequests` 5, `transferrequests` 3, `inquiries` 3, `conversations` 3, `messages` 9, `tickets` 5, `payments` 4, `contracts` 3, `bills` 3, `landlordapplications` 2, `documents` 2, `incidentreports` 2.
+
 - [ ] **Step 5: Commit**
 
 ```bash
-git add server/jest.config.js server/tests/smoke.test.ts
-git commit -m "test: add jest configuration and smoke test"
+git add server/src/seeds/seed.ts
+git commit -m "feat(seed): extend Mongo seed data for under-populated domains and fix dangling contract refs"
 ```
 
 ---
 
 ### Task 3: Capture golden API fixtures from the live Mongo implementation
 
-This is the highest-value task in the plan. It records what the API currently returns so the Postgres rewrite can be proven equivalent.
+This is the highest-value task in the plan. It records what the API currently returns so the Postgres rewrite can be proven equivalent. Run this only after Task 3a has extended the seed — otherwise the six highest-populate-density domains get captured with empty arrays.
 
 **Files:**
 - Create: `server/scripts/capture-golden.ts`, `server/tests/golden/*.json`
@@ -341,7 +462,12 @@ Create `server/scripts/capture-golden.ts`:
 import fs from 'fs';
 import path from 'path';
 import request from 'supertest';
-import app from '../src/server';
+import mongoose from 'mongoose';
+// IMPORTANT: named import. server.ts only calls connectDB()/app.listen() under
+// `if (require.main === module)`, so the default export is `undefined` when this
+// file is imported (as here, via supertest) rather than run directly. Importing
+// `app` does NOT connect to MongoDB — this script owns its own connection below.
+import { app } from '../src/server';
 
 interface Capture {
   name: string;
@@ -367,8 +493,24 @@ async function capture(group: string, cases: Capture[]) {
   console.log(`captured ${results.length} cases -> ${group}.json`);
 }
 
+async function main() {
+  // Importing `app` above does not connect to MongoDB — connect explicitly.
+  await mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/rentdito');
+  // ... call capture(group, cases) for each domain here ...
+  await mongoose.disconnect();
+}
+
+main()
+  .then(() => process.exit(0))
+  .catch((err) => {
+    console.error('Golden capture failed:', err);
+    mongoose.disconnect().finally(() => process.exit(1));
+  });
+
 export { capture, Capture };
 ```
+
+`server.ts`'s boot side effects (`connectDB()`, `app.listen()`) are guarded behind `require.main === module` (Task 2), so simply importing `{ app }` here does not open a MongoDB connection — this script must, and does, connect to MongoDB itself via `mongoose.connect(...)` before issuing any request, and disconnect when done.
 
 - [ ] **Step 3: Enumerate the endpoints to capture**
 
@@ -396,13 +538,50 @@ git commit -m "test: capture golden API fixtures from MongoDB implementation"
 ### Task 4: Contract tests that replay the golden fixtures
 
 **Files:**
-- Create: `server/tests/contract/replay.test.ts`, `server/tests/helpers/normalize.ts`
+- Create: `server/tests/contract/replay.test.ts`, `server/tests/contract/replay.meta.ts`, `server/tests/helpers/normalize.ts`, `server/tests/helpers/auth.ts`
 
 **Interfaces:**
 - Consumes: `server/tests/golden/*.json` from Task 3.
-- Produces: `normalizeBody(body: unknown): unknown` — strips volatile fields so Mongo and Postgres responses are comparable.
+- Produces: `normalizeBody(body: unknown): unknown` — strips volatile fields so Mongo and Postgres responses are comparable; `tokenForEmail(email: string): Promise<string>` — mints a bearer token for a seeded user.
 
-- [ ] **Step 1: Write the normalizer**
+- [ ] **Step 1: Write the token helper behind a swappable interface**
+
+Task 3's captures used `signAccess()` (from `src/utils/jwt.ts`) to mint bearer tokens directly — cheap, and it avoids the login route's rate limiter. But `utils/jwt.ts` is deleted at Task 7's Supabase cutover, so this replay harness must not import `signAccess` anywhere it can be avoided at the call site — isolate it behind one function so only that function's body changes later (to mint/fetch a Supabase-issued token via `supabase.auth.signInWithPassword` instead).
+
+Create `server/tests/helpers/auth.ts`:
+
+```typescript
+import { User } from '../../src/models/User';
+import { signAccess } from '../../src/utils/jwt';
+
+// This file is deliberately the ONLY place in the test suite that imports
+// signAccess or knows how a bearer token is produced. When auth moves to
+// Supabase, only tokenForEmail's implementation below needs to change —
+// every test that calls it stays untouched. Tokens must never be compared
+// by VALUE across engines: Mongo-JWTs and Supabase-JWTs are differently
+// shaped and will never be equal, which is fine — replay only needs a
+// token that authenticates as the right seeded user, not a specific string.
+process.env.JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET || 'contract-replay-access-secret';
+process.env.JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'contract-replay-refresh-secret';
+
+const tokenCache = new Map<string, string>();
+
+export async function tokenForEmail(email: string): Promise<string> {
+  const cached = tokenCache.get(email);
+  if (cached) return cached;
+
+  const user = await User.findOne({ email }).lean();
+  if (!user) {
+    throw new Error(`tokenForEmail: no seeded user found for "${email}". Run \`npm run seed\` first.`);
+  }
+
+  const token = signAccess((user as any)._id.toString(), (user as any).role);
+  tokenCache.set(email, token);
+  return token;
+}
+```
+
+- [ ] **Step 2: Write the normalizer**
 
 Create `server/tests/helpers/normalize.ts`:
 
@@ -413,6 +592,14 @@ const VOLATILE = new Set(['createdAt', 'updatedAt', '__v', 'timestamp', 'signedA
  * Strip fields that legitimately differ between runs or engines, and
  * canonicalise IDs to a placeholder so Mongo ObjectIds and Postgres UUIDs
  * compare equal by position rather than by value.
+ *
+ * IMPORTANT: this collapses both `id` and `_id` to the same `'<ID>'`
+ * placeholder, which makes it USELESS on its own for verifying that an
+ * object carries a consistent, matching `id`/`_id` pair — by the time a
+ * body reaches this function that information is already gone. Step 3's
+ * `assertDualId` MUST run on the raw response body BEFORE this function,
+ * never after (see the "Known Coverage Gaps" section near the top of this
+ * document for the two blind spots this normalizer still has even so).
  */
 export function normalizeBody(input: unknown): unknown {
   if (Array.isArray(input)) return input.map(normalizeBody);
@@ -432,7 +619,39 @@ export function normalizeBody(input: unknown): unknown {
 }
 ```
 
-- [ ] **Step 2: Write the failing replay test**
+- [ ] **Step 3: Write the failing replay test**
+
+Fixture records only carry `{ name, method, path, status, body }` — never which token produced them — so a companion file maps each captured case name to the seeded identity (or none, for the deliberately unauthenticated cases) it needs replayed with. Create `server/tests/contract/replay.meta.ts` with that mapping, populated to cover every case name Task 3 actually captured:
+
+```typescript
+export const EMAILS: Record<string, string> = {
+  superAdmin: 'admin@rentdito.com',
+  landlord1: 'landlord1@rentdito.com',
+  landlord2: 'landlord2@rentdito.com',
+  staffManager: 'manager@rentdito.com',
+  staffMaintenance: 'maintenance@rentdito.com',
+  staffFinance: 'finance@rentdito.com',
+  user1: 'user1@rentdito.com',
+  user2: 'user2@rentdito.com',
+  user3: 'user3@rentdito.com',
+};
+
+// Case name -> EMAILS key. Populate one entry per authenticated case Task 3 captured.
+export const CASE_AUTH: Record<string, keyof typeof EMAILS> = {
+  'property-by-id-landlord1': 'landlord1',
+  // ... one entry per remaining authenticated case name ...
+};
+
+// Case name -> query params, for cases captured with a query string.
+export const CASE_QUERY: Record<string, Record<string, string>> = {};
+
+// Case name -> request body, for the small set of real POST /api/auth/login captures.
+export const AUTH_LOGIN_BODIES: Record<string, { email: string; password: string }> = {};
+
+// Case names whose response is allowed to carry `id` with no sibling `_id`
+// (a deliberate DTO shape) — see assertDualId below. Empty until a real one is found.
+export const ALLOW_ID_ONLY = new Set<string>();
+```
 
 Create `server/tests/contract/replay.test.ts`:
 
@@ -440,38 +659,143 @@ Create `server/tests/contract/replay.test.ts`:
 import fs from 'fs';
 import path from 'path';
 import request from 'supertest';
-import app from '../../src/server';
+import mongoose from 'mongoose';
+// IMPORTANT: named import. server.ts only calls connectDB()/app.listen() under
+// `if (require.main === module)`; the default export is `undefined` on import.
+// Importing `app` here does NOT connect to MongoDB — this suite connects itself
+// in beforeAll below.
+import { app } from '../../src/server';
 import { normalizeBody } from '../helpers/normalize';
+import { tokenForEmail } from '../helpers/auth';
+import { EMAILS, CASE_AUTH, CASE_QUERY, AUTH_LOGIN_BODIES, ALLOW_ID_ONLY } from './replay.meta';
 
 const GOLDEN_DIR = path.resolve(__dirname, '../golden');
 const files = fs.existsSync(GOLDEN_DIR)
   ? fs.readdirSync(GOLDEN_DIR).filter((f) => f.endsWith('.json'))
   : [];
 
-describe.each(files)('golden replay: %s', (file) => {
-  const cases = JSON.parse(fs.readFileSync(path.join(GOLDEN_DIR, file), 'utf8'));
+if (files.length === 0) {
+  throw new Error(`golden replay: no *.json fixtures found in ${GOLDEN_DIR}`);
+}
 
-  it.each(cases)('$name', async (c: any) => {
-    const res = await request(app)[c.method as 'get'](c.path);
+interface GoldenCase {
+  name: string;
+  method: 'get' | 'post' | 'patch' | 'put' | 'delete';
+  path: string;
+  status: number;
+  body: unknown;
+}
+
+/**
+ * Structural dual-id assertion — MUST run on the raw body BEFORE normalizeBody,
+ * which collapses both `id` and `_id` to the same placeholder and so cannot
+ * verify this on its own. Global Constraint under test: every entity object the
+ * API returns must carry both `id` and `_id`, equal to each other.
+ */
+function assertDualId(node: unknown, allowIdOnly: boolean, pointer = '$'): void {
+  if (Array.isArray(node)) {
+    node.forEach((item, i) => assertDualId(item, allowIdOnly, `${pointer}[${i}]`));
+    return;
+  }
+  if (node && typeof node === 'object') {
+    const obj = node as Record<string, unknown>;
+    if (Object.prototype.hasOwnProperty.call(obj, 'id')) {
+      const hasUnderscoreId = Object.prototype.hasOwnProperty.call(obj, '_id');
+      if (!hasUnderscoreId && !allowIdOnly) {
+        throw new Error(`assertDualId: object at ${pointer} has "id" with no sibling "_id".`);
+      }
+      if (hasUnderscoreId && String(obj.id) !== String(obj._id)) {
+        throw new Error(`assertDualId: object at ${pointer} has mismatched id/_id.`);
+      }
+    }
+    for (const [key, value] of Object.entries(obj)) {
+      assertDualId(value, allowIdOnly, `${pointer}.${key}`);
+    }
+  }
+}
+
+/**
+ * Login responses embed live, freshly-signed tokens that can never equal a
+ * fixed placeholder byte-for-byte, and per this task's design must NEVER be
+ * compared by value at all — post-Supabase-cutover tokens are a different
+ * shape entirely. Assert presence, then replace with a placeholder so the
+ * rest of the body can still be deep-compared.
+ */
+function redactTokens(body: any): any {
+  if (body?.data && typeof body.data === 'object') {
+    if ('accessToken' in body.data) {
+      expect(typeof body.data.accessToken).toBe('string');
+      body.data.accessToken = '<ACCESS_TOKEN>';
+    }
+    if ('refreshToken' in body.data) {
+      expect(typeof body.data.refreshToken).toBe('string');
+      body.data.refreshToken = '<REFRESH_TOKEN>';
+    }
+  }
+  return body;
+}
+
+beforeAll(async () => {
+  await mongoose.connect('mongodb://127.0.0.1:27017/rentdito');
+});
+
+afterAll(async () => {
+  await mongoose.disconnect();
+});
+
+// KNOWN CAPTURED BUG — do not "fix" the fixture in passing: see the
+// "Known Issues" section right after this task for GET /api/tickets/:id
+// returning 403 to the ticket's own reporter.
+
+describe.each(files)('golden replay: %s', (file) => {
+  const cases: GoldenCase[] = JSON.parse(fs.readFileSync(path.join(GOLDEN_DIR, file), 'utf8'));
+
+  it.each(cases)('$name', async (c: GoldenCase) => {
+    let req = (request(app) as any)[c.method](c.path);
+
+    const loginBody = AUTH_LOGIN_BODIES[c.name];
+    if (loginBody) {
+      req = req.send(loginBody);
+    } else {
+      const key = CASE_AUTH[c.name];
+      if (key) req = req.set('Authorization', `Bearer ${await tokenForEmail(EMAILS[key])}`);
+      const query = CASE_QUERY[c.name];
+      if (query) req = req.query(query);
+    }
+
+    const res = await req;
     expect(res.status).toBe(c.status);
-    expect(normalizeBody(res.body)).toEqual(normalizeBody(c.body));
+
+    const actualBody = redactTokens(res.body);
+    assertDualId(actualBody, ALLOW_ID_ONLY.has(c.name));
+    expect(normalizeBody(actualBody)).toEqual(normalizeBody(c.body));
   });
 });
 ```
 
-- [ ] **Step 3: Run against the current Mongo build to verify the harness is sound**
+As in Task 3, importing `{ app }` does not connect to MongoDB — the `beforeAll`/`afterAll` pair above owns this suite's connection.
+
+- [ ] **Step 4: Run against the current Mongo build to verify the harness is sound**
 
 ```bash
 cd server && npm test -- replay
 ```
-Expected: PASS. The fixtures were captured from this same implementation, so a failure here means the normalizer is wrong or the seed is non-deterministic. Fix now — a harness that cannot reproduce its own baseline is worthless as a migration gate.
+Expected: PASS. The fixtures were captured from this same implementation, so a failure here means the normalizer is wrong, `replay.meta.ts` is missing an entry, or the seed is non-deterministic. Fix now — a harness that cannot reproduce its own baseline is worthless as a migration gate.
 
-- [ ] **Step 4: Commit**
+- [ ] **Step 5: Commit**
 
 ```bash
-git add server/tests/contract server/tests/helpers/normalize.ts
+git add server/tests/contract server/tests/helpers/normalize.ts server/tests/helpers/auth.ts
 git commit -m "test: add golden-fixture replay contract tests"
 ```
+
+---
+
+### Known Issues (carried by the golden fixtures)
+
+**`GET /api/tickets/:id` returns 403 to the ticket's own reporter — a real, pre-existing production bug, captured as-is.** In `ticket.service.ts`'s `canAccessTicket()` (around line 109), `ticket.reportedByUserId.toString() === userId` is evaluated against an already-populated object (`populateTicket` runs first), so `.toString()` yields the string `"[object Object]"` and never matches the raw `userId` — the comparison is always false. `tests/golden/ticket.json`'s `ticket-by-id-owner-user1` case freezes the resulting 403 as expected behaviour: it records what the app genuinely does today, not what it should do.
+
+**Do not silently "fix" the fixture or the app in passing.** If a future change corrects this comparison, this specific replay case will go red — that is correct, it means the bug is fixed. When it happens, deliberately re-run `capture-golden.ts` to re-capture `ticket-by-id-owner-user1` (and check for any other case relying on the old 403), rather than editing the fixture or loosening the assertion to preserve the old expectation. The application-level fix belongs in a separate change, not in this migration.
 
 ---
 
@@ -600,7 +924,7 @@ model Property {
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
   updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
 
-  landlord Profile @relation(fields: [landlordId], references: [id], onDelete: Cascade)
+  landlord Profile @relation(fields: [landlordId], references: [id], onDelete: Restrict)
   units    Unit[]
   assignedStaff StaffPropertyAssignment[]
 
@@ -673,13 +997,13 @@ git commit -m "feat(db): add Prisma schema for all 27 tables"
 
 ---
 
-### Task 6: Apply the initial migration with triggers and partial indexes
+### Task 6: Apply the initial migration with triggers, partial indexes, CHECK constraints, citext email, and the auth.users FK
 
 **Files:**
 - Create: `server/prisma/migrations/*_init/migration.sql`, `server/prisma/sql/triggers.sql`
 
 **Interfaces:**
-- Produces: a live Postgres schema; the `refresh_property_metrics()` trigger replacing `Unit.post()` hooks.
+- Produces: a live Postgres schema; the `refresh_property_metrics()` trigger replacing `Unit.post()` hooks; the 27 `min`/`max`-derived CHECK constraints; case-insensitive `profiles.email` via `citext`; the FK from `profiles.id` to `auth.users.id`.
 
 - [ ] **Step 1: Generate the migration**
 
@@ -725,14 +1049,88 @@ CREATE TRIGGER units_refresh_property_metrics
   FOR EACH ROW EXECUTE FUNCTION refresh_property_metrics();
 ```
 
-- [ ] **Step 4: Apply**
+- [ ] **Step 4: Append CHECK constraints for the Mongoose min/max validators Prisma cannot express**
+
+27 Mongoose `min`/`max` validators have no Prisma equivalent and would otherwise be silently unenforced in Postgres, letting invalid data (negative rent, zero-capacity units) become insertable post-cutover. Append to the end of `migration.sql`:
+
+```sql
+ALTER TABLE properties
+  ADD CONSTRAINT properties_billing_day_check CHECK (billing_day BETWEEN 1 AND 31),
+  ADD CONSTRAINT properties_due_day_check CHECK (due_day BETWEEN 1 AND 31),
+  ADD CONSTRAINT properties_late_fee_percent_check CHECK (late_fee_percent >= 0 AND late_fee_percent <= 100);
+
+ALTER TABLE units
+  ADD CONSTRAINT units_room_rent_check CHECK (room_rent IS NULL OR room_rent >= 0),
+  ADD CONSTRAINT units_bedspace_rent_check CHECK (bedspace_rent IS NULL OR bedspace_rent >= 0),
+  ADD CONSTRAINT units_per_head_rate_check CHECK (per_head_rate IS NULL OR per_head_rate >= 0),
+  ADD CONSTRAINT units_deposit_check CHECK (deposit >= 0),
+  ADD CONSTRAINT units_size_sqm_check CHECK (size_sqm IS NULL OR size_sqm >= 0),
+  ADD CONSTRAINT units_capacity_check CHECK (capacity >= 1),
+  ADD CONSTRAINT units_max_occupants_check CHECK (max_occupants >= 1);
+
+ALTER TABLE contracts
+  ADD CONSTRAINT contracts_lock_in_period_check CHECK (lock_in_period >= 0),
+  ADD CONSTRAINT contracts_monthly_rent_check CHECK (monthly_rent >= 0),
+  ADD CONSTRAINT contracts_security_deposit_check CHECK (security_deposit >= 0),
+  ADD CONSTRAINT contracts_advance_payment_check CHECK (advance_payment >= 0);
+
+ALTER TABLE bills
+  ADD CONSTRAINT bills_rent_amount_check CHECK (rent_amount >= 0),
+  ADD CONSTRAINT bills_utility_amount_check CHECK (utility_amount >= 0),
+  ADD CONSTRAINT bills_penalty_amount_check CHECK (penalty_amount >= 0),
+  ADD CONSTRAINT bills_total_amount_check CHECK (total_amount >= 0),
+  ADD CONSTRAINT bills_paid_amount_check CHECK (paid_amount >= 0),
+  ADD CONSTRAINT bills_balance_amount_check CHECK (balance_amount >= 0);
+
+ALTER TABLE payments
+  ADD CONSTRAINT payments_amount_check CHECK (amount >= 0.01);
+
+ALTER TABLE tenancies
+  ADD CONSTRAINT tenancies_slot_number_check CHECK (slot_number IS NULL OR slot_number >= 1);
+
+ALTER TABLE inventories
+  ADD CONSTRAINT inventories_quantity_check CHECK (quantity >= 1),
+  ADD CONSTRAINT inventories_available_quantity_check CHECK (available_quantity >= 0),
+  ADD CONSTRAINT inventories_purchase_cost_check CHECK (purchase_cost IS NULL OR purchase_cost >= 0);
+
+ALTER TABLE inventory_records
+  ADD CONSTRAINT inventory_records_quantity_issued_check CHECK (quantity_issued >= 1),
+  ADD CONSTRAINT inventory_records_penalty_amount_check CHECK (penalty_amount IS NULL OR penalty_amount >= 0);
+```
+
+If a column name above does not match Task 5's actual `@map`, adjust the constraint to the real column name — the invariant being enforced (the original Mongoose `min`/`max`) is what matters, not the exact identifier. `trim`/`lowercase` string normalization from the Mongoose schemas has no owning task anywhere in this plan; it is intentionally not ported — Postgres has no equivalent built-in and re-adding it would mean validating input shape in the service layer, which is out of scope for this migration.
+
+- [ ] **Step 5: Restore case-insensitive email uniqueness**
+
+`User.ts` had `lowercase: true` before its unique index; a bare `email String @unique` in Postgres is case-sensitive, so `A@x.com` and `a@x.com` could coexist post-cutover — a duplicate-account and failed-login-match risk that did not exist under Mongo. Append:
+
+```sql
+CREATE EXTENSION IF NOT EXISTS citext;
+ALTER TABLE profiles ALTER COLUMN email TYPE citext;
+```
+
+Retyping the column to `citext` makes the existing `UNIQUE` constraint Prisma already generated on `email` case-insensitive without needing to drop and recreate it. Task 7 must additionally keep the existing app-level `email.toLowerCase()` calls in `auth.service.ts` — the citext column makes *storage and comparison* case-insensitive, but does not stop mixed-case input from being written, so keep normalizing at the boundary too.
+
+- [ ] **Step 6: Add the FK from `profiles.id` to Supabase's `auth.users.id`**
+
+Prisma does not manage the `auth` schema, so without this, `profiles.id` is a bare UUID with no referential link to the Supabase Auth user it names — deleting an auth user leaves an orphaned profile behind. Append:
+
+```sql
+ALTER TABLE profiles
+  ADD CONSTRAINT profiles_id_fkey
+  FOREIGN KEY (id) REFERENCES auth.users (id) ON DELETE CASCADE;
+```
+
+`ON DELETE CASCADE` here is deliberate: a `profiles` row has no meaning once its owning `auth.users` row is gone, so removing the auth user should remove the profile rather than leaving it to fail lookups silently.
+
+- [ ] **Step 7: Apply**
 
 ```bash
 cd server && npx prisma migrate dev
 ```
 Expected: `Your database is now in sync with your schema`.
 
-- [ ] **Step 5: Verify the trigger works**
+- [ ] **Step 8: Verify the trigger works**
 
 ```bash
 cd server && npx prisma db execute --stdin <<'SQL'
@@ -741,11 +1139,11 @@ SQL
 ```
 Expected: one row returned.
 
-- [ ] **Step 6: Commit**
+- [ ] **Step 9: Commit**
 
 ```bash
 git add server/prisma/migrations
-git commit -m "feat(db): apply initial migration with metrics trigger and partial indexes"
+git commit -m "feat(db): apply initial migration with metrics trigger, partial indexes, CHECK constraints, citext email, and auth.users FK"
 ```
 
 ---
@@ -769,7 +1167,12 @@ Create `server/tests/contract/auth.test.ts`:
 
 ```typescript
 import request from 'supertest';
-import app from '../../src/server';
+// IMPORTANT: named import — server.ts's connectDB()/app.listen() are guarded
+// behind `require.main === module` (Task 2), so the default export is
+// `undefined` on import. Importing `app` does NOT connect to MongoDB; this
+// suite does not need it either, since after this task's rewrite
+// /api/auth/login is served entirely by Prisma + Supabase, not Mongoose.
+import { app } from '../../src/server';
 
 describe('POST /api/auth/login', () => {
   it('returns camelCase tokens and a dual-id user', async () => {
@@ -1288,7 +1691,7 @@ Each follows Task 10's six steps exactly. Ordered by dependency, then by populat
 
 | Task | Service | populates | Domain-specific notes |
 |---|---|---|---|
-| 11 | `user.service.ts` | 1 | Reads `profiles`. `assignedPropertyIds` now comes from `staff_property_assignments` — return it as a flat array of IDs to preserve the response shape. |
+| 11 | `user.service.ts` | 1 | Reads `profiles`. `assignedPropertyIds` now comes from `staff_property_assignments` — return it as a flat array of IDs to preserve the response shape. `getMe` currently does `const TenancyModel = mongoose.default.models['Tenancy']` via a lazy dynamic `import('mongoose')` purely to dodge a circular dependency between `user.service.ts` and the Tenancy model — Prisma has no such cycle (all models live on one `prisma` client), so drop the hack entirely and query `prisma.tenancy.findFirst({ where: { userId, status: 'checked_in' }, include: { property: true, unit: true } })` directly. `changePassword` must also be ported here, not left behind: it currently reads `hash`/`compare` from `utils/password.ts` (bcrypt) — verify the current password via `supabaseAdmin.auth.signInWithPassword({ email, password: currentPassword })` (401/400 on failure, matching the existing "Current password is incorrect." message and status code), then set the new one via `supabaseAdmin.auth.admin.updateUserById(userId, { password: newPassword })`. `utils/password.ts` has no other consumer left in this service after that — Task 31 deletes the file, and if `changePassword` is not ported first, either the build breaks on the missing import or password changes silently stop working post-cutover. |
 | 12 | `team.service.ts` | 1 | Staff creation goes through `supabaseAdmin.auth.admin.createUser` then a `profiles` insert, inside one `prisma.$transaction`. Roll back the Supabase user if the profile insert fails. |
 | 13 | `unit.service.ts` | 5 | `slots` is now the `unit_slots` child table — write via nested `create`. Drop the manual property-metrics update; the Task 6 trigger owns it. One of the three `new mongoose.Types.ObjectId` sites is here. |
 | 14 | `public.service.ts` | 3 | Listing queries. No auth context; keep the existing `status: 'Active'` filters. |
@@ -1513,6 +1916,6 @@ Deliberately excluded. Each is a separate piece of work:
 1. **Task 5 Step 3** covers 21 of 27 models by convention, with 6 written out in full as the pattern. The source models are authoritative and are named.
 2. **Tasks 11–29** are specified per-service with their populate counts and domain-specific hazards, but do not reproduce each service's code. Task 10 is the fully-worked exemplar. This is a deliberate trade: the golden replay tests from Task 4 are the real specification of correct behaviour for those tasks, and they are executable rather than prose.
 
-**Type consistency.** `serializeDoc`/`serializeList` are defined in Task 8 and used from Task 7 onward — Task 7 depends on Task 8, so **execute Task 8 before Task 7**, or stub `serializeDoc` in Task 7 and replace it. `toHttpError` (Task 9) is referenced by Task 10's pattern. `AuthRequest` keeps its existing shape from `middleware/auth.ts`. Prisma model names in Task 5's Interfaces block match those used in Tasks 10–29.
+**Type consistency.** `serializeDoc`/`serializeList` (Task 8) and `toHttpError` (Task 9) both import `{ Prisma }` from `@prisma/client`, which only exists once Task 5 has run `prisma generate` — so **Task 5 must execute before Task 8 and Task 9**, not after. `serializeDoc`/`serializeList` are then used from Task 7 onward — Task 7 depends on Task 8, so **execute Task 8 before Task 7**, or stub `serializeDoc` in Task 7 and replace it. `toHttpError` (Task 9) is referenced by Task 10's pattern. `AuthRequest` keeps its existing shape from `middleware/auth.ts`. Prisma model names in Task 5's Interfaces block match those used in Tasks 10–29.
 
-**Ordering correction:** the dependency above means the true execution order for Phase 3 is Task 8 → Task 9 → Task 7.
+**Ordering correction:** the dependency above means the true execution order spanning Phases 2–3 is Task 5 → Task 8 → Task 9 → Task 7, not the numeric 5 → 6 → 7 → 8 → 9 the phase layout implies. Task 3a's insertion ahead of Task 3 is a further correction, discovered later, to the same numeric-order assumption. See "Execution Order" near the top of this document for the complete, corrected sequence.
