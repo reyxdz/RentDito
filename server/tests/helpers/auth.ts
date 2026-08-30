@@ -8,57 +8,58 @@
  * actually logging in for each one would blow through that limit and produce
  * spurious 429s that have nothing to do with the behaviour under test.
  *
- * The capture script (scripts/capture-golden.ts) solved this by minting
- * tokens directly with `signAccess()` — the exact function
- * `authService.login()` itself calls — keyed off a seeded user's real
- * Mongo `_id` and `role`. This helper does the same thing for replay, for
- * the same reason: `tokenForEmail('user1@rentdito.com')` returns a token
- * byte-identical in shape to what a real login would issue, without ever
- * touching the rate-limited route.
+ * PRE-SUPABASE, this minted tokens directly with `signAccess()` — the exact
+ * function `authService.login()` itself called — keyed off a seeded user's
+ * real Mongo `_id` and `role`.
  *
- * FORWARD-COMPATIBILITY NOTE (do not lose this): `src/utils/jwt.ts` is
- * deleted later in the Mongo -> Supabase/Postgres migration, once auth
- * moves to Supabase. This file is deliberately the ONLY place in the test
- * suite that imports `signAccess` or knows how a bearer token is produced.
- * When that cutover happens, only `tokenForEmail`'s implementation below
- * needs to change (e.g. to mint/fetch a Supabase-issued token) — every test
- * that calls it stays untouched.
+ * POST-SUPABASE-CUTOVER (this implementation): `src/utils/jwt.ts` no longer
+ * exists — Supabase issues tokens now, and the auth middleware verifies them
+ * against Supabase's JWKS (ES256), so a token has to come from Supabase
+ * itself to be accepted. This calls `supabaseAdmin.auth.signInWithPassword`
+ * directly (NOT through the rate-limited `POST /api/auth/login` route),
+ * which is why the rate-limit concern above still doesn't apply.
+ *
+ * IMPORTANT DEPENDENCY: this requires a real Supabase Auth user (and a
+ * matching `profiles` row) to already exist for the given email, seeded with
+ * the password below. That seeding is Task 12's job (Supabase-Auth seed),
+ * not this file's — until Task 12 runs, every call here throws the error
+ * below rather than silently returning a bad token.
  */
-import { User } from '../../src/models/User';
-import { signAccess } from '../../src/utils/jwt';
+import { supabaseAdmin } from '../../src/config/supabase';
 
-// These must be set before the auth middleware verifies its first token
-// (src/middleware/auth.ts reads process.env.JWT_ACCESS_SECRET at REQUEST
-// time, not at import time — see src/server.ts's own dotenv.config(), which
-// is a no-op here since no server/.env exists or is created for this suite).
-// Forced (not `process.env.X || 'fallback'`) so the suite never silently
-// depends on a real .env a developer happens to have locally.
-process.env.JWT_ACCESS_SECRET = 'contract-replay-access-secret';
-process.env.JWT_REFRESH_SECRET = 'contract-replay-refresh-secret';
+// Matches the pre-Supabase Mongo seed's plaintext convention
+// (server/src/seeds/seed.ts: `await hash('password123')` for every seeded
+// user). Task 12's Supabase-Auth seed is expected to create each user with
+// this same password; override via SEED_TEST_PASSWORD if that ever changes.
+const SEED_TEST_PASSWORD = process.env.SEED_TEST_PASSWORD || 'password123';
 
 const tokenCache = new Map<string, string>();
 
 /**
- * Given a seeded user's email, return a bearer access token for them.
- * Looks the user up by email (for their real Mongo _id and role) and mints
- * a token with the same `signAccess()` the real login flow uses. Tokens are
- * cached per email for the lifetime of the test process, both for speed and
- * so the same email always yields a stable identity within one run.
+ * Given a seeded user's email, return a bearer access token for them, minted
+ * by signing in against Supabase Auth directly (never through the
+ * rate-limited `/api/auth/login` route). Tokens are cached per email for the
+ * lifetime of the test process, both for speed and so the same email always
+ * yields a stable identity within one run.
  */
 export async function tokenForEmail(email: string): Promise<string> {
   const cached = tokenCache.get(email);
   if (cached) return cached;
 
-  const user = await User.findOne({ email }).lean();
-  if (!user) {
+  const { data, error } = await supabaseAdmin.auth.signInWithPassword({
+    email,
+    password: SEED_TEST_PASSWORD,
+  });
+  if (error || !data.session) {
     throw new Error(
-      `tokenForEmail: no seeded user found for "${email}". Is MongoDB seeded ` +
-        `(run \`npm run seed\` in server/) and is it the same seed the golden ` +
-        `fixtures were captured against?`
+      `tokenForEmail: could not sign in as "${email}" via Supabase Auth ` +
+        `(${error?.message ?? 'no session returned'}). Is Supabase Auth seeded ` +
+        `with this user (Task 12's seed) using the SEED_TEST_PASSWORD ` +
+        `convention ("${SEED_TEST_PASSWORD}")?`
     );
   }
 
-  const token = signAccess((user as any)._id.toString(), (user as any).role);
+  const token = data.session.access_token;
   tokenCache.set(email, token);
   return token;
 }

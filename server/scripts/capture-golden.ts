@@ -62,7 +62,17 @@ import { InventoryRecord } from '../src/models/InventoryRecord';
 import { LandlordApplication } from '../src/models/LandlordApplication';
 import { Document } from '../src/models/Document';
 import { IncidentReport } from '../src/models/IncidentReport';
-import { signAccess } from '../src/utils/jwt';
+// `src/utils/jwt.ts` was deleted by the Supabase-auth cutover (Task 7) — Supabase
+// issues tokens now, so nothing in the live app signs its own JWTs anymore. This
+// script is a frozen, one-time, non-repeatable capture tool (see file header) that
+// is never run again; inlining the deleted signAccess() verbatim keeps it
+// self-contained and type-checkable without resurrecting the app-wide dependency.
+import jwt from 'jsonwebtoken';
+
+const signAccess = (userId: string, role: string) =>
+  jwt.sign({ id: userId, role }, process.env.JWT_ACCESS_SECRET as string, {
+    expiresIn: (process.env.JWT_ACCESS_EXPIRES_IN || '15m') as jwt.SignOptions['expiresIn'],
+  });
 
 // ─────────────────────────────────────────────────────────────
 //  Capture plumbing

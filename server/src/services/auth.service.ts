@@ -1,42 +1,32 @@
-import crypto from 'crypto';
-import { User, IUser } from '../models/User';
-import { hash, compare } from '../utils/password';
-import { signAccess, signRefresh, verifyToken } from '../utils/jwt';
-import transporter from '../config/mailer';
+import { supabaseAdmin } from '../config/supabase';
+import prisma from '../config/prisma';
+import { serializeDoc } from '../utils/serialize';
+import { toHttpError } from '../utils/prismaErrors';
 
 // ─── Helpers ────────────────────────────────────────────────
 
-/** Strip sensitive fields and return a plain user object */
-const sanitizeUser = (user: IUser) => {
-  const obj = user.toObject();
-  delete obj.passwordHash;
-  delete obj.refreshToken;
-  delete obj.resetPasswordToken;
-  delete obj.resetPasswordExpires;
-  return obj;
-};
-
-/** Hash a token with SHA-256 (one-way, for safe DB storage) */
-const hashToken = (token: string): string =>
-  crypto.createHash('sha256').update(token).digest('hex');
-
-/** Generate an access + refresh token pair and persist the refresh token */
-const generateTokenPair = async (user: IUser) => {
-  const accessToken = signAccess(user._id.toString(), user.role);
-  const refreshToken = signRefresh(user._id.toString());
-
-  // Persist hashed refresh token on the user document
-  user.refreshToken = hashToken(refreshToken);
-  await user.save();
-
-  return { accessToken, refreshToken };
+/**
+ * Sign in against Supabase and remap snake_case tokens to the frozen
+ * camelCase contract (`accessToken` / `refreshToken`).
+ */
+const signIn = async (email: string, password: string) => {
+  const { data, error } = await supabaseAdmin.auth.signInWithPassword({ email, password });
+  if (error || !data.session) {
+    throw Object.assign(new Error('Invalid email or password'), { statusCode: 401 });
+  }
+  return { accessToken: data.session.access_token, refreshToken: data.session.refresh_token };
 };
 
 // ─── Public Service Methods ─────────────────────────────────
 
 /**
  * Register a new user (role always defaults to 'user').
- * Returns sanitized user + token pair.
+ * Returns dual-id user + camelCase token pair.
+ *
+ * `profiles.id` has a real FK to `auth.users(id)` (ON DELETE CASCADE), so the
+ * Supabase auth user MUST be created first. If the profile insert then fails
+ * (e.g. a race on the citext-unique email), the auth user is deleted so a
+ * retry with the same email is possible instead of leaving an orphan.
  */
 export const register = async (data: {
   name: string;
@@ -44,144 +34,119 @@ export const register = async (data: {
   phone?: string;
   password: string;
 }) => {
-  const existing = await User.findOne({ email: data.email.toLowerCase() });
-  if (existing) {
-    throw Object.assign(new Error('Email already registered'), { statusCode: 409 });
+  const email = data.email.toLowerCase();
+
+  const { data: created, error } = await supabaseAdmin.auth.admin.createUser({
+    email,
+    password: data.password,
+    email_confirm: true,
+  });
+  if (error) {
+    const status = error.status === 422 ? 409 : 400;
+    throw Object.assign(
+      new Error(status === 409 ? 'Email already registered' : error.message),
+      { statusCode: status }
+    );
   }
 
-  const passwordHash = await hash(data.password);
-  const user = await User.create({
-    name: data.name,
-    email: data.email.toLowerCase(),
-    phone: data.phone,
-    passwordHash,
-    role: 'user',
-  });
+  try {
+    const profile = await prisma.profile.create({
+      data: {
+        id: created.user.id,
+        name: data.name,
+        email,
+        phone: data.phone,
+        role: 'user',
+      },
+    });
 
-  const tokens = await generateTokenPair(user);
-  return { user: sanitizeUser(user), ...tokens };
+    const session = await signIn(email, data.password);
+    return { user: serializeDoc(profile), ...session };
+  } catch (err) {
+    // Roll back the orphaned auth user so a retry with the same email works.
+    await supabaseAdmin.auth.admin.deleteUser(created.user.id).catch(() => {
+      /* best-effort cleanup — surface the original error either way */
+    });
+    throw toHttpError(err);
+  }
 };
 
 /**
  * Authenticate with email + password.
- * Returns sanitized user + token pair.
+ * Preserves the pre-Supabase business gates exactly as before: suspended
+ * accounts and unverified emails are rejected with the same messages and
+ * status codes ahead of the credential check, since golden fixtures and the
+ * client UI depend on these exact strings.
  */
 export const login = async (email: string, password: string) => {
-  const user = await User.findOne({ email: email.toLowerCase() }).select('+passwordHash +refreshToken');
-  if (!user) {
+  const normalized = email.toLowerCase();
+  const profile = await prisma.profile.findUnique({ where: { email: normalized } });
+  if (!profile) {
     throw Object.assign(new Error('Invalid email or password'), { statusCode: 401 });
   }
-
-  if (user.status === 'suspended') {
+  if (profile.status === 'suspended') {
     throw Object.assign(new Error('Account is suspended. Contact support.'), { statusCode: 403 });
   }
-
-  if (user.verificationStatus !== 'verified') {
+  if (profile.verificationStatus !== 'verified') {
     throw Object.assign(new Error('Please verify your email address to continue.'), { statusCode: 403 });
   }
 
-  const isMatch = await compare(password, user.passwordHash);
-  if (!isMatch) {
-    throw Object.assign(new Error('Invalid email or password'), { statusCode: 401 });
-  }
-
-  const tokens = await generateTokenPair(user);
-  return { user: sanitizeUser(user), ...tokens };
+  const session = await signIn(normalized, password);
+  return { user: serializeDoc(profile), ...session };
 };
 
 /**
- * Rotate refresh token.
- * Validates the incoming refresh token, issues a new pair, and invalidates the old one.
+ * Rotate refresh token via Supabase.
  */
 export const refreshToken = async (incomingRefreshToken: string) => {
-  const secret = process.env.JWT_REFRESH_SECRET;
-  if (!secret) throw Object.assign(new Error('Server misconfiguration: JWT_REFRESH_SECRET not set'), { statusCode: 500 });
-  let decoded: any;
-  try {
-    decoded = verifyToken(incomingRefreshToken, secret);
-  } catch {
+  const { data, error } = await supabaseAdmin.auth.refreshSession({
+    refresh_token: incomingRefreshToken,
+  });
+  if (error || !data.session || !data.user) {
     throw Object.assign(new Error('Invalid or expired refresh token'), { statusCode: 401 });
   }
 
-  const user = await User.findById(decoded.id).select('+refreshToken');
-  if (!user || user.refreshToken !== hashToken(incomingRefreshToken)) {
-    // Possible token reuse attack — clear all refresh tokens
-    if (user) {
-      user.refreshToken = undefined;
-      await user.save();
-    }
-    throw Object.assign(new Error('Invalid refresh token – possible reuse detected'), { statusCode: 401 });
-  }
-
-  const tokens = await generateTokenPair(user);
-  return { user: sanitizeUser(user), ...tokens };
+  const profile = await prisma.profile.findUnique({ where: { id: data.user.id } });
+  return {
+    user: profile ? serializeDoc(profile) : undefined,
+    accessToken: data.session.access_token,
+    refreshToken: data.session.refresh_token,
+  };
 };
 
 /**
- * Forgot password – generate a reset token and email it.
+ * Forgot password – Supabase sends the mail; never reveal whether the
+ * address exists.
  */
 export const forgotPassword = async (email: string) => {
-  const user = await User.findOne({ email: email.toLowerCase() }).select('+resetPasswordToken +resetPasswordExpires');
-  if (!user) {
-    // Don't reveal whether the email exists
-    return;
-  }
-
-  const resetToken = crypto.randomBytes(32).toString('hex');
-  const hashedToken = crypto.createHash('sha256').update(resetToken).digest('hex');
-
-  user.resetPasswordToken = hashedToken;
-  user.resetPasswordExpires = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
-  await user.save();
-
-  const resetUrl = `${process.env.CLIENT_URL || 'http://localhost:5173'}/reset-password/${resetToken}`;
-
-  try {
-    await transporter.sendMail({
-      from: process.env.SMTP_FROM || 'noreply@rentdito.com',
-      to: user.email,
-      subject: 'RentDito – Password Reset Request',
-      html: `
-        <h2>Password Reset</h2>
-        <p>You requested a password reset. Click the link below to reset your password:</p>
-        <a href="${resetUrl}">${resetUrl}</a>
-        <p>This link expires in 1 hour. If you did not request this, please ignore this email.</p>
-      `,
-    });
-  } catch (err) {
-    // Rollback token on mail failure
-    user.resetPasswordToken = undefined;
-    user.resetPasswordExpires = undefined;
-    await user.save();
-    throw Object.assign(new Error('Failed to send reset email. Try again later.'), { statusCode: 500 });
-  }
+  await supabaseAdmin.auth.resetPasswordForEmail(email.toLowerCase(), {
+    redirectTo: `${process.env.CLIENT_URL || 'http://localhost:5173'}/reset-password`,
+  });
 };
 
 /**
- * Reset password using the token from the email link.
+ * Reset password using the recovery token from the email link.
  */
 export const resetPassword = async (token: string, newPassword: string) => {
-  const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
-
-  const user = await User.findOne({
-    resetPasswordToken: hashedToken,
-    resetPasswordExpires: { $gt: Date.now() },
-  }).select('+resetPasswordToken +resetPasswordExpires +refreshToken');
-
-  if (!user) {
+  const { data, error } = await supabaseAdmin.auth.verifyOtp({
+    token_hash: token,
+    type: 'recovery',
+  });
+  if (error || !data.user) {
     throw Object.assign(new Error('Invalid or expired reset token'), { statusCode: 400 });
   }
 
-  user.passwordHash = await hash(newPassword);
-  user.resetPasswordToken = undefined;
-  user.resetPasswordExpires = undefined;
-  user.refreshToken = undefined; // Invalidate existing sessions
-  await user.save();
+  const { error: updateError } = await supabaseAdmin.auth.admin.updateUserById(data.user.id, {
+    password: newPassword,
+  });
+  if (updateError) {
+    throw Object.assign(new Error('Failed to reset password'), { statusCode: 400 });
+  }
 };
 
 /**
- * Logout – clear the stored refresh token.
+ * Logout – revoke the user's Supabase sessions.
  */
 export const logout = async (userId: string) => {
-  await User.findByIdAndUpdate(userId, { refreshToken: undefined });
+  await supabaseAdmin.auth.admin.signOut(userId);
 };
