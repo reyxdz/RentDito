@@ -1,0 +1,98 @@
+[
+  {
+    "name": "staff-list-landlord1",
+    "method": "get",
+    "path": "/api/team",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": [
+        {
+          "_id": "6a93e154107b82fb635d8fe4",
+          "name": "Test Staff",
+          "email": "staff@rentdito.com",
+          "phone": "09241234567",
+          "role": "staff",
+          "status": "active",
+          "verificationStatus": "verified",
+          "idPhotos": [],
+          "landlordId": "6a93e154107b82fb635d8fde",
+          "assignedPropertyIds": [],
+          "permissions": [
+            "dashboard",
+            "properties"
+          ],
+          "positionName": "General Staff",
+          "createdAt": "2026-08-30T07:52:52.541Z",
+          "updatedAt": "2026-08-30T08:07:09.915Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d8fe1",
+          "name": "Jose Rizal",
+          "email": "maintenance@rentdito.com",
+          "phone": "09211234567",
+          "role": "staff",
+          "status": "active",
+          "verificationStatus": "verified",
+          "idPhotos": [],
+          "landlordId": "6a93e154107b82fb635d8fde",
+          "assignedPropertyIds": [],
+          "permissions": [
+            "dashboard",
+            "maintenance",
+            "inventory"
+          ],
+          "positionName": "Maintenance Staff",
+          "createdAt": "2026-08-30T07:52:52.537Z",
+          "updatedAt": "2026-08-30T08:07:09.635Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d8fe0",
+          "name": "Pedro Penduko",
+          "email": "manager@rentdito.com",
+          "phone": "09201234567",
+          "role": "staff",
+          "status": "active",
+          "verificationStatus": "verified",
+          "idPhotos": [],
+          "landlordId": "6a93e154107b82fb635d8fde",
+          "assignedPropertyIds": [],
+          "permissions": [
+            "dashboard",
+            "properties",
+            "units",
+            "tenants",
+            "pipeline",
+            "maintenance"
+          ],
+          "positionName": "Manager",
+          "createdAt": "2026-08-30T07:52:52.536Z",
+          "updatedAt": "2026-08-30T08:07:09.544Z",
+          "__v": 0
+        }
+      ]
+    }
+  },
+  {
+    "name": "staff-list-denied-super-admin-not-in-role-list",
+    "method": "get",
+    "path": "/api/team",
+    "status": 403,
+    "body": {
+      "status": "error",
+      "message": "You do not have permission to perform this action."
+    }
+  },
+  {
+    "name": "staff-list-denied-staff-role",
+    "method": "get",
+    "path": "/api/team",
+    "status": 403,
+    "body": {
+      "status": "error",
+      "message": "You do not have permission to perform this action."
+    }
+  }
+]

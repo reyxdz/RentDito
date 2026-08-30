@@ -1,0 +1,676 @@
+[
+  {
+    "name": "platform-stats-super-admin",
+    "method": "get",
+    "path": "/api/admin/stats",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": {
+        "overview": {
+          "totalUsers": 14,
+          "totalLandlords": 2,
+          "totalStaff": 5,
+          "totalProperties": 2,
+          "activeTenancies": 1,
+          "totalTenancies": 2,
+          "pendingVerifications": 1,
+          "pendingLandlordApps": 1
+        },
+        "financial": {
+          "totalCollected": 3385,
+          "totalBilled": 3943.75,
+          "collectionRate": 86
+        },
+        "charts": {
+          "monthlyGrowth": [
+            {
+              "month": "2026-08",
+              "count": 14
+            }
+          ],
+          "usersByRole": [
+            {
+              "role": "user",
+              "count": 6
+            },
+            {
+              "role": "landlord",
+              "count": 2
+            },
+            {
+              "role": "super_admin",
+              "count": 1
+            },
+            {
+              "role": "staff",
+              "count": 5
+            }
+          ]
+        },
+        "recentUsers": [
+          {
+            "_id": "6a93e154107b82fb635d8fea",
+            "name": "Ding Dantes",
+            "email": "user6@rentdito.com",
+            "role": "user",
+            "status": "active",
+            "createdAt": "2026-08-30T07:52:52.547Z"
+          },
+          {
+            "_id": "6a93e154107b82fb635d8fe9",
+            "name": "Inday Bote",
+            "email": "user5@rentdito.com",
+            "role": "user",
+            "status": "active",
+            "createdAt": "2026-08-30T07:52:52.546Z"
+          },
+          {
+            "_id": "6a93e154107b82fb635d8fe8",
+            "name": "Boyet Fernandez",
+            "email": "user4@rentdito.com",
+            "role": "user",
+            "status": "active",
+            "createdAt": "2026-08-30T07:52:52.545Z"
+          },
+          {
+            "_id": "6a93e154107b82fb635d8fe7",
+            "name": "Nena Reyes",
+            "email": "user3@rentdito.com",
+            "role": "user",
+            "status": "active",
+            "createdAt": "2026-08-30T07:52:52.544Z"
+          },
+          {
+            "_id": "6a93e154107b82fb635d8fe6",
+            "name": "Cardo Dalisay",
+            "email": "user2@rentdito.com",
+            "role": "user",
+            "status": "active",
+            "createdAt": "2026-08-30T07:52:52.543Z"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "platform-stats-denied-landlord-role",
+    "method": "get",
+    "path": "/api/admin/stats",
+    "status": 403,
+    "body": {
+      "status": "error",
+      "message": "You do not have permission to perform this action."
+    }
+  },
+  {
+    "name": "users-list-super-admin",
+    "method": "get",
+    "path": "/api/admin/users",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": [
+        {
+          "_id": "6a93e154107b82fb635d8fea",
+          "name": "Ding Dantes",
+          "email": "user6@rentdito.com",
+          "phone": "09881112222",
+          "role": "user",
+          "status": "active",
+          "verificationStatus": "pending",
+          "idPhotos": [],
+          "assignedPropertyIds": [],
+          "permissions": [],
+          "createdAt": "2026-08-30T07:52:52.547Z",
+          "updatedAt": "2026-08-30T07:52:52.547Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d8fe9",
+          "name": "Inday Bote",
+          "email": "user5@rentdito.com",
+          "phone": "09999990000",
+          "role": "user",
+          "status": "active",
+          "verificationStatus": "unverified",
+          "idPhotos": [],
+          "assignedPropertyIds": [],
+          "permissions": [],
+          "createdAt": "2026-08-30T07:52:52.546Z",
+          "updatedAt": "2026-08-30T07:52:52.546Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d8fe8",
+          "name": "Boyet Fernandez",
+          "email": "user4@rentdito.com",
+          "phone": "09997778888",
+          "role": "user",
+          "status": "active",
+          "verificationStatus": "unverified",
+          "idPhotos": [],
+          "assignedPropertyIds": [],
+          "permissions": [],
+          "createdAt": "2026-08-30T07:52:52.545Z",
+          "updatedAt": "2026-08-30T07:52:52.545Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d8fe7",
+          "name": "Nena Reyes",
+          "email": "user3@rentdito.com",
+          "phone": "09995556666",
+          "role": "user",
+          "status": "active",
+          "verificationStatus": "verified",
+          "idPhotos": [],
+          "assignedPropertyIds": [],
+          "permissions": [],
+          "createdAt": "2026-08-30T07:52:52.544Z",
+          "updatedAt": "2026-08-30T07:52:52.544Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d8fe6",
+          "name": "Cardo Dalisay",
+          "email": "user2@rentdito.com",
+          "phone": "09993334444",
+          "role": "user",
+          "status": "active",
+          "verificationStatus": "verified",
+          "idPhotos": [],
+          "assignedPropertyIds": [],
+          "permissions": [],
+          "createdAt": "2026-08-30T07:52:52.543Z",
+          "updatedAt": "2026-08-30T08:07:10.101Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d8fe5",
+          "name": "Luzviminda Macaraeg",
+          "email": "user1@rentdito.com",
+          "phone": "09991112222",
+          "role": "user",
+          "status": "active",
+          "verificationStatus": "verified",
+          "idPhotos": [],
+          "assignedPropertyIds": [],
+          "permissions": [],
+          "createdAt": "2026-08-30T07:52:52.542Z",
+          "updatedAt": "2026-08-30T08:11:20.194Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d8fe4",
+          "name": "Test Staff",
+          "email": "staff@rentdito.com",
+          "phone": "09241234567",
+          "role": "staff",
+          "status": "active",
+          "verificationStatus": "verified",
+          "idPhotos": [],
+          "landlordId": "6a93e154107b82fb635d8fde",
+          "assignedPropertyIds": [],
+          "permissions": [
+            "dashboard",
+            "properties"
+          ],
+          "positionName": "General Staff",
+          "createdAt": "2026-08-30T07:52:52.541Z",
+          "updatedAt": "2026-08-30T08:07:09.915Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d8fe3",
+          "name": "Gabriela Silang",
+          "email": "receptionist@rentdito.com",
+          "phone": "09231234567",
+          "role": "staff",
+          "status": "active",
+          "verificationStatus": "verified",
+          "idPhotos": [],
+          "landlordId": "6a93e154107b82fb635d8fdf",
+          "assignedPropertyIds": [],
+          "permissions": [
+            "dashboard",
+            "tenants",
+            "bookings",
+            "pipeline"
+          ],
+          "positionName": "Front Desk Receptionist",
+          "createdAt": "2026-08-30T07:52:52.540Z",
+          "updatedAt": "2026-08-30T08:07:09.822Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d8fe2",
+          "name": "Andres Bonifacio",
+          "email": "finance@rentdito.com",
+          "phone": "09221234567",
+          "role": "staff",
+          "status": "active",
+          "verificationStatus": "verified",
+          "idPhotos": [],
+          "landlordId": "6a93e154107b82fb635d8fdf",
+          "assignedPropertyIds": [],
+          "permissions": [
+            "dashboard",
+            "billing",
+            "financials",
+            "reports"
+          ],
+          "positionName": "Accountant",
+          "createdAt": "2026-08-30T07:52:52.539Z",
+          "updatedAt": "2026-08-30T08:07:09.728Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d8fe1",
+          "name": "Jose Rizal",
+          "email": "maintenance@rentdito.com",
+          "phone": "09211234567",
+          "role": "staff",
+          "status": "active",
+          "verificationStatus": "verified",
+          "idPhotos": [],
+          "landlordId": "6a93e154107b82fb635d8fde",
+          "assignedPropertyIds": [],
+          "permissions": [
+            "dashboard",
+            "maintenance",
+            "inventory"
+          ],
+          "positionName": "Maintenance Staff",
+          "createdAt": "2026-08-30T07:52:52.537Z",
+          "updatedAt": "2026-08-30T08:07:09.635Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d8fe0",
+          "name": "Pedro Penduko",
+          "email": "manager@rentdito.com",
+          "phone": "09201234567",
+          "role": "staff",
+          "status": "active",
+          "verificationStatus": "verified",
+          "idPhotos": [],
+          "landlordId": "6a93e154107b82fb635d8fde",
+          "assignedPropertyIds": [],
+          "permissions": [
+            "dashboard",
+            "properties",
+            "units",
+            "tenants",
+            "pipeline",
+            "maintenance"
+          ],
+          "positionName": "Manager",
+          "createdAt": "2026-08-30T07:52:52.536Z",
+          "updatedAt": "2026-08-30T08:07:09.544Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d8fdf",
+          "name": "Maria Santos",
+          "email": "landlord2@rentdito.com",
+          "phone": "09191234567",
+          "role": "landlord",
+          "status": "active",
+          "verificationStatus": "verified",
+          "idPhotos": [],
+          "assignedPropertyIds": [],
+          "permissions": [],
+          "createdAt": "2026-08-30T07:52:52.534Z",
+          "updatedAt": "2026-08-30T08:07:09.459Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d8fde",
+          "name": "Juan Dela Cruz",
+          "email": "landlord1@rentdito.com",
+          "phone": "09181234567",
+          "role": "landlord",
+          "status": "active",
+          "verificationStatus": "verified",
+          "idPhotos": [],
+          "assignedPropertyIds": [],
+          "permissions": [],
+          "createdAt": "2026-08-30T07:52:52.532Z",
+          "updatedAt": "2026-08-30T08:11:20.099Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d8fdd",
+          "name": "System Admin",
+          "email": "admin@rentdito.com",
+          "phone": "09171234567",
+          "role": "super_admin",
+          "status": "active",
+          "verificationStatus": "verified",
+          "idPhotos": [],
+          "assignedPropertyIds": [],
+          "permissions": [],
+          "createdAt": "2026-08-30T07:52:52.529Z",
+          "updatedAt": "2026-08-30T08:11:19.965Z",
+          "__v": 0
+        }
+      ],
+      "pagination": {
+        "page": 1,
+        "limit": 20,
+        "total": 14,
+        "pages": 1
+      }
+    }
+  },
+  {
+    "name": "activity-log-super-admin",
+    "method": "get",
+    "path": "/api/admin/activity",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": [],
+      "pagination": {
+        "page": 1,
+        "limit": 30,
+        "total": 0,
+        "pages": 0
+      }
+    }
+  },
+  {
+    "name": "pending-verifications-super-admin",
+    "method": "get",
+    "path": "/api/admin/verifications",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": [
+        {
+          "_id": "6a93e154107b82fb635d8fea",
+          "name": "Ding Dantes",
+          "email": "user6@rentdito.com",
+          "phone": "09881112222",
+          "role": "user",
+          "status": "active",
+          "verificationStatus": "pending",
+          "idPhotos": [],
+          "assignedPropertyIds": [],
+          "permissions": [],
+          "createdAt": "2026-08-30T07:52:52.547Z",
+          "updatedAt": "2026-08-30T07:52:52.547Z",
+          "__v": 0
+        }
+      ],
+      "pagination": {
+        "page": 1,
+        "limit": 20,
+        "total": 1,
+        "pages": 1
+      }
+    }
+  },
+  {
+    "name": "all-verifications-super-admin",
+    "method": "get",
+    "path": "/api/admin/verifications/all",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": [
+        {
+          "_id": "6a93e154107b82fb635d8fe5",
+          "name": "Luzviminda Macaraeg",
+          "email": "user1@rentdito.com",
+          "phone": "09991112222",
+          "role": "user",
+          "status": "active",
+          "verificationStatus": "verified",
+          "idPhotos": [],
+          "assignedPropertyIds": [],
+          "permissions": [],
+          "createdAt": "2026-08-30T07:52:52.542Z",
+          "updatedAt": "2026-08-30T08:11:20.194Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d8fde",
+          "name": "Juan Dela Cruz",
+          "email": "landlord1@rentdito.com",
+          "phone": "09181234567",
+          "role": "landlord",
+          "status": "active",
+          "verificationStatus": "verified",
+          "idPhotos": [],
+          "assignedPropertyIds": [],
+          "permissions": [],
+          "createdAt": "2026-08-30T07:52:52.532Z",
+          "updatedAt": "2026-08-30T08:11:20.099Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d8fdd",
+          "name": "System Admin",
+          "email": "admin@rentdito.com",
+          "phone": "09171234567",
+          "role": "super_admin",
+          "status": "active",
+          "verificationStatus": "verified",
+          "idPhotos": [],
+          "assignedPropertyIds": [],
+          "permissions": [],
+          "createdAt": "2026-08-30T07:52:52.529Z",
+          "updatedAt": "2026-08-30T08:11:19.965Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d8fe6",
+          "name": "Cardo Dalisay",
+          "email": "user2@rentdito.com",
+          "phone": "09993334444",
+          "role": "user",
+          "status": "active",
+          "verificationStatus": "verified",
+          "idPhotos": [],
+          "assignedPropertyIds": [],
+          "permissions": [],
+          "createdAt": "2026-08-30T07:52:52.543Z",
+          "updatedAt": "2026-08-30T08:07:10.101Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d8fe4",
+          "name": "Test Staff",
+          "email": "staff@rentdito.com",
+          "phone": "09241234567",
+          "role": "staff",
+          "status": "active",
+          "verificationStatus": "verified",
+          "idPhotos": [],
+          "landlordId": "6a93e154107b82fb635d8fde",
+          "assignedPropertyIds": [],
+          "permissions": [
+            "dashboard",
+            "properties"
+          ],
+          "positionName": "General Staff",
+          "createdAt": "2026-08-30T07:52:52.541Z",
+          "updatedAt": "2026-08-30T08:07:09.915Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d8fe3",
+          "name": "Gabriela Silang",
+          "email": "receptionist@rentdito.com",
+          "phone": "09231234567",
+          "role": "staff",
+          "status": "active",
+          "verificationStatus": "verified",
+          "idPhotos": [],
+          "landlordId": "6a93e154107b82fb635d8fdf",
+          "assignedPropertyIds": [],
+          "permissions": [
+            "dashboard",
+            "tenants",
+            "bookings",
+            "pipeline"
+          ],
+          "positionName": "Front Desk Receptionist",
+          "createdAt": "2026-08-30T07:52:52.540Z",
+          "updatedAt": "2026-08-30T08:07:09.822Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d8fe2",
+          "name": "Andres Bonifacio",
+          "email": "finance@rentdito.com",
+          "phone": "09221234567",
+          "role": "staff",
+          "status": "active",
+          "verificationStatus": "verified",
+          "idPhotos": [],
+          "landlordId": "6a93e154107b82fb635d8fdf",
+          "assignedPropertyIds": [],
+          "permissions": [
+            "dashboard",
+            "billing",
+            "financials",
+            "reports"
+          ],
+          "positionName": "Accountant",
+          "createdAt": "2026-08-30T07:52:52.539Z",
+          "updatedAt": "2026-08-30T08:07:09.728Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d8fe1",
+          "name": "Jose Rizal",
+          "email": "maintenance@rentdito.com",
+          "phone": "09211234567",
+          "role": "staff",
+          "status": "active",
+          "verificationStatus": "verified",
+          "idPhotos": [],
+          "landlordId": "6a93e154107b82fb635d8fde",
+          "assignedPropertyIds": [],
+          "permissions": [
+            "dashboard",
+            "maintenance",
+            "inventory"
+          ],
+          "positionName": "Maintenance Staff",
+          "createdAt": "2026-08-30T07:52:52.537Z",
+          "updatedAt": "2026-08-30T08:07:09.635Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d8fe0",
+          "name": "Pedro Penduko",
+          "email": "manager@rentdito.com",
+          "phone": "09201234567",
+          "role": "staff",
+          "status": "active",
+          "verificationStatus": "verified",
+          "idPhotos": [],
+          "landlordId": "6a93e154107b82fb635d8fde",
+          "assignedPropertyIds": [],
+          "permissions": [
+            "dashboard",
+            "properties",
+            "units",
+            "tenants",
+            "pipeline",
+            "maintenance"
+          ],
+          "positionName": "Manager",
+          "createdAt": "2026-08-30T07:52:52.536Z",
+          "updatedAt": "2026-08-30T08:07:09.544Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d8fdf",
+          "name": "Maria Santos",
+          "email": "landlord2@rentdito.com",
+          "phone": "09191234567",
+          "role": "landlord",
+          "status": "active",
+          "verificationStatus": "verified",
+          "idPhotos": [],
+          "assignedPropertyIds": [],
+          "permissions": [],
+          "createdAt": "2026-08-30T07:52:52.534Z",
+          "updatedAt": "2026-08-30T08:07:09.459Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d8fea",
+          "name": "Ding Dantes",
+          "email": "user6@rentdito.com",
+          "phone": "09881112222",
+          "role": "user",
+          "status": "active",
+          "verificationStatus": "pending",
+          "idPhotos": [],
+          "assignedPropertyIds": [],
+          "permissions": [],
+          "createdAt": "2026-08-30T07:52:52.547Z",
+          "updatedAt": "2026-08-30T07:52:52.547Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d8fe9",
+          "name": "Inday Bote",
+          "email": "user5@rentdito.com",
+          "phone": "09999990000",
+          "role": "user",
+          "status": "active",
+          "verificationStatus": "unverified",
+          "idPhotos": [],
+          "assignedPropertyIds": [],
+          "permissions": [],
+          "createdAt": "2026-08-30T07:52:52.546Z",
+          "updatedAt": "2026-08-30T07:52:52.546Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d8fe8",
+          "name": "Boyet Fernandez",
+          "email": "user4@rentdito.com",
+          "phone": "09997778888",
+          "role": "user",
+          "status": "active",
+          "verificationStatus": "unverified",
+          "idPhotos": [],
+          "assignedPropertyIds": [],
+          "permissions": [],
+          "createdAt": "2026-08-30T07:52:52.545Z",
+          "updatedAt": "2026-08-30T07:52:52.545Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d8fe7",
+          "name": "Nena Reyes",
+          "email": "user3@rentdito.com",
+          "phone": "09995556666",
+          "role": "user",
+          "status": "active",
+          "verificationStatus": "verified",
+          "idPhotos": [],
+          "assignedPropertyIds": [],
+          "permissions": [],
+          "createdAt": "2026-08-30T07:52:52.544Z",
+          "updatedAt": "2026-08-30T07:52:52.544Z",
+          "__v": 0
+        }
+      ],
+      "pagination": {
+        "page": 1,
+        "limit": 20,
+        "total": 14,
+        "pages": 1
+      }
+    }
+  }
+]

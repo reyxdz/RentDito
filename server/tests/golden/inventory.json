@@ -1,0 +1,557 @@
+[
+  {
+    "name": "inventory-items-landlord1",
+    "method": "get",
+    "path": "/api/inventory",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": [
+        {
+          "_id": "6a93e154107b82fb635d9029",
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8feb",
+            "name": "White Dorm Property",
+            "address": {
+              "street": "Sikatuna Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            }
+          },
+          "itemName": "Samsung Split-type AC 1HP",
+          "serialNumber": "SMC-9921-AC",
+          "condition": "good",
+          "quantity": 5,
+          "availableQuantity": 3,
+          "status": "issued",
+          "purchaseDate": "2023-01-15T00:00:00.000Z",
+          "purchaseCost": 25000,
+          "__v": 0,
+          "createdAt": "2026-08-30T07:52:52.681Z",
+          "updatedAt": "2026-08-30T07:52:52.697Z"
+        },
+        {
+          "_id": "6a93e154107b82fb635d902a",
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8feb",
+            "name": "White Dorm Property",
+            "address": {
+              "street": "Sikatuna Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            }
+          },
+          "itemName": "Office Desk Chair (Ergo)",
+          "condition": "new",
+          "quantity": 10,
+          "availableQuantity": 6,
+          "status": "issued",
+          "purchaseDate": "2025-11-10T00:00:00.000Z",
+          "purchaseCost": 3500,
+          "__v": 0,
+          "createdAt": "2026-08-30T07:52:52.681Z",
+          "updatedAt": "2026-08-30T07:52:52.701Z"
+        },
+        {
+          "_id": "6a93e154107b82fb635d902b",
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8feb",
+            "name": "White Dorm Property",
+            "address": {
+              "street": "Sikatuna Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            }
+          },
+          "itemName": "Microwave Oven (LG)",
+          "serialNumber": "LG-MW-005",
+          "condition": "damaged",
+          "quantity": 2,
+          "availableQuantity": 2,
+          "status": "maintenance",
+          "purchaseDate": "2022-05-20T00:00:00.000Z",
+          "purchaseCost": 4500,
+          "__v": 0,
+          "createdAt": "2026-08-30T07:52:52.681Z",
+          "updatedAt": "2026-08-30T07:52:52.681Z"
+        }
+      ]
+    }
+  },
+  {
+    "name": "inventory-items-staff-maintenance-has-permission",
+    "method": "get",
+    "path": "/api/inventory",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": []
+    }
+  },
+  {
+    "name": "inventory-items-denied-staff-manager-no-permission",
+    "method": "get",
+    "path": "/api/inventory",
+    "status": 403,
+    "body": {
+      "status": "error",
+      "message": "Access denied. Missing permission: inventory"
+    }
+  },
+  {
+    "name": "inventory-items-super-admin",
+    "method": "get",
+    "path": "/api/inventory",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": [
+        {
+          "_id": "6a93e154107b82fb635d9029",
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8feb",
+            "name": "White Dorm Property",
+            "address": {
+              "street": "Sikatuna Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            }
+          },
+          "itemName": "Samsung Split-type AC 1HP",
+          "serialNumber": "SMC-9921-AC",
+          "condition": "good",
+          "quantity": 5,
+          "availableQuantity": 3,
+          "status": "issued",
+          "purchaseDate": "2023-01-15T00:00:00.000Z",
+          "purchaseCost": 25000,
+          "__v": 0,
+          "createdAt": "2026-08-30T07:52:52.681Z",
+          "updatedAt": "2026-08-30T07:52:52.697Z"
+        },
+        {
+          "_id": "6a93e154107b82fb635d902a",
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8feb",
+            "name": "White Dorm Property",
+            "address": {
+              "street": "Sikatuna Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            }
+          },
+          "itemName": "Office Desk Chair (Ergo)",
+          "condition": "new",
+          "quantity": 10,
+          "availableQuantity": 6,
+          "status": "issued",
+          "purchaseDate": "2025-11-10T00:00:00.000Z",
+          "purchaseCost": 3500,
+          "__v": 0,
+          "createdAt": "2026-08-30T07:52:52.681Z",
+          "updatedAt": "2026-08-30T07:52:52.701Z"
+        },
+        {
+          "_id": "6a93e154107b82fb635d902b",
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8feb",
+            "name": "White Dorm Property",
+            "address": {
+              "street": "Sikatuna Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            }
+          },
+          "itemName": "Microwave Oven (LG)",
+          "serialNumber": "LG-MW-005",
+          "condition": "damaged",
+          "quantity": 2,
+          "availableQuantity": 2,
+          "status": "maintenance",
+          "purchaseDate": "2022-05-20T00:00:00.000Z",
+          "purchaseCost": 4500,
+          "__v": 0,
+          "createdAt": "2026-08-30T07:52:52.681Z",
+          "updatedAt": "2026-08-30T07:52:52.681Z"
+        }
+      ]
+    }
+  },
+  {
+    "name": "inventory-items-denied-user-role",
+    "method": "get",
+    "path": "/api/inventory",
+    "status": 403,
+    "body": {
+      "status": "error",
+      "message": "Access denied. Insufficient permissions."
+    }
+  },
+  {
+    "name": "inventory-records-user1-own-tenancy",
+    "method": "get",
+    "path": "/api/inventory/records",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": [
+        {
+          "_id": "6a93e154107b82fb635d902d",
+          "inventoryItemId": {
+            "_id": "6a93e154107b82fb635d902a",
+            "itemName": "Office Desk Chair (Ergo)",
+            "condition": "new",
+            "quantity": 10,
+            "availableQuantity": 6,
+            "status": "issued"
+          },
+          "tenancyId": {
+            "_id": "6a93e154107b82fb635d901d",
+            "userId": {
+              "_id": "6a93e154107b82fb635d8fe5",
+              "name": "Luzviminda Macaraeg",
+              "email": "user1@rentdito.com"
+            },
+            "propertyId": "6a93e154107b82fb635d8feb",
+            "unitId": {
+              "_id": "6a93e154107b82fb635d8ff7",
+              "unitIdentifier": "Room 2"
+            },
+            "status": "checked_in",
+            "checkInDate": "2026-01-02T00:00:00.000Z"
+          },
+          "propertyId": "6a93e154107b82fb635d8feb",
+          "unitId": "6a93e154107b82fb635d8ff7",
+          "issuedByUserId": {
+            "_id": "6a93e154107b82fb635d8fe0",
+            "name": "Pedro Penduko",
+            "role": "staff"
+          },
+          "issuedDate": "2026-03-20T00:00:00.000Z",
+          "quantityIssued": 2,
+          "issuedCondition": "new",
+          "deductedFromDeposit": false,
+          "status": "active",
+          "__v": 0,
+          "createdAt": "2026-08-30T07:52:52.694Z",
+          "updatedAt": "2026-08-30T07:52:52.694Z"
+        },
+        {
+          "_id": "6a93e154107b82fb635d902c",
+          "inventoryItemId": {
+            "_id": "6a93e154107b82fb635d9029",
+            "itemName": "Samsung Split-type AC 1HP",
+            "serialNumber": "SMC-9921-AC",
+            "condition": "good",
+            "quantity": 5,
+            "availableQuantity": 3,
+            "status": "issued"
+          },
+          "tenancyId": {
+            "_id": "6a93e154107b82fb635d901d",
+            "userId": {
+              "_id": "6a93e154107b82fb635d8fe5",
+              "name": "Luzviminda Macaraeg",
+              "email": "user1@rentdito.com"
+            },
+            "propertyId": "6a93e154107b82fb635d8feb",
+            "unitId": {
+              "_id": "6a93e154107b82fb635d8ff7",
+              "unitIdentifier": "Room 2"
+            },
+            "status": "checked_in",
+            "checkInDate": "2026-01-02T00:00:00.000Z"
+          },
+          "propertyId": "6a93e154107b82fb635d8feb",
+          "unitId": "6a93e154107b82fb635d8ff7",
+          "issuedByUserId": {
+            "_id": "6a93e154107b82fb635d8fe0",
+            "name": "Pedro Penduko",
+            "role": "staff"
+          },
+          "issuedDate": "2026-03-20T00:00:00.000Z",
+          "quantityIssued": 1,
+          "issuedCondition": "good",
+          "deductedFromDeposit": false,
+          "status": "active",
+          "__v": 0,
+          "createdAt": "2026-08-30T07:52:52.693Z",
+          "updatedAt": "2026-08-30T07:52:52.693Z"
+        }
+      ]
+    }
+  },
+  {
+    "name": "inventory-records-landlord1",
+    "method": "get",
+    "path": "/api/inventory/records",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": [
+        {
+          "_id": "6a93e154107b82fb635d902d",
+          "inventoryItemId": {
+            "_id": "6a93e154107b82fb635d902a",
+            "itemName": "Office Desk Chair (Ergo)",
+            "condition": "new",
+            "quantity": 10,
+            "availableQuantity": 6,
+            "status": "issued"
+          },
+          "tenancyId": {
+            "_id": "6a93e154107b82fb635d901d",
+            "userId": {
+              "_id": "6a93e154107b82fb635d8fe5",
+              "name": "Luzviminda Macaraeg",
+              "email": "user1@rentdito.com"
+            },
+            "propertyId": "6a93e154107b82fb635d8feb",
+            "unitId": {
+              "_id": "6a93e154107b82fb635d8ff7",
+              "unitIdentifier": "Room 2"
+            },
+            "status": "checked_in",
+            "checkInDate": "2026-01-02T00:00:00.000Z"
+          },
+          "propertyId": "6a93e154107b82fb635d8feb",
+          "unitId": "6a93e154107b82fb635d8ff7",
+          "issuedByUserId": {
+            "_id": "6a93e154107b82fb635d8fe0",
+            "name": "Pedro Penduko",
+            "role": "staff"
+          },
+          "issuedDate": "2026-03-20T00:00:00.000Z",
+          "quantityIssued": 2,
+          "issuedCondition": "new",
+          "deductedFromDeposit": false,
+          "status": "active",
+          "__v": 0,
+          "createdAt": "2026-08-30T07:52:52.694Z",
+          "updatedAt": "2026-08-30T07:52:52.694Z"
+        },
+        {
+          "_id": "6a93e154107b82fb635d902c",
+          "inventoryItemId": {
+            "_id": "6a93e154107b82fb635d9029",
+            "itemName": "Samsung Split-type AC 1HP",
+            "serialNumber": "SMC-9921-AC",
+            "condition": "good",
+            "quantity": 5,
+            "availableQuantity": 3,
+            "status": "issued"
+          },
+          "tenancyId": {
+            "_id": "6a93e154107b82fb635d901d",
+            "userId": {
+              "_id": "6a93e154107b82fb635d8fe5",
+              "name": "Luzviminda Macaraeg",
+              "email": "user1@rentdito.com"
+            },
+            "propertyId": "6a93e154107b82fb635d8feb",
+            "unitId": {
+              "_id": "6a93e154107b82fb635d8ff7",
+              "unitIdentifier": "Room 2"
+            },
+            "status": "checked_in",
+            "checkInDate": "2026-01-02T00:00:00.000Z"
+          },
+          "propertyId": "6a93e154107b82fb635d8feb",
+          "unitId": "6a93e154107b82fb635d8ff7",
+          "issuedByUserId": {
+            "_id": "6a93e154107b82fb635d8fe0",
+            "name": "Pedro Penduko",
+            "role": "staff"
+          },
+          "issuedDate": "2026-03-20T00:00:00.000Z",
+          "quantityIssued": 1,
+          "issuedCondition": "good",
+          "deductedFromDeposit": false,
+          "status": "active",
+          "__v": 0,
+          "createdAt": "2026-08-30T07:52:52.693Z",
+          "updatedAt": "2026-08-30T07:52:52.693Z"
+        }
+      ]
+    }
+  },
+  {
+    "name": "inventory-records-by-tenancy-owner",
+    "method": "get",
+    "path": "/api/inventory/records/tenancy/6a93e154107b82fb635d901d",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": [
+        {
+          "_id": "6a93e154107b82fb635d902d",
+          "inventoryItemId": {
+            "_id": "6a93e154107b82fb635d902a",
+            "itemName": "Office Desk Chair (Ergo)",
+            "condition": "new",
+            "quantity": 10,
+            "availableQuantity": 6,
+            "status": "issued"
+          },
+          "tenancyId": "6a93e154107b82fb635d901d",
+          "propertyId": "6a93e154107b82fb635d8feb",
+          "unitId": "6a93e154107b82fb635d8ff7",
+          "issuedByUserId": {
+            "_id": "6a93e154107b82fb635d8fe0",
+            "name": "Pedro Penduko",
+            "role": "staff"
+          },
+          "issuedDate": "2026-03-20T00:00:00.000Z",
+          "quantityIssued": 2,
+          "issuedCondition": "new",
+          "deductedFromDeposit": false,
+          "status": "active",
+          "__v": 0,
+          "createdAt": "2026-08-30T07:52:52.694Z",
+          "updatedAt": "2026-08-30T07:52:52.694Z"
+        },
+        {
+          "_id": "6a93e154107b82fb635d902c",
+          "inventoryItemId": {
+            "_id": "6a93e154107b82fb635d9029",
+            "itemName": "Samsung Split-type AC 1HP",
+            "serialNumber": "SMC-9921-AC",
+            "condition": "good",
+            "quantity": 5,
+            "availableQuantity": 3,
+            "status": "issued"
+          },
+          "tenancyId": "6a93e154107b82fb635d901d",
+          "propertyId": "6a93e154107b82fb635d8feb",
+          "unitId": "6a93e154107b82fb635d8ff7",
+          "issuedByUserId": {
+            "_id": "6a93e154107b82fb635d8fe0",
+            "name": "Pedro Penduko",
+            "role": "staff"
+          },
+          "issuedDate": "2026-03-20T00:00:00.000Z",
+          "quantityIssued": 1,
+          "issuedCondition": "good",
+          "deductedFromDeposit": false,
+          "status": "active",
+          "__v": 0,
+          "createdAt": "2026-08-30T07:52:52.693Z",
+          "updatedAt": "2026-08-30T07:52:52.693Z"
+        }
+      ]
+    }
+  },
+  {
+    "name": "inventory-records-by-tenancy-landlord1",
+    "method": "get",
+    "path": "/api/inventory/records/tenancy/6a93e154107b82fb635d901d",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": [
+        {
+          "_id": "6a93e154107b82fb635d902d",
+          "inventoryItemId": {
+            "_id": "6a93e154107b82fb635d902a",
+            "itemName": "Office Desk Chair (Ergo)",
+            "condition": "new",
+            "quantity": 10,
+            "availableQuantity": 6,
+            "status": "issued"
+          },
+          "tenancyId": "6a93e154107b82fb635d901d",
+          "propertyId": "6a93e154107b82fb635d8feb",
+          "unitId": "6a93e154107b82fb635d8ff7",
+          "issuedByUserId": {
+            "_id": "6a93e154107b82fb635d8fe0",
+            "name": "Pedro Penduko",
+            "role": "staff"
+          },
+          "issuedDate": "2026-03-20T00:00:00.000Z",
+          "quantityIssued": 2,
+          "issuedCondition": "new",
+          "deductedFromDeposit": false,
+          "status": "active",
+          "__v": 0,
+          "createdAt": "2026-08-30T07:52:52.694Z",
+          "updatedAt": "2026-08-30T07:52:52.694Z"
+        },
+        {
+          "_id": "6a93e154107b82fb635d902c",
+          "inventoryItemId": {
+            "_id": "6a93e154107b82fb635d9029",
+            "itemName": "Samsung Split-type AC 1HP",
+            "serialNumber": "SMC-9921-AC",
+            "condition": "good",
+            "quantity": 5,
+            "availableQuantity": 3,
+            "status": "issued"
+          },
+          "tenancyId": "6a93e154107b82fb635d901d",
+          "propertyId": "6a93e154107b82fb635d8feb",
+          "unitId": "6a93e154107b82fb635d8ff7",
+          "issuedByUserId": {
+            "_id": "6a93e154107b82fb635d8fe0",
+            "name": "Pedro Penduko",
+            "role": "staff"
+          },
+          "issuedDate": "2026-03-20T00:00:00.000Z",
+          "quantityIssued": 1,
+          "issuedCondition": "good",
+          "deductedFromDeposit": false,
+          "status": "active",
+          "__v": 0,
+          "createdAt": "2026-08-30T07:52:52.693Z",
+          "updatedAt": "2026-08-30T07:52:52.693Z"
+        }
+      ]
+    }
+  },
+  {
+    "name": "inventory-monthly-report-landlord1",
+    "method": "get",
+    "path": "/api/inventory/reports/monthly",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": {
+        "month": 8,
+        "year": 2026,
+        "period": {
+          "start": "2026-07-31T16:00:00.000Z",
+          "end": "2026-08-31T15:59:59.999Z"
+        },
+        "summary": {
+          "activeIssued": 2,
+          "lostDamaged": 0,
+          "mostFrequentlyDamagedItem": null,
+          "totalEstimatedDepreciation": 0
+        },
+        "mostDamagedItems": [],
+        "depreciation": []
+      }
+    }
+  },
+  {
+    "name": "inventory-monthly-report-denied-staff-manager",
+    "method": "get",
+    "path": "/api/inventory/reports/monthly",
+    "status": 403,
+    "body": {
+      "status": "error",
+      "message": "Access denied. Missing permission: inventory"
+    }
+  }
+]

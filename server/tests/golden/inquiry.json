@@ -1,0 +1,290 @@
+[
+  {
+    "name": "my-inquiries-user1-empty",
+    "method": "get",
+    "path": "/api/inquiries/my",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": []
+    }
+  },
+  {
+    "name": "my-inquiries-unauthenticated",
+    "method": "get",
+    "path": "/api/inquiries/my",
+    "status": 401,
+    "body": {
+      "status": "error",
+      "message": "Access denied. No token provided."
+    }
+  },
+  {
+    "name": "property-inquiries-landlord1",
+    "method": "get",
+    "path": "/api/inquiries/property/6a93e154107b82fb635d8feb",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": [
+        {
+          "_id": "6a93e154107b82fb635d903f",
+          "userId": {
+            "_id": "6a93e154107b82fb635d8fea",
+            "name": "Ding Dantes",
+            "email": "user6@rentdito.com",
+            "phone": "09881112222"
+          },
+          "propertyId": "6a93e154107b82fb635d8feb",
+          "unitId": {
+            "_id": "6a93e154107b82fb635d9003",
+            "unitIdentifier": "Room 4"
+          },
+          "subject": "Inquiry about deposit refund policy",
+          "status": "closed",
+          "createdAt": "2026-08-30T07:52:52.747Z",
+          "updatedAt": "2026-08-30T07:52:52.747Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d9036",
+          "userId": {
+            "_id": "6a93e154107b82fb635d8fe8",
+            "name": "Boyet Fernandez",
+            "email": "user4@rentdito.com",
+            "phone": "09997778888"
+          },
+          "propertyId": "6a93e154107b82fb635d8feb",
+          "unitId": {
+            "_id": "6a93e154107b82fb635d8ff7",
+            "unitIdentifier": "Room 2"
+          },
+          "subject": "Is WiFi included?",
+          "status": "open",
+          "createdAt": "2026-08-30T07:52:52.718Z",
+          "updatedAt": "2026-08-30T07:52:52.718Z",
+          "__v": 0
+        }
+      ]
+    }
+  },
+  {
+    "name": "property-inquiries-super-admin",
+    "method": "get",
+    "path": "/api/inquiries/property/6a93e154107b82fb635d8feb",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": [
+        {
+          "_id": "6a93e154107b82fb635d903f",
+          "userId": {
+            "_id": "6a93e154107b82fb635d8fea",
+            "name": "Ding Dantes",
+            "email": "user6@rentdito.com",
+            "phone": "09881112222"
+          },
+          "propertyId": "6a93e154107b82fb635d8feb",
+          "unitId": {
+            "_id": "6a93e154107b82fb635d9003",
+            "unitIdentifier": "Room 4"
+          },
+          "subject": "Inquiry about deposit refund policy",
+          "status": "closed",
+          "createdAt": "2026-08-30T07:52:52.747Z",
+          "updatedAt": "2026-08-30T07:52:52.747Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d9036",
+          "userId": {
+            "_id": "6a93e154107b82fb635d8fe8",
+            "name": "Boyet Fernandez",
+            "email": "user4@rentdito.com",
+            "phone": "09997778888"
+          },
+          "propertyId": "6a93e154107b82fb635d8feb",
+          "unitId": {
+            "_id": "6a93e154107b82fb635d8ff7",
+            "unitIdentifier": "Room 2"
+          },
+          "subject": "Is WiFi included?",
+          "status": "open",
+          "createdAt": "2026-08-30T07:52:52.718Z",
+          "updatedAt": "2026-08-30T07:52:52.718Z",
+          "__v": 0
+        }
+      ]
+    }
+  },
+  {
+    "name": "property-inquiries-filtered-closed",
+    "method": "get",
+    "path": "/api/inquiries/property/6a93e154107b82fb635d8feb",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": [
+        {
+          "_id": "6a93e154107b82fb635d903f",
+          "userId": {
+            "_id": "6a93e154107b82fb635d8fea",
+            "name": "Ding Dantes",
+            "email": "user6@rentdito.com",
+            "phone": "09881112222"
+          },
+          "propertyId": "6a93e154107b82fb635d8feb",
+          "unitId": {
+            "_id": "6a93e154107b82fb635d9003",
+            "unitIdentifier": "Room 4"
+          },
+          "subject": "Inquiry about deposit refund policy",
+          "status": "closed",
+          "createdAt": "2026-08-30T07:52:52.747Z",
+          "updatedAt": "2026-08-30T07:52:52.747Z",
+          "__v": 0
+        }
+      ]
+    }
+  },
+  {
+    "name": "property-inquiries-denied-non-owner-landlord",
+    "method": "get",
+    "path": "/api/inquiries/property/6a93e154107b82fb635d8feb",
+    "status": 403,
+    "body": {
+      "status": "error",
+      "message": "Access denied"
+    }
+  },
+  {
+    "name": "inquiry-by-id-landlord1",
+    "method": "get",
+    "path": "/api/inquiries/6a93e154107b82fb635d9036",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": {
+        "_id": "6a93e154107b82fb635d9036",
+        "userId": {
+          "_id": "6a93e154107b82fb635d8fe8",
+          "name": "Boyet Fernandez",
+          "email": "user4@rentdito.com",
+          "phone": "09997778888"
+        },
+        "propertyId": {
+          "_id": "6a93e154107b82fb635d8feb",
+          "landlordId": "6a93e154107b82fb635d8fde",
+          "name": "White Dorm Property",
+          "address": {
+            "street": "Sikatuna Street",
+            "city": "Cebu City",
+            "province": "Cebu",
+            "zipCode": "6543",
+            "country": "Philippines"
+          }
+        },
+        "unitId": {
+          "_id": "6a93e154107b82fb635d8ff7",
+          "unitIdentifier": "Room 2"
+        },
+        "subject": "Is WiFi included?",
+        "status": "open",
+        "createdAt": "2026-08-30T07:52:52.718Z",
+        "updatedAt": "2026-08-30T07:52:52.718Z",
+        "__v": 0,
+        "conversationId": "6a93e154107b82fb635d9037"
+      }
+    }
+  },
+  {
+    "name": "inquiry-by-id-closed-landlord1",
+    "method": "get",
+    "path": "/api/inquiries/6a93e154107b82fb635d903f",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": {
+        "_id": "6a93e154107b82fb635d903f",
+        "userId": {
+          "_id": "6a93e154107b82fb635d8fea",
+          "name": "Ding Dantes",
+          "email": "user6@rentdito.com",
+          "phone": "09881112222"
+        },
+        "propertyId": {
+          "_id": "6a93e154107b82fb635d8feb",
+          "landlordId": "6a93e154107b82fb635d8fde",
+          "name": "White Dorm Property",
+          "address": {
+            "street": "Sikatuna Street",
+            "city": "Cebu City",
+            "province": "Cebu",
+            "zipCode": "6543",
+            "country": "Philippines"
+          }
+        },
+        "unitId": {
+          "_id": "6a93e154107b82fb635d9003",
+          "unitIdentifier": "Room 4"
+        },
+        "subject": "Inquiry about deposit refund policy",
+        "status": "closed",
+        "createdAt": "2026-08-30T07:52:52.747Z",
+        "updatedAt": "2026-08-30T07:52:52.747Z",
+        "__v": 0,
+        "conversationId": "6a93e154107b82fb635d9040"
+      }
+    }
+  },
+  {
+    "name": "inquiry-by-id-in-progress-landlord2",
+    "method": "get",
+    "path": "/api/inquiries/6a93e154107b82fb635d903a",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": {
+        "_id": "6a93e154107b82fb635d903a",
+        "userId": {
+          "_id": "6a93e154107b82fb635d8fe9",
+          "name": "Inday Bote",
+          "email": "user5@rentdito.com",
+          "phone": "09999990000"
+        },
+        "propertyId": {
+          "_id": "6a93e154107b82fb635d8ff1",
+          "landlordId": "6a93e154107b82fb635d8fdf",
+          "name": "Uytengso Boardings House",
+          "address": {
+            "street": "Uytengso Street",
+            "city": "Cebu City",
+            "province": "Cebu",
+            "zipCode": "6543",
+            "country": "Philippines"
+          }
+        },
+        "unitId": {
+          "_id": "6a93e154107b82fb635d9009",
+          "unitIdentifier": "Room 1"
+        },
+        "subject": "Can I view the room this weekend?",
+        "status": "in_progress",
+        "createdAt": "2026-08-30T07:52:52.729Z",
+        "updatedAt": "2026-08-30T07:52:52.729Z",
+        "__v": 0,
+        "conversationId": "6a93e154107b82fb635d903b"
+      }
+    }
+  },
+  {
+    "name": "inquiry-by-id-not-found",
+    "method": "get",
+    "path": "/api/inquiries/000000000000000000000000",
+    "status": 404,
+    "body": {
+      "status": "error",
+      "message": "Inquiry not found"
+    }
+  }
+]

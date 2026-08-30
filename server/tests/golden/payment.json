@@ -1,0 +1,460 @@
+[
+  {
+    "name": "payments-list-landlord1",
+    "method": "get",
+    "path": "/api/payments",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": [
+        {
+          "_id": "6a93e154107b82fb635d904d",
+          "billId": {
+            "_id": "6a93e154107b82fb635d9021",
+            "type": "utility",
+            "billingPeriod": {
+              "start": "2026-01-31T16:00:00.000Z",
+              "end": "2026-02-27T16:00:00.000Z"
+            },
+            "totalAmount": 1958.75,
+            "status": "partial"
+          },
+          "tenancyId": "6a93e154107b82fb635d901d",
+          "amount": 500,
+          "paymentDate": "2026-03-02T14:00:00.000Z",
+          "method": "other",
+          "recordedByUserId": {
+            "_id": "6a93e154107b82fb635d8fe2",
+            "name": "Andres Bonifacio"
+          },
+          "notes": "Partial payment via money remittance center.",
+          "createdAt": "2026-08-30T07:52:52.774Z",
+          "updatedAt": "2026-08-30T07:52:52.774Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d904c",
+          "billId": {
+            "_id": "6a93e154107b82fb635d9021",
+            "type": "utility",
+            "billingPeriod": {
+              "start": "2026-01-31T16:00:00.000Z",
+              "end": "2026-02-27T16:00:00.000Z"
+            },
+            "totalAmount": 1958.75,
+            "status": "partial"
+          },
+          "tenancyId": "6a93e154107b82fb635d901d",
+          "amount": 900,
+          "paymentDate": "2026-03-01T09:00:00.000Z",
+          "method": "bank_transfer",
+          "referenceNumber": "BT-2026-0002",
+          "recordedByUserId": {
+            "_id": "6a93e154107b82fb635d8fe2",
+            "name": "Andres Bonifacio"
+          },
+          "createdAt": "2026-08-30T07:52:52.774Z",
+          "updatedAt": "2026-08-30T07:52:52.774Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d904b",
+          "billId": {
+            "_id": "6a93e154107b82fb635d9022",
+            "type": "utility",
+            "billingPeriod": {
+              "start": "2025-12-31T16:00:00.000Z",
+              "end": "2026-01-30T16:00:00.000Z"
+            },
+            "totalAmount": 1985,
+            "status": "paid"
+          },
+          "tenancyId": "6a93e154107b82fb635d901d",
+          "amount": 985,
+          "paymentDate": "2026-02-03T15:30:00.000Z",
+          "method": "gcash",
+          "referenceNumber": "GC-2026-0001",
+          "recordedByUserId": {
+            "_id": "6a93e154107b82fb635d8fe2",
+            "name": "Andres Bonifacio"
+          },
+          "createdAt": "2026-08-30T07:52:52.774Z",
+          "updatedAt": "2026-08-30T07:52:52.774Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d904a",
+          "billId": {
+            "_id": "6a93e154107b82fb635d9022",
+            "type": "utility",
+            "billingPeriod": {
+              "start": "2025-12-31T16:00:00.000Z",
+              "end": "2026-01-30T16:00:00.000Z"
+            },
+            "totalAmount": 1985,
+            "status": "paid"
+          },
+          "tenancyId": "6a93e154107b82fb635d901d",
+          "amount": 1000,
+          "paymentDate": "2026-02-01T10:00:00.000Z",
+          "method": "cash",
+          "recordedByUserId": {
+            "_id": "6a93e154107b82fb635d8fe2",
+            "name": "Andres Bonifacio"
+          },
+          "createdAt": "2026-08-30T07:52:52.774Z",
+          "updatedAt": "2026-08-30T07:52:52.774Z",
+          "__v": 0
+        }
+      ]
+    }
+  },
+  {
+    "name": "payments-list-user1-own-tenancy",
+    "method": "get",
+    "path": "/api/payments",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": [
+        {
+          "_id": "6a93e154107b82fb635d904d",
+          "billId": {
+            "_id": "6a93e154107b82fb635d9021",
+            "type": "utility",
+            "billingPeriod": {
+              "start": "2026-01-31T16:00:00.000Z",
+              "end": "2026-02-27T16:00:00.000Z"
+            },
+            "totalAmount": 1958.75,
+            "status": "partial"
+          },
+          "tenancyId": "6a93e154107b82fb635d901d",
+          "amount": 500,
+          "paymentDate": "2026-03-02T14:00:00.000Z",
+          "method": "other",
+          "recordedByUserId": {
+            "_id": "6a93e154107b82fb635d8fe2",
+            "name": "Andres Bonifacio"
+          },
+          "notes": "Partial payment via money remittance center.",
+          "createdAt": "2026-08-30T07:52:52.774Z",
+          "updatedAt": "2026-08-30T07:52:52.774Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d904c",
+          "billId": {
+            "_id": "6a93e154107b82fb635d9021",
+            "type": "utility",
+            "billingPeriod": {
+              "start": "2026-01-31T16:00:00.000Z",
+              "end": "2026-02-27T16:00:00.000Z"
+            },
+            "totalAmount": 1958.75,
+            "status": "partial"
+          },
+          "tenancyId": "6a93e154107b82fb635d901d",
+          "amount": 900,
+          "paymentDate": "2026-03-01T09:00:00.000Z",
+          "method": "bank_transfer",
+          "referenceNumber": "BT-2026-0002",
+          "recordedByUserId": {
+            "_id": "6a93e154107b82fb635d8fe2",
+            "name": "Andres Bonifacio"
+          },
+          "createdAt": "2026-08-30T07:52:52.774Z",
+          "updatedAt": "2026-08-30T07:52:52.774Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d904b",
+          "billId": {
+            "_id": "6a93e154107b82fb635d9022",
+            "type": "utility",
+            "billingPeriod": {
+              "start": "2025-12-31T16:00:00.000Z",
+              "end": "2026-01-30T16:00:00.000Z"
+            },
+            "totalAmount": 1985,
+            "status": "paid"
+          },
+          "tenancyId": "6a93e154107b82fb635d901d",
+          "amount": 985,
+          "paymentDate": "2026-02-03T15:30:00.000Z",
+          "method": "gcash",
+          "referenceNumber": "GC-2026-0001",
+          "recordedByUserId": {
+            "_id": "6a93e154107b82fb635d8fe2",
+            "name": "Andres Bonifacio"
+          },
+          "createdAt": "2026-08-30T07:52:52.774Z",
+          "updatedAt": "2026-08-30T07:52:52.774Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d904a",
+          "billId": {
+            "_id": "6a93e154107b82fb635d9022",
+            "type": "utility",
+            "billingPeriod": {
+              "start": "2025-12-31T16:00:00.000Z",
+              "end": "2026-01-30T16:00:00.000Z"
+            },
+            "totalAmount": 1985,
+            "status": "paid"
+          },
+          "tenancyId": "6a93e154107b82fb635d901d",
+          "amount": 1000,
+          "paymentDate": "2026-02-01T10:00:00.000Z",
+          "method": "cash",
+          "recordedByUserId": {
+            "_id": "6a93e154107b82fb635d8fe2",
+            "name": "Andres Bonifacio"
+          },
+          "createdAt": "2026-08-30T07:52:52.774Z",
+          "updatedAt": "2026-08-30T07:52:52.774Z",
+          "__v": 0
+        }
+      ]
+    }
+  },
+  {
+    "name": "payments-by-tenancy-owner",
+    "method": "get",
+    "path": "/api/payments/tenancy/6a93e154107b82fb635d901d",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": [
+        {
+          "_id": "6a93e154107b82fb635d904d",
+          "billId": {
+            "_id": "6a93e154107b82fb635d9021",
+            "type": "utility",
+            "billingPeriod": {
+              "start": "2026-01-31T16:00:00.000Z",
+              "end": "2026-02-27T16:00:00.000Z"
+            },
+            "totalAmount": 1958.75,
+            "status": "partial",
+            "dueDate": "2026-03-04T16:00:00.000Z"
+          },
+          "tenancyId": "6a93e154107b82fb635d901d",
+          "amount": 500,
+          "paymentDate": "2026-03-02T14:00:00.000Z",
+          "method": "other",
+          "recordedByUserId": {
+            "_id": "6a93e154107b82fb635d8fe2",
+            "name": "Andres Bonifacio"
+          },
+          "notes": "Partial payment via money remittance center.",
+          "createdAt": "2026-08-30T07:52:52.774Z",
+          "updatedAt": "2026-08-30T07:52:52.774Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d904c",
+          "billId": {
+            "_id": "6a93e154107b82fb635d9021",
+            "type": "utility",
+            "billingPeriod": {
+              "start": "2026-01-31T16:00:00.000Z",
+              "end": "2026-02-27T16:00:00.000Z"
+            },
+            "totalAmount": 1958.75,
+            "status": "partial",
+            "dueDate": "2026-03-04T16:00:00.000Z"
+          },
+          "tenancyId": "6a93e154107b82fb635d901d",
+          "amount": 900,
+          "paymentDate": "2026-03-01T09:00:00.000Z",
+          "method": "bank_transfer",
+          "referenceNumber": "BT-2026-0002",
+          "recordedByUserId": {
+            "_id": "6a93e154107b82fb635d8fe2",
+            "name": "Andres Bonifacio"
+          },
+          "createdAt": "2026-08-30T07:52:52.774Z",
+          "updatedAt": "2026-08-30T07:52:52.774Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d904b",
+          "billId": {
+            "_id": "6a93e154107b82fb635d9022",
+            "type": "utility",
+            "billingPeriod": {
+              "start": "2025-12-31T16:00:00.000Z",
+              "end": "2026-01-30T16:00:00.000Z"
+            },
+            "totalAmount": 1985,
+            "status": "paid",
+            "dueDate": "2026-02-04T16:00:00.000Z"
+          },
+          "tenancyId": "6a93e154107b82fb635d901d",
+          "amount": 985,
+          "paymentDate": "2026-02-03T15:30:00.000Z",
+          "method": "gcash",
+          "referenceNumber": "GC-2026-0001",
+          "recordedByUserId": {
+            "_id": "6a93e154107b82fb635d8fe2",
+            "name": "Andres Bonifacio"
+          },
+          "createdAt": "2026-08-30T07:52:52.774Z",
+          "updatedAt": "2026-08-30T07:52:52.774Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d904a",
+          "billId": {
+            "_id": "6a93e154107b82fb635d9022",
+            "type": "utility",
+            "billingPeriod": {
+              "start": "2025-12-31T16:00:00.000Z",
+              "end": "2026-01-30T16:00:00.000Z"
+            },
+            "totalAmount": 1985,
+            "status": "paid",
+            "dueDate": "2026-02-04T16:00:00.000Z"
+          },
+          "tenancyId": "6a93e154107b82fb635d901d",
+          "amount": 1000,
+          "paymentDate": "2026-02-01T10:00:00.000Z",
+          "method": "cash",
+          "recordedByUserId": {
+            "_id": "6a93e154107b82fb635d8fe2",
+            "name": "Andres Bonifacio"
+          },
+          "createdAt": "2026-08-30T07:52:52.774Z",
+          "updatedAt": "2026-08-30T07:52:52.774Z",
+          "__v": 0
+        }
+      ]
+    }
+  },
+  {
+    "name": "payments-by-tenancy-landlord1",
+    "method": "get",
+    "path": "/api/payments/tenancy/6a93e154107b82fb635d901d",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": [
+        {
+          "_id": "6a93e154107b82fb635d904d",
+          "billId": {
+            "_id": "6a93e154107b82fb635d9021",
+            "type": "utility",
+            "billingPeriod": {
+              "start": "2026-01-31T16:00:00.000Z",
+              "end": "2026-02-27T16:00:00.000Z"
+            },
+            "totalAmount": 1958.75,
+            "status": "partial",
+            "dueDate": "2026-03-04T16:00:00.000Z"
+          },
+          "tenancyId": "6a93e154107b82fb635d901d",
+          "amount": 500,
+          "paymentDate": "2026-03-02T14:00:00.000Z",
+          "method": "other",
+          "recordedByUserId": {
+            "_id": "6a93e154107b82fb635d8fe2",
+            "name": "Andres Bonifacio"
+          },
+          "notes": "Partial payment via money remittance center.",
+          "createdAt": "2026-08-30T07:52:52.774Z",
+          "updatedAt": "2026-08-30T07:52:52.774Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d904c",
+          "billId": {
+            "_id": "6a93e154107b82fb635d9021",
+            "type": "utility",
+            "billingPeriod": {
+              "start": "2026-01-31T16:00:00.000Z",
+              "end": "2026-02-27T16:00:00.000Z"
+            },
+            "totalAmount": 1958.75,
+            "status": "partial",
+            "dueDate": "2026-03-04T16:00:00.000Z"
+          },
+          "tenancyId": "6a93e154107b82fb635d901d",
+          "amount": 900,
+          "paymentDate": "2026-03-01T09:00:00.000Z",
+          "method": "bank_transfer",
+          "referenceNumber": "BT-2026-0002",
+          "recordedByUserId": {
+            "_id": "6a93e154107b82fb635d8fe2",
+            "name": "Andres Bonifacio"
+          },
+          "createdAt": "2026-08-30T07:52:52.774Z",
+          "updatedAt": "2026-08-30T07:52:52.774Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d904b",
+          "billId": {
+            "_id": "6a93e154107b82fb635d9022",
+            "type": "utility",
+            "billingPeriod": {
+              "start": "2025-12-31T16:00:00.000Z",
+              "end": "2026-01-30T16:00:00.000Z"
+            },
+            "totalAmount": 1985,
+            "status": "paid",
+            "dueDate": "2026-02-04T16:00:00.000Z"
+          },
+          "tenancyId": "6a93e154107b82fb635d901d",
+          "amount": 985,
+          "paymentDate": "2026-02-03T15:30:00.000Z",
+          "method": "gcash",
+          "referenceNumber": "GC-2026-0001",
+          "recordedByUserId": {
+            "_id": "6a93e154107b82fb635d8fe2",
+            "name": "Andres Bonifacio"
+          },
+          "createdAt": "2026-08-30T07:52:52.774Z",
+          "updatedAt": "2026-08-30T07:52:52.774Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d904a",
+          "billId": {
+            "_id": "6a93e154107b82fb635d9022",
+            "type": "utility",
+            "billingPeriod": {
+              "start": "2025-12-31T16:00:00.000Z",
+              "end": "2026-01-30T16:00:00.000Z"
+            },
+            "totalAmount": 1985,
+            "status": "paid",
+            "dueDate": "2026-02-04T16:00:00.000Z"
+          },
+          "tenancyId": "6a93e154107b82fb635d901d",
+          "amount": 1000,
+          "paymentDate": "2026-02-01T10:00:00.000Z",
+          "method": "cash",
+          "recordedByUserId": {
+            "_id": "6a93e154107b82fb635d8fe2",
+            "name": "Andres Bonifacio"
+          },
+          "createdAt": "2026-08-30T07:52:52.774Z",
+          "updatedAt": "2026-08-30T07:52:52.774Z",
+          "__v": 0
+        }
+      ]
+    }
+  },
+  {
+    "name": "payments-by-tenancy-denied-other-tenant",
+    "method": "get",
+    "path": "/api/payments/tenancy/6a93e154107b82fb635d901d",
+    "status": 403,
+    "body": {
+      "status": "error",
+      "message": "Access denied"
+    }
+  }
+]

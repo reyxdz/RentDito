@@ -1,0 +1,61 @@
+[
+  {
+    "name": "notifications-landlord1-has-two",
+    "method": "get",
+    "path": "/api/notifications",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": [
+        {
+          "id": "6a93e154107b82fb635d9054",
+          "title": "New Inquiry Received",
+          "message": "You have a new inquiry for unit 101.",
+          "type": "inquiry",
+          "read": false,
+          "createdAt": "2026-08-30T07:52:52.796Z"
+        },
+        {
+          "id": "6a93e154107b82fb635d9055",
+          "title": "Contract Expiring Soon",
+          "message": "A contract for user3 is expiring in 2 months.",
+          "type": "contract",
+          "read": false,
+          "createdAt": "2026-08-30T07:52:52.796Z"
+        }
+      ]
+    }
+  },
+  {
+    "name": "notifications-user1-empty",
+    "method": "get",
+    "path": "/api/notifications",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": []
+    }
+  },
+  {
+    "name": "unread-count-landlord1",
+    "method": "get",
+    "path": "/api/notifications/unread-count",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": {
+        "count": 2
+      }
+    }
+  },
+  {
+    "name": "notifications-unauthenticated",
+    "method": "get",
+    "path": "/api/notifications",
+    "status": 401,
+    "body": {
+      "status": "error",
+      "message": "Access denied. No token provided."
+    }
+  }
+]

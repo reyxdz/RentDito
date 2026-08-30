@@ -1,0 +1,180 @@
+[
+  {
+    "name": "incidents-list-landlord1",
+    "method": "get",
+    "path": "/api/security/incidents",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": [
+        {
+          "_id": "6a93e154107b82fb635d9053",
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8feb",
+            "name": "White Dorm Property"
+          },
+          "reportedBy": {
+            "_id": "6a93e154107b82fb635d8fe1",
+            "name": "Jose Rizal",
+            "email": "maintenance@rentdito.com"
+          },
+          "dateOfIncident": "2026-01-05T00:00:00.000Z",
+          "type": "dispute",
+          "severity": "low",
+          "description": "Minor dispute between tenants over shared kitchen usage.",
+          "status": "resolved",
+          "resolutionNotes": "Mediated by staff; both parties agreed on a cleaning schedule.",
+          "attachments": [],
+          "createdAt": "2026-08-30T07:52:52.793Z",
+          "updatedAt": "2026-08-30T07:52:52.793Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d9052",
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8feb",
+            "name": "White Dorm Property"
+          },
+          "reportedBy": {
+            "_id": "6a93e154107b82fb635d8fe1",
+            "name": "Jose Rizal",
+            "email": "maintenance@rentdito.com"
+          },
+          "dateOfIncident": "2026-02-18T00:00:00.000Z",
+          "type": "damage",
+          "severity": "medium",
+          "description": "Water damage found in the common area ceiling after heavy rain.",
+          "status": "investigating",
+          "attachments": [],
+          "createdAt": "2026-08-30T07:52:52.792Z",
+          "updatedAt": "2026-08-30T07:52:52.792Z",
+          "__v": 0
+        }
+      ]
+    }
+  },
+  {
+    "name": "incidents-list-staff-maintenance",
+    "method": "get",
+    "path": "/api/security/incidents",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": [
+        {
+          "_id": "6a93e154107b82fb635d9053",
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8feb",
+            "name": "White Dorm Property"
+          },
+          "reportedBy": {
+            "_id": "6a93e154107b82fb635d8fe1",
+            "name": "Jose Rizal",
+            "email": "maintenance@rentdito.com"
+          },
+          "dateOfIncident": "2026-01-05T00:00:00.000Z",
+          "type": "dispute",
+          "severity": "low",
+          "description": "Minor dispute between tenants over shared kitchen usage.",
+          "status": "resolved",
+          "resolutionNotes": "Mediated by staff; both parties agreed on a cleaning schedule.",
+          "attachments": [],
+          "createdAt": "2026-08-30T07:52:52.793Z",
+          "updatedAt": "2026-08-30T07:52:52.793Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d9052",
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8feb",
+            "name": "White Dorm Property"
+          },
+          "reportedBy": {
+            "_id": "6a93e154107b82fb635d8fe1",
+            "name": "Jose Rizal",
+            "email": "maintenance@rentdito.com"
+          },
+          "dateOfIncident": "2026-02-18T00:00:00.000Z",
+          "type": "damage",
+          "severity": "medium",
+          "description": "Water damage found in the common area ceiling after heavy rain.",
+          "status": "investigating",
+          "attachments": [],
+          "createdAt": "2026-08-30T07:52:52.792Z",
+          "updatedAt": "2026-08-30T07:52:52.792Z",
+          "__v": 0
+        }
+      ]
+    }
+  },
+  {
+    "name": "incidents-list-denied-user-role",
+    "method": "get",
+    "path": "/api/security/incidents",
+    "status": 403,
+    "body": {
+      "status": "error",
+      "message": "You do not have permission to perform this action."
+    }
+  },
+  {
+    "name": "incidents-list-denied-super-admin-not-in-role-list",
+    "method": "get",
+    "path": "/api/security/incidents",
+    "status": 403,
+    "body": {
+      "status": "error",
+      "message": "You do not have permission to perform this action."
+    }
+  },
+  {
+    "name": "incident-by-id-landlord1",
+    "method": "get",
+    "path": "/api/security/incidents/6a93e154107b82fb635d9052",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": {
+        "_id": "6a93e154107b82fb635d9052",
+        "propertyId": {
+          "_id": "6a93e154107b82fb635d8feb",
+          "name": "White Dorm Property"
+        },
+        "reportedBy": {
+          "_id": "6a93e154107b82fb635d8fe1",
+          "name": "Jose Rizal",
+          "email": "maintenance@rentdito.com"
+        },
+        "dateOfIncident": "2026-02-18T00:00:00.000Z",
+        "type": "damage",
+        "severity": "medium",
+        "description": "Water damage found in the common area ceiling after heavy rain.",
+        "status": "investigating",
+        "attachments": [],
+        "createdAt": "2026-08-30T07:52:52.792Z",
+        "updatedAt": "2026-08-30T07:52:52.792Z",
+        "__v": 0
+      }
+    }
+  },
+  {
+    "name": "incident-by-id-not-found",
+    "method": "get",
+    "path": "/api/security/incidents/000000000000000000000000",
+    "status": 404,
+    "body": {
+      "status": "error",
+      "message": "Incident not found"
+    }
+  },
+  {
+    "name": "emergency-contacts-property0-landlord1",
+    "method": "get",
+    "path": "/api/security/contacts/6a93e154107b82fb635d8feb",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": []
+    }
+  }
+]

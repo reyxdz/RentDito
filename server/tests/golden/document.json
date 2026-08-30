@@ -1,0 +1,138 @@
+[
+  {
+    "name": "documents-list-landlord1",
+    "method": "get",
+    "path": "/api/documents",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": [
+        {
+          "_id": "6a93e154107b82fb635d9051",
+          "propertyId": "6a93e154107b82fb635d8feb",
+          "unitId": "6a93e154107b82fb635d8ff7",
+          "tenancyId": "6a93e154107b82fb635d9025",
+          "type": "receipt",
+          "title": "Final Move-out Receipt - User2",
+          "fileUrl": "/uploads/documents/receipt-user2.pdf",
+          "uploadedBy": {
+            "_id": "6a93e154107b82fb635d8fe2",
+            "name": "Andres Bonifacio",
+            "email": "finance@rentdito.com"
+          },
+          "createdAt": "2026-08-30T07:52:52.789Z",
+          "updatedAt": "2026-08-30T07:52:52.789Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d9050",
+          "propertyId": "6a93e154107b82fb635d8feb",
+          "unitId": "6a93e154107b82fb635d8ff7",
+          "tenancyId": "6a93e154107b82fb635d901d",
+          "type": "contract",
+          "title": "Signed Lease Contract - User1",
+          "fileUrl": "/uploads/documents/contract-user1.pdf",
+          "uploadedBy": {
+            "_id": "6a93e154107b82fb635d8fe2",
+            "name": "Andres Bonifacio",
+            "email": "finance@rentdito.com"
+          },
+          "createdAt": "2026-08-30T07:52:52.788Z",
+          "updatedAt": "2026-08-30T07:52:52.788Z",
+          "__v": 0
+        }
+      ]
+    }
+  },
+  {
+    "name": "documents-list-staff-maintenance",
+    "method": "get",
+    "path": "/api/documents",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": [
+        {
+          "_id": "6a93e154107b82fb635d9051",
+          "propertyId": "6a93e154107b82fb635d8feb",
+          "unitId": "6a93e154107b82fb635d8ff7",
+          "tenancyId": "6a93e154107b82fb635d9025",
+          "type": "receipt",
+          "title": "Final Move-out Receipt - User2",
+          "fileUrl": "/uploads/documents/receipt-user2.pdf",
+          "uploadedBy": {
+            "_id": "6a93e154107b82fb635d8fe2",
+            "name": "Andres Bonifacio",
+            "email": "finance@rentdito.com"
+          },
+          "createdAt": "2026-08-30T07:52:52.789Z",
+          "updatedAt": "2026-08-30T07:52:52.789Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d9050",
+          "propertyId": "6a93e154107b82fb635d8feb",
+          "unitId": "6a93e154107b82fb635d8ff7",
+          "tenancyId": "6a93e154107b82fb635d901d",
+          "type": "contract",
+          "title": "Signed Lease Contract - User1",
+          "fileUrl": "/uploads/documents/contract-user1.pdf",
+          "uploadedBy": {
+            "_id": "6a93e154107b82fb635d8fe2",
+            "name": "Andres Bonifacio",
+            "email": "finance@rentdito.com"
+          },
+          "createdAt": "2026-08-30T07:52:52.788Z",
+          "updatedAt": "2026-08-30T07:52:52.788Z",
+          "__v": 0
+        }
+      ]
+    }
+  },
+  {
+    "name": "documents-list-denied-user-role",
+    "method": "get",
+    "path": "/api/documents",
+    "status": 403,
+    "body": {
+      "status": "error",
+      "message": "You do not have permission to perform this action."
+    }
+  },
+  {
+    "name": "document-by-id-landlord1",
+    "method": "get",
+    "path": "/api/documents/6a93e154107b82fb635d9050",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": {
+        "_id": "6a93e154107b82fb635d9050",
+        "propertyId": "6a93e154107b82fb635d8feb",
+        "unitId": "6a93e154107b82fb635d8ff7",
+        "tenancyId": "6a93e154107b82fb635d901d",
+        "type": "contract",
+        "title": "Signed Lease Contract - User1",
+        "fileUrl": "/uploads/documents/contract-user1.pdf",
+        "uploadedBy": {
+          "_id": "6a93e154107b82fb635d8fe2",
+          "name": "Andres Bonifacio",
+          "email": "finance@rentdito.com"
+        },
+        "createdAt": "2026-08-30T07:52:52.788Z",
+        "updatedAt": "2026-08-30T07:52:52.788Z",
+        "__v": 0
+      }
+    }
+  },
+  {
+    "name": "document-by-id-not-found",
+    "method": "get",
+    "path": "/api/documents/000000000000000000000000",
+    "status": 404,
+    "body": {
+      "status": "error",
+      "message": "Document not found"
+    }
+  }
+]

@@ -1,0 +1,442 @@
+[
+  {
+    "name": "properties-list-landlord1",
+    "method": "get",
+    "path": "/api/properties",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": [
+        {
+          "_id": "6a93e154107b82fb635d8feb",
+          "landlordId": {
+            "_id": "6a93e154107b82fb635d8fde",
+            "name": "Juan Dela Cruz",
+            "email": "landlord1@rentdito.com"
+          },
+          "name": "White Dorm Property",
+          "description": "A beautiful and well-maintained property. Ideal for students and young professionals seeking affordable and comfortable accommodation.",
+          "address": {
+            "street": "Sikatuna Street",
+            "city": "Cebu City",
+            "province": "Cebu",
+            "zipCode": "6543",
+            "country": "Philippines"
+          },
+          "amenities": [],
+          "inclusions": [
+            "WiFi",
+            "Foam",
+            "Pillow",
+            "Table",
+            "Chair",
+            "Clip Fan",
+            "Electric Rice Cooker",
+            "Can Cook",
+            "Can Wash Clothes",
+            "No Curfew"
+          ],
+          "propertyType": "Mixed Use",
+          "status": "Active",
+          "images": [
+            "/src/assets/properties/white_dorm/images/image1.jpg",
+            "/src/assets/properties/white_dorm/images/image2.jpg",
+            "/src/assets/properties/white_dorm/images/image3.jpg"
+          ],
+          "totalUnits": 3,
+          "occupiedUnits": 0,
+          "vacantUnits": 3,
+          "occupancyRate": 0,
+          "venues": {
+            "reviewCenters": [
+              {
+                "name": "Ecel Review Center",
+                "distance": "6 minutes walking",
+                "_id": "6a93e154107b82fb635d8fec"
+              },
+              {
+                "name": "Manor Review Center",
+                "distance": "8 minutes walking",
+                "_id": "6a93e154107b82fb635d8fed"
+              }
+            ],
+            "schools": [
+              {
+                "name": "Velez College of Nursing",
+                "distance": "10 minutes walking",
+                "_id": "6a93e154107b82fb635d8fee"
+              },
+              {
+                "name": "Cebu Normal University",
+                "distance": "10 minutes walking",
+                "_id": "6a93e154107b82fb635d8fef"
+              }
+            ],
+            "commercial": [
+              {
+                "name": "Ayala Cebu Business Park",
+                "distance": "28 minutes walking",
+                "_id": "6a93e154107b82fb635d8ff0"
+              }
+            ]
+          },
+          "billingSettings": {
+            "billingDay": 1,
+            "dueDay": 5,
+            "lateFeePercent": 5,
+            "utilityDefault": "metered"
+          },
+          "emergencyContacts": [],
+          "createdAt": "2026-08-30T07:52:52.553Z",
+          "updatedAt": "2026-08-30T07:52:52.591Z",
+          "__v": 0,
+          "metrics": {
+            "totalUnits": 3,
+            "occupiedUnits": 0,
+            "vacantUnits": 3,
+            "occupancyRate": 0
+          }
+        }
+      ],
+      "pagination": {
+        "page": 1,
+        "limit": 20,
+        "total": 1,
+        "pages": 1
+      }
+    }
+  },
+  {
+    "name": "properties-list-super-admin",
+    "method": "get",
+    "path": "/api/properties",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": [
+        {
+          "_id": "6a93e154107b82fb635d8ff1",
+          "landlordId": {
+            "_id": "6a93e154107b82fb635d8fdf",
+            "name": "Maria Santos",
+            "email": "landlord2@rentdito.com"
+          },
+          "name": "Uytengso Boardings House",
+          "description": "A beautiful and well-maintained property. Ideal for students, young professionals, and reviewees seeking affordable and comfortable accommodation.",
+          "address": {
+            "street": "Uytengso Street",
+            "city": "Cebu City",
+            "province": "Cebu",
+            "zipCode": "6543",
+            "country": "Philippines"
+          },
+          "amenities": [],
+          "inclusions": [
+            "WiFi",
+            "Foam",
+            "Pillow",
+            "Table",
+            "Chair",
+            "Clip Fan",
+            "Electric Rice Cooker",
+            "Can Cook",
+            "Can Wash Clothes",
+            "No Curfew"
+          ],
+          "propertyType": "Boarding House",
+          "status": "Active",
+          "images": [
+            "/src/assets/properties/uytengso/images/u.jpg",
+            "/src/assets/properties/uytengso/images/y.jpg",
+            "/src/assets/properties/uytengso/images/t.jpg"
+          ],
+          "totalUnits": 2,
+          "occupiedUnits": 0,
+          "vacantUnits": 2,
+          "occupancyRate": 0,
+          "venues": {
+            "reviewCenters": [
+              {
+                "name": "Mega Review Center",
+                "distance": "4 minutes walking",
+                "_id": "6a93e154107b82fb635d8ff2"
+              },
+              {
+                "name": "Gold Rank Review Center",
+                "distance": "4 minutes walking",
+                "_id": "6a93e154107b82fb635d8ff3"
+              }
+            ],
+            "schools": [
+              {
+                "name": "ACT",
+                "distance": "10 minutes walking",
+                "_id": "6a93e154107b82fb635d8ff4"
+              },
+              {
+                "name": "Cebu Normal University",
+                "distance": "5 minutes walking",
+                "_id": "6a93e154107b82fb635d8ff5"
+              }
+            ],
+            "commercial": [
+              {
+                "name": "Robinson Fuente",
+                "distance": "5 minutes commute",
+                "_id": "6a93e154107b82fb635d8ff6"
+              }
+            ]
+          },
+          "billingSettings": {
+            "billingDay": 1,
+            "dueDay": 5,
+            "lateFeePercent": 5,
+            "utilityDefault": "metered"
+          },
+          "emergencyContacts": [],
+          "createdAt": "2026-08-30T07:52:52.560Z",
+          "updatedAt": "2026-08-30T07:52:52.609Z",
+          "__v": 0,
+          "metrics": {
+            "totalUnits": 2,
+            "occupiedUnits": 0,
+            "vacantUnits": 2,
+            "occupancyRate": 0
+          }
+        },
+        {
+          "_id": "6a93e154107b82fb635d8feb",
+          "landlordId": {
+            "_id": "6a93e154107b82fb635d8fde",
+            "name": "Juan Dela Cruz",
+            "email": "landlord1@rentdito.com"
+          },
+          "name": "White Dorm Property",
+          "description": "A beautiful and well-maintained property. Ideal for students and young professionals seeking affordable and comfortable accommodation.",
+          "address": {
+            "street": "Sikatuna Street",
+            "city": "Cebu City",
+            "province": "Cebu",
+            "zipCode": "6543",
+            "country": "Philippines"
+          },
+          "amenities": [],
+          "inclusions": [
+            "WiFi",
+            "Foam",
+            "Pillow",
+            "Table",
+            "Chair",
+            "Clip Fan",
+            "Electric Rice Cooker",
+            "Can Cook",
+            "Can Wash Clothes",
+            "No Curfew"
+          ],
+          "propertyType": "Mixed Use",
+          "status": "Active",
+          "images": [
+            "/src/assets/properties/white_dorm/images/image1.jpg",
+            "/src/assets/properties/white_dorm/images/image2.jpg",
+            "/src/assets/properties/white_dorm/images/image3.jpg"
+          ],
+          "totalUnits": 3,
+          "occupiedUnits": 0,
+          "vacantUnits": 3,
+          "occupancyRate": 0,
+          "venues": {
+            "reviewCenters": [
+              {
+                "name": "Ecel Review Center",
+                "distance": "6 minutes walking",
+                "_id": "6a93e154107b82fb635d8fec"
+              },
+              {
+                "name": "Manor Review Center",
+                "distance": "8 minutes walking",
+                "_id": "6a93e154107b82fb635d8fed"
+              }
+            ],
+            "schools": [
+              {
+                "name": "Velez College of Nursing",
+                "distance": "10 minutes walking",
+                "_id": "6a93e154107b82fb635d8fee"
+              },
+              {
+                "name": "Cebu Normal University",
+                "distance": "10 minutes walking",
+                "_id": "6a93e154107b82fb635d8fef"
+              }
+            ],
+            "commercial": [
+              {
+                "name": "Ayala Cebu Business Park",
+                "distance": "28 minutes walking",
+                "_id": "6a93e154107b82fb635d8ff0"
+              }
+            ]
+          },
+          "billingSettings": {
+            "billingDay": 1,
+            "dueDay": 5,
+            "lateFeePercent": 5,
+            "utilityDefault": "metered"
+          },
+          "emergencyContacts": [],
+          "createdAt": "2026-08-30T07:52:52.553Z",
+          "updatedAt": "2026-08-30T07:52:52.591Z",
+          "__v": 0,
+          "metrics": {
+            "totalUnits": 3,
+            "occupiedUnits": 0,
+            "vacantUnits": 3,
+            "occupancyRate": 0
+          }
+        }
+      ],
+      "pagination": {
+        "page": 1,
+        "limit": 20,
+        "total": 2,
+        "pages": 1
+      }
+    }
+  },
+  {
+    "name": "properties-list-staff-manager-no-assigned-properties",
+    "method": "get",
+    "path": "/api/properties",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": [],
+      "pagination": {
+        "page": 1,
+        "limit": 20,
+        "total": 0,
+        "pages": 0
+      }
+    }
+  },
+  {
+    "name": "properties-list-denied-user-role",
+    "method": "get",
+    "path": "/api/properties",
+    "status": 403,
+    "body": {
+      "status": "error",
+      "message": "Insufficient permissions"
+    }
+  },
+  {
+    "name": "property-by-id-landlord1",
+    "method": "get",
+    "path": "/api/properties/6a93e154107b82fb635d8feb",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": {
+        "_id": "6a93e154107b82fb635d8feb",
+        "landlordId": {
+          "_id": "6a93e154107b82fb635d8fde",
+          "name": "Juan Dela Cruz",
+          "email": "landlord1@rentdito.com",
+          "phone": "09181234567"
+        },
+        "name": "White Dorm Property",
+        "description": "A beautiful and well-maintained property. Ideal for students and young professionals seeking affordable and comfortable accommodation.",
+        "address": {
+          "street": "Sikatuna Street",
+          "city": "Cebu City",
+          "province": "Cebu",
+          "zipCode": "6543",
+          "country": "Philippines"
+        },
+        "amenities": [],
+        "inclusions": [
+          "WiFi",
+          "Foam",
+          "Pillow",
+          "Table",
+          "Chair",
+          "Clip Fan",
+          "Electric Rice Cooker",
+          "Can Cook",
+          "Can Wash Clothes",
+          "No Curfew"
+        ],
+        "propertyType": "Mixed Use",
+        "status": "Active",
+        "images": [
+          "/src/assets/properties/white_dorm/images/image1.jpg",
+          "/src/assets/properties/white_dorm/images/image2.jpg",
+          "/src/assets/properties/white_dorm/images/image3.jpg"
+        ],
+        "totalUnits": 3,
+        "occupiedUnits": 0,
+        "vacantUnits": 3,
+        "occupancyRate": 0,
+        "venues": {
+          "reviewCenters": [
+            {
+              "name": "Ecel Review Center",
+              "distance": "6 minutes walking",
+              "_id": "6a93e154107b82fb635d8fec"
+            },
+            {
+              "name": "Manor Review Center",
+              "distance": "8 minutes walking",
+              "_id": "6a93e154107b82fb635d8fed"
+            }
+          ],
+          "schools": [
+            {
+              "name": "Velez College of Nursing",
+              "distance": "10 minutes walking",
+              "_id": "6a93e154107b82fb635d8fee"
+            },
+            {
+              "name": "Cebu Normal University",
+              "distance": "10 minutes walking",
+              "_id": "6a93e154107b82fb635d8fef"
+            }
+          ],
+          "commercial": [
+            {
+              "name": "Ayala Cebu Business Park",
+              "distance": "28 minutes walking",
+              "_id": "6a93e154107b82fb635d8ff0"
+            }
+          ]
+        },
+        "billingSettings": {
+          "billingDay": 1,
+          "dueDay": 5,
+          "lateFeePercent": 5,
+          "utilityDefault": "metered"
+        },
+        "emergencyContacts": [],
+        "createdAt": "2026-08-30T07:52:52.553Z",
+        "updatedAt": "2026-08-30T07:52:52.591Z",
+        "__v": 0,
+        "metrics": {
+          "totalUnits": 3,
+          "occupiedUnits": 0,
+          "vacantUnits": 3,
+          "occupancyRate": 0
+        }
+      }
+    }
+  },
+  {
+    "name": "property-by-id-denied-non-owner-landlord",
+    "method": "get",
+    "path": "/api/properties/6a93e154107b82fb635d8feb",
+    "status": 404,
+    "body": {
+      "status": "error",
+      "message": "Property not found or access denied"
+    }
+  }
+]

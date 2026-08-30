@@ -1,0 +1,200 @@
+[
+  {
+    "name": "summary-landlord1",
+    "method": "get",
+    "path": "/api/financials/summary",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": {
+        "rentCollected": 0,
+        "utilitiesCollected": 3385,
+        "penaltiesCollected": 0,
+        "refunds": 0,
+        "netIncome": 3385,
+        "range": {
+          "from": "2025-12-31T16:00:00.000Z",
+          "to": "2026-08-30T08:11:22.114Z"
+        }
+      }
+    }
+  },
+  {
+    "name": "summary-staff-finance-has-permission",
+    "method": "get",
+    "path": "/api/financials/summary",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": {
+        "rentCollected": 0,
+        "utilitiesCollected": 0,
+        "penaltiesCollected": 0,
+        "refunds": 0,
+        "netIncome": 0,
+        "range": {
+          "from": "2025-12-31T16:00:00.000Z",
+          "to": "2026-08-30T08:11:22.130Z"
+        }
+      }
+    }
+  },
+  {
+    "name": "summary-denied-staff-manager-no-permission",
+    "method": "get",
+    "path": "/api/financials/summary",
+    "status": 403,
+    "body": {
+      "status": "error",
+      "message": "Access denied. Missing permission: financials"
+    }
+  },
+  {
+    "name": "monthly-landlord1",
+    "method": "get",
+    "path": "/api/financials/monthly",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": {
+        "year": 2026,
+        "trend": [
+          {
+            "month": 1,
+            "label": "Jan",
+            "rentCollected": 0,
+            "utilitiesCollected": 0,
+            "penaltiesCollected": 0,
+            "refunds": 0,
+            "netIncome": 0
+          },
+          {
+            "month": 2,
+            "label": "Feb",
+            "rentCollected": 0,
+            "utilitiesCollected": 1985,
+            "penaltiesCollected": 0,
+            "refunds": 0,
+            "netIncome": 1985
+          },
+          {
+            "month": 3,
+            "label": "Mar",
+            "rentCollected": 0,
+            "utilitiesCollected": 1400,
+            "penaltiesCollected": 0,
+            "refunds": 0,
+            "netIncome": 1400
+          },
+          {
+            "month": 4,
+            "label": "Apr",
+            "rentCollected": 0,
+            "utilitiesCollected": 0,
+            "penaltiesCollected": 0,
+            "refunds": 0,
+            "netIncome": 0
+          },
+          {
+            "month": 5,
+            "label": "May",
+            "rentCollected": 0,
+            "utilitiesCollected": 0,
+            "penaltiesCollected": 0,
+            "refunds": 0,
+            "netIncome": 0
+          },
+          {
+            "month": 6,
+            "label": "Jun",
+            "rentCollected": 0,
+            "utilitiesCollected": 0,
+            "penaltiesCollected": 0,
+            "refunds": 0,
+            "netIncome": 0
+          },
+          {
+            "month": 7,
+            "label": "Jul",
+            "rentCollected": 0,
+            "utilitiesCollected": 0,
+            "penaltiesCollected": 0,
+            "refunds": 0,
+            "netIncome": 0
+          },
+          {
+            "month": 8,
+            "label": "Aug",
+            "rentCollected": 0,
+            "utilitiesCollected": 0,
+            "penaltiesCollected": 0,
+            "refunds": 0,
+            "netIncome": 0
+          },
+          {
+            "month": 9,
+            "label": "Sep",
+            "rentCollected": 0,
+            "utilitiesCollected": 0,
+            "penaltiesCollected": 0,
+            "refunds": 0,
+            "netIncome": 0
+          },
+          {
+            "month": 10,
+            "label": "Oct",
+            "rentCollected": 0,
+            "utilitiesCollected": 0,
+            "penaltiesCollected": 0,
+            "refunds": 0,
+            "netIncome": 0
+          },
+          {
+            "month": 11,
+            "label": "Nov",
+            "rentCollected": 0,
+            "utilitiesCollected": 0,
+            "penaltiesCollected": 0,
+            "refunds": 0,
+            "netIncome": 0
+          },
+          {
+            "month": 12,
+            "label": "Dec",
+            "rentCollected": 0,
+            "utilitiesCollected": 0,
+            "penaltiesCollected": 0,
+            "refunds": 0,
+            "netIncome": 0
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "by-property-landlord1",
+    "method": "get",
+    "path": "/api/financials/by-property",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": {
+        "range": {
+          "from": "2025-12-31T16:00:00.000Z",
+          "to": "2026-08-30T08:11:22.164Z"
+        },
+        "data": [
+          {
+            "propertyId": "6a93e154107b82fb635d8feb",
+            "rentCollected": 0,
+            "utilitiesCollected": 3385,
+            "penaltiesCollected": 0,
+            "refunds": 0,
+            "netIncome": 3385,
+            "propertyName": "White Dorm Property"
+          }
+        ]
+      }
+    }
+  }
+]

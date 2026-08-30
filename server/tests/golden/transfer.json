@@ -1,0 +1,419 @@
+[
+  {
+    "name": "my-transfers-user1",
+    "method": "get",
+    "path": "/api/transfers/my",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": [
+        {
+          "_id": "6a93e154107b82fb635d9033",
+          "tenancyId": {
+            "_id": "6a93e154107b82fb635d901d",
+            "status": "checked_in",
+            "checkInDate": "2026-01-02T00:00:00.000Z"
+          },
+          "propertyId": "6a93e154107b82fb635d8feb",
+          "fromUnitId": {
+            "_id": "6a93e154107b82fb635d8ff7",
+            "unitIdentifier": "Room 2",
+            "accommodationType": "room"
+          },
+          "toUnitId": {
+            "_id": "6a93e154107b82fb635d8ffd",
+            "unitIdentifier": "Room 3",
+            "accommodationType": "room"
+          },
+          "reason": "Tenant requested a move to a smaller room to reduce rent.",
+          "status": "pending",
+          "initiatedByUserId": {
+            "_id": "6a93e154107b82fb635d8fe5",
+            "name": "Luzviminda Macaraeg",
+            "role": "user"
+          },
+          "createdAt": "2026-08-30T07:52:52.713Z",
+          "updatedAt": "2026-08-30T07:52:52.713Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d9034",
+          "tenancyId": {
+            "_id": "6a93e154107b82fb635d901d",
+            "status": "checked_in",
+            "checkInDate": "2026-01-02T00:00:00.000Z"
+          },
+          "propertyId": "6a93e154107b82fb635d8feb",
+          "fromUnitId": {
+            "_id": "6a93e154107b82fb635d8ff7",
+            "unitIdentifier": "Room 2",
+            "accommodationType": "room"
+          },
+          "toUnitId": {
+            "_id": "6a93e154107b82fb635d9003",
+            "unitIdentifier": "Room 4",
+            "accommodationType": "room"
+          },
+          "reason": "Requested move due to noise complaints from a neighboring room.",
+          "status": "approved",
+          "initiatedByUserId": {
+            "_id": "6a93e154107b82fb635d8fe5",
+            "name": "Luzviminda Macaraeg",
+            "role": "user"
+          },
+          "reviewedBy": {
+            "_id": "6a93e154107b82fb635d8fe0",
+            "name": "Pedro Penduko",
+            "role": "staff"
+          },
+          "reviewNotes": "Approved, unit is available.",
+          "reviewedAt": "2026-02-20T00:00:00.000Z",
+          "createdAt": "2026-08-30T07:52:52.713Z",
+          "updatedAt": "2026-08-30T07:52:52.713Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d9035",
+          "tenancyId": {
+            "_id": "6a93e154107b82fb635d901d",
+            "status": "checked_in",
+            "checkInDate": "2026-01-02T00:00:00.000Z"
+          },
+          "propertyId": "6a93e154107b82fb635d8feb",
+          "fromUnitId": {
+            "_id": "6a93e154107b82fb635d8ffd",
+            "unitIdentifier": "Room 3",
+            "accommodationType": "room"
+          },
+          "toUnitId": {
+            "_id": "6a93e154107b82fb635d9003",
+            "unitIdentifier": "Room 4",
+            "accommodationType": "room"
+          },
+          "reason": "Downsizing after roommate moved out.",
+          "status": "completed",
+          "initiatedByUserId": {
+            "_id": "6a93e154107b82fb635d8fe0",
+            "name": "Pedro Penduko",
+            "role": "staff"
+          },
+          "reviewedBy": {
+            "_id": "6a93e154107b82fb635d8fde",
+            "name": "Juan Dela Cruz",
+            "role": "landlord"
+          },
+          "reviewNotes": "Transfer completed successfully.",
+          "reviewedAt": "2026-02-25T00:00:00.000Z",
+          "completedAt": "2026-02-27T00:00:00.000Z",
+          "createdAt": "2026-08-30T07:52:52.713Z",
+          "updatedAt": "2026-08-30T07:52:52.713Z",
+          "__v": 0
+        }
+      ]
+    }
+  },
+  {
+    "name": "transfers-list-landlord1",
+    "method": "get",
+    "path": "/api/transfers",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": [
+        {
+          "_id": "6a93e154107b82fb635d9033",
+          "tenancyId": {
+            "_id": "6a93e154107b82fb635d901d",
+            "status": "checked_in",
+            "checkInDate": "2026-01-02T00:00:00.000Z"
+          },
+          "propertyId": "6a93e154107b82fb635d8feb",
+          "fromUnitId": {
+            "_id": "6a93e154107b82fb635d8ff7",
+            "unitIdentifier": "Room 2",
+            "accommodationType": "room"
+          },
+          "toUnitId": {
+            "_id": "6a93e154107b82fb635d8ffd",
+            "unitIdentifier": "Room 3",
+            "accommodationType": "room"
+          },
+          "reason": "Tenant requested a move to a smaller room to reduce rent.",
+          "status": "pending",
+          "initiatedByUserId": {
+            "_id": "6a93e154107b82fb635d8fe5",
+            "name": "Luzviminda Macaraeg",
+            "role": "user"
+          },
+          "createdAt": "2026-08-30T07:52:52.713Z",
+          "updatedAt": "2026-08-30T07:52:52.713Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d9034",
+          "tenancyId": {
+            "_id": "6a93e154107b82fb635d901d",
+            "status": "checked_in",
+            "checkInDate": "2026-01-02T00:00:00.000Z"
+          },
+          "propertyId": "6a93e154107b82fb635d8feb",
+          "fromUnitId": {
+            "_id": "6a93e154107b82fb635d8ff7",
+            "unitIdentifier": "Room 2",
+            "accommodationType": "room"
+          },
+          "toUnitId": {
+            "_id": "6a93e154107b82fb635d9003",
+            "unitIdentifier": "Room 4",
+            "accommodationType": "room"
+          },
+          "reason": "Requested move due to noise complaints from a neighboring room.",
+          "status": "approved",
+          "initiatedByUserId": {
+            "_id": "6a93e154107b82fb635d8fe5",
+            "name": "Luzviminda Macaraeg",
+            "role": "user"
+          },
+          "reviewedBy": {
+            "_id": "6a93e154107b82fb635d8fe0",
+            "name": "Pedro Penduko",
+            "role": "staff"
+          },
+          "reviewNotes": "Approved, unit is available.",
+          "reviewedAt": "2026-02-20T00:00:00.000Z",
+          "createdAt": "2026-08-30T07:52:52.713Z",
+          "updatedAt": "2026-08-30T07:52:52.713Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d9035",
+          "tenancyId": {
+            "_id": "6a93e154107b82fb635d901d",
+            "status": "checked_in",
+            "checkInDate": "2026-01-02T00:00:00.000Z"
+          },
+          "propertyId": "6a93e154107b82fb635d8feb",
+          "fromUnitId": {
+            "_id": "6a93e154107b82fb635d8ffd",
+            "unitIdentifier": "Room 3",
+            "accommodationType": "room"
+          },
+          "toUnitId": {
+            "_id": "6a93e154107b82fb635d9003",
+            "unitIdentifier": "Room 4",
+            "accommodationType": "room"
+          },
+          "reason": "Downsizing after roommate moved out.",
+          "status": "completed",
+          "initiatedByUserId": {
+            "_id": "6a93e154107b82fb635d8fe0",
+            "name": "Pedro Penduko",
+            "role": "staff"
+          },
+          "reviewedBy": {
+            "_id": "6a93e154107b82fb635d8fde",
+            "name": "Juan Dela Cruz",
+            "role": "landlord"
+          },
+          "reviewNotes": "Transfer completed successfully.",
+          "reviewedAt": "2026-02-25T00:00:00.000Z",
+          "completedAt": "2026-02-27T00:00:00.000Z",
+          "createdAt": "2026-08-30T07:52:52.713Z",
+          "updatedAt": "2026-08-30T07:52:52.713Z",
+          "__v": 0
+        }
+      ]
+    }
+  },
+  {
+    "name": "transfers-list-super-admin",
+    "method": "get",
+    "path": "/api/transfers",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": [
+        {
+          "_id": "6a93e154107b82fb635d9033",
+          "tenancyId": {
+            "_id": "6a93e154107b82fb635d901d",
+            "status": "checked_in",
+            "checkInDate": "2026-01-02T00:00:00.000Z"
+          },
+          "propertyId": "6a93e154107b82fb635d8feb",
+          "fromUnitId": {
+            "_id": "6a93e154107b82fb635d8ff7",
+            "unitIdentifier": "Room 2",
+            "accommodationType": "room"
+          },
+          "toUnitId": {
+            "_id": "6a93e154107b82fb635d8ffd",
+            "unitIdentifier": "Room 3",
+            "accommodationType": "room"
+          },
+          "reason": "Tenant requested a move to a smaller room to reduce rent.",
+          "status": "pending",
+          "initiatedByUserId": {
+            "_id": "6a93e154107b82fb635d8fe5",
+            "name": "Luzviminda Macaraeg",
+            "role": "user"
+          },
+          "createdAt": "2026-08-30T07:52:52.713Z",
+          "updatedAt": "2026-08-30T07:52:52.713Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d9034",
+          "tenancyId": {
+            "_id": "6a93e154107b82fb635d901d",
+            "status": "checked_in",
+            "checkInDate": "2026-01-02T00:00:00.000Z"
+          },
+          "propertyId": "6a93e154107b82fb635d8feb",
+          "fromUnitId": {
+            "_id": "6a93e154107b82fb635d8ff7",
+            "unitIdentifier": "Room 2",
+            "accommodationType": "room"
+          },
+          "toUnitId": {
+            "_id": "6a93e154107b82fb635d9003",
+            "unitIdentifier": "Room 4",
+            "accommodationType": "room"
+          },
+          "reason": "Requested move due to noise complaints from a neighboring room.",
+          "status": "approved",
+          "initiatedByUserId": {
+            "_id": "6a93e154107b82fb635d8fe5",
+            "name": "Luzviminda Macaraeg",
+            "role": "user"
+          },
+          "reviewedBy": {
+            "_id": "6a93e154107b82fb635d8fe0",
+            "name": "Pedro Penduko",
+            "role": "staff"
+          },
+          "reviewNotes": "Approved, unit is available.",
+          "reviewedAt": "2026-02-20T00:00:00.000Z",
+          "createdAt": "2026-08-30T07:52:52.713Z",
+          "updatedAt": "2026-08-30T07:52:52.713Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d9035",
+          "tenancyId": {
+            "_id": "6a93e154107b82fb635d901d",
+            "status": "checked_in",
+            "checkInDate": "2026-01-02T00:00:00.000Z"
+          },
+          "propertyId": "6a93e154107b82fb635d8feb",
+          "fromUnitId": {
+            "_id": "6a93e154107b82fb635d8ffd",
+            "unitIdentifier": "Room 3",
+            "accommodationType": "room"
+          },
+          "toUnitId": {
+            "_id": "6a93e154107b82fb635d9003",
+            "unitIdentifier": "Room 4",
+            "accommodationType": "room"
+          },
+          "reason": "Downsizing after roommate moved out.",
+          "status": "completed",
+          "initiatedByUserId": {
+            "_id": "6a93e154107b82fb635d8fe0",
+            "name": "Pedro Penduko",
+            "role": "staff"
+          },
+          "reviewedBy": {
+            "_id": "6a93e154107b82fb635d8fde",
+            "name": "Juan Dela Cruz",
+            "role": "landlord"
+          },
+          "reviewNotes": "Transfer completed successfully.",
+          "reviewedAt": "2026-02-25T00:00:00.000Z",
+          "completedAt": "2026-02-27T00:00:00.000Z",
+          "createdAt": "2026-08-30T07:52:52.713Z",
+          "updatedAt": "2026-08-30T07:52:52.713Z",
+          "__v": 0
+        }
+      ]
+    }
+  },
+  {
+    "name": "transfers-list-staff-manager-no-assigned-properties",
+    "method": "get",
+    "path": "/api/transfers",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": []
+    }
+  },
+  {
+    "name": "transfers-list-filtered-by-status-completed",
+    "method": "get",
+    "path": "/api/transfers",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": [
+        {
+          "_id": "6a93e154107b82fb635d9035",
+          "tenancyId": {
+            "_id": "6a93e154107b82fb635d901d",
+            "status": "checked_in",
+            "checkInDate": "2026-01-02T00:00:00.000Z"
+          },
+          "propertyId": "6a93e154107b82fb635d8feb",
+          "fromUnitId": {
+            "_id": "6a93e154107b82fb635d8ffd",
+            "unitIdentifier": "Room 3",
+            "accommodationType": "room"
+          },
+          "toUnitId": {
+            "_id": "6a93e154107b82fb635d9003",
+            "unitIdentifier": "Room 4",
+            "accommodationType": "room"
+          },
+          "reason": "Downsizing after roommate moved out.",
+          "status": "completed",
+          "initiatedByUserId": {
+            "_id": "6a93e154107b82fb635d8fe0",
+            "name": "Pedro Penduko",
+            "role": "staff"
+          },
+          "reviewedBy": {
+            "_id": "6a93e154107b82fb635d8fde",
+            "name": "Juan Dela Cruz",
+            "role": "landlord"
+          },
+          "reviewNotes": "Transfer completed successfully.",
+          "reviewedAt": "2026-02-25T00:00:00.000Z",
+          "completedAt": "2026-02-27T00:00:00.000Z",
+          "createdAt": "2026-08-30T07:52:52.713Z",
+          "updatedAt": "2026-08-30T07:52:52.713Z",
+          "__v": 0
+        }
+      ]
+    }
+  },
+  {
+    "name": "transfers-list-denied-for-user-role",
+    "method": "get",
+    "path": "/api/transfers",
+    "status": 403,
+    "body": {
+      "status": "error",
+      "message": "Access denied"
+    }
+  },
+  {
+    "name": "transfers-list-unauthenticated",
+    "method": "get",
+    "path": "/api/transfers",
+    "status": 401,
+    "body": {
+      "status": "error",
+      "message": "Access denied. No token provided."
+    }
+  }
+]

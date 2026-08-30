@@ -1,0 +1,117 @@
+[
+  {
+    "name": "my-application-user3-approved",
+    "method": "get",
+    "path": "/api/landlord-applications/me",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": {
+        "_id": "6a93e154107b82fb635d904f",
+        "userId": "6a93e154107b82fb635d8fe7",
+        "businessName": "Macaraeg Properties",
+        "businessType": "Sole Proprietorship",
+        "documents": [
+          "/uploads/landlord-applications/user3-permit.pdf"
+        ],
+        "status": "approved",
+        "reviewedBy": {
+          "_id": "6a93e154107b82fb635d8fdd",
+          "name": "System Admin",
+          "email": "admin@rentdito.com"
+        },
+        "reviewedAt": "2026-02-15T00:00:00.000Z",
+        "reviewNotes": "Documents verified, business permit valid.",
+        "createdAt": "2026-08-30T07:52:52.785Z",
+        "updatedAt": "2026-08-30T07:52:52.785Z",
+        "__v": 0
+      }
+    }
+  },
+  {
+    "name": "my-application-user1-none",
+    "method": "get",
+    "path": "/api/landlord-applications/me",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": null
+    }
+  },
+  {
+    "name": "my-application-denied-landlord-role",
+    "method": "get",
+    "path": "/api/landlord-applications/me",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": null
+    }
+  },
+  {
+    "name": "all-applications-super-admin",
+    "method": "get",
+    "path": "/api/landlord-applications",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": [
+        {
+          "_id": "6a93e154107b82fb635d904f",
+          "userId": {
+            "_id": "6a93e154107b82fb635d8fe7",
+            "name": "Nena Reyes",
+            "email": "user3@rentdito.com",
+            "phone": "09995556666",
+            "verificationStatus": "verified"
+          },
+          "businessName": "Macaraeg Properties",
+          "businessType": "Sole Proprietorship",
+          "documents": [
+            "/uploads/landlord-applications/user3-permit.pdf"
+          ],
+          "status": "approved",
+          "reviewedBy": {
+            "_id": "6a93e154107b82fb635d8fdd",
+            "name": "System Admin",
+            "email": "admin@rentdito.com"
+          },
+          "reviewedAt": "2026-02-15T00:00:00.000Z",
+          "reviewNotes": "Documents verified, business permit valid.",
+          "createdAt": "2026-08-30T07:52:52.785Z",
+          "updatedAt": "2026-08-30T07:52:52.785Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d904e",
+          "userId": {
+            "_id": "6a93e154107b82fb635d8fea",
+            "name": "Ding Dantes",
+            "email": "user6@rentdito.com",
+            "phone": "09881112222",
+            "verificationStatus": "pending"
+          },
+          "businessName": "Dantes Rental Ventures",
+          "businessType": "Sole Proprietorship",
+          "documents": [
+            "/uploads/landlord-applications/user6-permit.pdf"
+          ],
+          "status": "pending",
+          "createdAt": "2026-08-30T07:52:52.785Z",
+          "updatedAt": "2026-08-30T07:52:52.785Z",
+          "__v": 0
+        }
+      ]
+    }
+  },
+  {
+    "name": "all-applications-denied-landlord-role",
+    "method": "get",
+    "path": "/api/landlord-applications",
+    "status": 403,
+    "body": {
+      "status": "error",
+      "message": "You do not have permission to perform this action."
+    }
+  }
+]

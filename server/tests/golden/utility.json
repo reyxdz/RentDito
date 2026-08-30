@@ -1,0 +1,109 @@
+[
+  {
+    "name": "consumption-landlord1",
+    "method": "get",
+    "path": "/api/utilities/consumption",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": [
+        {
+          "period": "2026-01",
+          "electricity": 140,
+          "water": 16,
+          "utilityAmount": 1985
+        },
+        {
+          "period": "2026-02",
+          "electricity": 125,
+          "water": 19,
+          "utilityAmount": 1958.75
+        },
+        {
+          "period": "2026-03",
+          "electricity": 130,
+          "water": 17,
+          "utilityAmount": 1945
+        }
+      ]
+    }
+  },
+  {
+    "name": "consumption-denied-staff-no-utilities-permission",
+    "method": "get",
+    "path": "/api/utilities/consumption",
+    "status": 403,
+    "body": {
+      "status": "error",
+      "message": "Access denied. Missing permission: utilities"
+    }
+  },
+  {
+    "name": "highest-usage-landlord1",
+    "method": "get",
+    "path": "/api/utilities/highest-usage",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": [
+        {
+          "unitId": "6a93e154107b82fb635d8ff7",
+          "unitIdentifier": "Room 2",
+          "total": 447
+        }
+      ]
+    }
+  },
+  {
+    "name": "overconsumption-landlord1",
+    "method": "get",
+    "path": "/api/utilities/overconsumption",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": []
+    }
+  },
+  {
+    "name": "expense-summary-landlord1",
+    "method": "get",
+    "path": "/api/utilities/expense-summary",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": {
+        "electricity": 4937.5,
+        "water": 2340,
+        "internet": 4500,
+        "others": 0,
+        "total": 11777.5
+      }
+    }
+  },
+  {
+    "name": "available-units-landlord1",
+    "method": "get",
+    "path": "/api/utilities/units",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": [
+        {
+          "_id": "6a93e154107b82fb635d8ff7",
+          "propertyId": "6a93e154107b82fb635d8feb",
+          "unitIdentifier": "Room 2"
+        },
+        {
+          "_id": "6a93e154107b82fb635d8ffd",
+          "propertyId": "6a93e154107b82fb635d8feb",
+          "unitIdentifier": "Room 3"
+        },
+        {
+          "_id": "6a93e154107b82fb635d9003",
+          "propertyId": "6a93e154107b82fb635d8feb",
+          "unitIdentifier": "Room 4"
+        }
+      ]
+    }
+  }
+]

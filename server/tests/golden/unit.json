@@ -1,0 +1,495 @@
+[
+  {
+    "name": "units-list-landlord1",
+    "method": "get",
+    "path": "/api/units",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": [
+        {
+          "_id": "6a93e154107b82fb635d9003",
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8feb",
+            "name": "White Dorm Property",
+            "address": {
+              "street": "Sikatuna Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            }
+          },
+          "unitIdentifier": "Room 4",
+          "accommodationType": "room",
+          "roomRent": 5000,
+          "bedspaceRent": 2500,
+          "deposit": 5000,
+          "capacity": 2,
+          "maxOccupants": 2,
+          "features": [
+            "Foam",
+            "Pillow",
+            "WiFi",
+            "Clip Fan",
+            "Table",
+            "Chair"
+          ],
+          "images": [
+            "/src/assets/properties/white_dorm/units/room4/room4_img1.jpg"
+          ],
+          "status": "vacant",
+          "slots": [],
+          "createdAt": "2026-08-30T07:52:52.585Z",
+          "updatedAt": "2026-08-30T07:52:52.585Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d8ffd",
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8feb",
+            "name": "White Dorm Property",
+            "address": {
+              "street": "Sikatuna Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            }
+          },
+          "unitIdentifier": "Room 3",
+          "accommodationType": "room",
+          "roomRent": 10000,
+          "bedspaceRent": 2500,
+          "deposit": 5000,
+          "capacity": 4,
+          "maxOccupants": 4,
+          "features": [
+            "Foam",
+            "Pillow",
+            "WiFi",
+            "Clip Fan",
+            "Table",
+            "Chair"
+          ],
+          "images": [
+            "/src/assets/properties/white_dorm/units/room3/room3_img1.jpg"
+          ],
+          "status": "vacant",
+          "slots": [],
+          "createdAt": "2026-08-30T07:52:52.577Z",
+          "updatedAt": "2026-08-30T07:52:52.577Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d8ff7",
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8feb",
+            "name": "White Dorm Property",
+            "address": {
+              "street": "Sikatuna Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            }
+          },
+          "unitIdentifier": "Room 2",
+          "accommodationType": "room",
+          "roomRent": 18000,
+          "bedspaceRent": 2500,
+          "deposit": 5000,
+          "capacity": 8,
+          "maxOccupants": 8,
+          "features": [
+            "Foam",
+            "Pillow",
+            "WiFi",
+            "Clip Fan",
+            "Table",
+            "Chair"
+          ],
+          "images": [
+            "/src/assets/properties/white_dorm/units/room2/room2_img1.jpg"
+          ],
+          "status": "vacant",
+          "slots": [],
+          "createdAt": "2026-08-30T07:52:52.563Z",
+          "updatedAt": "2026-08-30T07:52:52.563Z",
+          "__v": 0
+        }
+      ],
+      "pagination": {
+        "page": 1,
+        "limit": 20,
+        "total": 3,
+        "pages": 1
+      }
+    }
+  },
+  {
+    "name": "units-list-super-admin",
+    "method": "get",
+    "path": "/api/units",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": [
+        {
+          "_id": "6a93e154107b82fb635d900f",
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8ff1",
+            "name": "Uytengso Boardings House",
+            "address": {
+              "street": "Uytengso Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            }
+          },
+          "unitIdentifier": "Door 5 - Room 2",
+          "accommodationType": "room",
+          "roomRent": 2500,
+          "deposit": 5000,
+          "capacity": 4,
+          "maxOccupants": 4,
+          "features": [
+            "Foam",
+            "Pillow",
+            "WiFi",
+            "Clip Fan",
+            "Table",
+            "Chair"
+          ],
+          "images": [
+            "/src/assets/properties/uytengso/units/Door_5/room2/dr5r4.jpg"
+          ],
+          "status": "vacant",
+          "slots": [],
+          "createdAt": "2026-08-30T07:52:52.601Z",
+          "updatedAt": "2026-08-30T07:52:52.601Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d9009",
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8ff1",
+            "name": "Uytengso Boardings House",
+            "address": {
+              "street": "Uytengso Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            }
+          },
+          "unitIdentifier": "Room 1",
+          "accommodationType": "room",
+          "roomRent": 20000,
+          "bedspaceRent": 2500,
+          "deposit": 5000,
+          "capacity": 8,
+          "maxOccupants": 8,
+          "features": [
+            "Foam",
+            "Pillow",
+            "WiFi",
+            "Clip Fan",
+            "Table",
+            "Chair"
+          ],
+          "images": [
+            "/src/assets/properties/uytengso/units/room1/room1_t.jpg"
+          ],
+          "status": "vacant",
+          "slots": [],
+          "createdAt": "2026-08-30T07:52:52.593Z",
+          "updatedAt": "2026-08-30T07:52:52.593Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d9003",
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8feb",
+            "name": "White Dorm Property",
+            "address": {
+              "street": "Sikatuna Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            }
+          },
+          "unitIdentifier": "Room 4",
+          "accommodationType": "room",
+          "roomRent": 5000,
+          "bedspaceRent": 2500,
+          "deposit": 5000,
+          "capacity": 2,
+          "maxOccupants": 2,
+          "features": [
+            "Foam",
+            "Pillow",
+            "WiFi",
+            "Clip Fan",
+            "Table",
+            "Chair"
+          ],
+          "images": [
+            "/src/assets/properties/white_dorm/units/room4/room4_img1.jpg"
+          ],
+          "status": "vacant",
+          "slots": [],
+          "createdAt": "2026-08-30T07:52:52.585Z",
+          "updatedAt": "2026-08-30T07:52:52.585Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d8ffd",
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8feb",
+            "name": "White Dorm Property",
+            "address": {
+              "street": "Sikatuna Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            }
+          },
+          "unitIdentifier": "Room 3",
+          "accommodationType": "room",
+          "roomRent": 10000,
+          "bedspaceRent": 2500,
+          "deposit": 5000,
+          "capacity": 4,
+          "maxOccupants": 4,
+          "features": [
+            "Foam",
+            "Pillow",
+            "WiFi",
+            "Clip Fan",
+            "Table",
+            "Chair"
+          ],
+          "images": [
+            "/src/assets/properties/white_dorm/units/room3/room3_img1.jpg"
+          ],
+          "status": "vacant",
+          "slots": [],
+          "createdAt": "2026-08-30T07:52:52.577Z",
+          "updatedAt": "2026-08-30T07:52:52.577Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d8ff7",
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8feb",
+            "name": "White Dorm Property",
+            "address": {
+              "street": "Sikatuna Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            }
+          },
+          "unitIdentifier": "Room 2",
+          "accommodationType": "room",
+          "roomRent": 18000,
+          "bedspaceRent": 2500,
+          "deposit": 5000,
+          "capacity": 8,
+          "maxOccupants": 8,
+          "features": [
+            "Foam",
+            "Pillow",
+            "WiFi",
+            "Clip Fan",
+            "Table",
+            "Chair"
+          ],
+          "images": [
+            "/src/assets/properties/white_dorm/units/room2/room2_img1.jpg"
+          ],
+          "status": "vacant",
+          "slots": [],
+          "createdAt": "2026-08-30T07:52:52.563Z",
+          "updatedAt": "2026-08-30T07:52:52.563Z",
+          "__v": 0
+        }
+      ],
+      "pagination": {
+        "page": 1,
+        "limit": 20,
+        "total": 5,
+        "pages": 1
+      }
+    }
+  },
+  {
+    "name": "units-list-staff-manager-no-assigned-properties",
+    "method": "get",
+    "path": "/api/units",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": [],
+      "pagination": {
+        "page": 1,
+        "limit": 20,
+        "total": 0,
+        "pages": 0
+      }
+    }
+  },
+  {
+    "name": "units-list-denied-user-role",
+    "method": "get",
+    "path": "/api/units",
+    "status": 403,
+    "body": {
+      "status": "error",
+      "message": "Insufficient permissions"
+    }
+  },
+  {
+    "name": "unit-by-id-landlord1",
+    "method": "get",
+    "path": "/api/units/6a93e154107b82fb635d8ff7",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": {
+        "_id": "6a93e154107b82fb635d8ff7",
+        "propertyId": {
+          "_id": "6a93e154107b82fb635d8feb",
+          "name": "White Dorm Property",
+          "address": {
+            "street": "Sikatuna Street",
+            "city": "Cebu City",
+            "province": "Cebu",
+            "zipCode": "6543",
+            "country": "Philippines"
+          }
+        },
+        "unitIdentifier": "Room 2",
+        "accommodationType": "room",
+        "roomRent": 18000,
+        "bedspaceRent": 2500,
+        "deposit": 5000,
+        "capacity": 8,
+        "maxOccupants": 8,
+        "features": [
+          "Foam",
+          "Pillow",
+          "WiFi",
+          "Clip Fan",
+          "Table",
+          "Chair"
+        ],
+        "images": [
+          "/src/assets/properties/white_dorm/units/room2/room2_img1.jpg"
+        ],
+        "status": "vacant",
+        "slots": [],
+        "createdAt": "2026-08-30T07:52:52.563Z",
+        "updatedAt": "2026-08-30T07:52:52.563Z",
+        "__v": 0
+      }
+    }
+  },
+  {
+    "name": "units-by-property-landlord1",
+    "method": "get",
+    "path": "/api/units/property/6a93e154107b82fb635d8feb/units",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": [
+        {
+          "_id": "6a93e154107b82fb635d8ff7",
+          "propertyId": "6a93e154107b82fb635d8feb",
+          "unitIdentifier": "Room 2",
+          "accommodationType": "room",
+          "roomRent": 18000,
+          "bedspaceRent": 2500,
+          "deposit": 5000,
+          "capacity": 8,
+          "maxOccupants": 8,
+          "features": [
+            "Foam",
+            "Pillow",
+            "WiFi",
+            "Clip Fan",
+            "Table",
+            "Chair"
+          ],
+          "images": [
+            "/src/assets/properties/white_dorm/units/room2/room2_img1.jpg"
+          ],
+          "status": "vacant",
+          "slots": [],
+          "createdAt": "2026-08-30T07:52:52.563Z",
+          "updatedAt": "2026-08-30T07:52:52.563Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d8ffd",
+          "propertyId": "6a93e154107b82fb635d8feb",
+          "unitIdentifier": "Room 3",
+          "accommodationType": "room",
+          "roomRent": 10000,
+          "bedspaceRent": 2500,
+          "deposit": 5000,
+          "capacity": 4,
+          "maxOccupants": 4,
+          "features": [
+            "Foam",
+            "Pillow",
+            "WiFi",
+            "Clip Fan",
+            "Table",
+            "Chair"
+          ],
+          "images": [
+            "/src/assets/properties/white_dorm/units/room3/room3_img1.jpg"
+          ],
+          "status": "vacant",
+          "slots": [],
+          "createdAt": "2026-08-30T07:52:52.577Z",
+          "updatedAt": "2026-08-30T07:52:52.577Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d9003",
+          "propertyId": "6a93e154107b82fb635d8feb",
+          "unitIdentifier": "Room 4",
+          "accommodationType": "room",
+          "roomRent": 5000,
+          "bedspaceRent": 2500,
+          "deposit": 5000,
+          "capacity": 2,
+          "maxOccupants": 2,
+          "features": [
+            "Foam",
+            "Pillow",
+            "WiFi",
+            "Clip Fan",
+            "Table",
+            "Chair"
+          ],
+          "images": [
+            "/src/assets/properties/white_dorm/units/room4/room4_img1.jpg"
+          ],
+          "status": "vacant",
+          "slots": [],
+          "createdAt": "2026-08-30T07:52:52.585Z",
+          "updatedAt": "2026-08-30T07:52:52.585Z",
+          "__v": 0
+        }
+      ]
+    }
+  }
+]

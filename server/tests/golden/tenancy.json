@@ -1,0 +1,919 @@
+[
+  {
+    "name": "my-tenancies-user1",
+    "method": "get",
+    "path": "/api/tenancies/my",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": [
+        {
+          "_id": "6a93e154107b82fb635d901d",
+          "userId": "6a93e154107b82fb635d8fe5",
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8feb",
+            "name": "White Dorm Property",
+            "address": {
+              "street": "Sikatuna Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            },
+            "images": [
+              "/src/assets/properties/white_dorm/images/image1.jpg",
+              "/src/assets/properties/white_dorm/images/image2.jpg",
+              "/src/assets/properties/white_dorm/images/image3.jpg"
+            ]
+          },
+          "unitId": {
+            "_id": "6a93e154107b82fb635d8ff7",
+            "unitIdentifier": "Room 2",
+            "accommodationType": "room",
+            "roomRent": 18000,
+            "bedspaceRent": 2500
+          },
+          "contractId": {
+            "_id": "6a93e154107b82fb635d901c",
+            "startDate": "2026-01-01T00:00:00.000Z",
+            "endDate": "2027-01-01T00:00:00.000Z",
+            "lockInPeriod": 6,
+            "monthlyRent": 8500,
+            "status": "active"
+          },
+          "status": "checked_in",
+          "checkInDate": "2026-01-02T00:00:00.000Z",
+          "isPrimary": true,
+          "personalDetails": {
+            "fullName": "Luzviminda Macaraeg",
+            "phone": "09991112222",
+            "occupation": "Software Engineer",
+            "address": "123 Test St.",
+            "emergencyContact": {
+              "name": "Emergency Contact 1",
+              "phone": "09000000000",
+              "relationship": "Sibling"
+            }
+          },
+          "comments": [
+            {
+              "userId": "6a93e154107b82fb635d8fde",
+              "role": "caretaker",
+              "text": "Tenant checked in successfully. Gave keys.",
+              "createdAt": "2026-01-02T09:00:00.000Z",
+              "_id": "6a93e154107b82fb635d901e"
+            },
+            {
+              "userId": "6a93e154107b82fb635d8fe5",
+              "role": "tenant",
+              "text": "Moved in, the room is clean. Thank you!",
+              "createdAt": "2026-01-02T18:00:00.000Z",
+              "_id": "6a93e154107b82fb635d901f"
+            }
+          ],
+          "householdMembers": [],
+          "createdAt": "2026-08-30T07:52:52.629Z",
+          "updatedAt": "2026-08-30T07:52:52.629Z",
+          "__v": 0
+        }
+      ]
+    }
+  },
+  {
+    "name": "my-tenancies-user2-checked-out",
+    "method": "get",
+    "path": "/api/tenancies/my",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": [
+        {
+          "_id": "6a93e154107b82fb635d9025",
+          "userId": "6a93e154107b82fb635d8fe6",
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8feb",
+            "name": "White Dorm Property",
+            "address": {
+              "street": "Sikatuna Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            },
+            "images": [
+              "/src/assets/properties/white_dorm/images/image1.jpg",
+              "/src/assets/properties/white_dorm/images/image2.jpg",
+              "/src/assets/properties/white_dorm/images/image3.jpg"
+            ]
+          },
+          "unitId": {
+            "_id": "6a93e154107b82fb635d8ff7",
+            "unitIdentifier": "Room 2",
+            "accommodationType": "room",
+            "roomRent": 18000,
+            "bedspaceRent": 2500
+          },
+          "contractId": {
+            "_id": "6a93e154107b82fb635d9023",
+            "startDate": "2024-03-15T00:00:00.000Z",
+            "endDate": "2025-03-15T00:00:00.000Z",
+            "lockInPeriod": 6,
+            "monthlyRent": 8000,
+            "status": "expired"
+          },
+          "status": "checked_out",
+          "checkInDate": "2024-03-15T00:00:00.000Z",
+          "checkOutDate": "2025-03-15T00:00:00.000Z",
+          "isPrimary": true,
+          "personalDetails": {
+            "fullName": "Cardo Dalisay",
+            "phone": "09993334444",
+            "occupation": "Designer",
+            "address": "456 Old St.",
+            "emergencyContact": {
+              "name": "Emergency Contact 2",
+              "phone": "09111111111",
+              "relationship": "Parent"
+            }
+          },
+          "comments": [
+            {
+              "userId": "6a93e154107b82fb635d8fde",
+              "role": "caretaker",
+              "text": "Tenant checked out successfully. Unit left in good condition.",
+              "createdAt": "2025-03-15T00:00:00.000Z",
+              "_id": "6a93e154107b82fb635d9026"
+            }
+          ],
+          "householdMembers": [],
+          "createdAt": "2026-08-30T07:52:52.669Z",
+          "updatedAt": "2026-08-30T07:52:52.669Z",
+          "__v": 0
+        }
+      ]
+    }
+  },
+  {
+    "name": "tenancies-list-landlord1",
+    "method": "get",
+    "path": "/api/tenancies",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": [
+        {
+          "_id": "6a93e154107b82fb635d9025",
+          "userId": {
+            "_id": "6a93e154107b82fb635d8fe6",
+            "name": "Cardo Dalisay",
+            "email": "user2@rentdito.com",
+            "phone": "09993334444"
+          },
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8feb",
+            "name": "White Dorm Property",
+            "address": {
+              "street": "Sikatuna Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            }
+          },
+          "unitId": {
+            "_id": "6a93e154107b82fb635d8ff7",
+            "unitIdentifier": "Room 2",
+            "accommodationType": "room"
+          },
+          "contractId": {
+            "_id": "6a93e154107b82fb635d9023",
+            "startDate": "2024-03-15T00:00:00.000Z",
+            "endDate": "2025-03-15T00:00:00.000Z",
+            "monthlyRent": 8000,
+            "status": "expired"
+          },
+          "status": "checked_out",
+          "checkInDate": "2024-03-15T00:00:00.000Z",
+          "checkOutDate": "2025-03-15T00:00:00.000Z",
+          "isPrimary": true,
+          "personalDetails": {
+            "fullName": "Cardo Dalisay",
+            "phone": "09993334444",
+            "occupation": "Designer",
+            "address": "456 Old St.",
+            "emergencyContact": {
+              "name": "Emergency Contact 2",
+              "phone": "09111111111",
+              "relationship": "Parent"
+            }
+          },
+          "comments": [
+            {
+              "userId": "6a93e154107b82fb635d8fde",
+              "role": "caretaker",
+              "text": "Tenant checked out successfully. Unit left in good condition.",
+              "createdAt": "2025-03-15T00:00:00.000Z",
+              "_id": "6a93e154107b82fb635d9026"
+            }
+          ],
+          "householdMembers": [],
+          "createdAt": "2026-08-30T07:52:52.669Z",
+          "updatedAt": "2026-08-30T07:52:52.669Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d901d",
+          "userId": {
+            "_id": "6a93e154107b82fb635d8fe5",
+            "name": "Luzviminda Macaraeg",
+            "email": "user1@rentdito.com",
+            "phone": "09991112222"
+          },
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8feb",
+            "name": "White Dorm Property",
+            "address": {
+              "street": "Sikatuna Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            }
+          },
+          "unitId": {
+            "_id": "6a93e154107b82fb635d8ff7",
+            "unitIdentifier": "Room 2",
+            "accommodationType": "room"
+          },
+          "contractId": {
+            "_id": "6a93e154107b82fb635d901c",
+            "startDate": "2026-01-01T00:00:00.000Z",
+            "endDate": "2027-01-01T00:00:00.000Z",
+            "monthlyRent": 8500,
+            "status": "active"
+          },
+          "status": "checked_in",
+          "checkInDate": "2026-01-02T00:00:00.000Z",
+          "isPrimary": true,
+          "personalDetails": {
+            "fullName": "Luzviminda Macaraeg",
+            "phone": "09991112222",
+            "occupation": "Software Engineer",
+            "address": "123 Test St.",
+            "emergencyContact": {
+              "name": "Emergency Contact 1",
+              "phone": "09000000000",
+              "relationship": "Sibling"
+            }
+          },
+          "comments": [
+            {
+              "userId": "6a93e154107b82fb635d8fde",
+              "role": "caretaker",
+              "text": "Tenant checked in successfully. Gave keys.",
+              "createdAt": "2026-01-02T09:00:00.000Z",
+              "_id": "6a93e154107b82fb635d901e"
+            },
+            {
+              "userId": "6a93e154107b82fb635d8fe5",
+              "role": "tenant",
+              "text": "Moved in, the room is clean. Thank you!",
+              "createdAt": "2026-01-02T18:00:00.000Z",
+              "_id": "6a93e154107b82fb635d901f"
+            }
+          ],
+          "householdMembers": [],
+          "createdAt": "2026-08-30T07:52:52.629Z",
+          "updatedAt": "2026-08-30T07:52:52.629Z",
+          "__v": 0
+        }
+      ]
+    }
+  },
+  {
+    "name": "tenancies-list-super-admin",
+    "method": "get",
+    "path": "/api/tenancies",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": [
+        {
+          "_id": "6a93e154107b82fb635d9025",
+          "userId": {
+            "_id": "6a93e154107b82fb635d8fe6",
+            "name": "Cardo Dalisay",
+            "email": "user2@rentdito.com",
+            "phone": "09993334444"
+          },
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8feb",
+            "name": "White Dorm Property",
+            "address": {
+              "street": "Sikatuna Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            }
+          },
+          "unitId": {
+            "_id": "6a93e154107b82fb635d8ff7",
+            "unitIdentifier": "Room 2",
+            "accommodationType": "room"
+          },
+          "contractId": {
+            "_id": "6a93e154107b82fb635d9023",
+            "startDate": "2024-03-15T00:00:00.000Z",
+            "endDate": "2025-03-15T00:00:00.000Z",
+            "monthlyRent": 8000,
+            "status": "expired"
+          },
+          "status": "checked_out",
+          "checkInDate": "2024-03-15T00:00:00.000Z",
+          "checkOutDate": "2025-03-15T00:00:00.000Z",
+          "isPrimary": true,
+          "personalDetails": {
+            "fullName": "Cardo Dalisay",
+            "phone": "09993334444",
+            "occupation": "Designer",
+            "address": "456 Old St.",
+            "emergencyContact": {
+              "name": "Emergency Contact 2",
+              "phone": "09111111111",
+              "relationship": "Parent"
+            }
+          },
+          "comments": [
+            {
+              "userId": "6a93e154107b82fb635d8fde",
+              "role": "caretaker",
+              "text": "Tenant checked out successfully. Unit left in good condition.",
+              "createdAt": "2025-03-15T00:00:00.000Z",
+              "_id": "6a93e154107b82fb635d9026"
+            }
+          ],
+          "householdMembers": [],
+          "createdAt": "2026-08-30T07:52:52.669Z",
+          "updatedAt": "2026-08-30T07:52:52.669Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d901d",
+          "userId": {
+            "_id": "6a93e154107b82fb635d8fe5",
+            "name": "Luzviminda Macaraeg",
+            "email": "user1@rentdito.com",
+            "phone": "09991112222"
+          },
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8feb",
+            "name": "White Dorm Property",
+            "address": {
+              "street": "Sikatuna Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            }
+          },
+          "unitId": {
+            "_id": "6a93e154107b82fb635d8ff7",
+            "unitIdentifier": "Room 2",
+            "accommodationType": "room"
+          },
+          "contractId": {
+            "_id": "6a93e154107b82fb635d901c",
+            "startDate": "2026-01-01T00:00:00.000Z",
+            "endDate": "2027-01-01T00:00:00.000Z",
+            "monthlyRent": 8500,
+            "status": "active"
+          },
+          "status": "checked_in",
+          "checkInDate": "2026-01-02T00:00:00.000Z",
+          "isPrimary": true,
+          "personalDetails": {
+            "fullName": "Luzviminda Macaraeg",
+            "phone": "09991112222",
+            "occupation": "Software Engineer",
+            "address": "123 Test St.",
+            "emergencyContact": {
+              "name": "Emergency Contact 1",
+              "phone": "09000000000",
+              "relationship": "Sibling"
+            }
+          },
+          "comments": [
+            {
+              "userId": "6a93e154107b82fb635d8fde",
+              "role": "caretaker",
+              "text": "Tenant checked in successfully. Gave keys.",
+              "createdAt": "2026-01-02T09:00:00.000Z",
+              "_id": "6a93e154107b82fb635d901e"
+            },
+            {
+              "userId": "6a93e154107b82fb635d8fe5",
+              "role": "tenant",
+              "text": "Moved in, the room is clean. Thank you!",
+              "createdAt": "2026-01-02T18:00:00.000Z",
+              "_id": "6a93e154107b82fb635d901f"
+            }
+          ],
+          "householdMembers": [],
+          "createdAt": "2026-08-30T07:52:52.629Z",
+          "updatedAt": "2026-08-30T07:52:52.629Z",
+          "__v": 0
+        }
+      ]
+    }
+  },
+  {
+    "name": "tenancies-list-staff-manager-no-assigned-properties",
+    "method": "get",
+    "path": "/api/tenancies",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": []
+    }
+  },
+  {
+    "name": "tenancies-list-filtered-checked-in",
+    "method": "get",
+    "path": "/api/tenancies",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": [
+        {
+          "_id": "6a93e154107b82fb635d901d",
+          "userId": {
+            "_id": "6a93e154107b82fb635d8fe5",
+            "name": "Luzviminda Macaraeg",
+            "email": "user1@rentdito.com",
+            "phone": "09991112222"
+          },
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8feb",
+            "name": "White Dorm Property",
+            "address": {
+              "street": "Sikatuna Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            }
+          },
+          "unitId": {
+            "_id": "6a93e154107b82fb635d8ff7",
+            "unitIdentifier": "Room 2",
+            "accommodationType": "room"
+          },
+          "contractId": {
+            "_id": "6a93e154107b82fb635d901c",
+            "startDate": "2026-01-01T00:00:00.000Z",
+            "endDate": "2027-01-01T00:00:00.000Z",
+            "monthlyRent": 8500,
+            "status": "active"
+          },
+          "status": "checked_in",
+          "checkInDate": "2026-01-02T00:00:00.000Z",
+          "isPrimary": true,
+          "personalDetails": {
+            "fullName": "Luzviminda Macaraeg",
+            "phone": "09991112222",
+            "occupation": "Software Engineer",
+            "address": "123 Test St.",
+            "emergencyContact": {
+              "name": "Emergency Contact 1",
+              "phone": "09000000000",
+              "relationship": "Sibling"
+            }
+          },
+          "comments": [
+            {
+              "userId": "6a93e154107b82fb635d8fde",
+              "role": "caretaker",
+              "text": "Tenant checked in successfully. Gave keys.",
+              "createdAt": "2026-01-02T09:00:00.000Z",
+              "_id": "6a93e154107b82fb635d901e"
+            },
+            {
+              "userId": "6a93e154107b82fb635d8fe5",
+              "role": "tenant",
+              "text": "Moved in, the room is clean. Thank you!",
+              "createdAt": "2026-01-02T18:00:00.000Z",
+              "_id": "6a93e154107b82fb635d901f"
+            }
+          ],
+          "householdMembers": [],
+          "createdAt": "2026-08-30T07:52:52.629Z",
+          "updatedAt": "2026-08-30T07:52:52.629Z",
+          "__v": 0
+        }
+      ]
+    }
+  },
+  {
+    "name": "tenancy-by-id-owner-user1",
+    "method": "get",
+    "path": "/api/tenancies/6a93e154107b82fb635d901d",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": {
+        "_id": "6a93e154107b82fb635d901d",
+        "userId": {
+          "_id": "6a93e154107b82fb635d8fe5",
+          "name": "Luzviminda Macaraeg",
+          "email": "user1@rentdito.com",
+          "phone": "09991112222",
+          "verificationStatus": "verified"
+        },
+        "propertyId": {
+          "_id": "6a93e154107b82fb635d8feb",
+          "landlordId": "6a93e154107b82fb635d8fde",
+          "name": "White Dorm Property",
+          "address": {
+            "street": "Sikatuna Street",
+            "city": "Cebu City",
+            "province": "Cebu",
+            "zipCode": "6543",
+            "country": "Philippines"
+          },
+          "images": [
+            "/src/assets/properties/white_dorm/images/image1.jpg",
+            "/src/assets/properties/white_dorm/images/image2.jpg",
+            "/src/assets/properties/white_dorm/images/image3.jpg"
+          ]
+        },
+        "unitId": {
+          "_id": "6a93e154107b82fb635d8ff7",
+          "unitIdentifier": "Room 2",
+          "accommodationType": "room",
+          "roomRent": 18000,
+          "bedspaceRent": 2500,
+          "deposit": 5000,
+          "features": [
+            "Foam",
+            "Pillow",
+            "WiFi",
+            "Clip Fan",
+            "Table",
+            "Chair"
+          ],
+          "images": [
+            "/src/assets/properties/white_dorm/units/room2/room2_img1.jpg"
+          ],
+          "status": "vacant",
+          "slots": []
+        },
+        "contractId": {
+          "_id": "6a93e154107b82fb635d901c",
+          "startDate": "2026-01-01T00:00:00.000Z",
+          "endDate": "2027-01-01T00:00:00.000Z",
+          "lockInPeriod": 6,
+          "monthlyRent": 8500,
+          "securityDeposit": 8500,
+          "advancePayment": 8500,
+          "signedAt": "2026-01-01T00:00:00.000Z",
+          "status": "active"
+        },
+        "status": "checked_in",
+        "checkInDate": "2026-01-02T00:00:00.000Z",
+        "isPrimary": true,
+        "personalDetails": {
+          "fullName": "Luzviminda Macaraeg",
+          "phone": "09991112222",
+          "occupation": "Software Engineer",
+          "address": "123 Test St.",
+          "emergencyContact": {
+            "name": "Emergency Contact 1",
+            "phone": "09000000000",
+            "relationship": "Sibling"
+          }
+        },
+        "comments": [
+          {
+            "userId": "6a93e154107b82fb635d8fde",
+            "role": "caretaker",
+            "text": "Tenant checked in successfully. Gave keys.",
+            "createdAt": "2026-01-02T09:00:00.000Z",
+            "_id": "6a93e154107b82fb635d901e"
+          },
+          {
+            "userId": "6a93e154107b82fb635d8fe5",
+            "role": "tenant",
+            "text": "Moved in, the room is clean. Thank you!",
+            "createdAt": "2026-01-02T18:00:00.000Z",
+            "_id": "6a93e154107b82fb635d901f"
+          }
+        ],
+        "householdMembers": [],
+        "createdAt": "2026-08-30T07:52:52.629Z",
+        "updatedAt": "2026-08-30T07:52:52.629Z",
+        "__v": 0
+      }
+    }
+  },
+  {
+    "name": "tenancy-by-id-landlord1",
+    "method": "get",
+    "path": "/api/tenancies/6a93e154107b82fb635d901d",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": {
+        "_id": "6a93e154107b82fb635d901d",
+        "userId": {
+          "_id": "6a93e154107b82fb635d8fe5",
+          "name": "Luzviminda Macaraeg",
+          "email": "user1@rentdito.com",
+          "phone": "09991112222",
+          "verificationStatus": "verified"
+        },
+        "propertyId": {
+          "_id": "6a93e154107b82fb635d8feb",
+          "landlordId": "6a93e154107b82fb635d8fde",
+          "name": "White Dorm Property",
+          "address": {
+            "street": "Sikatuna Street",
+            "city": "Cebu City",
+            "province": "Cebu",
+            "zipCode": "6543",
+            "country": "Philippines"
+          },
+          "images": [
+            "/src/assets/properties/white_dorm/images/image1.jpg",
+            "/src/assets/properties/white_dorm/images/image2.jpg",
+            "/src/assets/properties/white_dorm/images/image3.jpg"
+          ]
+        },
+        "unitId": {
+          "_id": "6a93e154107b82fb635d8ff7",
+          "unitIdentifier": "Room 2",
+          "accommodationType": "room",
+          "roomRent": 18000,
+          "bedspaceRent": 2500,
+          "deposit": 5000,
+          "features": [
+            "Foam",
+            "Pillow",
+            "WiFi",
+            "Clip Fan",
+            "Table",
+            "Chair"
+          ],
+          "images": [
+            "/src/assets/properties/white_dorm/units/room2/room2_img1.jpg"
+          ],
+          "status": "vacant",
+          "slots": []
+        },
+        "contractId": {
+          "_id": "6a93e154107b82fb635d901c",
+          "startDate": "2026-01-01T00:00:00.000Z",
+          "endDate": "2027-01-01T00:00:00.000Z",
+          "lockInPeriod": 6,
+          "monthlyRent": 8500,
+          "securityDeposit": 8500,
+          "advancePayment": 8500,
+          "signedAt": "2026-01-01T00:00:00.000Z",
+          "status": "active"
+        },
+        "status": "checked_in",
+        "checkInDate": "2026-01-02T00:00:00.000Z",
+        "isPrimary": true,
+        "personalDetails": {
+          "fullName": "Luzviminda Macaraeg",
+          "phone": "09991112222",
+          "occupation": "Software Engineer",
+          "address": "123 Test St.",
+          "emergencyContact": {
+            "name": "Emergency Contact 1",
+            "phone": "09000000000",
+            "relationship": "Sibling"
+          }
+        },
+        "comments": [
+          {
+            "userId": "6a93e154107b82fb635d8fde",
+            "role": "caretaker",
+            "text": "Tenant checked in successfully. Gave keys.",
+            "createdAt": "2026-01-02T09:00:00.000Z",
+            "_id": "6a93e154107b82fb635d901e"
+          },
+          {
+            "userId": "6a93e154107b82fb635d8fe5",
+            "role": "tenant",
+            "text": "Moved in, the room is clean. Thank you!",
+            "createdAt": "2026-01-02T18:00:00.000Z",
+            "_id": "6a93e154107b82fb635d901f"
+          }
+        ],
+        "householdMembers": [],
+        "createdAt": "2026-08-30T07:52:52.629Z",
+        "updatedAt": "2026-08-30T07:52:52.629Z",
+        "__v": 0
+      }
+    }
+  },
+  {
+    "name": "tenancy-by-id-denied-other-tenant",
+    "method": "get",
+    "path": "/api/tenancies/6a93e154107b82fb635d901d",
+    "status": 403,
+    "body": {
+      "status": "error",
+      "message": "Access denied"
+    }
+  },
+  {
+    "name": "tenancy-checkout-review-owner",
+    "method": "get",
+    "path": "/api/tenancies/6a93e154107b82fb635d901d/checkout-review",
+    "status": 403,
+    "body": {
+      "status": "error",
+      "message": "Access denied"
+    }
+  },
+  {
+    "name": "tenancy-comments-owner",
+    "method": "get",
+    "path": "/api/tenancies/6a93e154107b82fb635d901d/comments",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": [
+        {
+          "userId": {
+            "_id": "6a93e154107b82fb635d8fde",
+            "name": "Juan Dela Cruz"
+          },
+          "role": "caretaker",
+          "text": "Tenant checked in successfully. Gave keys.",
+          "createdAt": "2026-01-02T09:00:00.000Z",
+          "_id": "6a93e154107b82fb635d901e"
+        },
+        {
+          "userId": {
+            "_id": "6a93e154107b82fb635d8fe5",
+            "name": "Luzviminda Macaraeg"
+          },
+          "role": "tenant",
+          "text": "Moved in, the room is clean. Thank you!",
+          "createdAt": "2026-01-02T18:00:00.000Z",
+          "_id": "6a93e154107b82fb635d901f"
+        }
+      ]
+    }
+  },
+  {
+    "name": "tenancy-comments-landlord1",
+    "method": "get",
+    "path": "/api/tenancies/6a93e154107b82fb635d901d/comments",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": [
+        {
+          "userId": {
+            "_id": "6a93e154107b82fb635d8fde",
+            "name": "Juan Dela Cruz"
+          },
+          "role": "caretaker",
+          "text": "Tenant checked in successfully. Gave keys.",
+          "createdAt": "2026-01-02T09:00:00.000Z",
+          "_id": "6a93e154107b82fb635d901e"
+        },
+        {
+          "userId": {
+            "_id": "6a93e154107b82fb635d8fe5",
+            "name": "Luzviminda Macaraeg"
+          },
+          "role": "tenant",
+          "text": "Moved in, the room is clean. Thank you!",
+          "createdAt": "2026-01-02T18:00:00.000Z",
+          "_id": "6a93e154107b82fb635d901f"
+        }
+      ]
+    }
+  },
+  {
+    "name": "tenancy-roommates-owner",
+    "method": "get",
+    "path": "/api/tenancies/6a93e154107b82fb635d901d/roommates",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": []
+    }
+  },
+  {
+    "name": "tenancy-by-id-checked-out",
+    "method": "get",
+    "path": "/api/tenancies/6a93e154107b82fb635d9025",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": {
+        "_id": "6a93e154107b82fb635d9025",
+        "userId": {
+          "_id": "6a93e154107b82fb635d8fe6",
+          "name": "Cardo Dalisay",
+          "email": "user2@rentdito.com",
+          "phone": "09993334444",
+          "verificationStatus": "verified"
+        },
+        "propertyId": {
+          "_id": "6a93e154107b82fb635d8feb",
+          "landlordId": "6a93e154107b82fb635d8fde",
+          "name": "White Dorm Property",
+          "address": {
+            "street": "Sikatuna Street",
+            "city": "Cebu City",
+            "province": "Cebu",
+            "zipCode": "6543",
+            "country": "Philippines"
+          },
+          "images": [
+            "/src/assets/properties/white_dorm/images/image1.jpg",
+            "/src/assets/properties/white_dorm/images/image2.jpg",
+            "/src/assets/properties/white_dorm/images/image3.jpg"
+          ]
+        },
+        "unitId": {
+          "_id": "6a93e154107b82fb635d8ff7",
+          "unitIdentifier": "Room 2",
+          "accommodationType": "room",
+          "roomRent": 18000,
+          "bedspaceRent": 2500,
+          "deposit": 5000,
+          "features": [
+            "Foam",
+            "Pillow",
+            "WiFi",
+            "Clip Fan",
+            "Table",
+            "Chair"
+          ],
+          "images": [
+            "/src/assets/properties/white_dorm/units/room2/room2_img1.jpg"
+          ],
+          "status": "vacant",
+          "slots": []
+        },
+        "contractId": {
+          "_id": "6a93e154107b82fb635d9023",
+          "startDate": "2024-03-15T00:00:00.000Z",
+          "endDate": "2025-03-15T00:00:00.000Z",
+          "lockInPeriod": 6,
+          "monthlyRent": 8000,
+          "securityDeposit": 8000,
+          "advancePayment": 8000,
+          "signedAt": "2024-03-15T00:00:00.000Z",
+          "status": "expired"
+        },
+        "status": "checked_out",
+        "checkInDate": "2024-03-15T00:00:00.000Z",
+        "checkOutDate": "2025-03-15T00:00:00.000Z",
+        "isPrimary": true,
+        "personalDetails": {
+          "fullName": "Cardo Dalisay",
+          "phone": "09993334444",
+          "occupation": "Designer",
+          "address": "456 Old St.",
+          "emergencyContact": {
+            "name": "Emergency Contact 2",
+            "phone": "09111111111",
+            "relationship": "Parent"
+          }
+        },
+        "comments": [
+          {
+            "userId": "6a93e154107b82fb635d8fde",
+            "role": "caretaker",
+            "text": "Tenant checked out successfully. Unit left in good condition.",
+            "createdAt": "2025-03-15T00:00:00.000Z",
+            "_id": "6a93e154107b82fb635d9026"
+          }
+        ],
+        "householdMembers": [],
+        "createdAt": "2026-08-30T07:52:52.669Z",
+        "updatedAt": "2026-08-30T07:52:52.669Z",
+        "__v": 0
+      }
+    }
+  },
+  {
+    "name": "tenancy-by-id-not-found",
+    "method": "get",
+    "path": "/api/tenancies/000000000000000000000000",
+    "status": 404,
+    "body": {
+      "status": "error",
+      "message": "Tenancy not found"
+    }
+  }
+]

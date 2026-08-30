@@ -1,0 +1,69 @@
+[
+  {
+    "name": "conversation-messages-landlord1",
+    "method": "get",
+    "path": "/api/messages/conversation/6a93e154107b82fb635d9037/messages",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": [
+        {
+          "_id": "6a93e154107b82fb635d9038",
+          "conversationId": "6a93e154107b82fb635d9037",
+          "senderId": {
+            "_id": "6a93e154107b82fb635d8fe8",
+            "name": "Boyet Fernandez"
+          },
+          "content": "Hi, is WiFi included in the rent?",
+          "attachments": [],
+          "readBy": [
+            "6a93e154107b82fb635d8fde"
+          ],
+          "createdAt": "2026-08-30T07:52:52.724Z",
+          "updatedAt": "2026-08-30T07:52:52.724Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d9039",
+          "conversationId": "6a93e154107b82fb635d9037",
+          "senderId": {
+            "_id": "6a93e154107b82fb635d8fde",
+            "name": "Juan Dela Cruz"
+          },
+          "content": "Yes, WiFi is included in the rent.",
+          "attachments": [],
+          "readBy": [],
+          "createdAt": "2026-08-30T07:52:52.727Z",
+          "updatedAt": "2026-08-30T07:52:52.727Z",
+          "__v": 0
+        }
+      ],
+      "pagination": {
+        "page": 1,
+        "limit": 50,
+        "total": 2,
+        "pages": 1
+      }
+    }
+  },
+  {
+    "name": "conversation-messages-denied-non-participant",
+    "method": "get",
+    "path": "/api/messages/conversation/6a93e154107b82fb635d9037/messages",
+    "status": 403,
+    "body": {
+      "status": "error",
+      "message": "Access denied"
+    }
+  },
+  {
+    "name": "conversation-messages-not-found",
+    "method": "get",
+    "path": "/api/messages/conversation/000000000000000000000000/messages",
+    "status": 404,
+    "body": {
+      "status": "error",
+      "message": "Conversation not found"
+    }
+  }
+]

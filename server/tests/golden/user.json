@@ -1,0 +1,207 @@
+[
+  {
+    "name": "me-user1-with-active-tenancy",
+    "method": "get",
+    "path": "/api/users/me",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": {
+        "_id": "6a93e154107b82fb635d8fe5",
+        "name": "Luzviminda Macaraeg",
+        "email": "user1@rentdito.com",
+        "phone": "09991112222",
+        "role": "user",
+        "status": "active",
+        "verificationStatus": "verified",
+        "idPhotos": [],
+        "assignedPropertyIds": [],
+        "permissions": [],
+        "createdAt": "2026-08-30T07:52:52.542Z",
+        "updatedAt": "2026-08-30T08:11:20.194Z",
+        "__v": 0,
+        "activeTenancy": {
+          "_id": "6a93e154107b82fb635d901d",
+          "userId": "6a93e154107b82fb635d8fe5",
+          "propertyId": {
+            "address": {
+              "street": "Sikatuna Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            },
+            "venues": {
+              "reviewCenters": [
+                {
+                  "name": "Ecel Review Center",
+                  "distance": "6 minutes walking",
+                  "_id": "6a93e154107b82fb635d8fec"
+                },
+                {
+                  "name": "Manor Review Center",
+                  "distance": "8 minutes walking",
+                  "_id": "6a93e154107b82fb635d8fed"
+                }
+              ],
+              "schools": [
+                {
+                  "name": "Velez College of Nursing",
+                  "distance": "10 minutes walking",
+                  "_id": "6a93e154107b82fb635d8fee"
+                },
+                {
+                  "name": "Cebu Normal University",
+                  "distance": "10 minutes walking",
+                  "_id": "6a93e154107b82fb635d8fef"
+                }
+              ],
+              "commercial": [
+                {
+                  "name": "Ayala Cebu Business Park",
+                  "distance": "28 minutes walking",
+                  "_id": "6a93e154107b82fb635d8ff0"
+                }
+              ]
+            },
+            "billingSettings": {
+              "billingDay": 1,
+              "dueDay": 5,
+              "lateFeePercent": 5,
+              "utilityDefault": "metered"
+            },
+            "_id": "6a93e154107b82fb635d8feb",
+            "landlordId": "6a93e154107b82fb635d8fde",
+            "name": "White Dorm Property",
+            "description": "A beautiful and well-maintained property. Ideal for students and young professionals seeking affordable and comfortable accommodation.",
+            "amenities": [],
+            "inclusions": [
+              "WiFi",
+              "Foam",
+              "Pillow",
+              "Table",
+              "Chair",
+              "Clip Fan",
+              "Electric Rice Cooker",
+              "Can Cook",
+              "Can Wash Clothes",
+              "No Curfew"
+            ],
+            "propertyType": "Mixed Use",
+            "status": "Active",
+            "images": [
+              "/src/assets/properties/white_dorm/images/image1.jpg",
+              "/src/assets/properties/white_dorm/images/image2.jpg",
+              "/src/assets/properties/white_dorm/images/image3.jpg"
+            ],
+            "totalUnits": 3,
+            "occupiedUnits": 0,
+            "vacantUnits": 3,
+            "occupancyRate": 0,
+            "emergencyContacts": [],
+            "createdAt": "2026-08-30T07:52:52.553Z",
+            "updatedAt": "2026-08-30T07:52:52.591Z",
+            "__v": 0
+          },
+          "unitId": {
+            "_id": "6a93e154107b82fb635d8ff7",
+            "propertyId": "6a93e154107b82fb635d8feb",
+            "unitIdentifier": "Room 2",
+            "accommodationType": "room",
+            "roomRent": 18000,
+            "bedspaceRent": 2500,
+            "deposit": 5000,
+            "capacity": 8,
+            "maxOccupants": 8,
+            "features": [
+              "Foam",
+              "Pillow",
+              "WiFi",
+              "Clip Fan",
+              "Table",
+              "Chair"
+            ],
+            "images": [
+              "/src/assets/properties/white_dorm/units/room2/room2_img1.jpg"
+            ],
+            "status": "vacant",
+            "slots": [],
+            "createdAt": "2026-08-30T07:52:52.563Z",
+            "updatedAt": "2026-08-30T07:52:52.563Z",
+            "__v": 0
+          },
+          "contractId": "6a93e154107b82fb635d901c",
+          "status": "checked_in",
+          "checkInDate": "2026-01-02T00:00:00.000Z",
+          "isPrimary": true,
+          "personalDetails": {
+            "emergencyContact": {
+              "name": "Emergency Contact 1",
+              "phone": "09000000000",
+              "relationship": "Sibling"
+            },
+            "fullName": "Luzviminda Macaraeg",
+            "phone": "09991112222",
+            "occupation": "Software Engineer",
+            "address": "123 Test St."
+          },
+          "comments": [
+            {
+              "userId": "6a93e154107b82fb635d8fde",
+              "role": "caretaker",
+              "text": "Tenant checked in successfully. Gave keys.",
+              "createdAt": "2026-01-02T09:00:00.000Z",
+              "_id": "6a93e154107b82fb635d901e"
+            },
+            {
+              "userId": "6a93e154107b82fb635d8fe5",
+              "role": "tenant",
+              "text": "Moved in, the room is clean. Thank you!",
+              "createdAt": "2026-01-02T18:00:00.000Z",
+              "_id": "6a93e154107b82fb635d901f"
+            }
+          ],
+          "householdMembers": [],
+          "createdAt": "2026-08-30T07:52:52.629Z",
+          "updatedAt": "2026-08-30T07:52:52.629Z",
+          "__v": 0
+        }
+      }
+    }
+  },
+  {
+    "name": "me-landlord1",
+    "method": "get",
+    "path": "/api/users/me",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": {
+        "_id": "6a93e154107b82fb635d8fde",
+        "name": "Juan Dela Cruz",
+        "email": "landlord1@rentdito.com",
+        "phone": "09181234567",
+        "role": "landlord",
+        "status": "active",
+        "verificationStatus": "verified",
+        "idPhotos": [],
+        "assignedPropertyIds": [],
+        "permissions": [],
+        "createdAt": "2026-08-30T07:52:52.532Z",
+        "updatedAt": "2026-08-30T08:11:20.099Z",
+        "__v": 0,
+        "activeTenancy": null
+      }
+    }
+  },
+  {
+    "name": "me-unauthenticated",
+    "method": "get",
+    "path": "/api/users/me",
+    "status": 401,
+    "body": {
+      "status": "error",
+      "message": "Access denied. No token provided."
+    }
+  }
+]

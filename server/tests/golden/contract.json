@@ -1,0 +1,785 @@
+[
+  {
+    "name": "my-contracts-user1",
+    "method": "get",
+    "path": "/api/contracts/my",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": [
+        {
+          "_id": "6a93e154107b82fb635d901c",
+          "applicationId": "6a93e154107b82fb635d9019",
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8feb",
+            "name": "White Dorm Property",
+            "address": {
+              "street": "Sikatuna Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            },
+            "images": [
+              "/src/assets/properties/white_dorm/images/image1.jpg",
+              "/src/assets/properties/white_dorm/images/image2.jpg",
+              "/src/assets/properties/white_dorm/images/image3.jpg"
+            ]
+          },
+          "unitId": {
+            "_id": "6a93e154107b82fb635d8ff7",
+            "unitIdentifier": "Room 2",
+            "accommodationType": "room"
+          },
+          "landlordId": {
+            "_id": "6a93e154107b82fb635d8fde",
+            "name": "Juan Dela Cruz",
+            "email": "landlord1@rentdito.com",
+            "phone": "09181234567"
+          },
+          "userId": "6a93e154107b82fb635d8fe5",
+          "startDate": "2026-01-01T00:00:00.000Z",
+          "endDate": "2027-01-01T00:00:00.000Z",
+          "lockInPeriod": 6,
+          "monthlyRent": 8500,
+          "securityDeposit": 8500,
+          "advancePayment": 8500,
+          "utilityIncludedInRent": false,
+          "rateType": "fixed",
+          "landlordSignature": "mock-signature-base64",
+          "userSignature": "mock-signature-base64",
+          "signedAt": "2026-01-01T00:00:00.000Z",
+          "status": "active",
+          "createdAt": "2026-08-30T07:52:52.625Z",
+          "updatedAt": "2026-08-30T07:52:52.625Z",
+          "__v": 0
+        }
+      ]
+    }
+  },
+  {
+    "name": "my-contracts-user3-active-no-tenancy",
+    "method": "get",
+    "path": "/api/contracts/my",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": [
+        {
+          "_id": "6a93e154107b82fb635d9024",
+          "applicationId": "6a93e154107b82fb635d901b",
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8feb",
+            "name": "White Dorm Property",
+            "address": {
+              "street": "Sikatuna Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            },
+            "images": [
+              "/src/assets/properties/white_dorm/images/image1.jpg",
+              "/src/assets/properties/white_dorm/images/image2.jpg",
+              "/src/assets/properties/white_dorm/images/image3.jpg"
+            ]
+          },
+          "unitId": {
+            "_id": "6a93e154107b82fb635d8ff7",
+            "unitIdentifier": "Room 2",
+            "accommodationType": "room"
+          },
+          "landlordId": {
+            "_id": "6a93e154107b82fb635d8fde",
+            "name": "Juan Dela Cruz",
+            "email": "landlord1@rentdito.com",
+            "phone": "09181234567"
+          },
+          "userId": "6a93e154107b82fb635d8fe7",
+          "startDate": "2025-05-15T00:00:00.000Z",
+          "endDate": "2026-05-15T00:00:00.000Z",
+          "lockInPeriod": 6,
+          "monthlyRent": 9000,
+          "securityDeposit": 9000,
+          "advancePayment": 9000,
+          "utilityIncludedInRent": false,
+          "rateType": "fixed",
+          "landlordSignature": "mock-signature-base64",
+          "userSignature": "mock-signature-base64",
+          "signedAt": "2025-05-15T00:00:00.000Z",
+          "status": "active",
+          "createdAt": "2026-08-30T07:52:52.666Z",
+          "updatedAt": "2026-08-30T07:52:52.666Z",
+          "__v": 0
+        }
+      ]
+    }
+  },
+  {
+    "name": "contracts-list-landlord1",
+    "method": "get",
+    "path": "/api/contracts",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": [
+        {
+          "_id": "6a93e154107b82fb635d9024",
+          "applicationId": "6a93e154107b82fb635d901b",
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8feb",
+            "name": "White Dorm Property",
+            "address": {
+              "street": "Sikatuna Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            }
+          },
+          "unitId": {
+            "_id": "6a93e154107b82fb635d8ff7",
+            "unitIdentifier": "Room 2",
+            "accommodationType": "room"
+          },
+          "landlordId": "6a93e154107b82fb635d8fde",
+          "userId": {
+            "_id": "6a93e154107b82fb635d8fe7",
+            "name": "Nena Reyes",
+            "email": "user3@rentdito.com",
+            "phone": "09995556666"
+          },
+          "startDate": "2025-05-15T00:00:00.000Z",
+          "endDate": "2026-05-15T00:00:00.000Z",
+          "lockInPeriod": 6,
+          "monthlyRent": 9000,
+          "securityDeposit": 9000,
+          "advancePayment": 9000,
+          "utilityIncludedInRent": false,
+          "rateType": "fixed",
+          "landlordSignature": "mock-signature-base64",
+          "userSignature": "mock-signature-base64",
+          "signedAt": "2025-05-15T00:00:00.000Z",
+          "status": "active",
+          "createdAt": "2026-08-30T07:52:52.666Z",
+          "updatedAt": "2026-08-30T07:52:52.666Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d9023",
+          "applicationId": "6a93e154107b82fb635d901a",
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8feb",
+            "name": "White Dorm Property",
+            "address": {
+              "street": "Sikatuna Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            }
+          },
+          "unitId": {
+            "_id": "6a93e154107b82fb635d8ff7",
+            "unitIdentifier": "Room 2",
+            "accommodationType": "room"
+          },
+          "landlordId": "6a93e154107b82fb635d8fde",
+          "userId": {
+            "_id": "6a93e154107b82fb635d8fe6",
+            "name": "Cardo Dalisay",
+            "email": "user2@rentdito.com",
+            "phone": "09993334444"
+          },
+          "startDate": "2024-03-15T00:00:00.000Z",
+          "endDate": "2025-03-15T00:00:00.000Z",
+          "lockInPeriod": 6,
+          "monthlyRent": 8000,
+          "securityDeposit": 8000,
+          "advancePayment": 8000,
+          "utilityIncludedInRent": false,
+          "rateType": "fixed",
+          "landlordSignature": "mock-signature-base64",
+          "userSignature": "mock-signature-base64",
+          "signedAt": "2024-03-15T00:00:00.000Z",
+          "status": "expired",
+          "createdAt": "2026-08-30T07:52:52.663Z",
+          "updatedAt": "2026-08-30T07:52:52.663Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d901c",
+          "applicationId": "6a93e154107b82fb635d9019",
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8feb",
+            "name": "White Dorm Property",
+            "address": {
+              "street": "Sikatuna Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            }
+          },
+          "unitId": {
+            "_id": "6a93e154107b82fb635d8ff7",
+            "unitIdentifier": "Room 2",
+            "accommodationType": "room"
+          },
+          "landlordId": "6a93e154107b82fb635d8fde",
+          "userId": {
+            "_id": "6a93e154107b82fb635d8fe5",
+            "name": "Luzviminda Macaraeg",
+            "email": "user1@rentdito.com",
+            "phone": "09991112222"
+          },
+          "startDate": "2026-01-01T00:00:00.000Z",
+          "endDate": "2027-01-01T00:00:00.000Z",
+          "lockInPeriod": 6,
+          "monthlyRent": 8500,
+          "securityDeposit": 8500,
+          "advancePayment": 8500,
+          "utilityIncludedInRent": false,
+          "rateType": "fixed",
+          "landlordSignature": "mock-signature-base64",
+          "userSignature": "mock-signature-base64",
+          "signedAt": "2026-01-01T00:00:00.000Z",
+          "status": "active",
+          "createdAt": "2026-08-30T07:52:52.625Z",
+          "updatedAt": "2026-08-30T07:52:52.625Z",
+          "__v": 0
+        }
+      ]
+    }
+  },
+  {
+    "name": "contracts-list-super-admin",
+    "method": "get",
+    "path": "/api/contracts",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": [
+        {
+          "_id": "6a93e154107b82fb635d9024",
+          "applicationId": "6a93e154107b82fb635d901b",
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8feb",
+            "name": "White Dorm Property",
+            "address": {
+              "street": "Sikatuna Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            }
+          },
+          "unitId": {
+            "_id": "6a93e154107b82fb635d8ff7",
+            "unitIdentifier": "Room 2",
+            "accommodationType": "room"
+          },
+          "landlordId": "6a93e154107b82fb635d8fde",
+          "userId": {
+            "_id": "6a93e154107b82fb635d8fe7",
+            "name": "Nena Reyes",
+            "email": "user3@rentdito.com",
+            "phone": "09995556666"
+          },
+          "startDate": "2025-05-15T00:00:00.000Z",
+          "endDate": "2026-05-15T00:00:00.000Z",
+          "lockInPeriod": 6,
+          "monthlyRent": 9000,
+          "securityDeposit": 9000,
+          "advancePayment": 9000,
+          "utilityIncludedInRent": false,
+          "rateType": "fixed",
+          "landlordSignature": "mock-signature-base64",
+          "userSignature": "mock-signature-base64",
+          "signedAt": "2025-05-15T00:00:00.000Z",
+          "status": "active",
+          "createdAt": "2026-08-30T07:52:52.666Z",
+          "updatedAt": "2026-08-30T07:52:52.666Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d9023",
+          "applicationId": "6a93e154107b82fb635d901a",
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8feb",
+            "name": "White Dorm Property",
+            "address": {
+              "street": "Sikatuna Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            }
+          },
+          "unitId": {
+            "_id": "6a93e154107b82fb635d8ff7",
+            "unitIdentifier": "Room 2",
+            "accommodationType": "room"
+          },
+          "landlordId": "6a93e154107b82fb635d8fde",
+          "userId": {
+            "_id": "6a93e154107b82fb635d8fe6",
+            "name": "Cardo Dalisay",
+            "email": "user2@rentdito.com",
+            "phone": "09993334444"
+          },
+          "startDate": "2024-03-15T00:00:00.000Z",
+          "endDate": "2025-03-15T00:00:00.000Z",
+          "lockInPeriod": 6,
+          "monthlyRent": 8000,
+          "securityDeposit": 8000,
+          "advancePayment": 8000,
+          "utilityIncludedInRent": false,
+          "rateType": "fixed",
+          "landlordSignature": "mock-signature-base64",
+          "userSignature": "mock-signature-base64",
+          "signedAt": "2024-03-15T00:00:00.000Z",
+          "status": "expired",
+          "createdAt": "2026-08-30T07:52:52.663Z",
+          "updatedAt": "2026-08-30T07:52:52.663Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d901c",
+          "applicationId": "6a93e154107b82fb635d9019",
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8feb",
+            "name": "White Dorm Property",
+            "address": {
+              "street": "Sikatuna Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            }
+          },
+          "unitId": {
+            "_id": "6a93e154107b82fb635d8ff7",
+            "unitIdentifier": "Room 2",
+            "accommodationType": "room"
+          },
+          "landlordId": "6a93e154107b82fb635d8fde",
+          "userId": {
+            "_id": "6a93e154107b82fb635d8fe5",
+            "name": "Luzviminda Macaraeg",
+            "email": "user1@rentdito.com",
+            "phone": "09991112222"
+          },
+          "startDate": "2026-01-01T00:00:00.000Z",
+          "endDate": "2027-01-01T00:00:00.000Z",
+          "lockInPeriod": 6,
+          "monthlyRent": 8500,
+          "securityDeposit": 8500,
+          "advancePayment": 8500,
+          "utilityIncludedInRent": false,
+          "rateType": "fixed",
+          "landlordSignature": "mock-signature-base64",
+          "userSignature": "mock-signature-base64",
+          "signedAt": "2026-01-01T00:00:00.000Z",
+          "status": "active",
+          "createdAt": "2026-08-30T07:52:52.625Z",
+          "updatedAt": "2026-08-30T07:52:52.625Z",
+          "__v": 0
+        }
+      ]
+    }
+  },
+  {
+    "name": "contracts-list-staff-manager-no-assigned-properties",
+    "method": "get",
+    "path": "/api/contracts",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": []
+    }
+  },
+  {
+    "name": "contracts-list-filtered-active",
+    "method": "get",
+    "path": "/api/contracts",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": [
+        {
+          "_id": "6a93e154107b82fb635d9024",
+          "applicationId": "6a93e154107b82fb635d901b",
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8feb",
+            "name": "White Dorm Property",
+            "address": {
+              "street": "Sikatuna Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            }
+          },
+          "unitId": {
+            "_id": "6a93e154107b82fb635d8ff7",
+            "unitIdentifier": "Room 2",
+            "accommodationType": "room"
+          },
+          "landlordId": "6a93e154107b82fb635d8fde",
+          "userId": {
+            "_id": "6a93e154107b82fb635d8fe7",
+            "name": "Nena Reyes",
+            "email": "user3@rentdito.com",
+            "phone": "09995556666"
+          },
+          "startDate": "2025-05-15T00:00:00.000Z",
+          "endDate": "2026-05-15T00:00:00.000Z",
+          "lockInPeriod": 6,
+          "monthlyRent": 9000,
+          "securityDeposit": 9000,
+          "advancePayment": 9000,
+          "utilityIncludedInRent": false,
+          "rateType": "fixed",
+          "landlordSignature": "mock-signature-base64",
+          "userSignature": "mock-signature-base64",
+          "signedAt": "2025-05-15T00:00:00.000Z",
+          "status": "active",
+          "createdAt": "2026-08-30T07:52:52.666Z",
+          "updatedAt": "2026-08-30T07:52:52.666Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d901c",
+          "applicationId": "6a93e154107b82fb635d9019",
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8feb",
+            "name": "White Dorm Property",
+            "address": {
+              "street": "Sikatuna Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            }
+          },
+          "unitId": {
+            "_id": "6a93e154107b82fb635d8ff7",
+            "unitIdentifier": "Room 2",
+            "accommodationType": "room"
+          },
+          "landlordId": "6a93e154107b82fb635d8fde",
+          "userId": {
+            "_id": "6a93e154107b82fb635d8fe5",
+            "name": "Luzviminda Macaraeg",
+            "email": "user1@rentdito.com",
+            "phone": "09991112222"
+          },
+          "startDate": "2026-01-01T00:00:00.000Z",
+          "endDate": "2027-01-01T00:00:00.000Z",
+          "lockInPeriod": 6,
+          "monthlyRent": 8500,
+          "securityDeposit": 8500,
+          "advancePayment": 8500,
+          "utilityIncludedInRent": false,
+          "rateType": "fixed",
+          "landlordSignature": "mock-signature-base64",
+          "userSignature": "mock-signature-base64",
+          "signedAt": "2026-01-01T00:00:00.000Z",
+          "status": "active",
+          "createdAt": "2026-08-30T07:52:52.625Z",
+          "updatedAt": "2026-08-30T07:52:52.625Z",
+          "__v": 0
+        }
+      ]
+    }
+  },
+  {
+    "name": "contract-by-id-owner-user1",
+    "method": "get",
+    "path": "/api/contracts/6a93e154107b82fb635d901c",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": {
+        "_id": "6a93e154107b82fb635d901c",
+        "applicationId": {
+          "_id": "6a93e154107b82fb635d9019",
+          "userId": "6a93e154107b82fb635d8fe5",
+          "propertyId": "6a93e154107b82fb635d8feb",
+          "unitId": "6a93e154107b82fb635d8ff7",
+          "personalDetails": {
+            "fullName": "Luzviminda Macaraeg",
+            "phone": "09991112222",
+            "occupation": "Software Engineer",
+            "address": "123 Test St., Cebu City",
+            "emergencyContact": {
+              "name": "Emergency Contact 1",
+              "phone": "09000000000",
+              "relationship": "Sibling"
+            }
+          },
+          "documents": [
+            "/uploads/applications/user1-id.jpg"
+          ],
+          "status": "approved",
+          "reviewedBy": "6a93e154107b82fb635d8fde",
+          "reviewNotes": "Approved for move-in.",
+          "reviewedAt": "2025-12-20T00:00:00.000Z",
+          "createdAt": "2026-08-30T07:52:52.619Z",
+          "updatedAt": "2026-08-30T07:52:52.619Z",
+          "__v": 0
+        },
+        "propertyId": {
+          "_id": "6a93e154107b82fb635d8feb",
+          "landlordId": "6a93e154107b82fb635d8fde",
+          "name": "White Dorm Property",
+          "address": {
+            "street": "Sikatuna Street",
+            "city": "Cebu City",
+            "province": "Cebu",
+            "zipCode": "6543",
+            "country": "Philippines"
+          }
+        },
+        "unitId": {
+          "_id": "6a93e154107b82fb635d8ff7",
+          "unitIdentifier": "Room 2",
+          "accommodationType": "room",
+          "roomRent": 18000,
+          "bedspaceRent": 2500,
+          "deposit": 5000
+        },
+        "landlordId": {
+          "_id": "6a93e154107b82fb635d8fde",
+          "name": "Juan Dela Cruz",
+          "email": "landlord1@rentdito.com",
+          "phone": "09181234567"
+        },
+        "userId": {
+          "_id": "6a93e154107b82fb635d8fe5",
+          "name": "Luzviminda Macaraeg",
+          "email": "user1@rentdito.com",
+          "phone": "09991112222"
+        },
+        "startDate": "2026-01-01T00:00:00.000Z",
+        "endDate": "2027-01-01T00:00:00.000Z",
+        "lockInPeriod": 6,
+        "monthlyRent": 8500,
+        "securityDeposit": 8500,
+        "advancePayment": 8500,
+        "utilityIncludedInRent": false,
+        "rateType": "fixed",
+        "landlordSignature": "mock-signature-base64",
+        "userSignature": "mock-signature-base64",
+        "signedAt": "2026-01-01T00:00:00.000Z",
+        "status": "active",
+        "createdAt": "2026-08-30T07:52:52.625Z",
+        "updatedAt": "2026-08-30T07:52:52.625Z",
+        "__v": 0
+      }
+    }
+  },
+  {
+    "name": "contract-by-id-landlord1",
+    "method": "get",
+    "path": "/api/contracts/6a93e154107b82fb635d901c",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": {
+        "_id": "6a93e154107b82fb635d901c",
+        "applicationId": {
+          "_id": "6a93e154107b82fb635d9019",
+          "userId": "6a93e154107b82fb635d8fe5",
+          "propertyId": "6a93e154107b82fb635d8feb",
+          "unitId": "6a93e154107b82fb635d8ff7",
+          "personalDetails": {
+            "fullName": "Luzviminda Macaraeg",
+            "phone": "09991112222",
+            "occupation": "Software Engineer",
+            "address": "123 Test St., Cebu City",
+            "emergencyContact": {
+              "name": "Emergency Contact 1",
+              "phone": "09000000000",
+              "relationship": "Sibling"
+            }
+          },
+          "documents": [
+            "/uploads/applications/user1-id.jpg"
+          ],
+          "status": "approved",
+          "reviewedBy": "6a93e154107b82fb635d8fde",
+          "reviewNotes": "Approved for move-in.",
+          "reviewedAt": "2025-12-20T00:00:00.000Z",
+          "createdAt": "2026-08-30T07:52:52.619Z",
+          "updatedAt": "2026-08-30T07:52:52.619Z",
+          "__v": 0
+        },
+        "propertyId": {
+          "_id": "6a93e154107b82fb635d8feb",
+          "landlordId": "6a93e154107b82fb635d8fde",
+          "name": "White Dorm Property",
+          "address": {
+            "street": "Sikatuna Street",
+            "city": "Cebu City",
+            "province": "Cebu",
+            "zipCode": "6543",
+            "country": "Philippines"
+          }
+        },
+        "unitId": {
+          "_id": "6a93e154107b82fb635d8ff7",
+          "unitIdentifier": "Room 2",
+          "accommodationType": "room",
+          "roomRent": 18000,
+          "bedspaceRent": 2500,
+          "deposit": 5000
+        },
+        "landlordId": {
+          "_id": "6a93e154107b82fb635d8fde",
+          "name": "Juan Dela Cruz",
+          "email": "landlord1@rentdito.com",
+          "phone": "09181234567"
+        },
+        "userId": {
+          "_id": "6a93e154107b82fb635d8fe5",
+          "name": "Luzviminda Macaraeg",
+          "email": "user1@rentdito.com",
+          "phone": "09991112222"
+        },
+        "startDate": "2026-01-01T00:00:00.000Z",
+        "endDate": "2027-01-01T00:00:00.000Z",
+        "lockInPeriod": 6,
+        "monthlyRent": 8500,
+        "securityDeposit": 8500,
+        "advancePayment": 8500,
+        "utilityIncludedInRent": false,
+        "rateType": "fixed",
+        "landlordSignature": "mock-signature-base64",
+        "userSignature": "mock-signature-base64",
+        "signedAt": "2026-01-01T00:00:00.000Z",
+        "status": "active",
+        "createdAt": "2026-08-30T07:52:52.625Z",
+        "updatedAt": "2026-08-30T07:52:52.625Z",
+        "__v": 0
+      }
+    }
+  },
+  {
+    "name": "contract-by-id-denied-other-tenant",
+    "method": "get",
+    "path": "/api/contracts/6a93e154107b82fb635d901c",
+    "status": 403,
+    "body": {
+      "status": "error",
+      "message": "Access denied"
+    }
+  },
+  {
+    "name": "contract-download-url-not-generated",
+    "method": "get",
+    "path": "/api/contracts/6a93e154107b82fb635d901c/download",
+    "status": 404,
+    "body": {
+      "status": "error",
+      "message": "Contract PDF has not been generated yet"
+    }
+  },
+  {
+    "name": "contract-by-id-expired",
+    "method": "get",
+    "path": "/api/contracts/6a93e154107b82fb635d9023",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": {
+        "_id": "6a93e154107b82fb635d9023",
+        "applicationId": {
+          "_id": "6a93e154107b82fb635d901a",
+          "userId": "6a93e154107b82fb635d8fe6",
+          "propertyId": "6a93e154107b82fb635d8feb",
+          "unitId": "6a93e154107b82fb635d8ff7",
+          "personalDetails": {
+            "fullName": "Cardo Dalisay",
+            "phone": "09993334444",
+            "occupation": "Designer",
+            "address": "456 Old St., Cebu City",
+            "emergencyContact": {
+              "name": "Emergency Contact 2",
+              "phone": "09111111111",
+              "relationship": "Parent"
+            }
+          },
+          "documents": [
+            "/uploads/applications/user2-past-id.jpg"
+          ],
+          "status": "approved",
+          "reviewedBy": "6a93e154107b82fb635d8fde",
+          "reviewNotes": "Approved for move-in.",
+          "reviewedAt": "2024-03-01T00:00:00.000Z",
+          "createdAt": "2026-08-30T07:52:52.619Z",
+          "updatedAt": "2026-08-30T07:52:52.619Z",
+          "__v": 0
+        },
+        "propertyId": {
+          "_id": "6a93e154107b82fb635d8feb",
+          "landlordId": "6a93e154107b82fb635d8fde",
+          "name": "White Dorm Property",
+          "address": {
+            "street": "Sikatuna Street",
+            "city": "Cebu City",
+            "province": "Cebu",
+            "zipCode": "6543",
+            "country": "Philippines"
+          }
+        },
+        "unitId": {
+          "_id": "6a93e154107b82fb635d8ff7",
+          "unitIdentifier": "Room 2",
+          "accommodationType": "room",
+          "roomRent": 18000,
+          "bedspaceRent": 2500,
+          "deposit": 5000
+        },
+        "landlordId": {
+          "_id": "6a93e154107b82fb635d8fde",
+          "name": "Juan Dela Cruz",
+          "email": "landlord1@rentdito.com",
+          "phone": "09181234567"
+        },
+        "userId": {
+          "_id": "6a93e154107b82fb635d8fe6",
+          "name": "Cardo Dalisay",
+          "email": "user2@rentdito.com",
+          "phone": "09993334444"
+        },
+        "startDate": "2024-03-15T00:00:00.000Z",
+        "endDate": "2025-03-15T00:00:00.000Z",
+        "lockInPeriod": 6,
+        "monthlyRent": 8000,
+        "securityDeposit": 8000,
+        "advancePayment": 8000,
+        "utilityIncludedInRent": false,
+        "rateType": "fixed",
+        "landlordSignature": "mock-signature-base64",
+        "userSignature": "mock-signature-base64",
+        "signedAt": "2024-03-15T00:00:00.000Z",
+        "status": "expired",
+        "createdAt": "2026-08-30T07:52:52.663Z",
+        "updatedAt": "2026-08-30T07:52:52.663Z",
+        "__v": 0
+      }
+    }
+  },
+  {
+    "name": "contract-by-id-not-found",
+    "method": "get",
+    "path": "/api/contracts/000000000000000000000000",
+    "status": 404,
+    "body": {
+      "status": "error",
+      "message": "Contract not found"
+    }
+  }
+]

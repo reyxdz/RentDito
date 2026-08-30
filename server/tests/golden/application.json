@@ -1,0 +1,1314 @@
+[
+  {
+    "name": "my-applications-user1-approved",
+    "method": "get",
+    "path": "/api/applications/my",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": [
+        {
+          "_id": "6a93e154107b82fb635d9019",
+          "userId": "6a93e154107b82fb635d8fe5",
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8feb",
+            "name": "White Dorm Property",
+            "address": {
+              "street": "Sikatuna Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            },
+            "images": [
+              "/src/assets/properties/white_dorm/images/image1.jpg",
+              "/src/assets/properties/white_dorm/images/image2.jpg",
+              "/src/assets/properties/white_dorm/images/image3.jpg"
+            ]
+          },
+          "unitId": {
+            "_id": "6a93e154107b82fb635d8ff7",
+            "unitIdentifier": "Room 2",
+            "accommodationType": "room",
+            "roomRent": 18000,
+            "bedspaceRent": 2500
+          },
+          "personalDetails": {
+            "fullName": "Luzviminda Macaraeg",
+            "phone": "09991112222",
+            "occupation": "Software Engineer",
+            "address": "123 Test St., Cebu City",
+            "emergencyContact": {
+              "name": "Emergency Contact 1",
+              "phone": "09000000000",
+              "relationship": "Sibling"
+            }
+          },
+          "documents": [
+            "/uploads/applications/user1-id.jpg"
+          ],
+          "status": "approved",
+          "reviewedBy": {
+            "_id": "6a93e154107b82fb635d8fde",
+            "name": "Juan Dela Cruz"
+          },
+          "reviewNotes": "Approved for move-in.",
+          "reviewedAt": "2025-12-20T00:00:00.000Z",
+          "createdAt": "2026-08-30T07:52:52.619Z",
+          "updatedAt": "2026-08-30T07:52:52.619Z",
+          "__v": 0
+        }
+      ]
+    }
+  },
+  {
+    "name": "my-applications-user2",
+    "method": "get",
+    "path": "/api/applications/my",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": [
+        {
+          "_id": "6a93e154107b82fb635d901a",
+          "userId": "6a93e154107b82fb635d8fe6",
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8feb",
+            "name": "White Dorm Property",
+            "address": {
+              "street": "Sikatuna Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            },
+            "images": [
+              "/src/assets/properties/white_dorm/images/image1.jpg",
+              "/src/assets/properties/white_dorm/images/image2.jpg",
+              "/src/assets/properties/white_dorm/images/image3.jpg"
+            ]
+          },
+          "unitId": {
+            "_id": "6a93e154107b82fb635d8ff7",
+            "unitIdentifier": "Room 2",
+            "accommodationType": "room",
+            "roomRent": 18000,
+            "bedspaceRent": 2500
+          },
+          "personalDetails": {
+            "fullName": "Cardo Dalisay",
+            "phone": "09993334444",
+            "occupation": "Designer",
+            "address": "456 Old St., Cebu City",
+            "emergencyContact": {
+              "name": "Emergency Contact 2",
+              "phone": "09111111111",
+              "relationship": "Parent"
+            }
+          },
+          "documents": [
+            "/uploads/applications/user2-past-id.jpg"
+          ],
+          "status": "approved",
+          "reviewedBy": {
+            "_id": "6a93e154107b82fb635d8fde",
+            "name": "Juan Dela Cruz"
+          },
+          "reviewNotes": "Approved for move-in.",
+          "reviewedAt": "2024-03-01T00:00:00.000Z",
+          "createdAt": "2026-08-30T07:52:52.619Z",
+          "updatedAt": "2026-08-30T07:52:52.619Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d9017",
+          "userId": "6a93e154107b82fb635d8fe6",
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8ff1",
+            "name": "Uytengso Boardings House",
+            "address": {
+              "street": "Uytengso Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            },
+            "images": [
+              "/src/assets/properties/uytengso/images/u.jpg",
+              "/src/assets/properties/uytengso/images/y.jpg",
+              "/src/assets/properties/uytengso/images/t.jpg"
+            ]
+          },
+          "unitId": {
+            "_id": "6a93e154107b82fb635d9009",
+            "unitIdentifier": "Room 1",
+            "accommodationType": "room",
+            "roomRent": 20000,
+            "bedspaceRent": 2500
+          },
+          "personalDetails": {
+            "fullName": "Cardo Dalisay",
+            "phone": "09993334444",
+            "occupation": "Designer",
+            "address": "456 Old St., Cebu City",
+            "emergencyContact": {
+              "name": "Emergency Contact 2",
+              "phone": "09111111111",
+              "relationship": "Parent"
+            }
+          },
+          "documents": [
+            "/uploads/applications/user2-id.jpg"
+          ],
+          "status": "approved",
+          "reviewedBy": {
+            "_id": "6a93e154107b82fb635d8fdf",
+            "name": "Maria Santos"
+          },
+          "reviewNotes": "Documents verified, approved for move-in.",
+          "reviewedAt": "2026-02-10T00:00:00.000Z",
+          "createdAt": "2026-08-30T07:52:52.615Z",
+          "updatedAt": "2026-08-30T07:52:52.615Z",
+          "__v": 0
+        }
+      ]
+    }
+  },
+  {
+    "name": "applications-list-landlord1",
+    "method": "get",
+    "path": "/api/applications",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": [
+        {
+          "_id": "6a93e154107b82fb635d901b",
+          "userId": {
+            "_id": "6a93e154107b82fb635d8fe7",
+            "name": "Nena Reyes",
+            "email": "user3@rentdito.com",
+            "phone": "09995556666",
+            "verificationStatus": "verified"
+          },
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8feb",
+            "name": "White Dorm Property",
+            "address": {
+              "street": "Sikatuna Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            }
+          },
+          "unitId": {
+            "_id": "6a93e154107b82fb635d8ff7",
+            "unitIdentifier": "Room 2",
+            "accommodationType": "room",
+            "roomRent": 18000,
+            "bedspaceRent": 2500
+          },
+          "personalDetails": {
+            "fullName": "Nena Reyes",
+            "phone": "09995556666",
+            "occupation": "Nurse",
+            "address": "789 New St., Cebu City",
+            "emergencyContact": {
+              "name": "Reyes Sibling",
+              "phone": "09000000002",
+              "relationship": "Sibling"
+            }
+          },
+          "documents": [
+            "/uploads/applications/user3-id.jpg"
+          ],
+          "status": "approved",
+          "reviewedBy": {
+            "_id": "6a93e154107b82fb635d8fde",
+            "name": "Juan Dela Cruz"
+          },
+          "reviewNotes": "Approved for move-in.",
+          "reviewedAt": "2025-05-01T00:00:00.000Z",
+          "createdAt": "2026-08-30T07:52:52.619Z",
+          "updatedAt": "2026-08-30T07:52:52.619Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d901a",
+          "userId": {
+            "_id": "6a93e154107b82fb635d8fe6",
+            "name": "Cardo Dalisay",
+            "email": "user2@rentdito.com",
+            "phone": "09993334444",
+            "verificationStatus": "verified"
+          },
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8feb",
+            "name": "White Dorm Property",
+            "address": {
+              "street": "Sikatuna Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            }
+          },
+          "unitId": {
+            "_id": "6a93e154107b82fb635d8ff7",
+            "unitIdentifier": "Room 2",
+            "accommodationType": "room",
+            "roomRent": 18000,
+            "bedspaceRent": 2500
+          },
+          "personalDetails": {
+            "fullName": "Cardo Dalisay",
+            "phone": "09993334444",
+            "occupation": "Designer",
+            "address": "456 Old St., Cebu City",
+            "emergencyContact": {
+              "name": "Emergency Contact 2",
+              "phone": "09111111111",
+              "relationship": "Parent"
+            }
+          },
+          "documents": [
+            "/uploads/applications/user2-past-id.jpg"
+          ],
+          "status": "approved",
+          "reviewedBy": {
+            "_id": "6a93e154107b82fb635d8fde",
+            "name": "Juan Dela Cruz"
+          },
+          "reviewNotes": "Approved for move-in.",
+          "reviewedAt": "2024-03-01T00:00:00.000Z",
+          "createdAt": "2026-08-30T07:52:52.619Z",
+          "updatedAt": "2026-08-30T07:52:52.619Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d9019",
+          "userId": {
+            "_id": "6a93e154107b82fb635d8fe5",
+            "name": "Luzviminda Macaraeg",
+            "email": "user1@rentdito.com",
+            "phone": "09991112222",
+            "verificationStatus": "verified"
+          },
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8feb",
+            "name": "White Dorm Property",
+            "address": {
+              "street": "Sikatuna Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            }
+          },
+          "unitId": {
+            "_id": "6a93e154107b82fb635d8ff7",
+            "unitIdentifier": "Room 2",
+            "accommodationType": "room",
+            "roomRent": 18000,
+            "bedspaceRent": 2500
+          },
+          "personalDetails": {
+            "fullName": "Luzviminda Macaraeg",
+            "phone": "09991112222",
+            "occupation": "Software Engineer",
+            "address": "123 Test St., Cebu City",
+            "emergencyContact": {
+              "name": "Emergency Contact 1",
+              "phone": "09000000000",
+              "relationship": "Sibling"
+            }
+          },
+          "documents": [
+            "/uploads/applications/user1-id.jpg"
+          ],
+          "status": "approved",
+          "reviewedBy": {
+            "_id": "6a93e154107b82fb635d8fde",
+            "name": "Juan Dela Cruz"
+          },
+          "reviewNotes": "Approved for move-in.",
+          "reviewedAt": "2025-12-20T00:00:00.000Z",
+          "createdAt": "2026-08-30T07:52:52.619Z",
+          "updatedAt": "2026-08-30T07:52:52.619Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d9018",
+          "userId": {
+            "_id": "6a93e154107b82fb635d8fea",
+            "name": "Ding Dantes",
+            "email": "user6@rentdito.com",
+            "phone": "09881112222",
+            "verificationStatus": "pending"
+          },
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8feb",
+            "name": "White Dorm Property",
+            "address": {
+              "street": "Sikatuna Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            }
+          },
+          "unitId": {
+            "_id": "6a93e154107b82fb635d9003",
+            "unitIdentifier": "Room 4",
+            "accommodationType": "room",
+            "roomRent": 5000,
+            "bedspaceRent": 2500
+          },
+          "personalDetails": {
+            "fullName": "Ding Dantes",
+            "phone": "09881112222",
+            "occupation": "Freelancer",
+            "address": "78 Banilad St., Cebu City",
+            "emergencyContact": {
+              "name": "Dantes Parent",
+              "phone": "09173334455",
+              "relationship": "Parent"
+            }
+          },
+          "documents": [],
+          "status": "rejected",
+          "reviewedBy": {
+            "_id": "6a93e154107b82fb635d8fde",
+            "name": "Juan Dela Cruz"
+          },
+          "reviewNotes": "Insufficient proof of income.",
+          "reviewedAt": "2026-02-12T00:00:00.000Z",
+          "createdAt": "2026-08-30T07:52:52.615Z",
+          "updatedAt": "2026-08-30T07:52:52.615Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d9016",
+          "userId": {
+            "_id": "6a93e154107b82fb635d8fe9",
+            "name": "Inday Bote",
+            "email": "user5@rentdito.com",
+            "phone": "09999990000",
+            "verificationStatus": "unverified"
+          },
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8feb",
+            "name": "White Dorm Property",
+            "address": {
+              "street": "Sikatuna Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            }
+          },
+          "unitId": {
+            "_id": "6a93e154107b82fb635d8ffd",
+            "unitIdentifier": "Room 3",
+            "accommodationType": "room",
+            "roomRent": 10000,
+            "bedspaceRent": 2500
+          },
+          "personalDetails": {
+            "fullName": "Inday Bote",
+            "phone": "09999990000",
+            "occupation": "Call Center Agent",
+            "address": "45 Lahug St., Cebu City",
+            "emergencyContact": {
+              "name": "Bote Sibling",
+              "phone": "09172223344",
+              "relationship": "Sibling"
+            }
+          },
+          "documents": [
+            "/uploads/applications/user5-id.jpg"
+          ],
+          "status": "under_review",
+          "createdAt": "2026-08-30T07:52:52.615Z",
+          "updatedAt": "2026-08-30T07:52:52.615Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d9015",
+          "userId": {
+            "_id": "6a93e154107b82fb635d8fe8",
+            "name": "Boyet Fernandez",
+            "email": "user4@rentdito.com",
+            "phone": "09997778888",
+            "verificationStatus": "unverified"
+          },
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8feb",
+            "name": "White Dorm Property",
+            "address": {
+              "street": "Sikatuna Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            }
+          },
+          "unitId": {
+            "_id": "6a93e154107b82fb635d8ff7",
+            "unitIdentifier": "Room 2",
+            "accommodationType": "room",
+            "roomRent": 18000,
+            "bedspaceRent": 2500
+          },
+          "personalDetails": {
+            "fullName": "Boyet Fernandez",
+            "phone": "09997778888",
+            "occupation": "Student",
+            "school": "Cebu Normal University",
+            "address": "12 Mabolo St., Cebu City",
+            "emergencyContact": {
+              "name": "Fernandez Parent",
+              "phone": "09171112233",
+              "relationship": "Parent"
+            }
+          },
+          "documents": [
+            "/uploads/applications/user4-id.jpg"
+          ],
+          "status": "pending",
+          "createdAt": "2026-08-30T07:52:52.614Z",
+          "updatedAt": "2026-08-30T07:52:52.614Z",
+          "__v": 0
+        }
+      ]
+    }
+  },
+  {
+    "name": "applications-list-super-admin",
+    "method": "get",
+    "path": "/api/applications",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": [
+        {
+          "_id": "6a93e154107b82fb635d901b",
+          "userId": {
+            "_id": "6a93e154107b82fb635d8fe7",
+            "name": "Nena Reyes",
+            "email": "user3@rentdito.com",
+            "phone": "09995556666",
+            "verificationStatus": "verified"
+          },
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8feb",
+            "name": "White Dorm Property",
+            "address": {
+              "street": "Sikatuna Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            }
+          },
+          "unitId": {
+            "_id": "6a93e154107b82fb635d8ff7",
+            "unitIdentifier": "Room 2",
+            "accommodationType": "room",
+            "roomRent": 18000,
+            "bedspaceRent": 2500
+          },
+          "personalDetails": {
+            "fullName": "Nena Reyes",
+            "phone": "09995556666",
+            "occupation": "Nurse",
+            "address": "789 New St., Cebu City",
+            "emergencyContact": {
+              "name": "Reyes Sibling",
+              "phone": "09000000002",
+              "relationship": "Sibling"
+            }
+          },
+          "documents": [
+            "/uploads/applications/user3-id.jpg"
+          ],
+          "status": "approved",
+          "reviewedBy": {
+            "_id": "6a93e154107b82fb635d8fde",
+            "name": "Juan Dela Cruz"
+          },
+          "reviewNotes": "Approved for move-in.",
+          "reviewedAt": "2025-05-01T00:00:00.000Z",
+          "createdAt": "2026-08-30T07:52:52.619Z",
+          "updatedAt": "2026-08-30T07:52:52.619Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d901a",
+          "userId": {
+            "_id": "6a93e154107b82fb635d8fe6",
+            "name": "Cardo Dalisay",
+            "email": "user2@rentdito.com",
+            "phone": "09993334444",
+            "verificationStatus": "verified"
+          },
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8feb",
+            "name": "White Dorm Property",
+            "address": {
+              "street": "Sikatuna Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            }
+          },
+          "unitId": {
+            "_id": "6a93e154107b82fb635d8ff7",
+            "unitIdentifier": "Room 2",
+            "accommodationType": "room",
+            "roomRent": 18000,
+            "bedspaceRent": 2500
+          },
+          "personalDetails": {
+            "fullName": "Cardo Dalisay",
+            "phone": "09993334444",
+            "occupation": "Designer",
+            "address": "456 Old St., Cebu City",
+            "emergencyContact": {
+              "name": "Emergency Contact 2",
+              "phone": "09111111111",
+              "relationship": "Parent"
+            }
+          },
+          "documents": [
+            "/uploads/applications/user2-past-id.jpg"
+          ],
+          "status": "approved",
+          "reviewedBy": {
+            "_id": "6a93e154107b82fb635d8fde",
+            "name": "Juan Dela Cruz"
+          },
+          "reviewNotes": "Approved for move-in.",
+          "reviewedAt": "2024-03-01T00:00:00.000Z",
+          "createdAt": "2026-08-30T07:52:52.619Z",
+          "updatedAt": "2026-08-30T07:52:52.619Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d9019",
+          "userId": {
+            "_id": "6a93e154107b82fb635d8fe5",
+            "name": "Luzviminda Macaraeg",
+            "email": "user1@rentdito.com",
+            "phone": "09991112222",
+            "verificationStatus": "verified"
+          },
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8feb",
+            "name": "White Dorm Property",
+            "address": {
+              "street": "Sikatuna Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            }
+          },
+          "unitId": {
+            "_id": "6a93e154107b82fb635d8ff7",
+            "unitIdentifier": "Room 2",
+            "accommodationType": "room",
+            "roomRent": 18000,
+            "bedspaceRent": 2500
+          },
+          "personalDetails": {
+            "fullName": "Luzviminda Macaraeg",
+            "phone": "09991112222",
+            "occupation": "Software Engineer",
+            "address": "123 Test St., Cebu City",
+            "emergencyContact": {
+              "name": "Emergency Contact 1",
+              "phone": "09000000000",
+              "relationship": "Sibling"
+            }
+          },
+          "documents": [
+            "/uploads/applications/user1-id.jpg"
+          ],
+          "status": "approved",
+          "reviewedBy": {
+            "_id": "6a93e154107b82fb635d8fde",
+            "name": "Juan Dela Cruz"
+          },
+          "reviewNotes": "Approved for move-in.",
+          "reviewedAt": "2025-12-20T00:00:00.000Z",
+          "createdAt": "2026-08-30T07:52:52.619Z",
+          "updatedAt": "2026-08-30T07:52:52.619Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d9016",
+          "userId": {
+            "_id": "6a93e154107b82fb635d8fe9",
+            "name": "Inday Bote",
+            "email": "user5@rentdito.com",
+            "phone": "09999990000",
+            "verificationStatus": "unverified"
+          },
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8feb",
+            "name": "White Dorm Property",
+            "address": {
+              "street": "Sikatuna Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            }
+          },
+          "unitId": {
+            "_id": "6a93e154107b82fb635d8ffd",
+            "unitIdentifier": "Room 3",
+            "accommodationType": "room",
+            "roomRent": 10000,
+            "bedspaceRent": 2500
+          },
+          "personalDetails": {
+            "fullName": "Inday Bote",
+            "phone": "09999990000",
+            "occupation": "Call Center Agent",
+            "address": "45 Lahug St., Cebu City",
+            "emergencyContact": {
+              "name": "Bote Sibling",
+              "phone": "09172223344",
+              "relationship": "Sibling"
+            }
+          },
+          "documents": [
+            "/uploads/applications/user5-id.jpg"
+          ],
+          "status": "under_review",
+          "createdAt": "2026-08-30T07:52:52.615Z",
+          "updatedAt": "2026-08-30T07:52:52.615Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d9018",
+          "userId": {
+            "_id": "6a93e154107b82fb635d8fea",
+            "name": "Ding Dantes",
+            "email": "user6@rentdito.com",
+            "phone": "09881112222",
+            "verificationStatus": "pending"
+          },
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8feb",
+            "name": "White Dorm Property",
+            "address": {
+              "street": "Sikatuna Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            }
+          },
+          "unitId": {
+            "_id": "6a93e154107b82fb635d9003",
+            "unitIdentifier": "Room 4",
+            "accommodationType": "room",
+            "roomRent": 5000,
+            "bedspaceRent": 2500
+          },
+          "personalDetails": {
+            "fullName": "Ding Dantes",
+            "phone": "09881112222",
+            "occupation": "Freelancer",
+            "address": "78 Banilad St., Cebu City",
+            "emergencyContact": {
+              "name": "Dantes Parent",
+              "phone": "09173334455",
+              "relationship": "Parent"
+            }
+          },
+          "documents": [],
+          "status": "rejected",
+          "reviewedBy": {
+            "_id": "6a93e154107b82fb635d8fde",
+            "name": "Juan Dela Cruz"
+          },
+          "reviewNotes": "Insufficient proof of income.",
+          "reviewedAt": "2026-02-12T00:00:00.000Z",
+          "createdAt": "2026-08-30T07:52:52.615Z",
+          "updatedAt": "2026-08-30T07:52:52.615Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d9017",
+          "userId": {
+            "_id": "6a93e154107b82fb635d8fe6",
+            "name": "Cardo Dalisay",
+            "email": "user2@rentdito.com",
+            "phone": "09993334444",
+            "verificationStatus": "verified"
+          },
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8ff1",
+            "name": "Uytengso Boardings House",
+            "address": {
+              "street": "Uytengso Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            }
+          },
+          "unitId": {
+            "_id": "6a93e154107b82fb635d9009",
+            "unitIdentifier": "Room 1",
+            "accommodationType": "room",
+            "roomRent": 20000,
+            "bedspaceRent": 2500
+          },
+          "personalDetails": {
+            "fullName": "Cardo Dalisay",
+            "phone": "09993334444",
+            "occupation": "Designer",
+            "address": "456 Old St., Cebu City",
+            "emergencyContact": {
+              "name": "Emergency Contact 2",
+              "phone": "09111111111",
+              "relationship": "Parent"
+            }
+          },
+          "documents": [
+            "/uploads/applications/user2-id.jpg"
+          ],
+          "status": "approved",
+          "reviewedBy": {
+            "_id": "6a93e154107b82fb635d8fdf",
+            "name": "Maria Santos"
+          },
+          "reviewNotes": "Documents verified, approved for move-in.",
+          "reviewedAt": "2026-02-10T00:00:00.000Z",
+          "createdAt": "2026-08-30T07:52:52.615Z",
+          "updatedAt": "2026-08-30T07:52:52.615Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d9015",
+          "userId": {
+            "_id": "6a93e154107b82fb635d8fe8",
+            "name": "Boyet Fernandez",
+            "email": "user4@rentdito.com",
+            "phone": "09997778888",
+            "verificationStatus": "unverified"
+          },
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8feb",
+            "name": "White Dorm Property",
+            "address": {
+              "street": "Sikatuna Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            }
+          },
+          "unitId": {
+            "_id": "6a93e154107b82fb635d8ff7",
+            "unitIdentifier": "Room 2",
+            "accommodationType": "room",
+            "roomRent": 18000,
+            "bedspaceRent": 2500
+          },
+          "personalDetails": {
+            "fullName": "Boyet Fernandez",
+            "phone": "09997778888",
+            "occupation": "Student",
+            "school": "Cebu Normal University",
+            "address": "12 Mabolo St., Cebu City",
+            "emergencyContact": {
+              "name": "Fernandez Parent",
+              "phone": "09171112233",
+              "relationship": "Parent"
+            }
+          },
+          "documents": [
+            "/uploads/applications/user4-id.jpg"
+          ],
+          "status": "pending",
+          "createdAt": "2026-08-30T07:52:52.614Z",
+          "updatedAt": "2026-08-30T07:52:52.614Z",
+          "__v": 0
+        }
+      ]
+    }
+  },
+  {
+    "name": "applications-list-staff-manager-no-assigned-properties",
+    "method": "get",
+    "path": "/api/applications",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": []
+    }
+  },
+  {
+    "name": "applications-list-filtered-pending",
+    "method": "get",
+    "path": "/api/applications",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": [
+        {
+          "_id": "6a93e154107b82fb635d9015",
+          "userId": {
+            "_id": "6a93e154107b82fb635d8fe8",
+            "name": "Boyet Fernandez",
+            "email": "user4@rentdito.com",
+            "phone": "09997778888",
+            "verificationStatus": "unverified"
+          },
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8feb",
+            "name": "White Dorm Property",
+            "address": {
+              "street": "Sikatuna Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            }
+          },
+          "unitId": {
+            "_id": "6a93e154107b82fb635d8ff7",
+            "unitIdentifier": "Room 2",
+            "accommodationType": "room",
+            "roomRent": 18000,
+            "bedspaceRent": 2500
+          },
+          "personalDetails": {
+            "fullName": "Boyet Fernandez",
+            "phone": "09997778888",
+            "occupation": "Student",
+            "school": "Cebu Normal University",
+            "address": "12 Mabolo St., Cebu City",
+            "emergencyContact": {
+              "name": "Fernandez Parent",
+              "phone": "09171112233",
+              "relationship": "Parent"
+            }
+          },
+          "documents": [
+            "/uploads/applications/user4-id.jpg"
+          ],
+          "status": "pending",
+          "createdAt": "2026-08-30T07:52:52.614Z",
+          "updatedAt": "2026-08-30T07:52:52.614Z",
+          "__v": 0
+        }
+      ]
+    }
+  },
+  {
+    "name": "applications-list-denied-user-role",
+    "method": "get",
+    "path": "/api/applications",
+    "status": 403,
+    "body": {
+      "status": "error",
+      "message": "Access denied"
+    }
+  },
+  {
+    "name": "application-by-id-owner-user1",
+    "method": "get",
+    "path": "/api/applications/6a93e154107b82fb635d9019",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": {
+        "_id": "6a93e154107b82fb635d9019",
+        "userId": {
+          "_id": "6a93e154107b82fb635d8fe5",
+          "name": "Luzviminda Macaraeg",
+          "email": "user1@rentdito.com",
+          "phone": "09991112222",
+          "verificationStatus": "verified"
+        },
+        "propertyId": {
+          "_id": "6a93e154107b82fb635d8feb",
+          "landlordId": "6a93e154107b82fb635d8fde",
+          "name": "White Dorm Property",
+          "address": {
+            "street": "Sikatuna Street",
+            "city": "Cebu City",
+            "province": "Cebu",
+            "zipCode": "6543",
+            "country": "Philippines"
+          }
+        },
+        "unitId": {
+          "_id": "6a93e154107b82fb635d8ff7",
+          "unitIdentifier": "Room 2",
+          "accommodationType": "room",
+          "roomRent": 18000,
+          "bedspaceRent": 2500,
+          "deposit": 5000,
+          "features": [
+            "Foam",
+            "Pillow",
+            "WiFi",
+            "Clip Fan",
+            "Table",
+            "Chair"
+          ],
+          "images": [
+            "/src/assets/properties/white_dorm/units/room2/room2_img1.jpg"
+          ]
+        },
+        "personalDetails": {
+          "fullName": "Luzviminda Macaraeg",
+          "phone": "09991112222",
+          "occupation": "Software Engineer",
+          "address": "123 Test St., Cebu City",
+          "emergencyContact": {
+            "name": "Emergency Contact 1",
+            "phone": "09000000000",
+            "relationship": "Sibling"
+          }
+        },
+        "documents": [
+          "/uploads/applications/user1-id.jpg"
+        ],
+        "status": "approved",
+        "reviewedBy": {
+          "_id": "6a93e154107b82fb635d8fde",
+          "name": "Juan Dela Cruz",
+          "email": "landlord1@rentdito.com"
+        },
+        "reviewNotes": "Approved for move-in.",
+        "reviewedAt": "2025-12-20T00:00:00.000Z",
+        "createdAt": "2026-08-30T07:52:52.619Z",
+        "updatedAt": "2026-08-30T07:52:52.619Z",
+        "__v": 0
+      }
+    }
+  },
+  {
+    "name": "application-by-id-landlord1",
+    "method": "get",
+    "path": "/api/applications/6a93e154107b82fb635d9019",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": {
+        "_id": "6a93e154107b82fb635d9019",
+        "userId": {
+          "_id": "6a93e154107b82fb635d8fe5",
+          "name": "Luzviminda Macaraeg",
+          "email": "user1@rentdito.com",
+          "phone": "09991112222",
+          "verificationStatus": "verified"
+        },
+        "propertyId": {
+          "_id": "6a93e154107b82fb635d8feb",
+          "landlordId": "6a93e154107b82fb635d8fde",
+          "name": "White Dorm Property",
+          "address": {
+            "street": "Sikatuna Street",
+            "city": "Cebu City",
+            "province": "Cebu",
+            "zipCode": "6543",
+            "country": "Philippines"
+          }
+        },
+        "unitId": {
+          "_id": "6a93e154107b82fb635d8ff7",
+          "unitIdentifier": "Room 2",
+          "accommodationType": "room",
+          "roomRent": 18000,
+          "bedspaceRent": 2500,
+          "deposit": 5000,
+          "features": [
+            "Foam",
+            "Pillow",
+            "WiFi",
+            "Clip Fan",
+            "Table",
+            "Chair"
+          ],
+          "images": [
+            "/src/assets/properties/white_dorm/units/room2/room2_img1.jpg"
+          ]
+        },
+        "personalDetails": {
+          "fullName": "Luzviminda Macaraeg",
+          "phone": "09991112222",
+          "occupation": "Software Engineer",
+          "address": "123 Test St., Cebu City",
+          "emergencyContact": {
+            "name": "Emergency Contact 1",
+            "phone": "09000000000",
+            "relationship": "Sibling"
+          }
+        },
+        "documents": [
+          "/uploads/applications/user1-id.jpg"
+        ],
+        "status": "approved",
+        "reviewedBy": {
+          "_id": "6a93e154107b82fb635d8fde",
+          "name": "Juan Dela Cruz",
+          "email": "landlord1@rentdito.com"
+        },
+        "reviewNotes": "Approved for move-in.",
+        "reviewedAt": "2025-12-20T00:00:00.000Z",
+        "createdAt": "2026-08-30T07:52:52.619Z",
+        "updatedAt": "2026-08-30T07:52:52.619Z",
+        "__v": 0
+      }
+    }
+  },
+  {
+    "name": "application-by-id-denied-other-tenant",
+    "method": "get",
+    "path": "/api/applications/6a93e154107b82fb635d9019",
+    "status": 403,
+    "body": {
+      "status": "error",
+      "message": "Access denied"
+    }
+  },
+  {
+    "name": "application-by-id-pending-landlord1",
+    "method": "get",
+    "path": "/api/applications/6a93e154107b82fb635d9015",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": {
+        "_id": "6a93e154107b82fb635d9015",
+        "userId": {
+          "_id": "6a93e154107b82fb635d8fe8",
+          "name": "Boyet Fernandez",
+          "email": "user4@rentdito.com",
+          "phone": "09997778888",
+          "verificationStatus": "unverified"
+        },
+        "propertyId": {
+          "_id": "6a93e154107b82fb635d8feb",
+          "landlordId": "6a93e154107b82fb635d8fde",
+          "name": "White Dorm Property",
+          "address": {
+            "street": "Sikatuna Street",
+            "city": "Cebu City",
+            "province": "Cebu",
+            "zipCode": "6543",
+            "country": "Philippines"
+          }
+        },
+        "unitId": {
+          "_id": "6a93e154107b82fb635d8ff7",
+          "unitIdentifier": "Room 2",
+          "accommodationType": "room",
+          "roomRent": 18000,
+          "bedspaceRent": 2500,
+          "deposit": 5000,
+          "features": [
+            "Foam",
+            "Pillow",
+            "WiFi",
+            "Clip Fan",
+            "Table",
+            "Chair"
+          ],
+          "images": [
+            "/src/assets/properties/white_dorm/units/room2/room2_img1.jpg"
+          ]
+        },
+        "personalDetails": {
+          "fullName": "Boyet Fernandez",
+          "phone": "09997778888",
+          "occupation": "Student",
+          "school": "Cebu Normal University",
+          "address": "12 Mabolo St., Cebu City",
+          "emergencyContact": {
+            "name": "Fernandez Parent",
+            "phone": "09171112233",
+            "relationship": "Parent"
+          }
+        },
+        "documents": [
+          "/uploads/applications/user4-id.jpg"
+        ],
+        "status": "pending",
+        "createdAt": "2026-08-30T07:52:52.614Z",
+        "updatedAt": "2026-08-30T07:52:52.614Z",
+        "__v": 0
+      }
+    }
+  },
+  {
+    "name": "application-by-id-rejected-landlord1",
+    "method": "get",
+    "path": "/api/applications/6a93e154107b82fb635d9018",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": {
+        "_id": "6a93e154107b82fb635d9018",
+        "userId": {
+          "_id": "6a93e154107b82fb635d8fea",
+          "name": "Ding Dantes",
+          "email": "user6@rentdito.com",
+          "phone": "09881112222",
+          "verificationStatus": "pending"
+        },
+        "propertyId": {
+          "_id": "6a93e154107b82fb635d8feb",
+          "landlordId": "6a93e154107b82fb635d8fde",
+          "name": "White Dorm Property",
+          "address": {
+            "street": "Sikatuna Street",
+            "city": "Cebu City",
+            "province": "Cebu",
+            "zipCode": "6543",
+            "country": "Philippines"
+          }
+        },
+        "unitId": {
+          "_id": "6a93e154107b82fb635d9003",
+          "unitIdentifier": "Room 4",
+          "accommodationType": "room",
+          "roomRent": 5000,
+          "bedspaceRent": 2500,
+          "deposit": 5000,
+          "features": [
+            "Foam",
+            "Pillow",
+            "WiFi",
+            "Clip Fan",
+            "Table",
+            "Chair"
+          ],
+          "images": [
+            "/src/assets/properties/white_dorm/units/room4/room4_img1.jpg"
+          ]
+        },
+        "personalDetails": {
+          "fullName": "Ding Dantes",
+          "phone": "09881112222",
+          "occupation": "Freelancer",
+          "address": "78 Banilad St., Cebu City",
+          "emergencyContact": {
+            "name": "Dantes Parent",
+            "phone": "09173334455",
+            "relationship": "Parent"
+          }
+        },
+        "documents": [],
+        "status": "rejected",
+        "reviewedBy": {
+          "_id": "6a93e154107b82fb635d8fde",
+          "name": "Juan Dela Cruz",
+          "email": "landlord1@rentdito.com"
+        },
+        "reviewNotes": "Insufficient proof of income.",
+        "reviewedAt": "2026-02-12T00:00:00.000Z",
+        "createdAt": "2026-08-30T07:52:52.615Z",
+        "updatedAt": "2026-08-30T07:52:52.615Z",
+        "__v": 0
+      }
+    }
+  },
+  {
+    "name": "application-by-id-approved-property1-landlord2",
+    "method": "get",
+    "path": "/api/applications/6a93e154107b82fb635d9017",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": {
+        "_id": "6a93e154107b82fb635d9017",
+        "userId": {
+          "_id": "6a93e154107b82fb635d8fe6",
+          "name": "Cardo Dalisay",
+          "email": "user2@rentdito.com",
+          "phone": "09993334444",
+          "verificationStatus": "verified"
+        },
+        "propertyId": {
+          "_id": "6a93e154107b82fb635d8ff1",
+          "landlordId": "6a93e154107b82fb635d8fdf",
+          "name": "Uytengso Boardings House",
+          "address": {
+            "street": "Uytengso Street",
+            "city": "Cebu City",
+            "province": "Cebu",
+            "zipCode": "6543",
+            "country": "Philippines"
+          }
+        },
+        "unitId": {
+          "_id": "6a93e154107b82fb635d9009",
+          "unitIdentifier": "Room 1",
+          "accommodationType": "room",
+          "roomRent": 20000,
+          "bedspaceRent": 2500,
+          "deposit": 5000,
+          "features": [
+            "Foam",
+            "Pillow",
+            "WiFi",
+            "Clip Fan",
+            "Table",
+            "Chair"
+          ],
+          "images": [
+            "/src/assets/properties/uytengso/units/room1/room1_t.jpg"
+          ]
+        },
+        "personalDetails": {
+          "fullName": "Cardo Dalisay",
+          "phone": "09993334444",
+          "occupation": "Designer",
+          "address": "456 Old St., Cebu City",
+          "emergencyContact": {
+            "name": "Emergency Contact 2",
+            "phone": "09111111111",
+            "relationship": "Parent"
+          }
+        },
+        "documents": [
+          "/uploads/applications/user2-id.jpg"
+        ],
+        "status": "approved",
+        "reviewedBy": {
+          "_id": "6a93e154107b82fb635d8fdf",
+          "name": "Maria Santos",
+          "email": "landlord2@rentdito.com"
+        },
+        "reviewNotes": "Documents verified, approved for move-in.",
+        "reviewedAt": "2026-02-10T00:00:00.000Z",
+        "createdAt": "2026-08-30T07:52:52.615Z",
+        "updatedAt": "2026-08-30T07:52:52.615Z",
+        "__v": 0
+      }
+    }
+  },
+  {
+    "name": "application-by-id-not-found",
+    "method": "get",
+    "path": "/api/applications/000000000000000000000000",
+    "status": 404,
+    "body": {
+      "status": "error",
+      "message": "Application not found"
+    }
+  }
+]

@@ -1,0 +1,1318 @@
+[
+  {
+    "name": "my-tickets-user1",
+    "method": "get",
+    "path": "/api/tickets/my",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": [
+        {
+          "_id": "6a93e154107b82fb635d9046",
+          "tenancyId": {
+            "_id": "6a93e154107b82fb635d901d",
+            "userId": {
+              "_id": "6a93e154107b82fb635d8fe5",
+              "name": "Luzviminda Macaraeg",
+              "email": "user1@rentdito.com"
+            },
+            "unitId": {
+              "_id": "6a93e154107b82fb635d8ff7",
+              "unitIdentifier": "Room 2"
+            },
+            "status": "checked_in",
+            "checkInDate": "2026-01-02T00:00:00.000Z"
+          },
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8feb",
+            "landlordId": "6a93e154107b82fb635d8fde",
+            "name": "White Dorm Property",
+            "address": {
+              "street": "Sikatuna Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            }
+          },
+          "unitId": {
+            "_id": "6a93e154107b82fb635d8ff7",
+            "unitIdentifier": "Room 2",
+            "accommodationType": "room"
+          },
+          "reportedByUserId": {
+            "_id": "6a93e154107b82fb635d8fe5",
+            "name": "Luzviminda Macaraeg",
+            "email": "user1@rentdito.com"
+          },
+          "title": "Aircon not cooling",
+          "description": "The split-type aircon runs but no longer cools the room.",
+          "category": "appliance",
+          "priority": "high",
+          "images": [],
+          "status": "assigned",
+          "assignedToUserId": {
+            "_id": "6a93e154107b82fb635d8fe1",
+            "name": "Jose Rizal",
+            "email": "maintenance@rentdito.com",
+            "positionName": "Maintenance Staff"
+          },
+          "assignedByUserId": {
+            "_id": "6a93e154107b82fb635d8fe0",
+            "name": "Pedro Penduko",
+            "email": "manager@rentdito.com"
+          },
+          "updates": [
+            {
+              "userId": {
+                "_id": "6a93e154107b82fb635d8fe0",
+                "name": "Pedro Penduko",
+                "role": "staff"
+              },
+              "message": "Assigned to Jose Rizal for inspection.",
+              "timestamp": "2026-03-16T09:00:00.000Z"
+            }
+          ],
+          "createdAt": "2026-08-30T07:52:52.768Z",
+          "updatedAt": "2026-08-30T07:52:52.768Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d9047",
+          "tenancyId": {
+            "_id": "6a93e154107b82fb635d901d",
+            "userId": {
+              "_id": "6a93e154107b82fb635d8fe5",
+              "name": "Luzviminda Macaraeg",
+              "email": "user1@rentdito.com"
+            },
+            "unitId": {
+              "_id": "6a93e154107b82fb635d8ff7",
+              "unitIdentifier": "Room 2"
+            },
+            "status": "checked_in",
+            "checkInDate": "2026-01-02T00:00:00.000Z"
+          },
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8feb",
+            "landlordId": "6a93e154107b82fb635d8fde",
+            "name": "White Dorm Property",
+            "address": {
+              "street": "Sikatuna Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            }
+          },
+          "unitId": {
+            "_id": "6a93e154107b82fb635d8ff7",
+            "unitIdentifier": "Room 2",
+            "accommodationType": "room"
+          },
+          "reportedByUserId": {
+            "_id": "6a93e154107b82fb635d8fe5",
+            "name": "Luzviminda Macaraeg",
+            "email": "user1@rentdito.com"
+          },
+          "title": "Flickering lights in room",
+          "description": "Ceiling light flickers intermittently, possibly a wiring issue.",
+          "category": "electrical",
+          "priority": "urgent",
+          "images": [],
+          "status": "in_progress",
+          "assignedToUserId": {
+            "_id": "6a93e154107b82fb635d8fe1",
+            "name": "Jose Rizal",
+            "email": "maintenance@rentdito.com",
+            "positionName": "Maintenance Staff"
+          },
+          "assignedByUserId": {
+            "_id": "6a93e154107b82fb635d8fe0",
+            "name": "Pedro Penduko",
+            "email": "manager@rentdito.com"
+          },
+          "updates": [
+            {
+              "userId": {
+                "_id": "6a93e154107b82fb635d8fe1",
+                "name": "Jose Rizal",
+                "role": "staff"
+              },
+              "message": "On-site, checking the wiring.",
+              "timestamp": "2026-03-17T10:00:00.000Z"
+            },
+            {
+              "userId": {
+                "_id": "6a93e154107b82fb635d8fe5",
+                "name": "Luzviminda Macaraeg",
+                "role": "user"
+              },
+              "message": "Thanks, waiting for the update.",
+              "timestamp": "2026-03-17T12:00:00.000Z"
+            }
+          ],
+          "createdAt": "2026-08-30T07:52:52.768Z",
+          "updatedAt": "2026-08-30T07:52:52.768Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d9045",
+          "tenancyId": {
+            "_id": "6a93e154107b82fb635d901d",
+            "userId": {
+              "_id": "6a93e154107b82fb635d8fe5",
+              "name": "Luzviminda Macaraeg",
+              "email": "user1@rentdito.com"
+            },
+            "unitId": {
+              "_id": "6a93e154107b82fb635d8ff7",
+              "unitIdentifier": "Room 2"
+            },
+            "status": "checked_in",
+            "checkInDate": "2026-01-02T00:00:00.000Z"
+          },
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8feb",
+            "landlordId": "6a93e154107b82fb635d8fde",
+            "name": "White Dorm Property",
+            "address": {
+              "street": "Sikatuna Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            }
+          },
+          "unitId": {
+            "_id": "6a93e154107b82fb635d8ff7",
+            "unitIdentifier": "Room 2",
+            "accommodationType": "room"
+          },
+          "reportedByUserId": {
+            "_id": "6a93e154107b82fb635d8fe5",
+            "name": "Luzviminda Macaraeg",
+            "email": "user1@rentdito.com"
+          },
+          "title": "Leaking faucet in bathroom",
+          "description": "The bathroom faucet has been dripping continuously since yesterday.",
+          "category": "plumbing",
+          "priority": "medium",
+          "images": [],
+          "status": "open",
+          "updates": [],
+          "createdAt": "2026-08-30T07:52:52.766Z",
+          "updatedAt": "2026-08-30T07:52:52.766Z",
+          "__v": 0
+        }
+      ]
+    }
+  },
+  {
+    "name": "my-tickets-user2",
+    "method": "get",
+    "path": "/api/tickets/my",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": [
+        {
+          "_id": "6a93e154107b82fb635d9048",
+          "tenancyId": {
+            "_id": "6a93e154107b82fb635d9025",
+            "userId": {
+              "_id": "6a93e154107b82fb635d8fe6",
+              "name": "Cardo Dalisay",
+              "email": "user2@rentdito.com"
+            },
+            "unitId": {
+              "_id": "6a93e154107b82fb635d8ff7",
+              "unitIdentifier": "Room 2"
+            },
+            "status": "checked_out",
+            "checkInDate": "2024-03-15T00:00:00.000Z",
+            "checkOutDate": "2025-03-15T00:00:00.000Z"
+          },
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8feb",
+            "landlordId": "6a93e154107b82fb635d8fde",
+            "name": "White Dorm Property",
+            "address": {
+              "street": "Sikatuna Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            }
+          },
+          "unitId": {
+            "_id": "6a93e154107b82fb635d8ff7",
+            "unitIdentifier": "Room 2",
+            "accommodationType": "room"
+          },
+          "reportedByUserId": {
+            "_id": "6a93e154107b82fb635d8fe6",
+            "name": "Cardo Dalisay",
+            "email": "user2@rentdito.com"
+          },
+          "title": "Pest sighting in room corner",
+          "description": "Cockroaches spotted near the corner cabinet.",
+          "category": "pest",
+          "priority": "low",
+          "images": [],
+          "status": "resolved",
+          "assignedToUserId": {
+            "_id": "6a93e154107b82fb635d8fe1",
+            "name": "Jose Rizal",
+            "email": "maintenance@rentdito.com",
+            "positionName": "Maintenance Staff"
+          },
+          "assignedByUserId": {
+            "_id": "6a93e154107b82fb635d8fe0",
+            "name": "Pedro Penduko",
+            "email": "manager@rentdito.com"
+          },
+          "updates": [
+            {
+              "userId": {
+                "_id": "6a93e154107b82fb635d8fe1",
+                "name": "Jose Rizal",
+                "role": "staff"
+              },
+              "message": "Pest control scheduled for treatment.",
+              "timestamp": "2024-11-05T09:00:00.000Z"
+            }
+          ],
+          "resolutionNotes": "Pest control treated the area; no further sightings reported.",
+          "resolvedAt": "2024-11-10T00:00:00.000Z",
+          "createdAt": "2026-08-30T07:52:52.768Z",
+          "updatedAt": "2026-08-30T07:52:52.768Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d9049",
+          "tenancyId": {
+            "_id": "6a93e154107b82fb635d9025",
+            "userId": {
+              "_id": "6a93e154107b82fb635d8fe6",
+              "name": "Cardo Dalisay",
+              "email": "user2@rentdito.com"
+            },
+            "unitId": {
+              "_id": "6a93e154107b82fb635d8ff7",
+              "unitIdentifier": "Room 2"
+            },
+            "status": "checked_out",
+            "checkInDate": "2024-03-15T00:00:00.000Z",
+            "checkOutDate": "2025-03-15T00:00:00.000Z"
+          },
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8feb",
+            "landlordId": "6a93e154107b82fb635d8fde",
+            "name": "White Dorm Property",
+            "address": {
+              "street": "Sikatuna Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            }
+          },
+          "unitId": {
+            "_id": "6a93e154107b82fb635d8ff7",
+            "unitIdentifier": "Room 2",
+            "accommodationType": "room"
+          },
+          "reportedByUserId": {
+            "_id": "6a93e154107b82fb635d8fe6",
+            "name": "Cardo Dalisay",
+            "email": "user2@rentdito.com"
+          },
+          "title": "Broken window latch",
+          "description": "Window latch is broken and the window does not close properly.",
+          "category": "structural",
+          "priority": "medium",
+          "images": [],
+          "status": "closed",
+          "assignedToUserId": {
+            "_id": "6a93e154107b82fb635d8fe1",
+            "name": "Jose Rizal",
+            "email": "maintenance@rentdito.com",
+            "positionName": "Maintenance Staff"
+          },
+          "assignedByUserId": {
+            "_id": "6a93e154107b82fb635d8fe0",
+            "name": "Pedro Penduko",
+            "email": "manager@rentdito.com"
+          },
+          "resolutionNotes": "Latch replaced and verified working.",
+          "resolvedAt": "2024-12-01T00:00:00.000Z",
+          "updates": [],
+          "createdAt": "2026-08-30T07:52:52.766Z",
+          "updatedAt": "2026-08-30T07:52:52.766Z",
+          "__v": 0
+        }
+      ]
+    }
+  },
+  {
+    "name": "tickets-list-landlord1",
+    "method": "get",
+    "path": "/api/tickets",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": [
+        {
+          "_id": "6a93e154107b82fb635d9046",
+          "tenancyId": {
+            "_id": "6a93e154107b82fb635d901d",
+            "userId": {
+              "_id": "6a93e154107b82fb635d8fe5",
+              "name": "Luzviminda Macaraeg",
+              "email": "user1@rentdito.com"
+            },
+            "unitId": {
+              "_id": "6a93e154107b82fb635d8ff7",
+              "unitIdentifier": "Room 2"
+            },
+            "status": "checked_in",
+            "checkInDate": "2026-01-02T00:00:00.000Z"
+          },
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8feb",
+            "landlordId": "6a93e154107b82fb635d8fde",
+            "name": "White Dorm Property",
+            "address": {
+              "street": "Sikatuna Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            }
+          },
+          "unitId": {
+            "_id": "6a93e154107b82fb635d8ff7",
+            "unitIdentifier": "Room 2",
+            "accommodationType": "room"
+          },
+          "reportedByUserId": {
+            "_id": "6a93e154107b82fb635d8fe5",
+            "name": "Luzviminda Macaraeg",
+            "email": "user1@rentdito.com"
+          },
+          "title": "Aircon not cooling",
+          "description": "The split-type aircon runs but no longer cools the room.",
+          "category": "appliance",
+          "priority": "high",
+          "images": [],
+          "status": "assigned",
+          "assignedToUserId": {
+            "_id": "6a93e154107b82fb635d8fe1",
+            "name": "Jose Rizal",
+            "email": "maintenance@rentdito.com",
+            "positionName": "Maintenance Staff"
+          },
+          "assignedByUserId": {
+            "_id": "6a93e154107b82fb635d8fe0",
+            "name": "Pedro Penduko",
+            "email": "manager@rentdito.com"
+          },
+          "updates": [
+            {
+              "userId": {
+                "_id": "6a93e154107b82fb635d8fe0",
+                "name": "Pedro Penduko",
+                "role": "staff"
+              },
+              "message": "Assigned to Jose Rizal for inspection.",
+              "timestamp": "2026-03-16T09:00:00.000Z"
+            }
+          ],
+          "createdAt": "2026-08-30T07:52:52.768Z",
+          "updatedAt": "2026-08-30T07:52:52.768Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d9047",
+          "tenancyId": {
+            "_id": "6a93e154107b82fb635d901d",
+            "userId": {
+              "_id": "6a93e154107b82fb635d8fe5",
+              "name": "Luzviminda Macaraeg",
+              "email": "user1@rentdito.com"
+            },
+            "unitId": {
+              "_id": "6a93e154107b82fb635d8ff7",
+              "unitIdentifier": "Room 2"
+            },
+            "status": "checked_in",
+            "checkInDate": "2026-01-02T00:00:00.000Z"
+          },
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8feb",
+            "landlordId": "6a93e154107b82fb635d8fde",
+            "name": "White Dorm Property",
+            "address": {
+              "street": "Sikatuna Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            }
+          },
+          "unitId": {
+            "_id": "6a93e154107b82fb635d8ff7",
+            "unitIdentifier": "Room 2",
+            "accommodationType": "room"
+          },
+          "reportedByUserId": {
+            "_id": "6a93e154107b82fb635d8fe5",
+            "name": "Luzviminda Macaraeg",
+            "email": "user1@rentdito.com"
+          },
+          "title": "Flickering lights in room",
+          "description": "Ceiling light flickers intermittently, possibly a wiring issue.",
+          "category": "electrical",
+          "priority": "urgent",
+          "images": [],
+          "status": "in_progress",
+          "assignedToUserId": {
+            "_id": "6a93e154107b82fb635d8fe1",
+            "name": "Jose Rizal",
+            "email": "maintenance@rentdito.com",
+            "positionName": "Maintenance Staff"
+          },
+          "assignedByUserId": {
+            "_id": "6a93e154107b82fb635d8fe0",
+            "name": "Pedro Penduko",
+            "email": "manager@rentdito.com"
+          },
+          "updates": [
+            {
+              "userId": {
+                "_id": "6a93e154107b82fb635d8fe1",
+                "name": "Jose Rizal",
+                "role": "staff"
+              },
+              "message": "On-site, checking the wiring.",
+              "timestamp": "2026-03-17T10:00:00.000Z"
+            },
+            {
+              "userId": {
+                "_id": "6a93e154107b82fb635d8fe5",
+                "name": "Luzviminda Macaraeg",
+                "role": "user"
+              },
+              "message": "Thanks, waiting for the update.",
+              "timestamp": "2026-03-17T12:00:00.000Z"
+            }
+          ],
+          "createdAt": "2026-08-30T07:52:52.768Z",
+          "updatedAt": "2026-08-30T07:52:52.768Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d9048",
+          "tenancyId": {
+            "_id": "6a93e154107b82fb635d9025",
+            "userId": {
+              "_id": "6a93e154107b82fb635d8fe6",
+              "name": "Cardo Dalisay",
+              "email": "user2@rentdito.com"
+            },
+            "unitId": {
+              "_id": "6a93e154107b82fb635d8ff7",
+              "unitIdentifier": "Room 2"
+            },
+            "status": "checked_out",
+            "checkInDate": "2024-03-15T00:00:00.000Z",
+            "checkOutDate": "2025-03-15T00:00:00.000Z"
+          },
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8feb",
+            "landlordId": "6a93e154107b82fb635d8fde",
+            "name": "White Dorm Property",
+            "address": {
+              "street": "Sikatuna Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            }
+          },
+          "unitId": {
+            "_id": "6a93e154107b82fb635d8ff7",
+            "unitIdentifier": "Room 2",
+            "accommodationType": "room"
+          },
+          "reportedByUserId": {
+            "_id": "6a93e154107b82fb635d8fe6",
+            "name": "Cardo Dalisay",
+            "email": "user2@rentdito.com"
+          },
+          "title": "Pest sighting in room corner",
+          "description": "Cockroaches spotted near the corner cabinet.",
+          "category": "pest",
+          "priority": "low",
+          "images": [],
+          "status": "resolved",
+          "assignedToUserId": {
+            "_id": "6a93e154107b82fb635d8fe1",
+            "name": "Jose Rizal",
+            "email": "maintenance@rentdito.com",
+            "positionName": "Maintenance Staff"
+          },
+          "assignedByUserId": {
+            "_id": "6a93e154107b82fb635d8fe0",
+            "name": "Pedro Penduko",
+            "email": "manager@rentdito.com"
+          },
+          "updates": [
+            {
+              "userId": {
+                "_id": "6a93e154107b82fb635d8fe1",
+                "name": "Jose Rizal",
+                "role": "staff"
+              },
+              "message": "Pest control scheduled for treatment.",
+              "timestamp": "2024-11-05T09:00:00.000Z"
+            }
+          ],
+          "resolutionNotes": "Pest control treated the area; no further sightings reported.",
+          "resolvedAt": "2024-11-10T00:00:00.000Z",
+          "createdAt": "2026-08-30T07:52:52.768Z",
+          "updatedAt": "2026-08-30T07:52:52.768Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d9045",
+          "tenancyId": {
+            "_id": "6a93e154107b82fb635d901d",
+            "userId": {
+              "_id": "6a93e154107b82fb635d8fe5",
+              "name": "Luzviminda Macaraeg",
+              "email": "user1@rentdito.com"
+            },
+            "unitId": {
+              "_id": "6a93e154107b82fb635d8ff7",
+              "unitIdentifier": "Room 2"
+            },
+            "status": "checked_in",
+            "checkInDate": "2026-01-02T00:00:00.000Z"
+          },
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8feb",
+            "landlordId": "6a93e154107b82fb635d8fde",
+            "name": "White Dorm Property",
+            "address": {
+              "street": "Sikatuna Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            }
+          },
+          "unitId": {
+            "_id": "6a93e154107b82fb635d8ff7",
+            "unitIdentifier": "Room 2",
+            "accommodationType": "room"
+          },
+          "reportedByUserId": {
+            "_id": "6a93e154107b82fb635d8fe5",
+            "name": "Luzviminda Macaraeg",
+            "email": "user1@rentdito.com"
+          },
+          "title": "Leaking faucet in bathroom",
+          "description": "The bathroom faucet has been dripping continuously since yesterday.",
+          "category": "plumbing",
+          "priority": "medium",
+          "images": [],
+          "status": "open",
+          "updates": [],
+          "createdAt": "2026-08-30T07:52:52.766Z",
+          "updatedAt": "2026-08-30T07:52:52.766Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d9049",
+          "tenancyId": {
+            "_id": "6a93e154107b82fb635d9025",
+            "userId": {
+              "_id": "6a93e154107b82fb635d8fe6",
+              "name": "Cardo Dalisay",
+              "email": "user2@rentdito.com"
+            },
+            "unitId": {
+              "_id": "6a93e154107b82fb635d8ff7",
+              "unitIdentifier": "Room 2"
+            },
+            "status": "checked_out",
+            "checkInDate": "2024-03-15T00:00:00.000Z",
+            "checkOutDate": "2025-03-15T00:00:00.000Z"
+          },
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8feb",
+            "landlordId": "6a93e154107b82fb635d8fde",
+            "name": "White Dorm Property",
+            "address": {
+              "street": "Sikatuna Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            }
+          },
+          "unitId": {
+            "_id": "6a93e154107b82fb635d8ff7",
+            "unitIdentifier": "Room 2",
+            "accommodationType": "room"
+          },
+          "reportedByUserId": {
+            "_id": "6a93e154107b82fb635d8fe6",
+            "name": "Cardo Dalisay",
+            "email": "user2@rentdito.com"
+          },
+          "title": "Broken window latch",
+          "description": "Window latch is broken and the window does not close properly.",
+          "category": "structural",
+          "priority": "medium",
+          "images": [],
+          "status": "closed",
+          "assignedToUserId": {
+            "_id": "6a93e154107b82fb635d8fe1",
+            "name": "Jose Rizal",
+            "email": "maintenance@rentdito.com",
+            "positionName": "Maintenance Staff"
+          },
+          "assignedByUserId": {
+            "_id": "6a93e154107b82fb635d8fe0",
+            "name": "Pedro Penduko",
+            "email": "manager@rentdito.com"
+          },
+          "resolutionNotes": "Latch replaced and verified working.",
+          "resolvedAt": "2024-12-01T00:00:00.000Z",
+          "updates": [],
+          "createdAt": "2026-08-30T07:52:52.766Z",
+          "updatedAt": "2026-08-30T07:52:52.766Z",
+          "__v": 0
+        }
+      ]
+    }
+  },
+  {
+    "name": "tickets-list-staff-maintenance",
+    "method": "get",
+    "path": "/api/tickets",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": []
+    }
+  },
+  {
+    "name": "tickets-list-super-admin",
+    "method": "get",
+    "path": "/api/tickets",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": [
+        {
+          "_id": "6a93e154107b82fb635d9046",
+          "tenancyId": {
+            "_id": "6a93e154107b82fb635d901d",
+            "userId": {
+              "_id": "6a93e154107b82fb635d8fe5",
+              "name": "Luzviminda Macaraeg",
+              "email": "user1@rentdito.com"
+            },
+            "unitId": {
+              "_id": "6a93e154107b82fb635d8ff7",
+              "unitIdentifier": "Room 2"
+            },
+            "status": "checked_in",
+            "checkInDate": "2026-01-02T00:00:00.000Z"
+          },
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8feb",
+            "landlordId": "6a93e154107b82fb635d8fde",
+            "name": "White Dorm Property",
+            "address": {
+              "street": "Sikatuna Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            }
+          },
+          "unitId": {
+            "_id": "6a93e154107b82fb635d8ff7",
+            "unitIdentifier": "Room 2",
+            "accommodationType": "room"
+          },
+          "reportedByUserId": {
+            "_id": "6a93e154107b82fb635d8fe5",
+            "name": "Luzviminda Macaraeg",
+            "email": "user1@rentdito.com"
+          },
+          "title": "Aircon not cooling",
+          "description": "The split-type aircon runs but no longer cools the room.",
+          "category": "appliance",
+          "priority": "high",
+          "images": [],
+          "status": "assigned",
+          "assignedToUserId": {
+            "_id": "6a93e154107b82fb635d8fe1",
+            "name": "Jose Rizal",
+            "email": "maintenance@rentdito.com",
+            "positionName": "Maintenance Staff"
+          },
+          "assignedByUserId": {
+            "_id": "6a93e154107b82fb635d8fe0",
+            "name": "Pedro Penduko",
+            "email": "manager@rentdito.com"
+          },
+          "updates": [
+            {
+              "userId": {
+                "_id": "6a93e154107b82fb635d8fe0",
+                "name": "Pedro Penduko",
+                "role": "staff"
+              },
+              "message": "Assigned to Jose Rizal for inspection.",
+              "timestamp": "2026-03-16T09:00:00.000Z"
+            }
+          ],
+          "createdAt": "2026-08-30T07:52:52.768Z",
+          "updatedAt": "2026-08-30T07:52:52.768Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d9047",
+          "tenancyId": {
+            "_id": "6a93e154107b82fb635d901d",
+            "userId": {
+              "_id": "6a93e154107b82fb635d8fe5",
+              "name": "Luzviminda Macaraeg",
+              "email": "user1@rentdito.com"
+            },
+            "unitId": {
+              "_id": "6a93e154107b82fb635d8ff7",
+              "unitIdentifier": "Room 2"
+            },
+            "status": "checked_in",
+            "checkInDate": "2026-01-02T00:00:00.000Z"
+          },
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8feb",
+            "landlordId": "6a93e154107b82fb635d8fde",
+            "name": "White Dorm Property",
+            "address": {
+              "street": "Sikatuna Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            }
+          },
+          "unitId": {
+            "_id": "6a93e154107b82fb635d8ff7",
+            "unitIdentifier": "Room 2",
+            "accommodationType": "room"
+          },
+          "reportedByUserId": {
+            "_id": "6a93e154107b82fb635d8fe5",
+            "name": "Luzviminda Macaraeg",
+            "email": "user1@rentdito.com"
+          },
+          "title": "Flickering lights in room",
+          "description": "Ceiling light flickers intermittently, possibly a wiring issue.",
+          "category": "electrical",
+          "priority": "urgent",
+          "images": [],
+          "status": "in_progress",
+          "assignedToUserId": {
+            "_id": "6a93e154107b82fb635d8fe1",
+            "name": "Jose Rizal",
+            "email": "maintenance@rentdito.com",
+            "positionName": "Maintenance Staff"
+          },
+          "assignedByUserId": {
+            "_id": "6a93e154107b82fb635d8fe0",
+            "name": "Pedro Penduko",
+            "email": "manager@rentdito.com"
+          },
+          "updates": [
+            {
+              "userId": {
+                "_id": "6a93e154107b82fb635d8fe1",
+                "name": "Jose Rizal",
+                "role": "staff"
+              },
+              "message": "On-site, checking the wiring.",
+              "timestamp": "2026-03-17T10:00:00.000Z"
+            },
+            {
+              "userId": {
+                "_id": "6a93e154107b82fb635d8fe5",
+                "name": "Luzviminda Macaraeg",
+                "role": "user"
+              },
+              "message": "Thanks, waiting for the update.",
+              "timestamp": "2026-03-17T12:00:00.000Z"
+            }
+          ],
+          "createdAt": "2026-08-30T07:52:52.768Z",
+          "updatedAt": "2026-08-30T07:52:52.768Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d9048",
+          "tenancyId": {
+            "_id": "6a93e154107b82fb635d9025",
+            "userId": {
+              "_id": "6a93e154107b82fb635d8fe6",
+              "name": "Cardo Dalisay",
+              "email": "user2@rentdito.com"
+            },
+            "unitId": {
+              "_id": "6a93e154107b82fb635d8ff7",
+              "unitIdentifier": "Room 2"
+            },
+            "status": "checked_out",
+            "checkInDate": "2024-03-15T00:00:00.000Z",
+            "checkOutDate": "2025-03-15T00:00:00.000Z"
+          },
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8feb",
+            "landlordId": "6a93e154107b82fb635d8fde",
+            "name": "White Dorm Property",
+            "address": {
+              "street": "Sikatuna Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            }
+          },
+          "unitId": {
+            "_id": "6a93e154107b82fb635d8ff7",
+            "unitIdentifier": "Room 2",
+            "accommodationType": "room"
+          },
+          "reportedByUserId": {
+            "_id": "6a93e154107b82fb635d8fe6",
+            "name": "Cardo Dalisay",
+            "email": "user2@rentdito.com"
+          },
+          "title": "Pest sighting in room corner",
+          "description": "Cockroaches spotted near the corner cabinet.",
+          "category": "pest",
+          "priority": "low",
+          "images": [],
+          "status": "resolved",
+          "assignedToUserId": {
+            "_id": "6a93e154107b82fb635d8fe1",
+            "name": "Jose Rizal",
+            "email": "maintenance@rentdito.com",
+            "positionName": "Maintenance Staff"
+          },
+          "assignedByUserId": {
+            "_id": "6a93e154107b82fb635d8fe0",
+            "name": "Pedro Penduko",
+            "email": "manager@rentdito.com"
+          },
+          "updates": [
+            {
+              "userId": {
+                "_id": "6a93e154107b82fb635d8fe1",
+                "name": "Jose Rizal",
+                "role": "staff"
+              },
+              "message": "Pest control scheduled for treatment.",
+              "timestamp": "2024-11-05T09:00:00.000Z"
+            }
+          ],
+          "resolutionNotes": "Pest control treated the area; no further sightings reported.",
+          "resolvedAt": "2024-11-10T00:00:00.000Z",
+          "createdAt": "2026-08-30T07:52:52.768Z",
+          "updatedAt": "2026-08-30T07:52:52.768Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d9045",
+          "tenancyId": {
+            "_id": "6a93e154107b82fb635d901d",
+            "userId": {
+              "_id": "6a93e154107b82fb635d8fe5",
+              "name": "Luzviminda Macaraeg",
+              "email": "user1@rentdito.com"
+            },
+            "unitId": {
+              "_id": "6a93e154107b82fb635d8ff7",
+              "unitIdentifier": "Room 2"
+            },
+            "status": "checked_in",
+            "checkInDate": "2026-01-02T00:00:00.000Z"
+          },
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8feb",
+            "landlordId": "6a93e154107b82fb635d8fde",
+            "name": "White Dorm Property",
+            "address": {
+              "street": "Sikatuna Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            }
+          },
+          "unitId": {
+            "_id": "6a93e154107b82fb635d8ff7",
+            "unitIdentifier": "Room 2",
+            "accommodationType": "room"
+          },
+          "reportedByUserId": {
+            "_id": "6a93e154107b82fb635d8fe5",
+            "name": "Luzviminda Macaraeg",
+            "email": "user1@rentdito.com"
+          },
+          "title": "Leaking faucet in bathroom",
+          "description": "The bathroom faucet has been dripping continuously since yesterday.",
+          "category": "plumbing",
+          "priority": "medium",
+          "images": [],
+          "status": "open",
+          "updates": [],
+          "createdAt": "2026-08-30T07:52:52.766Z",
+          "updatedAt": "2026-08-30T07:52:52.766Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d9049",
+          "tenancyId": {
+            "_id": "6a93e154107b82fb635d9025",
+            "userId": {
+              "_id": "6a93e154107b82fb635d8fe6",
+              "name": "Cardo Dalisay",
+              "email": "user2@rentdito.com"
+            },
+            "unitId": {
+              "_id": "6a93e154107b82fb635d8ff7",
+              "unitIdentifier": "Room 2"
+            },
+            "status": "checked_out",
+            "checkInDate": "2024-03-15T00:00:00.000Z",
+            "checkOutDate": "2025-03-15T00:00:00.000Z"
+          },
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8feb",
+            "landlordId": "6a93e154107b82fb635d8fde",
+            "name": "White Dorm Property",
+            "address": {
+              "street": "Sikatuna Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            }
+          },
+          "unitId": {
+            "_id": "6a93e154107b82fb635d8ff7",
+            "unitIdentifier": "Room 2",
+            "accommodationType": "room"
+          },
+          "reportedByUserId": {
+            "_id": "6a93e154107b82fb635d8fe6",
+            "name": "Cardo Dalisay",
+            "email": "user2@rentdito.com"
+          },
+          "title": "Broken window latch",
+          "description": "Window latch is broken and the window does not close properly.",
+          "category": "structural",
+          "priority": "medium",
+          "images": [],
+          "status": "closed",
+          "assignedToUserId": {
+            "_id": "6a93e154107b82fb635d8fe1",
+            "name": "Jose Rizal",
+            "email": "maintenance@rentdito.com",
+            "positionName": "Maintenance Staff"
+          },
+          "assignedByUserId": {
+            "_id": "6a93e154107b82fb635d8fe0",
+            "name": "Pedro Penduko",
+            "email": "manager@rentdito.com"
+          },
+          "resolutionNotes": "Latch replaced and verified working.",
+          "resolvedAt": "2024-12-01T00:00:00.000Z",
+          "updates": [],
+          "createdAt": "2026-08-30T07:52:52.766Z",
+          "updatedAt": "2026-08-30T07:52:52.766Z",
+          "__v": 0
+        }
+      ]
+    }
+  },
+  {
+    "name": "tickets-list-filtered-priority-urgent",
+    "method": "get",
+    "path": "/api/tickets",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": [
+        {
+          "_id": "6a93e154107b82fb635d9047",
+          "tenancyId": {
+            "_id": "6a93e154107b82fb635d901d",
+            "userId": {
+              "_id": "6a93e154107b82fb635d8fe5",
+              "name": "Luzviminda Macaraeg",
+              "email": "user1@rentdito.com"
+            },
+            "unitId": {
+              "_id": "6a93e154107b82fb635d8ff7",
+              "unitIdentifier": "Room 2"
+            },
+            "status": "checked_in",
+            "checkInDate": "2026-01-02T00:00:00.000Z"
+          },
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8feb",
+            "landlordId": "6a93e154107b82fb635d8fde",
+            "name": "White Dorm Property",
+            "address": {
+              "street": "Sikatuna Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            }
+          },
+          "unitId": {
+            "_id": "6a93e154107b82fb635d8ff7",
+            "unitIdentifier": "Room 2",
+            "accommodationType": "room"
+          },
+          "reportedByUserId": {
+            "_id": "6a93e154107b82fb635d8fe5",
+            "name": "Luzviminda Macaraeg",
+            "email": "user1@rentdito.com"
+          },
+          "title": "Flickering lights in room",
+          "description": "Ceiling light flickers intermittently, possibly a wiring issue.",
+          "category": "electrical",
+          "priority": "urgent",
+          "images": [],
+          "status": "in_progress",
+          "assignedToUserId": {
+            "_id": "6a93e154107b82fb635d8fe1",
+            "name": "Jose Rizal",
+            "email": "maintenance@rentdito.com",
+            "positionName": "Maintenance Staff"
+          },
+          "assignedByUserId": {
+            "_id": "6a93e154107b82fb635d8fe0",
+            "name": "Pedro Penduko",
+            "email": "manager@rentdito.com"
+          },
+          "updates": [
+            {
+              "userId": {
+                "_id": "6a93e154107b82fb635d8fe1",
+                "name": "Jose Rizal",
+                "role": "staff"
+              },
+              "message": "On-site, checking the wiring.",
+              "timestamp": "2026-03-17T10:00:00.000Z"
+            },
+            {
+              "userId": {
+                "_id": "6a93e154107b82fb635d8fe5",
+                "name": "Luzviminda Macaraeg",
+                "role": "user"
+              },
+              "message": "Thanks, waiting for the update.",
+              "timestamp": "2026-03-17T12:00:00.000Z"
+            }
+          ],
+          "createdAt": "2026-08-30T07:52:52.768Z",
+          "updatedAt": "2026-08-30T07:52:52.768Z",
+          "__v": 0
+        }
+      ]
+    }
+  },
+  {
+    "name": "ticket-by-id-owner-user1",
+    "method": "get",
+    "path": "/api/tickets/6a93e154107b82fb635d9045",
+    "status": 403,
+    "body": {
+      "status": "error",
+      "message": "Access denied"
+    }
+  },
+  {
+    "name": "ticket-by-id-landlord1",
+    "method": "get",
+    "path": "/api/tickets/6a93e154107b82fb635d9045",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": {
+        "_id": "6a93e154107b82fb635d9045",
+        "tenancyId": {
+          "_id": "6a93e154107b82fb635d901d",
+          "userId": {
+            "_id": "6a93e154107b82fb635d8fe5",
+            "name": "Luzviminda Macaraeg",
+            "email": "user1@rentdito.com"
+          },
+          "unitId": {
+            "_id": "6a93e154107b82fb635d8ff7",
+            "unitIdentifier": "Room 2"
+          },
+          "status": "checked_in",
+          "checkInDate": "2026-01-02T00:00:00.000Z"
+        },
+        "propertyId": {
+          "_id": "6a93e154107b82fb635d8feb",
+          "landlordId": "6a93e154107b82fb635d8fde",
+          "name": "White Dorm Property",
+          "address": {
+            "street": "Sikatuna Street",
+            "city": "Cebu City",
+            "province": "Cebu",
+            "zipCode": "6543",
+            "country": "Philippines"
+          }
+        },
+        "unitId": {
+          "_id": "6a93e154107b82fb635d8ff7",
+          "unitIdentifier": "Room 2",
+          "accommodationType": "room"
+        },
+        "reportedByUserId": {
+          "_id": "6a93e154107b82fb635d8fe5",
+          "name": "Luzviminda Macaraeg",
+          "email": "user1@rentdito.com"
+        },
+        "title": "Leaking faucet in bathroom",
+        "description": "The bathroom faucet has been dripping continuously since yesterday.",
+        "category": "plumbing",
+        "priority": "medium",
+        "images": [],
+        "status": "open",
+        "updates": [],
+        "createdAt": "2026-08-30T07:52:52.766Z",
+        "updatedAt": "2026-08-30T07:52:52.766Z",
+        "__v": 0
+      }
+    }
+  },
+  {
+    "name": "ticket-by-id-assigned",
+    "method": "get",
+    "path": "/api/tickets/6a93e154107b82fb635d9046",
+    "status": 403,
+    "body": {
+      "status": "error",
+      "message": "Access denied"
+    }
+  },
+  {
+    "name": "ticket-by-id-resolved",
+    "method": "get",
+    "path": "/api/tickets/6a93e154107b82fb635d9048",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": {
+        "_id": "6a93e154107b82fb635d9048",
+        "tenancyId": {
+          "_id": "6a93e154107b82fb635d9025",
+          "userId": {
+            "_id": "6a93e154107b82fb635d8fe6",
+            "name": "Cardo Dalisay",
+            "email": "user2@rentdito.com"
+          },
+          "unitId": {
+            "_id": "6a93e154107b82fb635d8ff7",
+            "unitIdentifier": "Room 2"
+          },
+          "status": "checked_out",
+          "checkInDate": "2024-03-15T00:00:00.000Z",
+          "checkOutDate": "2025-03-15T00:00:00.000Z"
+        },
+        "propertyId": {
+          "_id": "6a93e154107b82fb635d8feb",
+          "landlordId": "6a93e154107b82fb635d8fde",
+          "name": "White Dorm Property",
+          "address": {
+            "street": "Sikatuna Street",
+            "city": "Cebu City",
+            "province": "Cebu",
+            "zipCode": "6543",
+            "country": "Philippines"
+          }
+        },
+        "unitId": {
+          "_id": "6a93e154107b82fb635d8ff7",
+          "unitIdentifier": "Room 2",
+          "accommodationType": "room"
+        },
+        "reportedByUserId": {
+          "_id": "6a93e154107b82fb635d8fe6",
+          "name": "Cardo Dalisay",
+          "email": "user2@rentdito.com"
+        },
+        "title": "Pest sighting in room corner",
+        "description": "Cockroaches spotted near the corner cabinet.",
+        "category": "pest",
+        "priority": "low",
+        "images": [],
+        "status": "resolved",
+        "assignedToUserId": {
+          "_id": "6a93e154107b82fb635d8fe1",
+          "name": "Jose Rizal",
+          "email": "maintenance@rentdito.com",
+          "positionName": "Maintenance Staff"
+        },
+        "assignedByUserId": {
+          "_id": "6a93e154107b82fb635d8fe0",
+          "name": "Pedro Penduko",
+          "email": "manager@rentdito.com"
+        },
+        "updates": [
+          {
+            "userId": {
+              "_id": "6a93e154107b82fb635d8fe1",
+              "name": "Jose Rizal",
+              "role": "staff"
+            },
+            "message": "Pest control scheduled for treatment.",
+            "timestamp": "2024-11-05T09:00:00.000Z"
+          }
+        ],
+        "resolutionNotes": "Pest control treated the area; no further sightings reported.",
+        "resolvedAt": "2024-11-10T00:00:00.000Z",
+        "createdAt": "2026-08-30T07:52:52.768Z",
+        "updatedAt": "2026-08-30T07:52:52.768Z",
+        "__v": 0
+      }
+    }
+  },
+  {
+    "name": "ticket-by-id-not-found",
+    "method": "get",
+    "path": "/api/tickets/000000000000000000000000",
+    "status": 404,
+    "body": {
+      "status": "error",
+      "message": "Ticket not found"
+    }
+  }
+]

@@ -1,0 +1,228 @@
+[
+  {
+    "name": "occupancy-landlord1",
+    "method": "get",
+    "path": "/api/reports/occupancy",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": {
+        "_id": null,
+        "totalUnits": 3,
+        "occupiedUnits": 0,
+        "vacantUnits": 3,
+        "reservedUnits": 0,
+        "maintenanceUnits": 0,
+        "occupancyRate": 0,
+        "propertyBreakdown": [
+          {
+            "_id": "6a93e154107b82fb635d8feb",
+            "totalUnits": 3,
+            "occupiedUnits": 0,
+            "vacantUnits": 3,
+            "reservedUnits": 0,
+            "maintenanceUnits": 0,
+            "propertyId": "6a93e154107b82fb635d8feb",
+            "propertyName": "White Dorm Property",
+            "occupancyRate": 0
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "occupancy-denied-user-role",
+    "method": "get",
+    "path": "/api/reports/occupancy",
+    "status": 403,
+    "body": {
+      "status": "error",
+      "message": "Insufficient permissions"
+    }
+  },
+  {
+    "name": "checkout-forecast-landlord1",
+    "method": "get",
+    "path": "/api/reports/checkout-forecast",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": {
+        "monthlyForecast": [
+          {
+            "month": "Aug",
+            "year": 2026,
+            "expiringCount": 0,
+            "revenueLoss": 0
+          },
+          {
+            "month": "Sep",
+            "year": 2026,
+            "expiringCount": 0,
+            "revenueLoss": 0
+          },
+          {
+            "month": "Oct",
+            "year": 2026,
+            "expiringCount": 0,
+            "revenueLoss": 0
+          },
+          {
+            "month": "Nov",
+            "year": 2026,
+            "expiringCount": 0,
+            "revenueLoss": 0
+          },
+          {
+            "month": "Dec",
+            "year": 2026,
+            "expiringCount": 0,
+            "revenueLoss": 0
+          },
+          {
+            "month": "Jan",
+            "year": 2027,
+            "expiringCount": 1,
+            "revenueLoss": 8500
+          }
+        ],
+        "peakMonth": "Jan 2027",
+        "totalRevenueLoss": 8500,
+        "historicalTrend": [
+          {
+            "month": "Sep",
+            "year": 2025,
+            "checkouts": 0
+          },
+          {
+            "month": "Oct",
+            "year": 2025,
+            "checkouts": 0
+          },
+          {
+            "month": "Nov",
+            "year": 2025,
+            "checkouts": 0
+          },
+          {
+            "month": "Dec",
+            "year": 2025,
+            "checkouts": 0
+          },
+          {
+            "month": "Jan",
+            "year": 2026,
+            "checkouts": 0
+          },
+          {
+            "month": "Feb",
+            "year": 2026,
+            "checkouts": 0
+          },
+          {
+            "month": "Mar",
+            "year": 2026,
+            "checkouts": 0
+          },
+          {
+            "month": "Apr",
+            "year": 2026,
+            "checkouts": 0
+          },
+          {
+            "month": "May",
+            "year": 2026,
+            "checkouts": 0
+          },
+          {
+            "month": "Jun",
+            "year": 2026,
+            "checkouts": 0
+          },
+          {
+            "month": "Jul",
+            "year": 2026,
+            "checkouts": 0
+          },
+          {
+            "month": "Aug",
+            "year": 2026,
+            "checkouts": 0
+          }
+        ],
+        "expiringContracts": [
+          {
+            "contractId": "6a93e154107b82fb635d901c",
+            "propertyName": "White Dorm Property",
+            "unitIdentifier": "Room 2",
+            "tenantName": "Luzviminda Macaraeg",
+            "endDate": "2027-01-01T00:00:00.000Z",
+            "monthlyRent": 8500
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "vacancy-forecast-landlord1",
+    "method": "get",
+    "path": "/api/reports/vacancy-forecast",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": {
+        "totalUnits": 3,
+        "currentVacant": 3,
+        "predictedVacant": 3,
+        "currentVacancyRate": 100,
+        "predictedVacancyRate": 100,
+        "propertyBreakdown": [
+          {
+            "propertyId": "6a93e154107b82fb635d8feb",
+            "propertyName": "White Dorm Property",
+            "totalUnits": 3,
+            "currentVacant": 3,
+            "predictedVacant": 3,
+            "currentVacancyRate": 100,
+            "predictedVacancyRate": 100
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "reservation-forecast-landlord1",
+    "method": "get",
+    "path": "/api/reports/reservation-forecast",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": {
+        "pendingInquiries": 1,
+        "scheduledVisits": 1,
+        "pendingApplications": 0,
+        "totalApplications": 6,
+        "approvedApplications": 3,
+        "conversionRate": 50
+      }
+    }
+  },
+  {
+    "name": "occupancy-staff-manager-no-assigned-properties",
+    "method": "get",
+    "path": "/api/reports/occupancy",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": {
+        "totalUnits": 0,
+        "occupiedUnits": 0,
+        "vacantUnits": 0,
+        "reservedUnits": 0,
+        "maintenanceUnits": 0,
+        "occupancyRate": 0,
+        "propertyBreakdown": []
+      }
+    }
+  }
+]

@@ -1,0 +1,324 @@
+[
+  {
+    "name": "my-visits-user1-pending",
+    "method": "get",
+    "path": "/api/visits/my",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": [
+        {
+          "_id": "6a93e154107b82fb635d902e",
+          "userId": "6a93e154107b82fb635d8fe5",
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8feb",
+            "name": "White Dorm Property",
+            "address": {
+              "street": "Sikatuna Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            },
+            "images": [
+              "/src/assets/properties/white_dorm/images/image1.jpg",
+              "/src/assets/properties/white_dorm/images/image2.jpg",
+              "/src/assets/properties/white_dorm/images/image3.jpg"
+            ]
+          },
+          "unitId": {
+            "_id": "6a93e154107b82fb635d8ff7",
+            "unitIdentifier": "Room 2"
+          },
+          "requestedDate": "2026-02-01T00:00:00.000Z",
+          "requestedTime": "10:00",
+          "purpose": "viewing",
+          "status": "pending",
+          "createdAt": "2026-08-30T07:52:52.706Z",
+          "updatedAt": "2026-08-30T07:52:52.706Z",
+          "__v": 0
+        }
+      ]
+    }
+  },
+  {
+    "name": "my-visits-user3-scheduled",
+    "method": "get",
+    "path": "/api/visits/my",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": [
+        {
+          "_id": "6a93e154107b82fb635d9030",
+          "userId": "6a93e154107b82fb635d8fe7",
+          "propertyId": {
+            "_id": "6a93e154107b82fb635d8ff1",
+            "name": "Uytengso Boardings House",
+            "address": {
+              "street": "Uytengso Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            },
+            "images": [
+              "/src/assets/properties/uytengso/images/u.jpg",
+              "/src/assets/properties/uytengso/images/y.jpg",
+              "/src/assets/properties/uytengso/images/t.jpg"
+            ]
+          },
+          "unitId": {
+            "_id": "6a93e154107b82fb635d9009",
+            "unitIdentifier": "Room 1"
+          },
+          "requestedDate": "2026-02-05T00:00:00.000Z",
+          "requestedTime": "14:00",
+          "scheduledDate": "2026-02-06T00:00:00.000Z",
+          "scheduledTime": "14:00",
+          "purpose": "inspection",
+          "status": "scheduled",
+          "assignedStaffId": {
+            "_id": "6a93e154107b82fb635d8fe1",
+            "name": "Jose Rizal",
+            "phone": "09211234567"
+          },
+          "createdAt": "2026-08-30T07:52:52.706Z",
+          "updatedAt": "2026-08-30T07:52:52.706Z",
+          "__v": 0
+        }
+      ]
+    }
+  },
+  {
+    "name": "property-visits-landlord1",
+    "method": "get",
+    "path": "/api/visits/property/6a93e154107b82fb635d8feb",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": [
+        {
+          "_id": "6a93e154107b82fb635d902f",
+          "userId": {
+            "_id": "6a93e154107b82fb635d8fe6",
+            "name": "Cardo Dalisay",
+            "email": "user2@rentdito.com",
+            "phone": "09993334444"
+          },
+          "propertyId": "6a93e154107b82fb635d8feb",
+          "unitId": {
+            "_id": "6a93e154107b82fb635d8ffd",
+            "unitIdentifier": "Room 3"
+          },
+          "requestedDate": "2026-02-03T00:00:00.000Z",
+          "requestedTime": "11:00",
+          "purpose": "viewing",
+          "status": "approved",
+          "createdAt": "2026-08-30T07:52:52.706Z",
+          "updatedAt": "2026-08-30T07:52:52.706Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d9031",
+          "userId": {
+            "_id": "6a93e154107b82fb635d8fe8",
+            "name": "Boyet Fernandez",
+            "email": "user4@rentdito.com",
+            "phone": "09997778888"
+          },
+          "propertyId": "6a93e154107b82fb635d8feb",
+          "unitId": {
+            "_id": "6a93e154107b82fb635d8ff7",
+            "unitIdentifier": "Room 2"
+          },
+          "requestedDate": "2026-01-20T00:00:00.000Z",
+          "requestedTime": "09:00",
+          "scheduledDate": "2026-01-21T00:00:00.000Z",
+          "scheduledTime": "09:00",
+          "purpose": "viewing",
+          "status": "completed",
+          "assignedStaffId": {
+            "_id": "6a93e154107b82fb635d8fe3",
+            "name": "Gabriela Silang",
+            "phone": "09231234567"
+          },
+          "createdAt": "2026-08-30T07:52:52.706Z",
+          "updatedAt": "2026-08-30T07:52:52.706Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d902e",
+          "userId": {
+            "_id": "6a93e154107b82fb635d8fe5",
+            "name": "Luzviminda Macaraeg",
+            "email": "user1@rentdito.com",
+            "phone": "09991112222"
+          },
+          "propertyId": "6a93e154107b82fb635d8feb",
+          "unitId": {
+            "_id": "6a93e154107b82fb635d8ff7",
+            "unitIdentifier": "Room 2"
+          },
+          "requestedDate": "2026-02-01T00:00:00.000Z",
+          "requestedTime": "10:00",
+          "purpose": "viewing",
+          "status": "pending",
+          "createdAt": "2026-08-30T07:52:52.706Z",
+          "updatedAt": "2026-08-30T07:52:52.706Z",
+          "__v": 0
+        }
+      ]
+    }
+  },
+  {
+    "name": "property-visits-super-admin",
+    "method": "get",
+    "path": "/api/visits/property/6a93e154107b82fb635d8feb",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": [
+        {
+          "_id": "6a93e154107b82fb635d902f",
+          "userId": {
+            "_id": "6a93e154107b82fb635d8fe6",
+            "name": "Cardo Dalisay",
+            "email": "user2@rentdito.com",
+            "phone": "09993334444"
+          },
+          "propertyId": "6a93e154107b82fb635d8feb",
+          "unitId": {
+            "_id": "6a93e154107b82fb635d8ffd",
+            "unitIdentifier": "Room 3"
+          },
+          "requestedDate": "2026-02-03T00:00:00.000Z",
+          "requestedTime": "11:00",
+          "purpose": "viewing",
+          "status": "approved",
+          "createdAt": "2026-08-30T07:52:52.706Z",
+          "updatedAt": "2026-08-30T07:52:52.706Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d9031",
+          "userId": {
+            "_id": "6a93e154107b82fb635d8fe8",
+            "name": "Boyet Fernandez",
+            "email": "user4@rentdito.com",
+            "phone": "09997778888"
+          },
+          "propertyId": "6a93e154107b82fb635d8feb",
+          "unitId": {
+            "_id": "6a93e154107b82fb635d8ff7",
+            "unitIdentifier": "Room 2"
+          },
+          "requestedDate": "2026-01-20T00:00:00.000Z",
+          "requestedTime": "09:00",
+          "scheduledDate": "2026-01-21T00:00:00.000Z",
+          "scheduledTime": "09:00",
+          "purpose": "viewing",
+          "status": "completed",
+          "assignedStaffId": {
+            "_id": "6a93e154107b82fb635d8fe3",
+            "name": "Gabriela Silang",
+            "phone": "09231234567"
+          },
+          "createdAt": "2026-08-30T07:52:52.706Z",
+          "updatedAt": "2026-08-30T07:52:52.706Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a93e154107b82fb635d902e",
+          "userId": {
+            "_id": "6a93e154107b82fb635d8fe5",
+            "name": "Luzviminda Macaraeg",
+            "email": "user1@rentdito.com",
+            "phone": "09991112222"
+          },
+          "propertyId": "6a93e154107b82fb635d8feb",
+          "unitId": {
+            "_id": "6a93e154107b82fb635d8ff7",
+            "unitIdentifier": "Room 2"
+          },
+          "requestedDate": "2026-02-01T00:00:00.000Z",
+          "requestedTime": "10:00",
+          "purpose": "viewing",
+          "status": "pending",
+          "createdAt": "2026-08-30T07:52:52.706Z",
+          "updatedAt": "2026-08-30T07:52:52.706Z",
+          "__v": 0
+        }
+      ]
+    }
+  },
+  {
+    "name": "property-visits-staff-maintenance",
+    "method": "get",
+    "path": "/api/visits/property/6a93e154107b82fb635d8feb",
+    "status": 403,
+    "body": {
+      "status": "error",
+      "message": "Access denied"
+    }
+  },
+  {
+    "name": "property-visits-filtered-scheduled",
+    "method": "get",
+    "path": "/api/visits/property/6a93e154107b82fb635d8ff1",
+    "status": 200,
+    "body": {
+      "status": "success",
+      "data": [
+        {
+          "_id": "6a93e154107b82fb635d9030",
+          "userId": {
+            "_id": "6a93e154107b82fb635d8fe7",
+            "name": "Nena Reyes",
+            "email": "user3@rentdito.com",
+            "phone": "09995556666"
+          },
+          "propertyId": "6a93e154107b82fb635d8ff1",
+          "unitId": {
+            "_id": "6a93e154107b82fb635d9009",
+            "unitIdentifier": "Room 1"
+          },
+          "requestedDate": "2026-02-05T00:00:00.000Z",
+          "requestedTime": "14:00",
+          "scheduledDate": "2026-02-06T00:00:00.000Z",
+          "scheduledTime": "14:00",
+          "purpose": "inspection",
+          "status": "scheduled",
+          "assignedStaffId": {
+            "_id": "6a93e154107b82fb635d8fe1",
+            "name": "Jose Rizal",
+            "phone": "09211234567"
+          },
+          "createdAt": "2026-08-30T07:52:52.706Z",
+          "updatedAt": "2026-08-30T07:52:52.706Z",
+          "__v": 0
+        }
+      ]
+    }
+  },
+  {
+    "name": "property-visits-denied-non-owner-landlord",
+    "method": "get",
+    "path": "/api/visits/property/6a93e154107b82fb635d8feb",
+    "status": 403,
+    "body": {
+      "status": "error",
+      "message": "Access denied"
+    }
+  },
+  {
+    "name": "property-visits-denied-user-role",
+    "method": "get",
+    "path": "/api/visits/property/6a93e154107b82fb635d8feb",
+    "status": 403,
+    "body": {
+      "status": "error",
+      "message": "Access denied"
+    }
+  }
+]
