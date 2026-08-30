@@ -1005,12 +1005,60 @@ git commit -m "feat(db): add Prisma schema for all 27 tables"
 **Interfaces:**
 - Produces: a live Postgres schema; the `refresh_property_metrics()` trigger replacing `Unit.post()` hooks; the 27 `min`/`max`-derived CHECK constraints; case-insensitive `profiles.email` via `citext`; the FK from `profiles.id` to `auth.users.id`.
 
+> **WORKFLOW UPDATE (post-incident, see task-6-report.md §8-§10 and its
+> follow-up):** Once
+> `profiles.id` carries a FK into Supabase's `auth` schema (Step 6 below), Prisma
+> can no longer introspect this database — every command that introspects
+> (`prisma migrate dev`, `prisma db pull`, `migrate diff --from-schema-datasource`)
+> fails with **P4002** ("Cross schema references are only allowed when the
+> target schema is listed in the `schemas` property..."). Adding `auth` to
+> `datasource.schemas` is the wrong fix — it would put the Supabase-owned `auth`
+> schema under Prisma's management.
+>
+> From Task 6 onward (this task included), every migration in this project is
+> produced and applied with:
+> ```bash
+> npx prisma migrate diff \
+>   --from-migrations ./prisma/migrations \
+>   --to-schema-datamodel ./prisma/schema.prisma \
+>   --shadow-database-url <A THROWAWAY DATABASE, NEVER A REAL ONE> \
+>   --script > prisma/migrations/<timestamp>_<name>/migration.sql
+> # review/hand-edit the generated SQL, then:
+> npx prisma migrate deploy
+> ```
+> **`--shadow-database-url` RESETS whatever database it points at** (Prisma
+> drops and recreates the schema there to compute the diff). This is not a
+> "point it at prod and it'll be careful" flag — it is destructive by design.
+> **Never pass `DATABASE_URL` or `DIRECT_URL` (or any other real/shared
+> database) as the shadow database.** Use a disposable local Postgres
+> (e.g. a throwaway Docker container) that you can afford to have wiped, or —
+> if none is available — skip the shadow-database diff entirely and hand-author
+> the migration SQL directly, then verify it with `migrate deploy` +
+> `migrate status` against the real database. This is exactly what caused the
+> live-database reset documented in task-6-report.md §8: `DIRECT_URL` was
+> passed as `--shadow-database-url` and Prisma reset the live project database.
+> Nothing was lost that time only because the database held no data yet — with
+> real data present this would be destructive, not merely inconvenient.
+>
+> `prisma migrate dev` (Steps 1 and 7 below, as originally written) **must
+> not be used** once this FK exists — its drift-detection introspection hits
+> the same P4002. Use `migrate deploy` to apply, and the `migrate diff` +
+> hand-edit flow above to generate new migrations.
+
 - [ ] **Step 1: Generate the migration**
 
-```bash
+~~```bash
 cd server && npx prisma migrate dev --name init --create-only
-```
-Expected: a `migration.sql` is written but not yet applied. Read it and confirm all 27 tables plus every enum are present.
+```~~
+**Superseded — do not run this.** At the time this step was originally written,
+`profiles.id`'s FK into `auth.users` did not exist yet, so `migrate dev
+--create-only` (which introspects to compute drift) would have worked. In
+practice the migration was produced and reviewed by hand instead — see
+`server/prisma/migrations/20260830100425_init/migration.sql` and
+`server/prisma/sql/triggers.sql` — and the same hand-authored approach is now
+mandatory for every subsequent migration (see the workflow note above).
+Expected outcome either way: a `migration.sql` is written but not yet applied.
+Read it and confirm all 27 tables plus every enum are present.
 
 - [ ] **Step 2: Append the partial unique indexes**
 
@@ -1125,10 +1173,19 @@ ALTER TABLE profiles
 
 - [ ] **Step 7: Apply**
 
-```bash
+~~```bash
 cd server && npx prisma migrate dev
+```~~
+**Superseded — use `migrate deploy` instead** (see the workflow note above the
+Step 1 heading: `migrate dev`'s drift-detection introspection fails with P4002
+once the `auth.users` FK exists, which it does as of Step 6 above):
+```bash
+cd server && npx prisma migrate deploy
 ```
-Expected: `Your database is now in sync with your schema`.
+Expected: `All migrations have been successfully applied.` (or, for a schema
+already at this state, `Database schema is up to date!` — confirm with
+`npx prisma migrate status`, not the `migrate dev` "in sync" message, which
+this command does not print).
 
 - [ ] **Step 8: Verify the trigger works**
 
@@ -1844,6 +1901,33 @@ git commit -m "feat(db): cut over to Postgres and remove Mongoose"
 - Create: `server/prisma/migrations/*_rls/migration.sql`
 
 RLS here is a second layer, not the gate. The API authorizes; these policies limit the blast radius if the pooled connection string ever leaks.
+
+> **DONE EARLY, OUT OF ORDER — see task-6-report.md §8-§9 and its follow-up
+> report.** Task 6's shadow-database incident destroyed Supabase's automatic-RLS
+> event trigger (`ensure_rls` / `rls_auto_enable()`), which had been keeping
+> `rolbypassrls` moot for the app but meant RLS was enabled on 0 of 27 tables
+> and would not auto-enable on any new one. That made this task's substance
+> urgent immediately rather than at its numbered position in Phase 6, so it was
+> executed right after Task 6 as
+> `server/prisma/migrations/*_enable_rls_deny_by_default/migration.sql`.
+> Two differences from the draft SQL below, both deliberate:
+> - It excludes `_prisma_migrations` from the `pg_tables` loop explicitly
+>   (`AND tablename <> '_prisma_migrations'`) rather than looping over every
+>   table in `public` unconditionally. Enabling RLS on Prisma's own migration
+>   ledger is harmless either way since `postgres` owns it and bypasses RLS,
+>   but there is no reason to touch a table Prisma manages.
+> - Step 3's verification below (`curl` against the PostgREST anon key) was not
+>   run, because this project's Supabase Data API is disabled (see Task 6
+>   remediation report); the equivalent proof used instead was querying
+>   `pg_class.relrowsecurity` (27/27 true) and `information_schema.role_table_grants`
+>   for `anon`/`authenticated` on `public` tables (zero rows), plus Step 4's
+>   proof done against real inserted-and-read-back rows, not just an empty-table
+>   count, to rule out RLS silently returning zero rows.
+>
+> This task's remaining checkbox value if revisited: confirming nothing here
+> needs to change once real per-role policies are considered (see "Per-user RLS
+> policies" in Out of Scope) — the migration this task specifies has already
+> shipped.
 
 - [ ] **Step 1: Confirm the app connects as table owner**
 
