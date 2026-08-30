@@ -1149,10 +1149,58 @@
     "name": "ticket-by-id-owner-user1",
     "method": "get",
     "path": "/api/tickets/6a93e154107b82fb635d9045",
-    "status": 403,
+    "status": 200,
     "body": {
-      "status": "error",
-      "message": "Access denied"
+      "status": "success",
+      "data": {
+        "_id": "6a93e154107b82fb635d9045",
+        "tenancyId": {
+          "_id": "6a93e154107b82fb635d901d",
+          "userId": {
+            "_id": "6a93e154107b82fb635d8fe5",
+            "name": "Luzviminda Macaraeg",
+            "email": "user1@rentdito.com"
+          },
+          "unitId": {
+            "_id": "6a93e154107b82fb635d8ff7",
+            "unitIdentifier": "Room 2"
+          },
+          "status": "checked_in",
+          "checkInDate": "2026-01-02T00:00:00.000Z"
+        },
+        "propertyId": {
+          "_id": "6a93e154107b82fb635d8feb",
+          "landlordId": "6a93e154107b82fb635d8fde",
+          "name": "White Dorm Property",
+          "address": {
+            "street": "Sikatuna Street",
+            "city": "Cebu City",
+            "province": "Cebu",
+            "zipCode": "6543",
+            "country": "Philippines"
+          }
+        },
+        "unitId": {
+          "_id": "6a93e154107b82fb635d8ff7",
+          "unitIdentifier": "Room 2",
+          "accommodationType": "room"
+        },
+        "reportedByUserId": {
+          "_id": "6a93e154107b82fb635d8fe5",
+          "name": "Luzviminda Macaraeg",
+          "email": "user1@rentdito.com"
+        },
+        "title": "Leaking faucet in bathroom",
+        "description": "The bathroom faucet has been dripping continuously since yesterday.",
+        "category": "plumbing",
+        "priority": "medium",
+        "images": [],
+        "status": "open",
+        "updates": [],
+        "createdAt": "2026-08-30T07:52:52.766Z",
+        "updatedAt": "2026-08-30T07:52:52.766Z",
+        "__v": 0
+      }
     }
   },
   {
