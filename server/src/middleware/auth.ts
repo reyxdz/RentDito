@@ -83,10 +83,18 @@ interface CachedProfile {
 
 const profileCache = new Map<string, { value: CachedProfile; cachedAt: number }>();
 
+/**
+ * The cache's sole time source. Defaults to the real wall clock in
+ * production; tests may override it (see `__setClockForTests`) so TTL
+ * expiry can be proven by advancing a controlled counter instead of
+ * sleeping real milliseconds -- see that function's doc comment for why.
+ */
+let nowFn: () => number = Date.now;
+
 function getCachedProfile(sub: string): CachedProfile | undefined {
   const entry = profileCache.get(sub);
   if (!entry) return undefined;
-  if (Date.now() - entry.cachedAt > PROFILE_CACHE_TTL_MS) {
+  if (nowFn() - entry.cachedAt > PROFILE_CACHE_TTL_MS) {
     profileCache.delete(sub);
     return undefined;
   }
@@ -101,7 +109,7 @@ function setCachedProfile(sub: string, value: CachedProfile): void {
     const oldestKey = profileCache.keys().next().value;
     if (oldestKey !== undefined) profileCache.delete(oldestKey);
   }
-  profileCache.set(sub, { value, cachedAt: Date.now() });
+  profileCache.set(sub, { value, cachedAt: nowFn() });
 }
 
 /**
@@ -111,6 +119,22 @@ function setCachedProfile(sub: string, value: CachedProfile): void {
  */
 export function __clearProfileCacheForTests(): void {
   profileCache.clear();
+}
+
+/**
+ * Test-only escape hatch: overrides the cache's time source. Lets a test
+ * prove TTL expiry deterministically -- "still cached before expiry" /
+ * "expired and re-fetched after expiry" -- by advancing a controlled
+ * counter instead of sleeping a real wall-clock duration. Sleeping a real
+ * duration is inherently racy under load: if the request round trip (or
+ * just CPU contention) eats into the sleep window, the "still cached"
+ * assertion can fire after the TTL has actually elapsed, or the "expired"
+ * assertion can fire before it has. Injecting the clock removes real
+ * elapsed time from the equation entirely, while still exercising the
+ * exact same `nowFn() - cachedAt > TTL` comparison production uses.
+ */
+export function __setClockForTests(fn: () => number): void {
+  nowFn = fn;
 }
 
 /**

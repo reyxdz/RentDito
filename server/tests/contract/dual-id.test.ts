@@ -124,12 +124,16 @@ describe('profile cache TTL expiry', () => {
   });
 
   it('picks up a role change from the database only after the TTL elapses', async () => {
-    // Use a short TTL for this test only (see auth.ts's
-    // AUTH_PROFILE_CACHE_TTL_MS override) so this proves real expiry
-    // behaviour without sleeping a real 60s. 1.5s comfortably outlasts a
-    // single Prisma round-trip to the remote Postgres instance
-    // (~200-400ms, see auth.ts's cache rationale) so the "still cached"
-    // assertion below isn't racing the TTL itself.
+    // Deterministic TTL proof: instead of sleeping a real duration (which
+    // flaked under load -- a slow request round trip or CPU contention could
+    // eat into the sleep window and race the TTL boundary either way), this
+    // injects the cache's clock (auth.ts's `__setClockForTests`) and
+    // advances a controlled counter explicitly. The TTL value itself
+    // (1500ms, via AUTH_PROFILE_CACHE_TTL_MS) and the exact
+    // `nowFn() - cachedAt > TTL` comparison are still the real production
+    // code path -- only the passage of time is now a value this test
+    // controls rather than something it waits on, so the assertions below
+    // genuinely prove expiry behaviour with zero real elapsed time at risk.
     process.env.AUTH_PROFILE_CACHE_TTL_MS = '1500';
     jest.resetModules();
     // Re-require with the short TTL now in effect. Also re-require prisma so
@@ -139,6 +143,9 @@ describe('profile cache TTL expiry', () => {
     const freshAuth = require('../../src/middleware/auth');
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const freshPrisma = require('../../src/config/prisma').default;
+
+    let mockNow = 1_000_000_000;
+    freshAuth.__setClockForTests(() => mockNow);
 
     const app = express();
     app.get('/whoami', freshAuth.default, (req: AuthRequest, res: express.Response) => {
@@ -154,14 +161,15 @@ describe('profile cache TTL expiry', () => {
     await freshPrisma.profile.update({ where: { id: before.body.user.pgId }, data: { role: 'landlord' } });
 
     try {
-      // Immediately after the DB write, still within the TTL: cached value wins.
+      // Advance the mock clock by less than the TTL: still within the
+      // window, so the cached (stale) value must win.
+      mockNow += 500;
       const stillCached = await request(app).get('/whoami').set('Authorization', `Bearer ${token}`);
       expect(stillCached.status).toBe(200);
       expect(stillCached.body.user.role).toBe('user');
 
-      // Wait out the (short, test-only) TTL.
-      await new Promise((resolve) => setTimeout(resolve, 1800));
-
+      // Advance past the TTL boundary (total elapsed: 1600ms > 1500ms).
+      mockNow += 1100;
       const afterExpiry = await request(app).get('/whoami').set('Authorization', `Bearer ${token}`);
       expect(afterExpiry.status).toBe(200);
       expect(afterExpiry.body.user.role).toBe('landlord');
