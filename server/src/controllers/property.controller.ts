@@ -9,7 +9,7 @@ import * as propertyService from '../services/property.service';
 export const getProperties = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
     const { status, propertyType, city, page, limit } = req.query;
 
-    const result = await propertyService.getProperties(req.user!.id, {
+    const result = await propertyService.getProperties(req.user!.pgId, {
       status: status as string,
       propertyType: propertyType as string,
       city: city as string,
@@ -28,7 +28,7 @@ export const getProperties = catchAsync(async (req: AuthRequest, res: Response):
  * GET /api/properties/:id - Get single property
  */
 export const getPropertyById = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
-    const property = await propertyService.getPropertyById(req.user!.id, req.params.id as string);
+    const property = await propertyService.getPropertyById(req.user!.pgId, req.params.id as string);
 
     res.status(200).json({
       status: 'success',
@@ -40,7 +40,7 @@ export const getPropertyById = catchAsync(async (req: AuthRequest, res: Response
  * POST /api/properties - Create new property
  */
 export const createProperty = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
-    const property = await propertyService.createProperty(req.user!.id, req.body);
+    const property = await propertyService.createProperty(req.user!.pgId, req.body);
 
     res.status(201).json({
       status: 'success',
@@ -54,7 +54,7 @@ export const createProperty = catchAsync(async (req: AuthRequest, res: Response)
  */
 export const updateProperty = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
     const property = await propertyService.updateProperty(
-      req.user!.id,
+      req.user!.pgId,
       req.params.id as string,
       req.body
     );
@@ -72,7 +72,7 @@ export const updateProperty = catchAsync(async (req: AuthRequest, res: Response)
 export const updatePropertyStatus = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
     const { status } = req.body;
     const property = await propertyService.updatePropertyStatus(
-      req.user!.id,
+      req.user!.pgId,
       req.params.id as string,
       status
     );
@@ -88,7 +88,7 @@ export const updatePropertyStatus = catchAsync(async (req: AuthRequest, res: Res
  * DELETE /api/properties/:id - Soft delete property
  */
 export const deleteProperty = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
-    await propertyService.deleteProperty(req.user!.id, req.params.id as string);
+    await propertyService.deleteProperty(req.user!.pgId, req.params.id as string);
 
     res.status(200).json({
       status: 'success',
@@ -112,7 +112,7 @@ export const uploadPropertyImages = catchAsync(async (req: AuthRequest, res: Res
     }
 
     const property = await propertyService.uploadPropertyImages(
-      req.user!.id,
+      req.user!.pgId,
       req.params.id as string,
       imageUrls
     );
