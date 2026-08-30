@@ -154,6 +154,55 @@ function assertDualId(node: unknown, allowIdOnly: boolean, pointer = '$'): void 
 }
 
 /**
+ * Guard against `Profile.legacyMongoId` (internal migration bookkeeping --
+ * maps a Postgres profile back to its pre-migration Mongo `_id` so
+ * not-yet-ported services can keep resolving `req.user.id` against Mongo,
+ * see `src/middleware/auth.ts`) ever crossing the response boundary, at ANY
+ * depth -- top-level or embedded arbitrarily deep inside a nested
+ * object/array. It must never reach a client: it exposes the Mongo id space
+ * and is meaningless outside the migration.
+ *
+ * `auth.service.ts` excludes it deliberately (`serialize.ts`'s
+ * `NEVER_SERIALIZE_PROFILE_FIELDS`), but task 18's port of
+ * visit.service.ts found it leaking through embedded profile objects
+ * (`remapFullVisit`'s `userId`/`assignedStaffId`) — caught only because a
+ * throwaway live proof happened to print the response, not by this suite.
+ * inquiry.service.ts's `remapFullPopulate()` had the identical latent leak,
+ * undetected purely because no fixture there embeds a profile. Per-service
+ * vigilance has now failed once (twice, counting inquiry), and there are
+ * more ports still to come, so this checks EVERY one of the suite's cases
+ * rather than relying on some future fixture happening to embed a profile
+ * at the right call site.
+ *
+ * Runs on the raw response body BEFORE normalizeBody(), exactly like
+ * assertDualId above (normalizeBody has no reason to touch this field, but
+ * running pre-normalization keeps both structural guards following the same
+ * pattern and immune to any future normalizer change that might otherwise
+ * mask a leak).
+ */
+function assertNoLeakedLegacyMongoId(node: unknown, pointer = '$'): void {
+  if (Array.isArray(node)) {
+    node.forEach((item, i) => assertNoLeakedLegacyMongoId(item, `${pointer}[${i}]`));
+    return;
+  }
+  if (node && typeof node === 'object') {
+    const obj = node as Record<string, unknown>;
+    if (Object.prototype.hasOwnProperty.call(obj, 'legacyMongoId')) {
+      throw new Error(
+        `assertNoLeakedLegacyMongoId: object at ${pointer} carries "legacyMongoId" ` +
+          `(${JSON.stringify(obj.legacyMongoId)}). This is internal migration bookkeeping ` +
+          `and must NEVER reach a client response -- see serialize.ts's ` +
+          `NEVER_SERIALIZE_PROFILE_FIELDS and utils/embeddedProfile.mapper.ts's ` +
+          `shapeEmbeddedProfile(), which the offending service/remap function needs to use.`
+      );
+    }
+    for (const [key, value] of Object.entries(obj)) {
+      assertNoLeakedLegacyMongoId(value, `${pointer}.${key}`);
+    }
+  }
+}
+
+/**
  * Login responses embed live, freshly-signed JWTs. They can never equal the
  * `<ACCESS_TOKEN>` / `<REFRESH_TOKEN>` placeholders capture-golden.ts's own
  * redactTokens() baked into auth.json, and per this task's design must
@@ -287,6 +336,7 @@ describe.each(suites.map(({ file, cases }) => [file, cases] as const))(
 
       // Structural pass FIRST, on the raw (un-normalized) body.
       assertDualId(actualBody, ALLOW_ID_ONLY.has(c.name));
+      assertNoLeakedLegacyMongoId(actualBody);
 
       // Then the value comparison, on normalized (ID/volatile-field
       // agnostic) copies of both sides.

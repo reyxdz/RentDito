@@ -3,6 +3,7 @@ import { Prisma } from '@prisma/client';
 import { serializeDoc, serializeList } from '../utils/serialize';
 import { toHttpError } from '../utils/prismaErrors';
 import { PROPERTY_REF_SELECT, shapePropertyRef } from '../utils/propertyRef.mapper';
+import { shapeEmbeddedProfile } from '../utils/embeddedProfile.mapper';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const isValidId = (id: string): boolean => UUID_RE.test(id);
@@ -19,19 +20,12 @@ function stripNulls<T extends Record<string, unknown>>(obj: T): T {
   return obj;
 }
 
-/**
- * Shapes a full `Profile` row embedded via the unqualified
- * `.populate(['userId', ..., 'assignedStaffId'])` shape (FULL_VISIT_INCLUDE's
- * `user`/`assignedStaff`, both full-row includes, not field-selected).
- * `legacyMongoId` is migration-internal bookkeeping (see
- * `serialize.ts`'s `NEVER_SERIALIZE_PROFILE_FIELDS`) and must never cross the
- * response boundary -- stripped here explicitly since this path spreads the
- * whole Profile row rather than going through `serializeProfile()`.
- */
-function shapeEmbeddedProfile(row: Record<string, any>): Record<string, unknown> {
-  const { legacyMongoId, ...rest } = row;
-  return stripNulls(rest);
-}
+// `shapeEmbeddedProfile()` (full `Profile` row embed, e.g. FULL_VISIT_INCLUDE's
+// `user`/`assignedStaff`, both unqualified includes, not field-selected) now
+// lives in ../utils/embeddedProfile.mapper.ts -- promoted from a local
+// helper here (task 18) so inquiry.service.ts's identical latent
+// `legacyMongoId` leak (task 18a) shares the same fix instead of a second
+// copy.
 
 // ═══════════════════════════════════════════════════════════════════════
 // Relation shapes. THREE distinct populate shapes existed in the original

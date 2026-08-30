@@ -3,6 +3,7 @@ import { Prisma } from '@prisma/client';
 import { serializeDoc, serializeList } from '../utils/serialize';
 import { toHttpError } from '../utils/prismaErrors';
 import { PROPERTY_REF_SELECT, shapePropertyRef } from '../utils/propertyRef.mapper';
+import { shapeEmbeddedProfile } from '../utils/embeddedProfile.mapper';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const isValidId = (id: string): boolean => UUID_RE.test(id);
@@ -113,11 +114,20 @@ function remapInquiryDetail(row: Record<string, any>): Record<string, unknown> {
  * property.service.ts's private nested address/billingSettings shape, which
  * isn't exported and is out of this port's scope to duplicate for an
  * untested path.
+ *
+ * `user` is a full `Profile` row (unqualified include, not field-selected)
+ * and must go through the shared `shapeEmbeddedProfile()` (task 18a), not a
+ * bare `stripNulls({ ...user })` -- that bare form is exactly what leaked
+ * `legacyMongoId` here (flagged as a latent bug in task 18's report,
+ * confirmed and fixed in task 18a; no fixture exercises this return shape,
+ * which is why it went undetected). `property`/`unit` are not `Profile`
+ * rows (no `legacyMongoId` column exists on either model), so they keep the
+ * plain local `stripNulls()`.
  */
 function remapFullPopulate(row: Record<string, any>): Record<string, unknown> {
   const { user, property, unit, ...rest } = row;
   const out: Record<string, unknown> = { ...rest };
-  if (user !== undefined) out.userId = stripNulls({ ...user });
+  if (user !== undefined) out.userId = shapeEmbeddedProfile(user);
   if (property !== undefined) out.propertyId = stripNulls({ ...property });
   if (unit !== undefined) out.unitId = unit === null ? null : stripNulls({ ...unit });
   return out;
