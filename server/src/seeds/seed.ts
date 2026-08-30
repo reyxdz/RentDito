@@ -139,7 +139,12 @@ const seedUnits = async (properties: any[]) => {
   return units;
 };
 
-const seedContractsAndTenancies = async (users: any[], properties: any[], units: any[]) => {
+const seedContractsAndTenancies = async (
+  users: any[],
+  properties: any[],
+  units: any[],
+  applications: { user1Application: any; user2ContractApplication: any; user3Application: any }
+) => {
   console.log('Seeding contracts & tenancies...');
 
   const user1 = users.find((u: any) => u.email === 'user1@rentdito.com');
@@ -151,10 +156,11 @@ const seedContractsAndTenancies = async (users: any[], properties: any[], units:
   const unit1 = units.find((u: any) => u.propertyId.toString() === property._id.toString()); // First unit of property
 
   // Create contract for user1
-  // Mock application ID: fixed literal (no RentalApplication is linked to this contract) so the
-  // stored value is identical across seed runs.
+  // applicationId references the real, approved RentalApplication seeded for this same
+  // user + unit in seedRentalApplications (Contract.applicationId is required:true and a NOT
+  // NULL FK in the Prisma schema, so it must resolve to a real row, not a mock ObjectId).
   const contract1 = await Contract.create({
-    applicationId: new mongoose.Types.ObjectId('000000000000000000000101'),
+    applicationId: applications.user1Application._id,
     landlordId: landlord1._id,
     userId: user1._id,
     propertyId: property._id,
@@ -284,7 +290,7 @@ const seedContractsAndTenancies = async (users: any[], properties: any[], units:
   const pastStartDate = new Date('2024-03-15T00:00:00Z');
   const pastEndDate = new Date('2025-03-15T00:00:00Z');
   const pastContract = await Contract.create({
-    applicationId: new mongoose.Types.ObjectId('000000000000000000000102'),
+    applicationId: applications.user2ContractApplication._id,
     landlordId: landlord1._id,
     userId: user2._id,
     propertyId: property._id,
@@ -305,7 +311,7 @@ const seedContractsAndTenancies = async (users: any[], properties: any[], units:
   const expiringStartDate = new Date('2025-05-15T00:00:00Z');
   const expiringEndDate = new Date('2026-05-15T00:00:00Z');
   const expiringContract = await Contract.create({
-    applicationId: new mongoose.Types.ObjectId('000000000000000000000103'),
+    applicationId: applications.user3Application._id,
     landlordId: landlord1._id,
     userId: user3._id,
     propertyId: property._id,
@@ -442,7 +448,9 @@ const seedInventory = async (users: any[], properties: any[]) => {
 const seedRentalApplications = async (users: any[], properties: any[], units: any[]) => {
   console.log('Seeding rental applications...');
 
+  const user1 = users.find((u: any) => u.email === 'user1@rentdito.com');
   const user2 = users.find((u: any) => u.email === 'user2@rentdito.com');
+  const user3 = users.find((u: any) => u.email === 'user3@rentdito.com');
   const user4 = users.find((u: any) => u.email === 'user4@rentdito.com');
   const user5 = users.find((u: any) => u.email === 'user5@rentdito.com');
   const user6 = users.find((u: any) => u.email === 'user6@rentdito.com');
@@ -523,7 +531,73 @@ const seedRentalApplications = async (users: any[], properties: any[], units: an
     }
   ]);
 
-  return applications;
+  // seedContractsAndTenancies wires each of its 3 contracts to a real, approved
+  // RentalApplication for the same user + unit. Contract.applicationId is required:true and
+  // becomes a NOT NULL FK to rental_applications in the Prisma schema, so a dangling mock
+  // ObjectId here would both crash contract.service.ts's populate('applicationId') call today
+  // and make the fixture unreplayable against Postgres later.
+  //
+  // These are separate approved RentalApplication rows from the 4 above, not a conversion of
+  // any of them, so the pending/under_review/approved/rejected status coverage above is
+  // unaffected. Multiple 'approved' rows for the same (userId, unitId) are fine -- the partial
+  // unique index only constrains status in {pending, under_review}.
+  const unit1 = unitsP0[0]; // matches the "first unit of property0" seedContractsAndTenancies resolves to
+
+  const [user1Application, user2ContractApplication, user3Application] = await RentalApplication.create([
+    {
+      userId: user1._id,
+      propertyId: property0._id,
+      unitId: unit1._id,
+      personalDetails: {
+        fullName: user1.name,
+        phone: user1.phone,
+        occupation: 'Software Engineer',
+        address: '123 Test St., Cebu City',
+        emergencyContact: { name: 'Emergency Contact 1', phone: '09000000000', relationship: 'Sibling' }
+      },
+      documents: ['/uploads/applications/user1-id.jpg'],
+      status: 'approved',
+      reviewedBy: landlord1._id,
+      reviewNotes: 'Approved for move-in.',
+      reviewedAt: new Date('2025-12-20T00:00:00Z')
+    },
+    {
+      userId: user2._id,
+      propertyId: property0._id,
+      unitId: unit1._id,
+      personalDetails: {
+        fullName: user2.name,
+        phone: user2.phone,
+        occupation: 'Designer',
+        address: '456 Old St., Cebu City',
+        emergencyContact: { name: 'Emergency Contact 2', phone: '09111111111', relationship: 'Parent' }
+      },
+      documents: ['/uploads/applications/user2-past-id.jpg'],
+      status: 'approved',
+      reviewedBy: landlord1._id,
+      reviewNotes: 'Approved for move-in.',
+      reviewedAt: new Date('2024-03-01T00:00:00Z')
+    },
+    {
+      userId: user3._id,
+      propertyId: property0._id,
+      unitId: unit1._id,
+      personalDetails: {
+        fullName: user3.name,
+        phone: user3.phone,
+        occupation: 'Nurse',
+        address: '789 New St., Cebu City',
+        emergencyContact: { name: 'Reyes Sibling', phone: '09000000002', relationship: 'Sibling' }
+      },
+      documents: ['/uploads/applications/user3-id.jpg'],
+      status: 'approved',
+      reviewedBy: landlord1._id,
+      reviewNotes: 'Approved for move-in.',
+      reviewedAt: new Date('2025-05-01T00:00:00Z')
+    }
+  ]);
+
+  return { applications, user1Application, user2ContractApplication, user3Application };
 };
 
 const seedVisitRequests = async (users: any[], properties: any[], units: any[]) => {
@@ -981,9 +1055,9 @@ const runSeeder = async () => {
     const users = await seedUsers();
     const properties = await seedProperties(users);
     const units = await seedUnits(properties);
-    const { tenancy1, tenancy2, utilityBills } = await seedContractsAndTenancies(users, properties, units);
+    const rentalApplications = await seedRentalApplications(users, properties, units);
+    const { tenancy1, tenancy2, utilityBills } = await seedContractsAndTenancies(users, properties, units, rentalApplications);
     await seedInventory(users, properties);
-    await seedRentalApplications(users, properties, units);
     await seedVisitRequests(users, properties, units);
     await seedTransferRequests(users, properties, units, tenancy1);
     await seedInquiriesConversationsAndMessages(users, properties, units);
