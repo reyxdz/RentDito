@@ -74,6 +74,37 @@ const SEED_EMAILS = USER_SPECS.map((u) => u.email);
 const DEFAULT_PASSWORD = 'password123';
 
 // =============================================================================
+// Deterministic, strictly-increasing `createdAt` generator.
+//
+// WHY THIS EXISTS: every createMany() call below evaluates Prisma's
+// `@default(now())` exactly ONCE for the whole SQL statement, so every row in
+// a batch would otherwise receive the *identical* createdAt, down to the
+// millisecond. Any table with more than one seeded row can be (or, once its
+// service is ported, WILL be) sorted `orderBy: { createdAt: 'desc' }` --
+// nearly every model in prisma/schema.prisma has a `createdAt`-based index for
+// exactly this -- and a tied sort key leaves list order non-deterministic:
+// Postgres has no obligation to break the tie the way Mongo's genuinely
+// sequential seed.ts `.create()` calls happened to.
+//
+// Fix: hand each row its own fixed, strictly-increasing timestamp, advancing
+// in the SAME order seed.ts's sequential .create()/.create([...]) calls ran
+// in (each createMany() array below is already ordered 1:1 with its seed.ts
+// counterpart -- see the "source: seed.ts ..." comment above each section
+// and task-4b-report.md's audit table), so list order after a port matches
+// the order the original Mongo seed produced.
+//
+// Fixed ISO base + fixed step -- no Date.now(), no bare `new Date()`, no
+// Math.random() -- so running this script twice in a row is byte-for-byte
+// reproducible.
+// =============================================================================
+let seedClockMs = Date.parse('2023-01-01T00:00:00.000Z');
+function nextCreatedAt(): Date {
+  const ts = new Date(seedClockMs);
+  seedClockMs += 60_000; // +1 minute per row -- arbitrary but strictly increasing
+  return ts;
+}
+
+// =============================================================================
 // 2. Mongo lookup -- legacy_mongo_id per email (server/.env MONGO_URI, already
 //    seeded by seed.ts; connects read-only, never writes to Mongo).
 // =============================================================================
@@ -192,6 +223,7 @@ async function seedProfiles(legacyIds: Record<string, string>): Promise<Record<s
     permissions: spec.permissions ?? [],
     positionName: spec.positionName ?? null,
     legacyMongoId: legacyIds[spec.email],
+    createdAt: nextCreatedAt(),
   }));
 
   await prisma.profile.createMany({ data: rows });
@@ -285,6 +317,7 @@ async function run() {
         utilityDefault: 'metered',
         latitude: null,
         longitude: null,
+        createdAt: nextCreatedAt(),
       },
       {
         id: property1Id,
@@ -325,6 +358,7 @@ async function run() {
         utilityDefault: 'metered',
         latitude: null,
         longitude: null,
+        createdAt: nextCreatedAt(),
       },
     ],
   });
@@ -362,6 +396,7 @@ async function run() {
         status: 'vacant',
         features: ['Foam', 'Pillow', 'WiFi', 'Clip Fan', 'Table', 'Chair'],
         deposit: 5000,
+        createdAt: nextCreatedAt(),
       },
       {
         id: unitRoom3Id,
@@ -378,6 +413,7 @@ async function run() {
         status: 'vacant',
         features: ['Foam', 'Pillow', 'WiFi', 'Clip Fan', 'Table', 'Chair'],
         deposit: 5000,
+        createdAt: nextCreatedAt(),
       },
       {
         id: unitRoom4Id,
@@ -394,6 +430,7 @@ async function run() {
         status: 'vacant',
         features: ['Foam', 'Pillow', 'WiFi', 'Clip Fan', 'Table', 'Chair'],
         deposit: 5000,
+        createdAt: nextCreatedAt(),
       },
       {
         id: unitP1Room1Id,
@@ -410,6 +447,7 @@ async function run() {
         status: 'vacant',
         features: ['Foam', 'Pillow', 'WiFi', 'Clip Fan', 'Table', 'Chair'],
         deposit: 5000,
+        createdAt: nextCreatedAt(),
       },
       {
         id: unitP1Door5Room2Id,
@@ -426,6 +464,7 @@ async function run() {
         status: 'vacant',
         features: ['Foam', 'Pillow', 'WiFi', 'Clip Fan', 'Table', 'Chair'],
         deposit: 5000,
+        createdAt: nextCreatedAt(),
       },
     ],
   });
@@ -466,6 +505,7 @@ async function run() {
         pdEmergencyRelationship: 'Parent',
         documents: ['/uploads/applications/user4-id.jpg'],
         status: 'pending',
+        createdAt: nextCreatedAt(),
       },
       {
         id: appUser5Id,
@@ -482,6 +522,7 @@ async function run() {
         pdEmergencyRelationship: 'Sibling',
         documents: ['/uploads/applications/user5-id.jpg'],
         status: 'under_review',
+        createdAt: nextCreatedAt(),
       },
       {
         id: appUser2StandaloneId,
@@ -501,6 +542,7 @@ async function run() {
         reviewedBy: landlord2,
         reviewNotes: 'Documents verified, approved for move-in.',
         reviewedAt: new Date('2026-02-10T00:00:00Z'),
+        createdAt: nextCreatedAt(),
       },
       {
         id: appUser6Id,
@@ -520,6 +562,7 @@ async function run() {
         reviewedBy: landlord1,
         reviewNotes: 'Insufficient proof of income.',
         reviewedAt: new Date('2026-02-12T00:00:00Z'),
+        createdAt: nextCreatedAt(),
       },
       {
         id: appUser1Id,
@@ -539,6 +582,7 @@ async function run() {
         reviewedBy: landlord1,
         reviewNotes: 'Approved for move-in.',
         reviewedAt: new Date('2025-12-20T00:00:00Z'),
+        createdAt: nextCreatedAt(),
       },
       {
         id: appUser2ContractId,
@@ -558,6 +602,7 @@ async function run() {
         reviewedBy: landlord1,
         reviewNotes: 'Approved for move-in.',
         reviewedAt: new Date('2024-03-01T00:00:00Z'),
+        createdAt: nextCreatedAt(),
       },
       {
         id: appUser3Id,
@@ -577,6 +622,7 @@ async function run() {
         reviewedBy: landlord1,
         reviewNotes: 'Approved for move-in.',
         reviewedAt: new Date('2025-05-01T00:00:00Z'),
+        createdAt: nextCreatedAt(),
       },
     ],
   });
@@ -614,6 +660,7 @@ async function run() {
         landlordSignature: 'mock-signature-base64',
         userSignature: 'mock-signature-base64',
         signedAt: new Date('2026-01-01T00:00:00Z'),
+        createdAt: nextCreatedAt(),
       },
       {
         id: pastContractId,
@@ -634,6 +681,7 @@ async function run() {
         landlordSignature: 'mock-signature-base64',
         userSignature: 'mock-signature-base64',
         signedAt: new Date('2024-03-15T00:00:00Z'),
+        createdAt: nextCreatedAt(),
       },
       {
         id: expiringContractId,
@@ -654,6 +702,7 @@ async function run() {
         landlordSignature: 'mock-signature-base64',
         userSignature: 'mock-signature-base64',
         signedAt: new Date('2025-05-15T00:00:00Z'),
+        createdAt: nextCreatedAt(),
       },
     ],
   });
@@ -689,6 +738,7 @@ async function run() {
           pdEmergencyName: 'Emergency Contact 1',
           pdEmergencyPhone: '09000000000',
           pdEmergencyRelationship: 'Sibling',
+          createdAt: nextCreatedAt(),
         },
         {
           id: tenancy2Id,
@@ -710,6 +760,7 @@ async function run() {
           pdEmergencyName: 'Emergency Contact 2',
           pdEmergencyPhone: '09111111111',
           pdEmergencyRelationship: 'Parent',
+          createdAt: nextCreatedAt(),
         },
       ],
     }),
@@ -791,6 +842,7 @@ async function run() {
         },
         notes: note(m0Total, m0PerHead),
         isAutoGenerated: false,
+        createdAt: nextCreatedAt(),
       },
       {
         id: partialBillId,
@@ -816,6 +868,7 @@ async function run() {
         },
         notes: note(m1Total, m1PerHead),
         isAutoGenerated: false,
+        createdAt: nextCreatedAt(),
       },
       {
         id: paidBillId,
@@ -841,6 +894,7 @@ async function run() {
         },
         notes: note(m2Total, m2PerHead),
         isAutoGenerated: false,
+        createdAt: nextCreatedAt(),
       },
     ],
   });
@@ -855,10 +909,10 @@ async function run() {
   await prisma.$transaction([
     prisma.payment.createMany({
       data: [
-        { id: randomUUID(), billId: paidBillId, tenancyId: tenancy1Id, amount: 1000, paymentDate: new Date('2026-02-01T10:00:00Z'), method: 'cash', recordedByUserId: staff3 },
-        { id: randomUUID(), billId: paidBillId, tenancyId: tenancy1Id, amount: 985, paymentDate: new Date('2026-02-03T15:30:00Z'), method: 'gcash', referenceNumber: 'GC-2026-0001', recordedByUserId: staff3 },
-        { id: randomUUID(), billId: partialBillId, tenancyId: tenancy1Id, amount: 900, paymentDate: new Date('2026-03-01T09:00:00Z'), method: 'bank_transfer', referenceNumber: 'BT-2026-0002', recordedByUserId: staff3 },
-        { id: randomUUID(), billId: partialBillId, tenancyId: tenancy1Id, amount: 500, paymentDate: new Date('2026-03-02T14:00:00Z'), method: 'other', notes: 'Partial payment via money remittance center.', recordedByUserId: staff3 },
+        { id: randomUUID(), billId: paidBillId, tenancyId: tenancy1Id, amount: 1000, paymentDate: new Date('2026-02-01T10:00:00Z'), method: 'cash', recordedByUserId: staff3, createdAt: nextCreatedAt() },
+        { id: randomUUID(), billId: paidBillId, tenancyId: tenancy1Id, amount: 985, paymentDate: new Date('2026-02-03T15:30:00Z'), method: 'gcash', referenceNumber: 'GC-2026-0001', recordedByUserId: staff3, createdAt: nextCreatedAt() },
+        { id: randomUUID(), billId: partialBillId, tenancyId: tenancy1Id, amount: 900, paymentDate: new Date('2026-03-01T09:00:00Z'), method: 'bank_transfer', referenceNumber: 'BT-2026-0002', recordedByUserId: staff3, createdAt: nextCreatedAt() },
+        { id: randomUUID(), billId: partialBillId, tenancyId: tenancy1Id, amount: 500, paymentDate: new Date('2026-03-02T14:00:00Z'), method: 'other', notes: 'Partial payment via money remittance center.', recordedByUserId: staff3, createdAt: nextCreatedAt() },
       ],
     }),
     prisma.bill.update({ where: { id: paidBillId }, data: { paidAmount: 1985, balanceAmount: m2PerHead - 1985, status: 'paid' } }),
@@ -879,16 +933,16 @@ async function run() {
 
   await prisma.inventory.createMany({
     data: [
-      { id: inventoryAcId, propertyId: property0Id, itemName: 'Samsung Split-type AC 1HP', serialNumber: 'SMC-9921-AC', condition: 'good', quantity: 5, availableQuantity: 3, status: 'issued', purchaseDate: new Date('2023-01-15T00:00:00Z'), purchaseCost: 25000 },
-      { id: inventoryChairId, propertyId: property0Id, itemName: 'Office Desk Chair (Ergo)', serialNumber: null, condition: 'new', quantity: 10, availableQuantity: 6, status: 'issued', purchaseDate: new Date('2025-11-10T00:00:00Z'), purchaseCost: 3500 },
-      { id: inventoryMicrowaveId, propertyId: property0Id, itemName: 'Microwave Oven (LG)', serialNumber: 'LG-MW-005', condition: 'damaged', quantity: 2, availableQuantity: 2, status: 'maintenance', purchaseDate: new Date('2022-05-20T00:00:00Z'), purchaseCost: 4500 },
+      { id: inventoryAcId, propertyId: property0Id, itemName: 'Samsung Split-type AC 1HP', serialNumber: 'SMC-9921-AC', condition: 'good', quantity: 5, availableQuantity: 3, status: 'issued', purchaseDate: new Date('2023-01-15T00:00:00Z'), purchaseCost: 25000, createdAt: nextCreatedAt() },
+      { id: inventoryChairId, propertyId: property0Id, itemName: 'Office Desk Chair (Ergo)', serialNumber: null, condition: 'new', quantity: 10, availableQuantity: 6, status: 'issued', purchaseDate: new Date('2025-11-10T00:00:00Z'), purchaseCost: 3500, createdAt: nextCreatedAt() },
+      { id: inventoryMicrowaveId, propertyId: property0Id, itemName: 'Microwave Oven (LG)', serialNumber: 'LG-MW-005', condition: 'damaged', quantity: 2, availableQuantity: 2, status: 'maintenance', purchaseDate: new Date('2022-05-20T00:00:00Z'), purchaseCost: 4500, createdAt: nextCreatedAt() },
     ],
   });
 
   await prisma.inventoryRecord.createMany({
     data: [
-      { id: randomUUID(), inventoryItemId: inventoryAcId, tenancyId: tenancy1Id, propertyId: property0Id, unitId: unit1Id, issuedByUserId: staff1, issuedDate: new Date('2026-03-20T00:00:00Z'), quantityIssued: 1, issuedCondition: 'good', status: 'active' },
-      { id: randomUUID(), inventoryItemId: inventoryChairId, tenancyId: tenancy1Id, propertyId: property0Id, unitId: unit1Id, issuedByUserId: staff1, issuedDate: new Date('2026-03-20T00:00:00Z'), quantityIssued: 2, issuedCondition: 'new', status: 'active' },
+      { id: randomUUID(), inventoryItemId: inventoryAcId, tenancyId: tenancy1Id, propertyId: property0Id, unitId: unit1Id, issuedByUserId: staff1, issuedDate: new Date('2026-03-20T00:00:00Z'), quantityIssued: 1, issuedCondition: 'good', status: 'active', createdAt: nextCreatedAt() },
+      { id: randomUUID(), inventoryItemId: inventoryChairId, tenancyId: tenancy1Id, propertyId: property0Id, unitId: unit1Id, issuedByUserId: staff1, issuedDate: new Date('2026-03-20T00:00:00Z'), quantityIssued: 2, issuedCondition: 'new', status: 'active', createdAt: nextCreatedAt() },
     ],
   });
   console.log('Seeded 3 inventory items, 2 inventory records.');
@@ -899,8 +953,8 @@ async function run() {
   console.log('Seeding notifications...');
   await prisma.notification.createMany({
     data: [
-      { id: randomUUID(), userId: landlord1, type: 'inquiry', title: 'New Inquiry Received', message: 'You have a new inquiry for unit 101.', isRead: false },
-      { id: randomUUID(), userId: landlord1, type: 'contract', title: 'Contract Expiring Soon', message: 'A contract for user3 is expiring in 2 months.', isRead: false },
+      { id: randomUUID(), userId: landlord1, type: 'inquiry', title: 'New Inquiry Received', message: 'You have a new inquiry for unit 101.', isRead: false, createdAt: nextCreatedAt() },
+      { id: randomUUID(), userId: landlord1, type: 'contract', title: 'Contract Expiring Soon', message: 'A contract for user3 is expiring in 2 months.', isRead: false, createdAt: nextCreatedAt() },
     ],
   });
   console.log('Seeded 2 notifications.');
@@ -911,11 +965,11 @@ async function run() {
   console.log('Seeding visit requests...');
   await prisma.visitRequest.createMany({
     data: [
-      { id: randomUUID(), userId: user1, propertyId: property0Id, unitId: unitsP0[0], requestedDate: new Date('2026-02-01T00:00:00Z'), requestedTime: '10:00', purpose: 'viewing', status: 'pending' },
-      { id: randomUUID(), userId: user2, propertyId: property0Id, unitId: unitsP0[1], requestedDate: new Date('2026-02-03T00:00:00Z'), requestedTime: '11:00', purpose: 'viewing', status: 'approved' },
-      { id: randomUUID(), userId: user3, propertyId: property1Id, unitId: unitsP1[0], requestedDate: new Date('2026-02-05T00:00:00Z'), requestedTime: '14:00', scheduledDate: new Date('2026-02-06T00:00:00Z'), scheduledTime: '14:00', purpose: 'inspection', status: 'scheduled', assignedStaffId: staff2 },
-      { id: randomUUID(), userId: user4, propertyId: property0Id, unitId: unitsP0[0], requestedDate: new Date('2026-01-20T00:00:00Z'), requestedTime: '09:00', scheduledDate: new Date('2026-01-21T00:00:00Z'), scheduledTime: '09:00', purpose: 'viewing', status: 'completed', assignedStaffId: staff4 },
-      { id: randomUUID(), userId: user5, propertyId: property1Id, unitId: unitsP1[1], requestedDate: new Date('2026-01-25T00:00:00Z'), requestedTime: '13:00', purpose: 'viewing', status: 'cancelled', notes: 'Requester cancelled due to a schedule conflict.' },
+      { id: randomUUID(), userId: user1, propertyId: property0Id, unitId: unitsP0[0], requestedDate: new Date('2026-02-01T00:00:00Z'), requestedTime: '10:00', purpose: 'viewing', status: 'pending', createdAt: nextCreatedAt() },
+      { id: randomUUID(), userId: user2, propertyId: property0Id, unitId: unitsP0[1], requestedDate: new Date('2026-02-03T00:00:00Z'), requestedTime: '11:00', purpose: 'viewing', status: 'approved', createdAt: nextCreatedAt() },
+      { id: randomUUID(), userId: user3, propertyId: property1Id, unitId: unitsP1[0], requestedDate: new Date('2026-02-05T00:00:00Z'), requestedTime: '14:00', scheduledDate: new Date('2026-02-06T00:00:00Z'), scheduledTime: '14:00', purpose: 'inspection', status: 'scheduled', assignedStaffId: staff2, createdAt: nextCreatedAt() },
+      { id: randomUUID(), userId: user4, propertyId: property0Id, unitId: unitsP0[0], requestedDate: new Date('2026-01-20T00:00:00Z'), requestedTime: '09:00', scheduledDate: new Date('2026-01-21T00:00:00Z'), scheduledTime: '09:00', purpose: 'viewing', status: 'completed', assignedStaffId: staff4, createdAt: nextCreatedAt() },
+      { id: randomUUID(), userId: user5, propertyId: property1Id, unitId: unitsP1[1], requestedDate: new Date('2026-01-25T00:00:00Z'), requestedTime: '13:00', purpose: 'viewing', status: 'cancelled', notes: 'Requester cancelled due to a schedule conflict.', createdAt: nextCreatedAt() },
     ],
   });
   console.log('Seeded 5 visit requests.');
@@ -926,9 +980,9 @@ async function run() {
   console.log('Seeding transfer requests...');
   await prisma.transferRequest.createMany({
     data: [
-      { id: randomUUID(), tenancyId: tenancy1Id, propertyId: property0Id, fromUnitId: unitsP0[0], toUnitId: unitsP0[1], reason: 'Tenant requested a move to a smaller room to reduce rent.', initiatedByUserId: user1, status: 'pending' },
-      { id: randomUUID(), tenancyId: tenancy1Id, propertyId: property0Id, fromUnitId: unitsP0[0], toUnitId: unitsP0[2], reason: 'Requested move due to noise complaints from a neighboring room.', initiatedByUserId: user1, status: 'approved', reviewedBy: staff1, reviewNotes: 'Approved, unit is available.', reviewedAt: new Date('2026-02-20T00:00:00Z') },
-      { id: randomUUID(), tenancyId: tenancy1Id, propertyId: property0Id, fromUnitId: unitsP0[1], toUnitId: unitsP0[2], reason: 'Downsizing after roommate moved out.', initiatedByUserId: staff1, status: 'completed', reviewedBy: landlord1, reviewNotes: 'Transfer completed successfully.', reviewedAt: new Date('2026-02-25T00:00:00Z'), completedAt: new Date('2026-02-27T00:00:00Z') },
+      { id: randomUUID(), tenancyId: tenancy1Id, propertyId: property0Id, fromUnitId: unitsP0[0], toUnitId: unitsP0[1], reason: 'Tenant requested a move to a smaller room to reduce rent.', initiatedByUserId: user1, status: 'pending', createdAt: nextCreatedAt() },
+      { id: randomUUID(), tenancyId: tenancy1Id, propertyId: property0Id, fromUnitId: unitsP0[0], toUnitId: unitsP0[2], reason: 'Requested move due to noise complaints from a neighboring room.', initiatedByUserId: user1, status: 'approved', reviewedBy: staff1, reviewNotes: 'Approved, unit is available.', reviewedAt: new Date('2026-02-20T00:00:00Z'), createdAt: nextCreatedAt() },
+      { id: randomUUID(), tenancyId: tenancy1Id, propertyId: property0Id, fromUnitId: unitsP0[1], toUnitId: unitsP0[2], reason: 'Downsizing after roommate moved out.', initiatedByUserId: staff1, status: 'completed', reviewedBy: landlord1, reviewNotes: 'Transfer completed successfully.', reviewedAt: new Date('2026-02-25T00:00:00Z'), completedAt: new Date('2026-02-27T00:00:00Z'), createdAt: nextCreatedAt() },
     ],
   });
   console.log('Seeded 3 transfer requests.');
@@ -951,17 +1005,17 @@ async function run() {
 
   await prisma.inquiry.createMany({
     data: [
-      { id: inquiry1Id, userId: user4, propertyId: property0Id, unitId: unitsP0[0], subject: 'Is WiFi included?', status: 'open' },
-      { id: inquiry2Id, userId: user5, propertyId: property1Id, unitId: unitsP1[0], subject: 'Can I view the room this weekend?', status: 'in_progress' },
-      { id: inquiry3Id, userId: user6, propertyId: property0Id, unitId: unitsP0[2], subject: 'Inquiry about deposit refund policy', status: 'closed' },
+      { id: inquiry1Id, userId: user4, propertyId: property0Id, unitId: unitsP0[0], subject: 'Is WiFi included?', status: 'open', createdAt: nextCreatedAt() },
+      { id: inquiry2Id, userId: user5, propertyId: property1Id, unitId: unitsP1[0], subject: 'Can I view the room this weekend?', status: 'in_progress', createdAt: nextCreatedAt() },
+      { id: inquiry3Id, userId: user6, propertyId: property0Id, unitId: unitsP0[2], subject: 'Inquiry about deposit refund policy', status: 'closed', createdAt: nextCreatedAt() },
     ],
   });
 
   await prisma.conversation.createMany({
     data: [
-      { id: conversation1Id, inquiryId: inquiry1Id },
-      { id: conversation2Id, inquiryId: inquiry2Id },
-      { id: conversation3Id, inquiryId: inquiry3Id },
+      { id: conversation1Id, inquiryId: inquiry1Id, createdAt: nextCreatedAt() },
+      { id: conversation2Id, inquiryId: inquiry2Id, createdAt: nextCreatedAt() },
+      { id: conversation3Id, inquiryId: inquiry3Id, createdAt: nextCreatedAt() },
     ],
   });
 
@@ -1025,11 +1079,11 @@ async function run() {
 
   await prisma.ticket.createMany({
     data: [
-      { id: ticket1Id, tenancyId: tenancy1Id, propertyId: property0Id, unitId: unit1Id, reportedByUserId: user1, title: 'Leaking faucet in bathroom', description: 'The bathroom faucet has been dripping continuously since yesterday.', category: 'plumbing', priority: 'medium', images: [], status: 'open' },
-      { id: ticket2Id, tenancyId: tenancy1Id, propertyId: property0Id, unitId: unit1Id, reportedByUserId: user1, title: 'Aircon not cooling', description: 'The split-type aircon runs but no longer cools the room.', category: 'appliance', priority: 'high', images: [], status: 'assigned', assignedToUserId: staff2, assignedByUserId: staff1 },
-      { id: ticket3Id, tenancyId: tenancy1Id, propertyId: property0Id, unitId: unit1Id, reportedByUserId: user1, title: 'Flickering lights in room', description: 'Ceiling light flickers intermittently, possibly a wiring issue.', category: 'electrical', priority: 'urgent', images: [], status: 'in_progress', assignedToUserId: staff2, assignedByUserId: staff1 },
-      { id: ticket4Id, tenancyId: tenancy2Id, propertyId: property0Id, unitId: unit1Id, reportedByUserId: user2, title: 'Pest sighting in room corner', description: 'Cockroaches spotted near the corner cabinet.', category: 'pest', priority: 'low', images: [], status: 'resolved', assignedToUserId: staff2, assignedByUserId: staff1, resolutionNotes: 'Pest control treated the area; no further sightings reported.', resolvedAt: new Date('2024-11-10T00:00:00Z') },
-      { id: ticket5Id, tenancyId: tenancy2Id, propertyId: property0Id, unitId: unit1Id, reportedByUserId: user2, title: 'Broken window latch', description: 'Window latch is broken and the window does not close properly.', category: 'structural', priority: 'medium', images: [], status: 'closed', assignedToUserId: staff2, assignedByUserId: staff1, resolutionNotes: 'Latch replaced and verified working.', resolvedAt: new Date('2024-12-01T00:00:00Z') },
+      { id: ticket1Id, tenancyId: tenancy1Id, propertyId: property0Id, unitId: unit1Id, reportedByUserId: user1, title: 'Leaking faucet in bathroom', description: 'The bathroom faucet has been dripping continuously since yesterday.', category: 'plumbing', priority: 'medium', images: [], status: 'open', createdAt: nextCreatedAt() },
+      { id: ticket2Id, tenancyId: tenancy1Id, propertyId: property0Id, unitId: unit1Id, reportedByUserId: user1, title: 'Aircon not cooling', description: 'The split-type aircon runs but no longer cools the room.', category: 'appliance', priority: 'high', images: [], status: 'assigned', assignedToUserId: staff2, assignedByUserId: staff1, createdAt: nextCreatedAt() },
+      { id: ticket3Id, tenancyId: tenancy1Id, propertyId: property0Id, unitId: unit1Id, reportedByUserId: user1, title: 'Flickering lights in room', description: 'Ceiling light flickers intermittently, possibly a wiring issue.', category: 'electrical', priority: 'urgent', images: [], status: 'in_progress', assignedToUserId: staff2, assignedByUserId: staff1, createdAt: nextCreatedAt() },
+      { id: ticket4Id, tenancyId: tenancy2Id, propertyId: property0Id, unitId: unit1Id, reportedByUserId: user2, title: 'Pest sighting in room corner', description: 'Cockroaches spotted near the corner cabinet.', category: 'pest', priority: 'low', images: [], status: 'resolved', assignedToUserId: staff2, assignedByUserId: staff1, resolutionNotes: 'Pest control treated the area; no further sightings reported.', resolvedAt: new Date('2024-11-10T00:00:00Z'), createdAt: nextCreatedAt() },
+      { id: ticket5Id, tenancyId: tenancy2Id, propertyId: property0Id, unitId: unit1Id, reportedByUserId: user2, title: 'Broken window latch', description: 'Window latch is broken and the window does not close properly.', category: 'structural', priority: 'medium', images: [], status: 'closed', assignedToUserId: staff2, assignedByUserId: staff1, resolutionNotes: 'Latch replaced and verified working.', resolvedAt: new Date('2024-12-01T00:00:00Z'), createdAt: nextCreatedAt() },
     ],
   });
 
@@ -1050,22 +1104,22 @@ async function run() {
   console.log('Seeding landlord applications, documents & incident reports...');
   await prisma.landlordApplication.createMany({
     data: [
-      { id: randomUUID(), userId: user6, businessName: 'Dantes Rental Ventures', businessType: 'Sole Proprietorship', documents: ['/uploads/landlord-applications/user6-permit.pdf'], status: 'pending' },
-      { id: randomUUID(), userId: user3, businessName: 'Macaraeg Properties', businessType: 'Sole Proprietorship', documents: ['/uploads/landlord-applications/user3-permit.pdf'], status: 'approved', reviewedBy: admin, reviewedAt: new Date('2026-02-15T00:00:00Z'), reviewNotes: 'Documents verified, business permit valid.' },
+      { id: randomUUID(), userId: user6, businessName: 'Dantes Rental Ventures', businessType: 'Sole Proprietorship', documents: ['/uploads/landlord-applications/user6-permit.pdf'], status: 'pending', createdAt: nextCreatedAt() },
+      { id: randomUUID(), userId: user3, businessName: 'Macaraeg Properties', businessType: 'Sole Proprietorship', documents: ['/uploads/landlord-applications/user3-permit.pdf'], status: 'approved', reviewedBy: admin, reviewedAt: new Date('2026-02-15T00:00:00Z'), reviewNotes: 'Documents verified, business permit valid.', createdAt: nextCreatedAt() },
     ],
   });
 
   await prisma.document.createMany({
     data: [
-      { id: randomUUID(), propertyId: property0Id, unitId: unit1Id, tenancyId: tenancy1Id, type: 'contract', title: 'Signed Lease Contract - User1', fileUrl: '/uploads/documents/contract-user1.pdf', uploadedBy: staff3 },
-      { id: randomUUID(), propertyId: property0Id, unitId: unit1Id, tenancyId: tenancy2Id, type: 'receipt', title: 'Final Move-out Receipt - User2', fileUrl: '/uploads/documents/receipt-user2.pdf', uploadedBy: staff3 },
+      { id: randomUUID(), propertyId: property0Id, unitId: unit1Id, tenancyId: tenancy1Id, type: 'contract', title: 'Signed Lease Contract - User1', fileUrl: '/uploads/documents/contract-user1.pdf', uploadedBy: staff3, createdAt: nextCreatedAt() },
+      { id: randomUUID(), propertyId: property0Id, unitId: unit1Id, tenancyId: tenancy2Id, type: 'receipt', title: 'Final Move-out Receipt - User2', fileUrl: '/uploads/documents/receipt-user2.pdf', uploadedBy: staff3, createdAt: nextCreatedAt() },
     ],
   });
 
   await prisma.incidentReport.createMany({
     data: [
-      { id: randomUUID(), propertyId: property0Id, reportedBy: staff2, dateOfIncident: new Date('2026-02-18T00:00:00Z'), type: 'damage', severity: 'medium', description: 'Water damage found in the common area ceiling after heavy rain.', status: 'investigating', attachments: [] },
-      { id: randomUUID(), propertyId: property0Id, reportedBy: staff2, dateOfIncident: new Date('2026-01-05T00:00:00Z'), type: 'dispute', severity: 'low', description: 'Minor dispute between tenants over shared kitchen usage.', status: 'resolved', resolutionNotes: 'Mediated by staff; both parties agreed on a cleaning schedule.', attachments: [] },
+      { id: randomUUID(), propertyId: property0Id, reportedBy: staff2, dateOfIncident: new Date('2026-02-18T00:00:00Z'), type: 'damage', severity: 'medium', description: 'Water damage found in the common area ceiling after heavy rain.', status: 'investigating', attachments: [], createdAt: nextCreatedAt() },
+      { id: randomUUID(), propertyId: property0Id, reportedBy: staff2, dateOfIncident: new Date('2026-01-05T00:00:00Z'), type: 'dispute', severity: 'low', description: 'Minor dispute between tenants over shared kitchen usage.', status: 'resolved', resolutionNotes: 'Mediated by staff; both parties agreed on a cleaning schedule.', attachments: [], createdAt: nextCreatedAt() },
     ],
   });
   console.log('Seeded 2 landlord applications, 2 documents, 2 incident reports.');
