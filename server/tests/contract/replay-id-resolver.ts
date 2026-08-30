@@ -134,8 +134,9 @@ import { EMAILS } from './replay.meta';
 // ═══════════════════════════════════════════════════════════════════════
 export const PORTED_SERVICES: ReadonlySet<string> = new Set<string>([
   'property', // Task 10 (server/src/services/property.service.ts)
-  // Task 11 -> add 'unit'
-  // Task 12 -> add 'tenancy'
+  'user', // Task 11 (server/src/services/user.service.ts)
+  // Task 12 -> add 'unit'
+  // Task 13 -> add 'tenancy'
   // ...and so on, one line per port, in whatever order the ports land.
 ]);
 

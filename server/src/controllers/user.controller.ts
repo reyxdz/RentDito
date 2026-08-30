@@ -7,7 +7,7 @@ import * as userService from '../services/user.service';
  * GET /api/users/me — Get current user profile (with activeTenancy)
  */
 export const getMe = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
-    const result = await userService.getMe(req.user!.id);
+    const result = await userService.getMe(req.user!.pgId);
     res.status(200).json({
       status: 'success',
       data: result,
@@ -18,7 +18,7 @@ export const getMe = catchAsync(async (req: AuthRequest, res: Response): Promise
  * PATCH /api/users/me — Update profile
  */
 export const updateMe = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
-    const result = await userService.updateMe(req.user!.id, req.body);
+    const result = await userService.updateMe(req.user!.pgId, req.body);
     res.status(200).json({
       status: 'success',
       message: 'Profile updated.',
@@ -31,7 +31,7 @@ export const updateMe = catchAsync(async (req: AuthRequest, res: Response): Prom
  */
 export const changePassword = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
     const { currentPassword, newPassword } = req.body;
-    await userService.changePassword(req.user!.id, currentPassword, newPassword);
+    await userService.changePassword(req.user!.pgId, currentPassword, newPassword);
     res.status(200).json({
       status: 'success',
       message: 'Password changed successfully.',
@@ -46,7 +46,7 @@ export const updateAvatar = catchAsync(async (req: AuthRequest, res: Response): 
       res.status(400).json({ status: 'error', message: 'No image uploaded.' });
       return;
     }
-    const result = await userService.updateAvatar(req.user!.id, req.body.imageUrl);
+    const result = await userService.updateAvatar(req.user!.pgId, req.body.imageUrl);
     res.status(200).json({
       status: 'success',
       message: 'Avatar updated.',
@@ -59,7 +59,7 @@ export const updateAvatar = catchAsync(async (req: AuthRequest, res: Response): 
  */
 export const submitVerification = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
     const idPhotos = req.body.imageUrls || [];
-    const result = await userService.submitVerification(req.user!.id, idPhotos);
+    const result = await userService.submitVerification(req.user!.pgId, idPhotos);
     res.status(200).json({
       status: 'success',
       message: 'Verification documents submitted. Review is pending.',
