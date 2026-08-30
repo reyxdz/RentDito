@@ -41,6 +41,9 @@ dist-ssr/
 build/
 .next/
 
+# Local Git worktrees
+.worktrees/
+
 # Environment configurations
 .env
 .env.test
