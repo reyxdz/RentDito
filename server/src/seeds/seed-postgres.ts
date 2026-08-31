@@ -478,6 +478,20 @@ async function run() {
   // 7. Rental applications (source: seed.ts seedRentalApplications()).
   //    7 rows: 4 standalone (pending/under_review/approved/rejected) + 3 that
   //    the 3 contracts below reference via their required applicationId FK.
+  //
+  //    Task 30b: the first 4-row batch's createMany() array order below is
+  //    NOT the same as seed.ts's own declaration order -- it is deliberately
+  //    reordered to match the ASCENDING order of seed.ts's own explicit
+  //    createdAt literals for these 4 rows (user4 08:00 < user2Standalone
+  //    08:01 < user6 08:02 < user5 08:03; seed.ts itself declares them in a
+  //    different order -- user4, user5, user2Standalone, user6 -- but their
+  //    explicit timestamps do not follow that declaration order). Since this
+  //    file's nextCreatedAt() assigns strictly-increasing values in ARRAY
+  //    order, the array order here must follow the TIMESTAMP order, not
+  //    seed.ts's textual declaration order, for the two seeds to agree on
+  //    getApplications' `orderBy: { createdAt: 'desc' }`. This is the exact
+  //    defect task-19-report.md flagged for `applications-list-landlord1` /
+  //    `applications-list-super-admin`.
   // ===========================================================================
   console.log('Seeding rental applications...');
   const appUser4Id = randomUUID(); // pending
@@ -505,23 +519,6 @@ async function run() {
         pdEmergencyRelationship: 'Parent',
         documents: ['/uploads/applications/user4-id.jpg'],
         status: 'pending',
-        createdAt: nextCreatedAt(),
-      },
-      {
-        id: appUser5Id,
-        userId: user5,
-        propertyId: property0Id,
-        unitId: unitsP0[1],
-        pdFullName: 'Inday Bote',
-        pdPhone: '09999990000',
-        pdOccupation: 'Call Center Agent',
-        pdSchool: null,
-        pdAddress: '45 Lahug St., Cebu City',
-        pdEmergencyName: 'Bote Sibling',
-        pdEmergencyPhone: '09172223344',
-        pdEmergencyRelationship: 'Sibling',
-        documents: ['/uploads/applications/user5-id.jpg'],
-        status: 'under_review',
         createdAt: nextCreatedAt(),
       },
       {
@@ -562,6 +559,23 @@ async function run() {
         reviewedBy: landlord1,
         reviewNotes: 'Insufficient proof of income.',
         reviewedAt: new Date('2026-02-12T00:00:00Z'),
+        createdAt: nextCreatedAt(),
+      },
+      {
+        id: appUser5Id,
+        userId: user5,
+        propertyId: property0Id,
+        unitId: unitsP0[1],
+        pdFullName: 'Inday Bote',
+        pdPhone: '09999990000',
+        pdOccupation: 'Call Center Agent',
+        pdSchool: null,
+        pdAddress: '45 Lahug St., Cebu City',
+        pdEmergencyName: 'Bote Sibling',
+        pdEmergencyPhone: '09172223344',
+        pdEmergencyRelationship: 'Sibling',
+        documents: ['/uploads/applications/user5-id.jpg'],
+        status: 'under_review',
         createdAt: nextCreatedAt(),
       },
       {
@@ -931,11 +945,20 @@ async function run() {
   const inventoryChairId = randomUUID();
   const inventoryMicrowaveId = randomUUID();
 
+  // Task 30b: seed.ts's own explicit createdAt literals for these 3 rows are
+  // AC=08:02 (newest), Chair=08:01, Microwave=08:00 (oldest) -- i.e. Mongo's
+  // `.sort({ createdAt: -1 })` desc order is [AC, Chair, Microwave], the
+  // order both inventory-items fixtures already depend on (see seed.ts's own
+  // comment above its Inventory.insertMany call). Since nextCreatedAt()
+  // assigns strictly-increasing values in ARRAY order (oldest first), this
+  // array must be declared oldest-to-newest -- [Microwave, Chair, AC] -- so
+  // its resulting desc order matches Mongo's, not [AC, Chair, Microwave]
+  // (which would invert it to [Microwave, Chair, AC] desc).
   await prisma.inventory.createMany({
     data: [
-      { id: inventoryAcId, propertyId: property0Id, itemName: 'Samsung Split-type AC 1HP', serialNumber: 'SMC-9921-AC', condition: 'good', quantity: 5, availableQuantity: 3, status: 'issued', purchaseDate: new Date('2023-01-15T00:00:00Z'), purchaseCost: 25000, createdAt: nextCreatedAt() },
-      { id: inventoryChairId, propertyId: property0Id, itemName: 'Office Desk Chair (Ergo)', serialNumber: null, condition: 'new', quantity: 10, availableQuantity: 6, status: 'issued', purchaseDate: new Date('2025-11-10T00:00:00Z'), purchaseCost: 3500, createdAt: nextCreatedAt() },
       { id: inventoryMicrowaveId, propertyId: property0Id, itemName: 'Microwave Oven (LG)', serialNumber: 'LG-MW-005', condition: 'damaged', quantity: 2, availableQuantity: 2, status: 'maintenance', purchaseDate: new Date('2022-05-20T00:00:00Z'), purchaseCost: 4500, createdAt: nextCreatedAt() },
+      { id: inventoryChairId, propertyId: property0Id, itemName: 'Office Desk Chair (Ergo)', serialNumber: null, condition: 'new', quantity: 10, availableQuantity: 6, status: 'issued', purchaseDate: new Date('2025-11-10T00:00:00Z'), purchaseCost: 3500, createdAt: nextCreatedAt() },
+      { id: inventoryAcId, propertyId: property0Id, itemName: 'Samsung Split-type AC 1HP', serialNumber: 'SMC-9921-AC', condition: 'good', quantity: 5, availableQuantity: 3, status: 'issued', purchaseDate: new Date('2023-01-15T00:00:00Z'), purchaseCost: 25000, createdAt: nextCreatedAt() },
     ],
   });
 
@@ -949,12 +972,18 @@ async function run() {
 
   // ===========================================================================
   // 13. Notifications (source: seed.ts seedNotifications()).
+  //     Task 30b: seed.ts's own explicit createdAt literals put the
+  //     "contract" notification oldest (08:00) and "inquiry" newest (08:01),
+  //     so Mongo's desc order is [inquiry, contract] -- the order
+  //     `notifications-landlord1-has-two` depends on. Declared oldest-first
+  //     here (contract, then inquiry) so nextCreatedAt() reproduces that
+  //     same desc order instead of inverting it.
   // ===========================================================================
   console.log('Seeding notifications...');
   await prisma.notification.createMany({
     data: [
-      { id: randomUUID(), userId: landlord1, type: 'inquiry', title: 'New Inquiry Received', message: 'You have a new inquiry for unit 101.', isRead: false, createdAt: nextCreatedAt() },
       { id: randomUUID(), userId: landlord1, type: 'contract', title: 'Contract Expiring Soon', message: 'A contract for user3 is expiring in 2 months.', isRead: false, createdAt: nextCreatedAt() },
+      { id: randomUUID(), userId: landlord1, type: 'inquiry', title: 'New Inquiry Received', message: 'You have a new inquiry for unit 101.', isRead: false, createdAt: nextCreatedAt() },
     ],
   });
   console.log('Seeded 2 notifications.');
@@ -976,13 +1005,22 @@ async function run() {
 
   // ===========================================================================
   // 15. Transfer requests (source: seed.ts seedTransferRequests()).
+  //     Task 30b: seed.ts declares these 3 rows in [pending, approved,
+  //     completed] TEXTUAL order, but its own explicit createdAt literals run
+  //     the OPPOSITE way (pending=08:02 newest, approved=08:01,
+  //     completed=08:00 oldest) -- i.e. Mongo's desc order equals its
+  //     declaration order, [pending, approved, completed], the order every
+  //     transfer-list fixture depends on. Declared oldest-first here
+  //     (completed, approved, pending) so nextCreatedAt() reproduces that
+  //     same desc order instead of inverting it to [completed, approved,
+  //     pending].
   // ===========================================================================
   console.log('Seeding transfer requests...');
   await prisma.transferRequest.createMany({
     data: [
-      { id: randomUUID(), tenancyId: tenancy1Id, propertyId: property0Id, fromUnitId: unitsP0[0], toUnitId: unitsP0[1], reason: 'Tenant requested a move to a smaller room to reduce rent.', initiatedByUserId: user1, status: 'pending', createdAt: nextCreatedAt() },
-      { id: randomUUID(), tenancyId: tenancy1Id, propertyId: property0Id, fromUnitId: unitsP0[0], toUnitId: unitsP0[2], reason: 'Requested move due to noise complaints from a neighboring room.', initiatedByUserId: user1, status: 'approved', reviewedBy: staff1, reviewNotes: 'Approved, unit is available.', reviewedAt: new Date('2026-02-20T00:00:00Z'), createdAt: nextCreatedAt() },
       { id: randomUUID(), tenancyId: tenancy1Id, propertyId: property0Id, fromUnitId: unitsP0[1], toUnitId: unitsP0[2], reason: 'Downsizing after roommate moved out.', initiatedByUserId: staff1, status: 'completed', reviewedBy: landlord1, reviewNotes: 'Transfer completed successfully.', reviewedAt: new Date('2026-02-25T00:00:00Z'), completedAt: new Date('2026-02-27T00:00:00Z'), createdAt: nextCreatedAt() },
+      { id: randomUUID(), tenancyId: tenancy1Id, propertyId: property0Id, fromUnitId: unitsP0[0], toUnitId: unitsP0[2], reason: 'Requested move due to noise complaints from a neighboring room.', initiatedByUserId: user1, status: 'approved', reviewedBy: staff1, reviewNotes: 'Approved, unit is available.', reviewedAt: new Date('2026-02-20T00:00:00Z'), createdAt: nextCreatedAt() },
+      { id: randomUUID(), tenancyId: tenancy1Id, propertyId: property0Id, fromUnitId: unitsP0[0], toUnitId: unitsP0[1], reason: 'Tenant requested a move to a smaller room to reduce rent.', initiatedByUserId: user1, status: 'pending', createdAt: nextCreatedAt() },
     ],
   });
   console.log('Seeded 3 transfer requests.');
@@ -1069,6 +1107,15 @@ async function run() {
 
   // ===========================================================================
   // 17. Tickets + ticket_updates (source: seed.ts seedTickets()).
+  //     Task 30b: seed.ts's own explicit createdAt literals for these 5 rows
+  //     do NOT follow its textual declaration order -- ticket5(closed)=08:00
+  //     (oldest), ticket1(open)=08:01, ticket4(resolved)=08:02,
+  //     ticket3(in_progress)=08:03, ticket2(assigned)=08:04 (newest). Mongo's
+  //     desc order is therefore [assigned, in_progress, resolved, open,
+  //     closed] -- the order every multi-ticket fixture depends on (see
+  //     seed.ts's own comment above its Ticket.create call). Declared
+  //     oldest-first here (by that same timestamp order, not by ticketN
+  //     numbering) so nextCreatedAt() reproduces it instead of inverting it.
   // ===========================================================================
   console.log('Seeding tickets...');
   const ticket1Id = randomUUID();
@@ -1079,11 +1126,11 @@ async function run() {
 
   await prisma.ticket.createMany({
     data: [
-      { id: ticket1Id, tenancyId: tenancy1Id, propertyId: property0Id, unitId: unit1Id, reportedByUserId: user1, title: 'Leaking faucet in bathroom', description: 'The bathroom faucet has been dripping continuously since yesterday.', category: 'plumbing', priority: 'medium', images: [], status: 'open', createdAt: nextCreatedAt() },
-      { id: ticket2Id, tenancyId: tenancy1Id, propertyId: property0Id, unitId: unit1Id, reportedByUserId: user1, title: 'Aircon not cooling', description: 'The split-type aircon runs but no longer cools the room.', category: 'appliance', priority: 'high', images: [], status: 'assigned', assignedToUserId: staff2, assignedByUserId: staff1, createdAt: nextCreatedAt() },
-      { id: ticket3Id, tenancyId: tenancy1Id, propertyId: property0Id, unitId: unit1Id, reportedByUserId: user1, title: 'Flickering lights in room', description: 'Ceiling light flickers intermittently, possibly a wiring issue.', category: 'electrical', priority: 'urgent', images: [], status: 'in_progress', assignedToUserId: staff2, assignedByUserId: staff1, createdAt: nextCreatedAt() },
-      { id: ticket4Id, tenancyId: tenancy2Id, propertyId: property0Id, unitId: unit1Id, reportedByUserId: user2, title: 'Pest sighting in room corner', description: 'Cockroaches spotted near the corner cabinet.', category: 'pest', priority: 'low', images: [], status: 'resolved', assignedToUserId: staff2, assignedByUserId: staff1, resolutionNotes: 'Pest control treated the area; no further sightings reported.', resolvedAt: new Date('2024-11-10T00:00:00Z'), createdAt: nextCreatedAt() },
       { id: ticket5Id, tenancyId: tenancy2Id, propertyId: property0Id, unitId: unit1Id, reportedByUserId: user2, title: 'Broken window latch', description: 'Window latch is broken and the window does not close properly.', category: 'structural', priority: 'medium', images: [], status: 'closed', assignedToUserId: staff2, assignedByUserId: staff1, resolutionNotes: 'Latch replaced and verified working.', resolvedAt: new Date('2024-12-01T00:00:00Z'), createdAt: nextCreatedAt() },
+      { id: ticket1Id, tenancyId: tenancy1Id, propertyId: property0Id, unitId: unit1Id, reportedByUserId: user1, title: 'Leaking faucet in bathroom', description: 'The bathroom faucet has been dripping continuously since yesterday.', category: 'plumbing', priority: 'medium', images: [], status: 'open', createdAt: nextCreatedAt() },
+      { id: ticket4Id, tenancyId: tenancy2Id, propertyId: property0Id, unitId: unit1Id, reportedByUserId: user2, title: 'Pest sighting in room corner', description: 'Cockroaches spotted near the corner cabinet.', category: 'pest', priority: 'low', images: [], status: 'resolved', assignedToUserId: staff2, assignedByUserId: staff1, resolutionNotes: 'Pest control treated the area; no further sightings reported.', resolvedAt: new Date('2024-11-10T00:00:00Z'), createdAt: nextCreatedAt() },
+      { id: ticket3Id, tenancyId: tenancy1Id, propertyId: property0Id, unitId: unit1Id, reportedByUserId: user1, title: 'Flickering lights in room', description: 'Ceiling light flickers intermittently, possibly a wiring issue.', category: 'electrical', priority: 'urgent', images: [], status: 'in_progress', assignedToUserId: staff2, assignedByUserId: staff1, createdAt: nextCreatedAt() },
+      { id: ticket2Id, tenancyId: tenancy1Id, propertyId: property0Id, unitId: unit1Id, reportedByUserId: user1, title: 'Aircon not cooling', description: 'The split-type aircon runs but no longer cools the room.', category: 'appliance', priority: 'high', images: [], status: 'assigned', assignedToUserId: staff2, assignedByUserId: staff1, createdAt: nextCreatedAt() },
     ],
   });
 
