@@ -144,6 +144,7 @@ export const PORTED_SERVICES: ReadonlySet<string> = new Set<string>([
   'visit', // Task 18 (server/src/services/visit.service.ts)
   'application', // Task 19 (server/src/services/application.service.ts)
   'contract', // Task 20 (server/src/services/contract.service.ts)
+  'tenancy', // Task 21 (server/src/services/tenancy.service.ts)
   // ...and so on, one line per port, in whatever order the ports land.
 ]);
 

@@ -9,7 +9,7 @@ import * as tenancyService from '../services/tenancy.service';
 export const confirmCheckin = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
     const { contractId, slotNumber } = req.body;
     const tenancy = await tenancyService.confirmCheckin(
-      req.user!.id,
+      req.user!.pgId,
       contractId,
       slotNumber
     );
@@ -25,7 +25,7 @@ export const confirmCheckin = catchAsync(async (req: AuthRequest, res: Response)
  * GET /api/tenancies/my - Get current user's tenancies
  */
 export const getMyTenancies = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
-    const tenancies = await tenancyService.getMyTenancies(req.user!.id);
+    const tenancies = await tenancyService.getMyTenancies(req.user!.pgId);
 
     res.status(200).json({
       status: 'success',
@@ -42,7 +42,7 @@ export const getTenancies = catchAsync(async (req: AuthRequest, res: Response): 
       propertyId: req.query.propertyId as string
     };
 
-    const tenancies = await tenancyService.getTenancies(req.user!.id, filters);
+    const tenancies = await tenancyService.getTenancies(req.user!.pgId, filters);
 
     res.status(200).json({
       status: 'success',
@@ -54,7 +54,7 @@ export const getTenancies = catchAsync(async (req: AuthRequest, res: Response): 
  * GET /api/tenancies/:id - Get tenancy by ID
  */
 export const getTenancyById = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
-    const tenancy = await tenancyService.getTenancyById(req.user!.id, req.params.id as string);
+    const tenancy = await tenancyService.getTenancyById(req.user!.pgId, req.params.id as string);
 
     res.status(200).json({
       status: 'success',
@@ -66,7 +66,7 @@ export const getTenancyById = catchAsync(async (req: AuthRequest, res: Response)
  * GET /api/tenancies/:id/checkout-review - Pre-checkout review
  */
 export const getCheckoutReview = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
-    const review = await tenancyService.getCheckoutReview(req.user!.id, req.params.id as string);
+    const review = await tenancyService.getCheckoutReview(req.user!.pgId, req.params.id as string);
 
     res.status(200).json({
       status: 'success',
@@ -78,7 +78,7 @@ export const getCheckoutReview = catchAsync(async (req: AuthRequest, res: Respon
  * PATCH /api/tenancies/:id/checkout - Initiate tenant checkout
  */
 export const initiateCheckout = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
-    const result = await tenancyService.initiateCheckout(req.user!.id, req.params.id as string);
+    const result = await tenancyService.initiateCheckout(req.user!.pgId, req.params.id as string);
 
     res.status(200).json({
       status: 'success',
@@ -97,7 +97,7 @@ export const addComment = catchAsync(async (req: AuthRequest, res: Response): Pr
       return;
     }
 
-    const comment = await tenancyService.addComment(req.user!.id, req.params.id as string, text);
+    const comment = await tenancyService.addComment(req.user!.pgId, req.params.id as string, text);
 
     res.status(201).json({
       status: 'success',
@@ -110,7 +110,7 @@ export const addComment = catchAsync(async (req: AuthRequest, res: Response): Pr
  * GET /api/tenancies/:id/comments - Get comments for a tenancy
  */
 export const getComments = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
-    const comments = await tenancyService.getComments(req.user!.id, req.params.id as string);
+    const comments = await tenancyService.getComments(req.user!.pgId, req.params.id as string);
 
     res.status(200).json({
       status: 'success',
@@ -122,7 +122,7 @@ export const getComments = catchAsync(async (req: AuthRequest, res: Response): P
  * GET /api/tenancies/:id/roommates - Get roommates for a tenancy
  */
 export const getRoommates = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
-    const roommates = await tenancyService.getRoommates(req.user!.id, req.params.id as string);
+    const roommates = await tenancyService.getRoommates(req.user!.pgId, req.params.id as string);
 
     res.status(200).json({
       status: 'success',
