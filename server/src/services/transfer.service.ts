@@ -1,452 +1,881 @@
-import { TransferRequest } from '../models/TransferRequest';
-import { Tenancy } from '../models/Tenancy';
-import { Unit } from '../models/Unit';
-import { Property } from '../models/Property';
-import { User } from '../models/User';
-import { Contract } from '../models/Contract';
-import { Bill } from '../models/Bill';
-import { Notification } from '../models/Notification';
+import { Prisma } from '@prisma/client';
+import prisma from '../config/prisma';
+import { serializeDoc, serializeList } from '../utils/serialize';
+import { toHttpError } from '../utils/prismaErrors';
+import { PROPERTY_REF_SELECT, shapePropertyRef } from '../utils/propertyRef.mapper';
 
-const throwWithStatus = (message: string, statusCode: number): never => {
-  throw Object.assign(new Error(message), { statusCode });
-};
+// NOTE on propertyRef.mapper.ts / embeddedProfile.mapper.ts (both listed as
+// "existing utilities to use" for this port):
+//
+// - propertyRef.mapper.ts DOES apply, but only to ONE call site:
+//   completeTransferRequest's own returned `tenancy.propertyId` embed
+//   (`.populate('propertyId', 'name address')`) is exactly the narrow
+//   `{id, name, address}` projection this mapper was built for -- used below
+//   via `PROPERTY_REF_SELECT`/`shapePropertyRef`. Every OTHER relation this
+//   file embeds is a different, narrower, purpose-built projection --
+//   `{id, unitIdentifier, accommodationType}` for fromUnit/toUnit and
+//   `{id, name, role}` for initiatedByUserId/reviewedBy -- and `propertyId`
+//   on the TransferRequest itself is NEVER populated by any of this file's
+//   six TransferRequest-returning functions (it stays a raw scalar FK in
+//   every response, confirmed against every case in
+//   tests/golden/transfer.json), so the mapper has no other call site here.
+// - embeddedProfile.mapper.ts does NOT apply anywhere in this file: every
+//   Profile/user relation this file ever returns to a client is a narrow
+//   `select` (`name role` or `name email phone avatar`), which excludes
+//   `legacyMongoId` by construction. The only UNQUALIFIED `include: { user:
+//   true }`/`include: { tenancy: true }`-style full-row reads in this file
+//   are used purely for internal logic (ids, names, status checks) and are
+//   never serialized directly -- every actual response re-queries with its
+//   own narrow select afterward, so nothing here needs the mapper's
+//   `legacyMongoId`-stripping protection.
 
-const ensureUser = async (userId: string): Promise<any> => {
-  const user: any = await User.findById(userId);
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const isValidId = (id: string): boolean => UUID_RE.test(id);
+
+/**
+ * Drops any null-valued key from a shallow object, mirroring Mongoose's
+ * "unset optional path -> key entirely absent" convention (same pattern
+ * every other ported service in this migration already uses).
+ */
+function stripNulls<T extends Record<string, unknown>>(obj: T): T {
+  for (const key of Object.keys(obj)) {
+    if (obj[key] === null) delete obj[key];
+  }
+  return obj;
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// Relation shapes. Every one of the six read-return call sites
+// (createTransferRequest, getMyTransferRequests, getTransferRequests,
+// approveTransferRequest, rejectTransferRequest, and completeTransferRequest's
+// own transferRequest sub-read) does the IDENTICAL 4-way populate of
+// fromUnitId/toUnitId/initiatedByUserId/reviewedBy -- extracted once here
+// per the brief ("Six repeated 4-way populates; use one shared include
+// constant"). `tenancy`'s own select is NOT part of this shared constant:
+// it varies across call sites (a 2-3 field-width difference), so collapsing
+// it in would silently change response content -- each call site adds its
+// own `tenancy: { select: ... }` alongside this constant instead.
+// ═══════════════════════════════════════════════════════════════════════
+const TRANSFER_UNIT_REF_SELECT = {
+  id: true,
+  unitIdentifier: true,
+  accommodationType: true,
+} satisfies Prisma.UnitSelect;
+
+const TRANSFER_USER_ROLE_SELECT = { id: true, name: true, role: true } satisfies Prisma.ProfileSelect;
+
+const TRANSFER_REQUEST_SHARED_INCLUDE = {
+  fromUnit: { select: TRANSFER_UNIT_REF_SELECT },
+  toUnit: { select: TRANSFER_UNIT_REF_SELECT },
+  initiatedBy: { select: TRANSFER_USER_ROLE_SELECT },
+  reviewer: { select: TRANSFER_USER_ROLE_SELECT },
+} satisfies Prisma.TransferRequestInclude;
+
+/** `.populate('tenancyId', 'status checkInDate')` -- createTransferRequest/approveTransferRequest/rejectTransferRequest return. */
+const TENANCY_CHECKIN_SELECT = { id: true, status: true, checkInDate: true } satisfies Prisma.TenancySelect;
+/** `.populate('tenancyId', 'status checkInDate checkOutDate')` -- getMyTransferRequests/getTransferRequests. */
+const TENANCY_CHECKIN_CHECKOUT_SELECT = {
+  ...TENANCY_CHECKIN_SELECT,
+  checkOutDate: true,
+} satisfies Prisma.TenancySelect;
+/** `.populate('tenancyId', 'status unitId propertyId')` -- completeTransferRequest's own return shape only. */
+const TENANCY_COMPLETE_SELECT = {
+  id: true,
+  status: true,
+  unitId: true,
+  propertyId: true,
+} satisfies Prisma.TenancySelect;
+
+type UnitRefRow = { id: string; unitIdentifier: string; accommodationType: string };
+type UserRoleRow = { id: string; name: string; role: string };
+
+const shapeUnitRef = (row: UnitRefRow): Record<string, unknown> => ({
+  id: row.id,
+  unitIdentifier: row.unitIdentifier,
+  accommodationType: row.accommodationType,
+});
+const shapeUserRole = (row: UserRoleRow): Record<string, unknown> => ({
+  id: row.id,
+  name: row.name,
+  role: row.role,
+});
+
+/**
+ * Remaps a TransferRequest row (fetched with `TRANSFER_REQUEST_SHARED_INCLUDE`
+ * plus a per-call-site `tenancy` select) back onto the Mongoose `.populate()`
+ * shape: relation objects replace their own scalar FK key (property.service.ts's
+ * task-10 remap pattern), `propertyId` is left untouched (never populated by
+ * the original), and any nullable scalar (`reviewNotes`/`reviewedAt`/
+ * `completedAt`) or unpopulated optional relation (`reviewer`, when
+ * `reviewedBy` is null -- a pending request has no reviewer yet) is omitted
+ * entirely rather than emitted as `null`/absent-object, matching every seeded
+ * fixture (a `pending` transfer request carries none of
+ * reviewedBy/reviewNotes/reviewedAt/completedAt at all).
+ */
+function remapTransferRequest(row: Record<string, any>): Record<string, unknown> {
+  const { tenancy, fromUnit, toUnit, initiatedBy, reviewer, ...rest } = row;
+  const out: Record<string, unknown> = stripNulls(rest);
+
+  if (tenancy !== undefined) out.tenancyId = stripNulls({ ...tenancy });
+  if (fromUnit !== undefined) out.fromUnitId = shapeUnitRef(fromUnit);
+  if (toUnit !== undefined) out.toUnitId = shapeUnitRef(toUnit);
+  if (initiatedBy !== undefined) out.initiatedByUserId = shapeUserRole(initiatedBy);
+  if (reviewer !== undefined && reviewer !== null) out.reviewedBy = shapeUserRole(reviewer);
+
+  return out;
+}
+
+// ─────────────────────────────────────────────────────────────
+//  Helpers
+// ─────────────────────────────────────────────────────────────
+
+const ensureUser = async (userId: string) => {
+  const user = await prisma.profile.findUnique({ where: { id: userId } });
   if (!user) {
-    throwWithStatus('User not found', 404);
+    throw Object.assign(new Error('User not found'), { statusCode: 404 });
   }
   return user;
 };
 
+/**
+ * Whether `staffId` is assigned to `propertyId` -- direct replacement for
+ * Mongoose's `user.assignedPropertyIds?.some(...)`, which lived directly on
+ * the User document; in Postgres it's the `staff_property_assignments` join
+ * table (same pattern every other ported service's own scoped-access checks
+ * already use, e.g. tenancy.service.ts's `isStaffAssignedToProperty`).
+ */
+async function isStaffAssignedToProperty(staffId: string, propertyId: string): Promise<boolean> {
+  const assignment = await prisma.staffPropertyAssignment.findUnique({
+    where: { staffId_propertyId: { staffId, propertyId } },
+  });
+  return assignment !== null;
+}
+
+/**
+ * Verify the caller is a landlord/staff with property access, or super_admin.
+ * Direct Prisma port of the original -- message/statusCode preserved exactly
+ * ('User not found'/404, 'Property not found'/404, 'Access denied'/403).
+ */
 const verifyPropertyManagementAccess = async (userId: string, propertyId: string) => {
-  const user: any = await ensureUser(userId);
-  const property: any = await Property.findById(propertyId);
+  const user = await ensureUser(userId);
+  const property = await prisma.property.findUnique({ where: { id: propertyId } });
   if (!property) {
-    throwWithStatus('Property not found', 404);
+    throw Object.assign(new Error('Property not found'), { statusCode: 404 });
   }
 
   if (user.role === 'super_admin') {
     return { user, property };
   }
 
-  const isLandlord = property.landlordId.toString() === userId;
-  const isStaff =
-    user.role === 'staff' &&
-    user.assignedPropertyIds?.some((id: any) => id.toString() === propertyId);
+  const isLandlord = property.landlordId === userId;
+  const isStaff = user.role === 'staff' && (await isStaffAssignedToProperty(userId, propertyId));
 
   if (!isLandlord && !isStaff) {
-    throwWithStatus('Access denied', 403);
+    throw Object.assign(new Error('Access denied'), { statusCode: 403 });
   }
 
   return { user, property };
 };
 
-const ensureTargetUnitAvailability = (targetUnit: any) => {
+/**
+ * Placement/availability check for the TARGET unit of a transfer -- shared,
+ * pure (no writes), verbatim port of the original's `ensureTargetUnitAvailability`.
+ * Used both at request time (createTransferRequest, to reject a doomed
+ * request up front) and again at completion time (completeTransferRequest,
+ * to re-validate against the unit's CURRENT state and compute the actual
+ * placement to write).
+ */
+type SlotRow = { slotNumber: number; status: string };
+type TargetUnitRow = { accommodationType: string; status: string; slots: SlotRow[] };
+
+function ensureTargetUnitAvailability(targetUnit: TargetUnitRow): { slotNumber?: number; isPrimary: boolean } {
   if (targetUnit.accommodationType === 'bedspace') {
-    const slots = targetUnit.slots || [];
-    const vacantSlot = slots.find((slot: any) => slot.status === 'vacant');
+    const vacantSlot = targetUnit.slots.find((slot) => slot.status === 'vacant');
     if (!vacantSlot) {
-      throwWithStatus('Target bedspace unit has no vacant slots', 400);
+      throw Object.assign(new Error('Target bedspace unit has no vacant slots'), { statusCode: 400 });
     }
     return { slotNumber: vacantSlot.slotNumber, isPrimary: false };
   }
 
   if (targetUnit.status !== 'vacant') {
-    throwWithStatus(`Target unit is ${targetUnit.status} and cannot accept transfer`, 400);
+    throw Object.assign(
+      new Error(`Target unit is ${targetUnit.status} and cannot accept transfer`),
+      { statusCode: 400 }
+    );
   }
 
   return { slotNumber: undefined, isPrimary: true };
-};
+}
 
-const releaseCurrentUnitOccupancy = async (tenancy: any, currentUnit: any) => {
-  if (currentUnit.accommodationType === 'bedspace' && tenancy.slotNumber) {
-    const slotIndex = currentUnit.slots?.findIndex((slot: any) => slot.slotNumber === tenancy.slotNumber);
-    if (slotIndex !== undefined && slotIndex >= 0 && currentUnit.slots) {
-      currentUnit.slots[slotIndex].status = 'vacant';
-      currentUnit.slots[slotIndex].tenancyId = undefined;
-    }
-
-    const hasOccupiedSlots = currentUnit.slots?.some((slot: any) => slot.status === 'occupied');
-    currentUnit.status = hasOccupiedSlots ? 'occupied' : 'vacant';
-  } else {
-    currentUnit.status = 'vacant';
+/**
+ * Pure computation of the SOURCE unit's release plan -- verbatim port of the
+ * original's `releaseCurrentUnitOccupancy`. The `hasOccupiedSlots` check
+ * deliberately excludes the slot being released (`slot.slotNumber !==
+ * releaseSlotNumber`), matching the original's in-place array mutation
+ * (which flipped that slot to 'vacant' BEFORE checking `.some(status ===
+ * 'occupied')`, so it could never see its own just-released slot as
+ * occupied) -- same translation tenancy.service.ts's `processCheckout`
+ * already established for the identical Mongoose pattern.
+ */
+function computeReleasePlan(
+  tenancySlotNumber: number | null,
+  fromUnit: TargetUnitRow
+): { slotNumber?: number; newUnitStatus: string } {
+  if (fromUnit.accommodationType === 'bedspace' && tenancySlotNumber) {
+    const hasOccupiedSlots = fromUnit.slots.some(
+      (slot) => slot.slotNumber !== tenancySlotNumber && slot.status === 'occupied'
+    );
+    return { slotNumber: tenancySlotNumber, newUnitStatus: hasOccupiedSlots ? 'occupied' : 'vacant' };
   }
+  return { slotNumber: undefined, newUnitStatus: 'vacant' };
+}
 
-  await currentUnit.save();
-};
-
-const occupyTargetUnit = async (tenancy: any, targetUnit: any) => {
-  const placement = ensureTargetUnitAvailability(targetUnit);
-
-  if (targetUnit.accommodationType === 'bedspace') {
-    const slotIndex = targetUnit.slots.findIndex((slot: any) => slot.slotNumber === placement.slotNumber);
-    targetUnit.slots[slotIndex].status = 'occupied';
-    targetUnit.slots[slotIndex].tenancyId = tenancy._id;
-
-    const allOccupied = targetUnit.slots.every((slot: any) => slot.status === 'occupied');
-    targetUnit.status = allOccupied ? 'occupied' : 'vacant';
-  } else {
-    targetUnit.status = 'occupied';
+/**
+ * Pure computation of the TARGET unit's occupy plan -- verbatim port of the
+ * original's `occupyTargetUnit`. `allOccupied` deliberately counts the
+ * slot being claimed as occupied (`slot.slotNumber === placement.slotNumber`),
+ * matching the original's in-place mutation-then-check order (same
+ * translation tenancy.service.ts's `confirmCheckin` already established for
+ * its own identical `allOccupied` pattern).
+ */
+function computeOccupyPlan(
+  toUnit: TargetUnitRow,
+  placement: { slotNumber?: number; isPrimary: boolean }
+): { slotNumber?: number; newUnitStatus: string } {
+  if (toUnit.accommodationType === 'bedspace') {
+    const allOccupied = toUnit.slots.every(
+      (slot) => slot.slotNumber === placement.slotNumber || slot.status === 'occupied'
+    );
+    return { slotNumber: placement.slotNumber, newUnitStatus: allOccupied ? 'occupied' : 'vacant' };
   }
+  return { slotNumber: undefined, newUnitStatus: 'occupied' };
+}
 
-  await targetUnit.save();
-  return placement;
-};
-
-const getScopedPropertiesForManager = async (user: any) => {
+async function getScopedPropertiesForManager(user: { id: string; role: string }): Promise<string[] | null> {
   if (user.role === 'super_admin') {
     return null;
   }
   if (user.role === 'landlord') {
-    const properties = await Property.find({ landlordId: user._id }).select('_id');
-    return properties.map((property: any) => property._id);
+    const properties = await prisma.property.findMany({ where: { landlordId: user.id }, select: { id: true } });
+    return properties.map((p) => p.id);
   }
   if (user.role === 'staff') {
-    return user.assignedPropertyIds || [];
+    const assignments = await prisma.staffPropertyAssignment.findMany({
+      where: { staffId: user.id },
+      select: { propertyId: true },
+    });
+    return assignments.map((a) => a.propertyId);
   }
-  throwWithStatus('Access denied', 403);
-};
+  throw Object.assign(new Error('Access denied'), { statusCode: 403 });
+}
 
-export const createTransferRequest = async (userId: string, data: {
-  tenancyId: string;
-  toUnitId: string;
-  reason: string;
-}) => {
-  const user: any = await ensureUser(userId);
+// ─────────────────────────────────────────────────────────────
+//  createTransferRequest
+//
+//  WRITE SET (inside one prisma.$transaction):
+//    1. transferRequest.create -- the new request row
+//    2. notification.create    -- to the current property's landlord
+//  Under Mongoose these were two independent, non-atomic writes (a crash
+//  after step 1 could leave a filed transfer request the landlord is never
+//  notified about); wrapped here following the same "two writes, one
+//  transaction" pattern every other create-plus-notify path in this
+//  migration already uses (e.g. tenancy.service.ts's addComment).
+// ─────────────────────────────────────────────────────────────
 
-  const tenancy: any = await Tenancy.findById(data.tenancyId).populate('propertyId unitId');
+export const createTransferRequest = async (
+  userId: string,
+  data: { tenancyId: string; toUnitId: string; reason: string }
+) => {
+  const user = await ensureUser(userId);
+
+  // Invalid-id collapse (task-14 pattern, verbatim): a malformed/Mongo-
+  // ObjectId-shaped tenancyId is not a valid Postgres UUID -- collapse it
+  // into the exact same 404 this function already throws for a missing
+  // tenancy.
+  if (!isValidId(data.tenancyId)) {
+    throw Object.assign(new Error('Tenancy not found'), { statusCode: 404 });
+  }
+
+  const tenancy = await prisma.tenancy.findUnique({
+    where: { id: data.tenancyId },
+    include: { property: true, unit: true },
+  });
   if (!tenancy) {
-    throwWithStatus('Tenancy not found', 404);
+    throw Object.assign(new Error('Tenancy not found'), { statusCode: 404 });
   }
   if (tenancy.status !== 'checked_in') {
-    throwWithStatus('Only checked-in tenancies can request transfer', 400);
+    throw Object.assign(new Error('Only checked-in tenancies can request transfer'), { statusCode: 400 });
   }
 
-  const property: any = tenancy.propertyId;
-  const isTenantOwner = tenancy.userId.toString() === userId;
-  const isLandlord = property.landlordId.toString() === userId;
+  const property = tenancy.property;
+  const isTenantOwner = tenancy.userId === userId;
+  const isLandlord = property.landlordId === userId;
   const isAdmin = user.role === 'super_admin';
 
   if (!isTenantOwner && !isLandlord && !isAdmin) {
-    throwWithStatus('Only the tenant owner or landlord can initiate transfer', 403);
+    throw Object.assign(
+      new Error('Only the tenant owner or landlord can initiate transfer'),
+      { statusCode: 403 }
+    );
   }
 
-  const toUnit: any = await Unit.findById(data.toUnitId).populate('propertyId');
+  if (!isValidId(data.toUnitId)) {
+    throw Object.assign(new Error('Target unit not found'), { statusCode: 404 });
+  }
+
+  const toUnit = await prisma.unit.findUnique({
+    where: { id: data.toUnitId },
+    include: { property: true, slots: true },
+  });
   if (!toUnit) {
-    throwWithStatus('Target unit not found', 404);
+    throw Object.assign(new Error('Target unit not found'), { statusCode: 404 });
   }
-  if (toUnit._id.toString() === tenancy.unitId._id.toString()) {
-    throwWithStatus('Target unit must be different from current unit', 400);
+  if (toUnit.id === tenancy.unitId) {
+    throw Object.assign(new Error('Target unit must be different from current unit'), { statusCode: 400 });
   }
 
-  const fromLandlordId = property.landlordId.toString();
-  const toLandlordId = toUnit.propertyId.landlordId.toString();
+  const fromLandlordId = property.landlordId;
+  const toLandlordId = toUnit.property.landlordId;
   if (!isAdmin && fromLandlordId !== toLandlordId) {
-    throwWithStatus('Transfer is only allowed between properties of the same landlord', 400);
+    throw Object.assign(
+      new Error('Transfer is only allowed between properties of the same landlord'),
+      { statusCode: 400 }
+    );
   }
 
   ensureTargetUnitAvailability(toUnit);
 
-  const existingPending = await TransferRequest.findOne({
-    tenancyId: tenancy._id,
-    status: { $in: ['pending', 'approved'] }
+  const existingPending = await prisma.transferRequest.findFirst({
+    where: { tenancyId: tenancy.id, status: { in: ['pending', 'approved'] } },
   });
   if (existingPending) {
-    throwWithStatus('There is already an active transfer request for this tenancy', 409);
+    throw Object.assign(
+      new Error('There is already an active transfer request for this tenancy'),
+      { statusCode: 409 }
+    );
   }
 
-  const transferRequest = await TransferRequest.create({
-    tenancyId: tenancy._id,
-    propertyId: tenancy.propertyId._id,
-    fromUnitId: tenancy.unitId._id,
-    toUnitId: toUnit._id,
-    reason: data.reason,
-    status: 'pending',
-    initiatedByUserId: userId
+  let created;
+  try {
+    created = await prisma.$transaction(async (tx) => {
+      const transferRequest = await tx.transferRequest.create({
+        data: {
+          tenancyId: tenancy.id,
+          propertyId: property.id,
+          fromUnitId: tenancy.unitId,
+          toUnitId: toUnit.id,
+          reason: data.reason,
+          status: 'pending',
+          initiatedByUserId: userId,
+        },
+      });
+
+      await tx.notification.create({
+        data: {
+          userId: property.landlordId,
+          type: 'tenancy',
+          title: 'New Transfer Request',
+          message: `A transfer request was filed from ${tenancy.unit.unitIdentifier} to ${toUnit.unitIdentifier}.`,
+          link: `/hub/pipeline/transfers/${transferRequest.id}`,
+          metadata: { transferRequestId: transferRequest.id, tenancyId: tenancy.id },
+        },
+      });
+
+      return transferRequest;
+    });
+  } catch (e) {
+    throw toHttpError(e);
+  }
+
+  const populated = await prisma.transferRequest.findUnique({
+    where: { id: created.id },
+    include: { ...TRANSFER_REQUEST_SHARED_INCLUDE, tenancy: { select: TENANCY_CHECKIN_SELECT } },
   });
 
-  await Notification.create({
-    userId: property.landlordId,
-    type: 'tenancy',
-    title: 'New Transfer Request',
-    message: `A transfer request was filed from ${tenancy.unitId.unitIdentifier} to ${toUnit.unitIdentifier}.`,
-    link: `/hub/pipeline/transfers/${transferRequest._id}`,
-    metadata: {
-      transferRequestId: transferRequest._id.toString(),
-      tenancyId: tenancy._id.toString()
-    }
-  });
-
-  return TransferRequest.findById(transferRequest._id)
-    .populate('tenancyId', 'status checkInDate')
-    .populate('fromUnitId', 'unitIdentifier accommodationType')
-    .populate('toUnitId', 'unitIdentifier accommodationType')
-    .populate('initiatedByUserId', 'name role')
-    .populate('reviewedBy', 'name role')
-    .lean();
+  return serializeDoc(remapTransferRequest(populated!));
 };
 
 export const getMyTransferRequests = async (userId: string) => {
-  const user: any = await ensureUser(userId);
+  const user = await ensureUser(userId);
   if (user.role !== 'user') {
-    throwWithStatus('Access denied', 403);
+    throw Object.assign(new Error('Access denied'), { statusCode: 403 });
   }
 
-  const tenancies = await Tenancy.find({ userId }).select('_id');
-  const tenancyIds = tenancies.map((tenancy: any) => tenancy._id);
+  const tenancies = await prisma.tenancy.findMany({ where: { userId }, select: { id: true } });
+  const tenancyIds = tenancies.map((t) => t.id);
 
-  return TransferRequest.find({ tenancyId: { $in: tenancyIds } })
-    .populate('tenancyId', 'status checkInDate checkOutDate')
-    .populate('fromUnitId', 'unitIdentifier accommodationType')
-    .populate('toUnitId', 'unitIdentifier accommodationType')
-    .populate('initiatedByUserId', 'name role')
-    .populate('reviewedBy', 'name role')
-    .sort({ createdAt: -1 })
-    .lean();
+  const transferRequests = await prisma.transferRequest.findMany({
+    where: { tenancyId: { in: tenancyIds } },
+    include: { ...TRANSFER_REQUEST_SHARED_INCLUDE, tenancy: { select: TENANCY_CHECKIN_CHECKOUT_SELECT } },
+    orderBy: { createdAt: 'desc' },
+  });
+
+  return serializeList(transferRequests.map((row) => remapTransferRequest(row)));
 };
 
 export const getTransferRequests = async (
   userId: string,
   filters: { status?: string; propertyId?: string } = {}
 ) => {
-  const user: any = await ensureUser(userId);
+  const user = await ensureUser(userId);
   const scopedPropertyIds = await getScopedPropertiesForManager(user);
 
-  const query: any = {};
-  if (scopedPropertyIds) {
-    query.propertyId = { $in: scopedPropertyIds };
+  const query: Prisma.TransferRequestWhereInput = {};
+  if (scopedPropertyIds !== null) {
+    query.propertyId = { in: scopedPropertyIds };
   }
 
   if (filters.propertyId) {
+    // Invalid-id guard for an AUTHENTICATED route (property.service.ts's own
+    // convention, not task-14's public-route collapse): a malformed id is a
+    // genuine, distinguishable client bug for a signed-in caller, so it gets
+    // its own 400 rather than folding into verifyPropertyManagementAccess's
+    // 404.
+    if (!isValidId(filters.propertyId)) {
+      throw Object.assign(new Error('Invalid property ID'), { statusCode: 400 });
+    }
     await verifyPropertyManagementAccess(userId, filters.propertyId);
     query.propertyId = filters.propertyId;
   }
   if (filters.status) {
-    query.status = filters.status;
+    query.status = filters.status as Prisma.TransferRequestWhereInput['status'];
   }
 
-  return TransferRequest.find(query)
-    .populate('tenancyId', 'status checkInDate checkOutDate')
-    .populate('fromUnitId', 'unitIdentifier accommodationType')
-    .populate('toUnitId', 'unitIdentifier accommodationType')
-    .populate('initiatedByUserId', 'name role')
-    .populate('reviewedBy', 'name role')
-    .sort({ createdAt: -1 })
-    .lean();
+  const transferRequests = await prisma.transferRequest.findMany({
+    where: query,
+    include: { ...TRANSFER_REQUEST_SHARED_INCLUDE, tenancy: { select: TENANCY_CHECKIN_CHECKOUT_SELECT } },
+    orderBy: { createdAt: 'desc' },
+  });
+
+  return serializeList(transferRequests.map((row) => remapTransferRequest(row)));
 };
+
+// ─────────────────────────────────────────────────────────────
+//  approveTransferRequest
+//
+//  WRITE SET (inside one prisma.$transaction):
+//    1. transferRequest.update -- status -> 'approved', reviewedBy/reviewedAt/reviewNotes
+//    2. notification.create    -- to the tenant
+//  Same non-atomicity fix as createTransferRequest's write pair.
+// ─────────────────────────────────────────────────────────────
 
 export const approveTransferRequest = async (userId: string, transferRequestId: string, reviewNotes?: string) => {
-  const transferRequest: any = await TransferRequest.findById(transferRequestId).populate('tenancyId propertyId');
+  if (!isValidId(transferRequestId)) {
+    throw Object.assign(new Error('Transfer request not found'), { statusCode: 404 });
+  }
+
+  const transferRequest = await prisma.transferRequest.findUnique({
+    where: { id: transferRequestId },
+    include: { tenancy: true },
+  });
   if (!transferRequest) {
-    throwWithStatus('Transfer request not found', 404);
+    throw Object.assign(new Error('Transfer request not found'), { statusCode: 404 });
   }
-
   if (transferRequest.status !== 'pending') {
-    throwWithStatus(`Only pending requests can be approved. Current status: ${transferRequest.status}`, 400);
+    throw Object.assign(
+      new Error(`Only pending requests can be approved. Current status: ${transferRequest.status}`),
+      { statusCode: 400 }
+    );
   }
 
-  const management = await verifyPropertyManagementAccess(userId, transferRequest.propertyId._id.toString());
+  const management = await verifyPropertyManagementAccess(userId, transferRequest.propertyId);
   if (management.user.role === 'staff') {
-    throwWithStatus('Only landlord can approve transfer requests', 403);
+    throw Object.assign(new Error('Only landlord can approve transfer requests'), { statusCode: 403 });
   }
 
-  transferRequest.status = 'approved';
-  transferRequest.reviewedBy = management.user._id;
-  transferRequest.reviewedAt = new Date();
-  transferRequest.reviewNotes = reviewNotes;
-  await transferRequest.save();
+  const tenancy = transferRequest.tenancy;
 
-  const tenancy: any = await Tenancy.findById(transferRequest.tenancyId);
-  if (tenancy) {
-    await Notification.create({
-      userId: tenancy.userId,
-      type: 'tenancy',
-      title: 'Transfer Request Approved',
-      message: 'Your transfer request has been approved and is ready for completion.',
-      link: `/u/my-transfers/${transferRequest._id}`,
-      metadata: {
-        transferRequestId: transferRequest._id.toString(),
-        tenancyId: tenancy._id.toString()
+  try {
+    await prisma.$transaction(async (tx) => {
+      await tx.transferRequest.update({
+        where: { id: transferRequest.id },
+        data: {
+          status: 'approved',
+          reviewedBy: management.user.id,
+          reviewedAt: new Date(),
+          reviewNotes: reviewNotes ?? null,
+        },
+      });
+
+      if (tenancy) {
+        await tx.notification.create({
+          data: {
+            userId: tenancy.userId,
+            type: 'tenancy',
+            title: 'Transfer Request Approved',
+            message: 'Your transfer request has been approved and is ready for completion.',
+            link: `/u/my-transfers/${transferRequest.id}`,
+            metadata: { transferRequestId: transferRequest.id, tenancyId: tenancy.id },
+          },
+        });
       }
     });
+  } catch (e) {
+    throw toHttpError(e);
   }
 
-  return TransferRequest.findById(transferRequest._id)
-    .populate('tenancyId', 'status checkInDate')
-    .populate('fromUnitId', 'unitIdentifier accommodationType')
-    .populate('toUnitId', 'unitIdentifier accommodationType')
-    .populate('initiatedByUserId', 'name role')
-    .populate('reviewedBy', 'name role')
-    .lean();
+  const populated = await prisma.transferRequest.findUnique({
+    where: { id: transferRequest.id },
+    include: { ...TRANSFER_REQUEST_SHARED_INCLUDE, tenancy: { select: TENANCY_CHECKIN_SELECT } },
+  });
+
+  return serializeDoc(remapTransferRequest(populated!));
 };
+
+// ─────────────────────────────────────────────────────────────
+//  rejectTransferRequest -- same write shape/atomicity fix as approve.
+// ─────────────────────────────────────────────────────────────
 
 export const rejectTransferRequest = async (userId: string, transferRequestId: string, reviewNotes?: string) => {
-  const transferRequest: any = await TransferRequest.findById(transferRequestId).populate('tenancyId propertyId');
+  if (!isValidId(transferRequestId)) {
+    throw Object.assign(new Error('Transfer request not found'), { statusCode: 404 });
+  }
+
+  const transferRequest = await prisma.transferRequest.findUnique({
+    where: { id: transferRequestId },
+    include: { tenancy: true },
+  });
   if (!transferRequest) {
-    throwWithStatus('Transfer request not found', 404);
+    throw Object.assign(new Error('Transfer request not found'), { statusCode: 404 });
   }
   if (transferRequest.status !== 'pending') {
-    throwWithStatus(`Only pending requests can be rejected. Current status: ${transferRequest.status}`, 400);
+    throw Object.assign(
+      new Error(`Only pending requests can be rejected. Current status: ${transferRequest.status}`),
+      { statusCode: 400 }
+    );
   }
 
-  const management = await verifyPropertyManagementAccess(userId, transferRequest.propertyId._id.toString());
+  const management = await verifyPropertyManagementAccess(userId, transferRequest.propertyId);
   if (management.user.role === 'staff') {
-    throwWithStatus('Only landlord can reject transfer requests', 403);
+    throw Object.assign(new Error('Only landlord can reject transfer requests'), { statusCode: 403 });
   }
 
-  transferRequest.status = 'rejected';
-  transferRequest.reviewedBy = management.user._id;
-  transferRequest.reviewedAt = new Date();
-  transferRequest.reviewNotes = reviewNotes;
-  await transferRequest.save();
+  const tenancy = transferRequest.tenancy;
 
-  const tenancy: any = await Tenancy.findById(transferRequest.tenancyId);
-  if (tenancy) {
-    await Notification.create({
-      userId: tenancy.userId,
-      type: 'tenancy',
-      title: 'Transfer Request Rejected',
-      message: reviewNotes ? `Your transfer request was rejected. Note: ${reviewNotes}` : 'Your transfer request was rejected.',
-      link: `/u/my-transfers/${transferRequest._id}`,
-      metadata: {
-        transferRequestId: transferRequest._id.toString(),
-        tenancyId: tenancy._id.toString()
+  try {
+    await prisma.$transaction(async (tx) => {
+      await tx.transferRequest.update({
+        where: { id: transferRequest.id },
+        data: {
+          status: 'rejected',
+          reviewedBy: management.user.id,
+          reviewedAt: new Date(),
+          reviewNotes: reviewNotes ?? null,
+        },
+      });
+
+      if (tenancy) {
+        await tx.notification.create({
+          data: {
+            userId: tenancy.userId,
+            type: 'tenancy',
+            title: 'Transfer Request Rejected',
+            message: reviewNotes
+              ? `Your transfer request was rejected. Note: ${reviewNotes}`
+              : 'Your transfer request was rejected.',
+            link: `/u/my-transfers/${transferRequest.id}`,
+            metadata: { transferRequestId: transferRequest.id, tenancyId: tenancy.id },
+          },
+        });
       }
     });
+  } catch (e) {
+    throw toHttpError(e);
   }
 
-  return TransferRequest.findById(transferRequest._id)
-    .populate('tenancyId', 'status checkInDate')
-    .populate('fromUnitId', 'unitIdentifier accommodationType')
-    .populate('toUnitId', 'unitIdentifier accommodationType')
-    .populate('initiatedByUserId', 'name role')
-    .populate('reviewedBy', 'name role')
-    .lean();
+  const populated = await prisma.transferRequest.findUnique({
+    where: { id: transferRequest.id },
+    include: { ...TRANSFER_REQUEST_SHARED_INCLUDE, tenancy: { select: TENANCY_CHECKIN_SELECT } },
+  });
+
+  return serializeDoc(remapTransferRequest(populated!));
 };
+
+// ─────────────────────────────────────────────────────────────
+//  completeTransferRequest — moves a checked-in tenant from one unit to
+//  another. The densest write in this service; see the module-level report
+//  (task-24-report.md) for the full write-set/atomicity writeup.
+//
+//  WRITE SET (ALL inside one prisma.$transaction, explicit 15000ms timeout):
+//    1. unitSlot.update      -- bedspace only: release the SOURCE slot -> vacant, tenancyId cleared
+//    2. unit.update          -- source unit's own status (room: vacant; bedspace: vacant/occupied per remaining slots)
+//    3. unitSlot.update      -- bedspace only: claim the TARGET slot -> occupied, tenancyId linked
+//    4. unit.update          -- target unit's own status (room: occupied; bedspace: occupied only if now all slots full)
+//    5. tenancy.update       -- unitId/propertyId/slotNumber/isPrimary moved onto the target unit
+//    6. contract.update      -- unitId/propertyId moved to match (contract always exists: tenancy.contractId is a required FK)
+//    7. bill.updateMany      -- reassign future OPEN bills (balance>0, due>=now, unpaid/partial/overdue) to the new unit/property
+//    8. transferRequest.update -- status -> 'completed', completedAt, reviewedBy, reviewedAt
+//    9. notification.create x2 -- tenant + the ORIGINAL property's landlord
+//
+//  Under Mongoose these were up to 9 independent document writes/saves with
+//  NO atomicity: a crash partway through could leave a tenant occupying two
+//  units at once (both marked occupied), occupying neither (both released),
+//  or a tenancy pointing at a unit whose own slot/status was never flipped
+//  to match. This is the seventh such fix in this migration and the most
+//  consequential.
+//
+//  The property-metrics trigger (units_refresh_property_metrics) fires on
+//  writes 2 and 4 above and is left untouched -- it recomputes each unit's
+//  OWN property row itself; this code never writes metric columns directly.
+//  fromUnit/toUnit each keep their own property_id unchanged here (only the
+//  TENANCY/contract/bills move property, never the units themselves), so the
+//  trigger independently refreshes each unit's own property on its own
+//  UPDATE OF status -- both properties end up correct even when they differ
+//  (a cross-property transfer), with no special-casing needed.
+//
+//  Explicit timeout: up to 9 writes (2 conditional slot updates + 2 unit
+//  updates + 1 tenancy update + 1 conditional contract update + 1 updateMany
+//  + 1 transferRequest update + 2 inserts) -- more round trips than any other
+//  single transaction in this migration so far. Raised from Prisma's 5000ms
+//  default to stay well clear of it under a hosted (non-local) Postgres
+//  instance, rather than splitting the transaction and losing the atomicity
+//  this task exists to add.
+// ─────────────────────────────────────────────────────────────
 
 export const completeTransferRequest = async (userId: string, transferRequestId: string) => {
-  const transferRequest: any = await TransferRequest.findById(transferRequestId)
-    .populate('tenancyId propertyId fromUnitId toUnitId');
+  if (!isValidId(transferRequestId)) {
+    throw Object.assign(new Error('Transfer request not found'), { statusCode: 404 });
+  }
+
+  const transferRequest = await prisma.transferRequest.findUnique({ where: { id: transferRequestId } });
   if (!transferRequest) {
-    throwWithStatus('Transfer request not found', 404);
+    throw Object.assign(new Error('Transfer request not found'), { statusCode: 404 });
   }
   if (transferRequest.status !== 'approved') {
-    throwWithStatus(`Only approved requests can be completed. Current status: ${transferRequest.status}`, 400);
+    throw Object.assign(
+      new Error(`Only approved requests can be completed. Current status: ${transferRequest.status}`),
+      { statusCode: 400 }
+    );
   }
 
-  const management = await verifyPropertyManagementAccess(userId, transferRequest.propertyId._id.toString());
+  const management = await verifyPropertyManagementAccess(userId, transferRequest.propertyId);
   if (management.user.role === 'staff') {
-    throwWithStatus('Only landlord can complete transfer requests', 403);
+    throw Object.assign(new Error('Only landlord can complete transfer requests'), { statusCode: 403 });
   }
 
-  const tenancy: any = await Tenancy.findById(transferRequest.tenancyId)
-    .populate('propertyId unitId contractId userId');
+  const tenancy = await prisma.tenancy.findUnique({
+    where: { id: transferRequest.tenancyId },
+    include: { contract: true, user: true },
+  });
   if (!tenancy) {
-    throwWithStatus('Tenancy not found', 404);
+    throw Object.assign(new Error('Tenancy not found'), { statusCode: 404 });
   }
   if (tenancy.status !== 'checked_in') {
-    throwWithStatus('Only checked-in tenancies can be transferred', 400);
+    throw Object.assign(new Error('Only checked-in tenancies can be transferred'), { statusCode: 400 });
   }
 
-  const fromUnit: any = await Unit.findById(transferRequest.fromUnitId);
-  const toUnit: any = await Unit.findById(transferRequest.toUnitId).populate('propertyId');
+  const [fromUnit, toUnit] = await Promise.all([
+    prisma.unit.findUnique({ where: { id: transferRequest.fromUnitId }, include: { slots: true } }),
+    prisma.unit.findUnique({ where: { id: transferRequest.toUnitId }, include: { slots: true } }),
+  ]);
   if (!fromUnit || !toUnit) {
-    throwWithStatus('Transfer units not found', 404);
+    throw Object.assign(new Error('Transfer units not found'), { statusCode: 404 });
   }
-  if (tenancy.unitId._id.toString() !== fromUnit._id.toString()) {
-    throwWithStatus('Transfer source unit no longer matches tenancy unit', 409);
-  }
-
-  ensureTargetUnitAvailability(toUnit);
-
-  await releaseCurrentUnitOccupancy(tenancy, fromUnit);
-  const placement = await occupyTargetUnit(tenancy, toUnit);
-
-  const previousUnitId = tenancy.unitId._id.toString();
-  const previousPropertyId = tenancy.propertyId._id.toString();
-
-  tenancy.unitId = toUnit._id;
-  tenancy.propertyId = toUnit.propertyId._id || toUnit.propertyId;
-  tenancy.slotNumber = placement.slotNumber;
-  tenancy.isPrimary = placement.isPrimary;
-  await tenancy.save();
-
-  const contract: any = await Contract.findById(tenancy.contractId);
-  if (contract) {
-    contract.unitId = toUnit._id;
-    contract.propertyId = toUnit.propertyId._id || toUnit.propertyId;
-    await contract.save();
+  if (tenancy.unitId !== fromUnit.id) {
+    throw Object.assign(
+      new Error('Transfer source unit no longer matches tenancy unit'),
+      { statusCode: 409 }
+    );
   }
 
-  // Update future open bills so upcoming collections align to the new unit.
+  // Re-validate against the unit's CURRENT state (not any snapshot taken at
+  // request time) and compute the actual placement to write.
+  const placement = ensureTargetUnitAvailability(toUnit);
+  const releasePlan = computeReleasePlan(tenancy.slotNumber, fromUnit);
+  const occupyPlan = computeOccupyPlan(toUnit, placement);
+
+  const previousUnitId = tenancy.unitId;
+  const previousPropertyId = tenancy.propertyId;
+  const contract = tenancy.contract;
+  const tenant = tenancy.user;
   const now = new Date();
-  await Bill.updateMany(
-    {
-      tenancyId: tenancy._id,
-      balanceAmount: { $gt: 0 },
-      dueDate: { $gte: now },
-      status: { $in: ['unpaid', 'partial', 'overdue'] }
-    },
-    {
-      $set: {
-        propertyId: toUnit.propertyId._id || toUnit.propertyId,
-        unitId: toUnit._id
-      }
-    }
-  );
 
-  transferRequest.status = 'completed';
-  transferRequest.completedAt = new Date();
-  transferRequest.reviewedBy = management.user._id;
-  transferRequest.reviewedAt = transferRequest.reviewedAt || new Date();
-  await transferRequest.save();
+  try {
+    await prisma.$transaction(
+      async (tx) => {
+        if (releasePlan.slotNumber !== undefined) {
+          await tx.unitSlot.update({
+            where: { unitId_slotNumber: { unitId: fromUnit.id, slotNumber: releasePlan.slotNumber } },
+            data: { status: 'vacant', tenancyId: null },
+          });
+        }
+        await tx.unit.update({
+          where: { id: fromUnit.id },
+          data: { status: releasePlan.newUnitStatus as Prisma.UnitUpdateInput['status'] },
+        });
 
-  const tenant: any = tenancy.userId;
-  const oldProperty: any = tenancy.propertyId;
-  const toProperty: any = toUnit.propertyId;
+        if (occupyPlan.slotNumber !== undefined) {
+          await tx.unitSlot.update({
+            where: { unitId_slotNumber: { unitId: toUnit.id, slotNumber: occupyPlan.slotNumber } },
+            data: { status: 'occupied', tenancyId: tenancy.id },
+          });
+        }
+        await tx.unit.update({
+          where: { id: toUnit.id },
+          data: { status: occupyPlan.newUnitStatus as Prisma.UnitUpdateInput['status'] },
+        });
 
-  await Notification.create({
-    userId: tenant._id,
-    type: 'tenancy',
-    title: 'Transfer Completed',
-    message: `Your transfer to unit ${toUnit.unitIdentifier} is complete.`,
-    link: '/u/my-room',
-    metadata: {
-      transferRequestId: transferRequest._id.toString(),
-      tenancyId: tenancy._id.toString(),
-      fromUnitId: previousUnitId,
-      toUnitId: toUnit._id.toString()
-    }
+        await tx.tenancy.update({
+          where: { id: tenancy.id },
+          data: {
+            unitId: toUnit.id,
+            propertyId: toUnit.propertyId,
+            slotNumber: placement.slotNumber ?? null,
+            isPrimary: placement.isPrimary,
+          },
+        });
+
+        if (contract) {
+          await tx.contract.update({
+            where: { id: contract.id },
+            data: { unitId: toUnit.id, propertyId: toUnit.propertyId },
+          });
+        }
+
+        // Update future open bills so upcoming collections align to the new unit.
+        await tx.bill.updateMany({
+          where: {
+            tenancyId: tenancy.id,
+            balanceAmount: { gt: 0 },
+            dueDate: { gte: now },
+            status: { in: ['unpaid', 'partial', 'overdue'] },
+          },
+          data: { propertyId: toUnit.propertyId, unitId: toUnit.id },
+        });
+
+        await tx.transferRequest.update({
+          where: { id: transferRequest.id },
+          data: {
+            status: 'completed',
+            completedAt: now,
+            reviewedBy: management.user.id,
+            reviewedAt: transferRequest.reviewedAt ?? now,
+          },
+        });
+
+        await tx.notification.create({
+          data: {
+            userId: tenant.id,
+            type: 'tenancy',
+            title: 'Transfer Completed',
+            message: `Your transfer to unit ${toUnit.unitIdentifier} is complete.`,
+            link: '/u/my-room',
+            metadata: {
+              transferRequestId: transferRequest.id,
+              tenancyId: tenancy.id,
+              fromUnitId: previousUnitId,
+              toUnitId: toUnit.id,
+            },
+          },
+        });
+
+        await tx.notification.create({
+          data: {
+            userId: management.property.landlordId,
+            type: 'tenancy',
+            title: 'Tenant Transfer Completed',
+            message: `${tenant.name} was transferred to ${toUnit.unitIdentifier}.`,
+            link: `/hub/tenants/${tenancy.id}`,
+            metadata: {
+              transferRequestId: transferRequest.id,
+              tenancyId: tenancy.id,
+              fromPropertyId: previousPropertyId,
+              toPropertyId: toUnit.propertyId,
+            },
+          },
+        });
+      },
+      { timeout: 15000 }
+    );
+  } catch (e) {
+    throw toHttpError(e);
+  }
+
+  const [populatedTransferRequest, populatedTenancy] = await Promise.all([
+    prisma.transferRequest.findUnique({
+      where: { id: transferRequest.id },
+      include: { ...TRANSFER_REQUEST_SHARED_INCLUDE, tenancy: { select: TENANCY_COMPLETE_SELECT } },
+    }),
+    prisma.tenancy.findUnique({
+      where: { id: tenancy.id },
+      include: {
+        user: { select: { id: true, name: true, email: true, phone: true, avatar: true } },
+        property: { select: PROPERTY_REF_SELECT },
+        unit: {
+          select: {
+            id: true,
+            unitIdentifier: true,
+            accommodationType: true,
+            status: true,
+            slots: { orderBy: { slotNumber: 'asc' as const } },
+          },
+        },
+        contract: { select: { id: true, status: true, startDate: true, endDate: true, monthlyRent: true } },
+      },
+    }),
+  ]);
+
+  return serializeDoc({
+    transferRequest: remapTransferRequest(populatedTransferRequest!),
+    tenancy: remapCompletedTenancy(populatedTenancy!),
   });
-
-  await Notification.create({
-    userId: management.property.landlordId,
-    type: 'tenancy',
-    title: 'Tenant Transfer Completed',
-    message: `${tenant.name} was transferred to ${toUnit.unitIdentifier}.`,
-    link: `/hub/tenants/${tenancy._id}`,
-    metadata: {
-      transferRequestId: transferRequest._id.toString(),
-      tenancyId: tenancy._id.toString(),
-      fromPropertyId: previousPropertyId,
-      toPropertyId: (toUnit.propertyId._id || toUnit.propertyId).toString()
-    }
-  });
-
-  return {
-    transferRequest: await TransferRequest.findById(transferRequest._id)
-      .populate('tenancyId', 'status unitId propertyId')
-      .populate('fromUnitId', 'unitIdentifier accommodationType')
-      .populate('toUnitId', 'unitIdentifier accommodationType')
-      .populate('initiatedByUserId', 'name role')
-      .populate('reviewedBy', 'name role')
-      .lean(),
-    tenancy: await Tenancy.findById(tenancy._id)
-      .populate('userId', 'name email phone avatar')
-      .populate('propertyId', 'name address')
-      .populate('unitId', 'unitIdentifier accommodationType slots status')
-      .populate('contractId', 'status startDate endDate monthlyRent')
-      .lean()
-  };
 };
+
+// ─────────────────────────────────────────────────────────────
+//  completeTransferRequest's own tenancy embed shape:
+//  `.populate('userId', 'name email phone avatar')`
+//  `.populate('propertyId', 'name address')`         -- via propertyRef.mapper.ts
+//  `.populate('unitId', 'unitIdentifier accommodationType slots status')`
+//  `.populate('contractId', 'status startDate endDate monthlyRent')`
+//  Kept local (not reusing tenancy.service.ts's own remap helpers, per the
+//  brief: transfer.service.ts must not import from/modify tenancy.service.ts)
+//  -- `propertyId`'s shape happens to be EXACTLY propertyRef.mapper.ts's own
+//  narrow `{id, name, address}` projection (`PROPERTY_REF_SELECT`/
+//  `shapePropertyRef`, reused directly below), unlike any of tenancy.service.ts's
+//  own three wider property variants (which all add images/landlordId/metrics).
+// ─────────────────────────────────────────────────────────────
+type CompletedTenancySlotRow = { slotNumber: number; status: string; tenancyId: string | null };
+type CompletedTenancyUnitRow = {
+  id: string;
+  unitIdentifier: string;
+  accommodationType: string;
+  status: string;
+  slots: CompletedTenancySlotRow[];
+};
+
+function shapeCompletedTenancyUnit(row: CompletedTenancyUnitRow): Record<string, unknown> {
+  return {
+    id: row.id,
+    unitIdentifier: row.unitIdentifier,
+    accommodationType: row.accommodationType,
+    slots: row.slots
+      .slice()
+      .sort((a, b) => a.slotNumber - b.slotNumber)
+      .map((s) => ({
+        slotNumber: s.slotNumber,
+        status: s.status,
+        ...(s.tenancyId !== null && s.tenancyId !== undefined ? { tenancyId: s.tenancyId } : {}),
+      })),
+    status: row.status,
+  };
+}
+
+function remapCompletedTenancy(row: Record<string, any>): Record<string, unknown> {
+  const { user, property, unit, contract, ...rest } = row;
+  const out: Record<string, unknown> = stripNulls(rest);
+  if (user !== undefined) {
+    out.userId = stripNulls({ id: user.id, name: user.name, email: user.email, phone: user.phone, avatar: user.avatar });
+  }
+  if (property !== undefined) out.propertyId = shapePropertyRef(property);
+  if (unit !== undefined) out.unitId = shapeCompletedTenancyUnit(unit);
+  if (contract !== undefined) {
+    out.contractId = {
+      id: contract.id,
+      status: contract.status,
+      startDate: contract.startDate,
+      endDate: contract.endDate,
+      monthlyRent: contract.monthlyRent,
+    };
+  }
+  return out;
+}

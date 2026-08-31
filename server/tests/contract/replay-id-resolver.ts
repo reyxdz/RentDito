@@ -146,6 +146,7 @@ export const PORTED_SERVICES: ReadonlySet<string> = new Set<string>([
   'contract', // Task 20 (server/src/services/contract.service.ts)
   'tenancy', // Task 21 (server/src/services/tenancy.service.ts)
   'billing', // Task 22 (server/src/services/billing.service.ts) -- also serves payment.json, see the module docstring's "known exceptions" note
+  'transfer', // Task 24 (server/src/services/transfer.service.ts)
   // ...and so on, one line per port, in whatever order the ports land.
 ]);
 
