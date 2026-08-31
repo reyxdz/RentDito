@@ -11,9 +11,10 @@
  *
  * Requirements:
  *   - MongoDB running at 127.0.0.1:27017/rentdito, already seeded via `npm run seed`.
- *   - No server/.env file is required or created. JWT secrets are set in-process below purely
- *     for this script's own login/verify cycle (sign + verify both read process.env at request
- *     time, so setting them before any request is made is sufficient).
+ *   - Supabase Auth seeded with every user this script signs in as (Task 12's seed), all
+ *     sharing the SEED_TEST_PASSWORD convention documented in tests/helpers/auth.ts.
+ *   - server/.env present with SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY set (src/config/
+ *     supabase.ts throws at import time otherwise).
  */
 
 import fs from 'fs';
@@ -21,22 +22,18 @@ import path from 'path';
 import request from 'supertest';
 import mongoose from 'mongoose';
 
-// Must be set before any HTTP request is made (login signs a token, auth middleware verifies
-// it) — but does NOT need to precede the `import { app }` below, because server.ts's own
-// dotenv.config() is a no-op here (no server/.env exists) and signAccess/verifyToken only read
-// process.env when an actual request is handled, which happens later, after this module's
-// synchronous top-level code (including these three lines) has already run.
-//
-// These are FORCED, unconditionally overwriting whatever is already in process.env — do NOT
-// change this to a `process.env.X || 'fallback'` pattern. This script signs tokens (both via
-// real POST /api/auth/login and via the direct signAccess() mint below), and those tokens get
-// written into committed fixture files. If a developer re-runs this script on a machine that
-// happens to have a real server/.env (the normal state for local development), an env-aware
-// fallback would silently sign with the *real* JWT secrets and commit real-secret-signed tokens
-// to git history. Forcing dummy, single-purpose secrets unconditionally — even when real ones
-// are present in the environment — makes that impossible.
-process.env.JWT_ACCESS_SECRET = 'golden-capture-access-secret';
-process.env.JWT_REFRESH_SECRET = 'golden-capture-refresh-secret';
+// FORCED, unconditionally overwriting whatever is already in process.env — do NOT change this
+// to a `process.env.NODE_ENV || 'test'` pattern. server/.env sets NODE_ENV=development for
+// normal local dev, and errorHandler.ts (src/middleware/errorHandler.ts) reads
+// `process.env.NODE_ENV` at request-handling time and attaches a live `stack` trace to every
+// error-response body whenever it is 'development'. Those stack traces would get baked into
+// committed error fixtures otherwise. A plain assignment here (as opposed to an env-aware
+// fallback) always wins by the time any request is handled, regardless of whether
+// src/config/supabase.ts's own dotenv.config() call (reached via the `import { app }` below,
+// which loads server/.env and would otherwise set NODE_ENV=development) happens to run before
+// or after this line — this matches what Jest itself defaults NODE_ENV to for the replay
+// suite, for the exact same reason.
+process.env.NODE_ENV = 'test';
 process.env.MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/rentdito';
 
 // IMPORTANT: named import. `server.ts` only calls connectDB()/app.listen() under
@@ -62,17 +59,15 @@ import { InventoryRecord } from '../src/models/InventoryRecord';
 import { LandlordApplication } from '../src/models/LandlordApplication';
 import { Document } from '../src/models/Document';
 import { IncidentReport } from '../src/models/IncidentReport';
-// `src/utils/jwt.ts` was deleted by the Supabase-auth cutover (Task 7) — Supabase
-// issues tokens now, so nothing in the live app signs its own JWTs anymore. This
-// script is a frozen, one-time, non-repeatable capture tool (see file header) that
-// is never run again; inlining the deleted signAccess() verbatim keeps it
-// self-contained and type-checkable without resurrecting the app-wide dependency.
-import jwt from 'jsonwebtoken';
-
-const signAccess = (userId: string, role: string) =>
-  jwt.sign({ id: userId, role }, process.env.JWT_ACCESS_SECRET as string, {
-    expiresIn: (process.env.JWT_ACCESS_EXPIRES_IN || '15m') as jwt.SignOptions['expiresIn'],
-  });
+// `src/utils/jwt.ts` was deleted by the Supabase-auth cutover (Task 7) — Supabase issues
+// tokens now, and the live auth middleware (src/middleware/auth.ts) verifies only
+// Supabase-issued ES256 tokens via JWKS. A locally HS256-signed token (the old
+// `signAccess()` this script used to mint directly) is rejected with 401 on every
+// request. `tokenForEmail()` is the same real-Supabase-sign-in helper the contract
+// replay suite already uses for this identical reason (tests/helpers/auth.ts) — it
+// calls `supabaseAdmin.auth.signInWithPassword` directly (not through the rate-limited
+// POST /api/auth/login route) and caches the token per email for the process lifetime.
+import { tokenForEmail } from '../tests/helpers/auth';
 
 // ─────────────────────────────────────────────────────────────
 //  Capture plumbing
@@ -98,6 +93,16 @@ const OUT_DIR = path.resolve(__dirname, '../tests/golden');
 let totalCaptured = 0;
 const fileCounts: Record<string, number> = {};
 
+// Every group's records are buffered here in memory, keyed by group name, instead of being
+// written to disk as each `capture()` call finishes. This is deliberate: it lets `main()` run
+// a corpus-wide safety check (see checkNotCatastrophic() below) across *every* captured
+// response before a single byte of any fixture file is touched. Writing incrementally (the
+// previous behaviour) meant a stale-auth run had already overwritten most of the 25 fixture
+// files with 401s by the time anyone could notice — see task-18b-report.md, which documents
+// ~10,000 lines lost this way. Buffering + a single gated flush at the end makes "detect
+// catastrophe, then refuse to write anything" possible.
+const pendingGroups = new Map<string, CaptureRecord[]>();
+
 async function capture(group: string, cases: CaseDef[]): Promise<void> {
   const results: CaptureRecord[] = [];
   for (const c of cases) {
@@ -107,11 +112,73 @@ async function capture(group: string, cases: CaseDef[]): Promise<void> {
     const res = await req;
     results.push({ name: c.name, method: c.method, path: c.path, status: res.status, body: res.body });
   }
-  fs.mkdirSync(OUT_DIR, { recursive: true });
-  fs.writeFileSync(path.join(OUT_DIR, `${group}.json`), JSON.stringify(results, null, 2));
-  console.log(`captured ${results.length} cases -> ${group}.json`);
+  pendingGroups.set(group, results);
+  console.log(`captured ${results.length} cases -> ${group}.json (buffered, not yet written)`);
   totalCaptured += results.length;
   fileCounts[group] = results.length;
+}
+
+/**
+ * Guard against exactly the failure mode task-18b-report.md documents: a stale
+ * token-minting path (or any other systemic auth breakage) turning nearly every
+ * authenticated case into a 401, then silently overwriting all 25 committed fixture
+ * files with that garbage.
+ *
+ * Threshold rationale: counted directly against the corpus committed at the time this
+ * check was written, exactly 6 of 186 cases (~3.2%) are legitimately expected to return
+ * 401 — deliberate negative-auth cases like `login-wrong-password`,
+ * `*-unauthenticated`, `login-unknown-email`. Of the 186 case defs in this script, 169
+ * (~91%) attach a bearer token; a stale-auth failure mode flips essentially all of
+ * those to 401 at once, since the middleware rejects every token identically. So the
+ * two possible worlds are ~3% (healthy) vs. ~90%+ (catastrophic) — there is no
+ * plausible legitimate scenario in between. 20% is set well above the healthy baseline
+ * (>6x headroom for the corpus growing more negative-auth cases over time) and far
+ * below the catastrophic floor, so it fires reliably on the real failure mode without
+ * being sensitive to ordinary fixture evolution.
+ */
+function checkNotCatastrophic(): void {
+  let total = 0;
+  let unauthorized = 0;
+  for (const records of pendingGroups.values()) {
+    for (const r of records) {
+      total += 1;
+      if (r.status === 401) unauthorized += 1;
+    }
+  }
+  const ratio = total === 0 ? 0 : unauthorized / total;
+  const THRESHOLD = 0.2;
+  if (ratio >= THRESHOLD) {
+    console.error('\n=== REFUSING TO WRITE GOLDEN FIXTURES ===');
+    console.error(
+      `${unauthorized}/${total} captured responses (${(ratio * 100).toFixed(1)}%) came back ` +
+        `401 Unauthorized — at or above the ${(THRESHOLD * 100).toFixed(0)}% catastrophe ` +
+        `threshold (healthy baseline is ~3%).`
+    );
+    console.error(
+      'This is the exact stale-auth failure mode documented in task-18b-report.md: every ' +
+        'bearer token this script minted was rejected by the auth middleware, which would ' +
+        'otherwise overwrite all committed golden fixtures with near-uniform 401 bodies.'
+    );
+    console.error(
+      'Likely cause: tokenForEmail() could not sign in via Supabase (missing/incorrect ' +
+        'SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY in server/.env, or Supabase Auth not seeded ' +
+        'per Task 12 — see the WARNING lines logged above for which emails failed), or the ' +
+        'live auth middleware no longer accepts tokens minted this way.'
+    );
+    console.error('No fixture file was written. Fix the root cause and re-run.\n');
+    throw new Error(
+      `capture-golden: ${unauthorized}/${total} responses were 401 (${(ratio * 100).toFixed(1)}%) — refusing to overwrite golden fixtures.`
+    );
+  }
+}
+
+/** Only called once checkNotCatastrophic() has passed — writes every buffered group to disk. */
+function flushToDisk(): void {
+  fs.mkdirSync(OUT_DIR, { recursive: true });
+  for (const [group, results] of pendingGroups.entries()) {
+    fs.writeFileSync(path.join(OUT_DIR, `${group}.json`), JSON.stringify(results, null, 2));
+  }
+  console.log(`\nWrote ${pendingGroups.size} fixture files to ${OUT_DIR}`);
 }
 
 async function loginRaw(email: string, password = 'password123') {
@@ -124,8 +191,8 @@ async function loginRaw(email: string, password = 'password123') {
  * point of this fixture anyway — the point is the response *shape*: that accessToken and
  * refreshToken are present, that user is returned, that status is 200. Replace the actual
  * values with stable placeholders before anything is written to disk, so re-running this
- * script can never regress a redacted fixture back into embedding a live token (real or,
- * per the forced dummy JWT secrets above, at least never a *real-secret*-signed one).
+ * script can never regress a redacted fixture back into embedding a live, real Supabase
+ * session token.
  */
 function redactTokens<T>(body: T): T {
   const anyBody = body as any;
@@ -210,9 +277,8 @@ async function main() {
     authRecords.push({ name: 'health-check', method: 'get', path: '/api/health', status: res.status, body: redactTokens(res.body) });
   }
 
-  fs.mkdirSync(OUT_DIR, { recursive: true });
-  fs.writeFileSync(path.join(OUT_DIR, 'auth.json'), JSON.stringify(authRecords, null, 2));
-  console.log(`captured ${authRecords.length} cases -> auth.json`);
+  pendingGroups.set('auth', authRecords);
+  console.log(`captured ${authRecords.length} cases -> auth.json (buffered, not yet written)`);
   totalCaptured += authRecords.length;
   fileCounts.auth = authRecords.length;
 
@@ -223,11 +289,18 @@ async function main() {
   const tokens: Record<string, string> = {};
   for (const [key, email] of Object.entries(emails)) {
     const doc: any = userByEmail.get(email);
-    if (doc) tokens[key] = signAccess(doc._id.toString(), doc.role);
-  }
-  for (const key of Object.keys(emails)) {
-    if (!tokens[key]) {
-      console.warn(`WARNING: no user found for ${key} (${emails[key]}) — dependent captures will be skipped/denied.`);
+    if (!doc) {
+      console.warn(`WARNING: no Mongo user found for ${key} (${email}) — dependent captures will be skipped/denied.`);
+      continue;
+    }
+    try {
+      // Real Supabase sign-in, not a local JWT mint — see the import comment above.
+      // Only needs the email (Supabase Auth is a separate store from the Mongo `doc`
+      // just looked up); the `doc` check above still guards the Mongo-side id/role
+      // lookups this script does elsewhere for the same email.
+      tokens[key] = await tokenForEmail(email);
+    } catch (err) {
+      console.warn(`WARNING: could not mint a Supabase token for ${key} (${email}) — dependent captures will be skipped/denied. ${(err as Error).message}`);
     }
   }
 
@@ -642,6 +715,12 @@ async function main() {
     console.log(`  ${group.padEnd(24)} ${count}`);
   }
   console.log(`  TOTAL${''.padEnd(20)} ${totalCaptured}`);
+
+  // Gate: refuse to touch any fixture file if the run looks like the stale-auth failure
+  // mode (see checkNotCatastrophic()'s doc comment). Every group above is still only
+  // buffered in memory at this point — nothing has been written to tests/golden/ yet.
+  checkNotCatastrophic();
+  flushToDisk();
 
   await mongoose.disconnect();
   console.log('Disconnected from MongoDB.');
