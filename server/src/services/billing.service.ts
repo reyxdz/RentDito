@@ -42,43 +42,27 @@ function stripNulls<T extends Record<string, unknown>>(obj: T): T {
 }
 
 // ═══════════════════════════════════════════════════════════════════════
-// Strangler dual-id resolution.
+// Caller resolution.
 //
-// `billing.controller.ts`'s 11 call sites were swapped (per this task's
-// brief) to pass `req.user!.pgId` -- the real Postgres UUID. But
-// `payment.controller.ts` ALSO imports this file (`getPayments` /
-// `getPaymentsByTenancy` -- see replay-id-resolver.ts's own comment: "
-// `payment.json`'s cases are served by `billing.service.ts`"), and per the
-// brief's scope ("Change billing.controller.ts's ... Nothing else in that
-// controller; no other controller") that file is explicitly out of scope
-// for this task, so its 2 call sites still pass `req.user!.id` -- the
-// LEGACY MONGO OBJECTID for any profile that has one (see
-// src/middleware/auth.ts). Left unresolved, `getPayments`/
-// `getPaymentsByTenancy` would look up `prisma.profile.findUnique({where:
-// {id: <mongo-objectid-string>}})`, which Postgres rejects outright (P2023,
-// invalid UUID syntax) before ever reaching an OR-branch -- breaking every
-// `payment.json` fixture, a regression this task's non-negotiables forbid.
-//
-// Rather than reach outside this file's declared scope to fix
-// payment.controller.ts, every "resolve the caller" lookup in this file
-// goes through this one resolver instead of a raw `prisma.profile.findUnique
-// ({where:{id:userId}})`: try the UUID id first (this always succeeds for
-// the 11 swapped billing.controller.ts sites), and fall back to
-// `legacyMongoId` only when the incoming id isn't UUID-shaped at all (never
-// attempting an `id: <mongo-id>` comparison, which is what would throw
-// P2023). EVERY subsequent comparison/query in this file that needs "the
-// caller's real Postgres id" then uses the RESOLVED `profile.id` -- never
-// the raw `userId` parameter -- so a legacy-id caller (payment.controller.ts)
-// and a pgId caller (billing.controller.ts) behave identically from this
-// point on. Applied uniformly to all 13 exported functions (not just the
-// 2 payment.controller.ts actually calls) so there is one pattern, not a
-// special case per call site.
+// This service is ported: every call site is expected to pass the real
+// Postgres UUID (`req.user!.pgId`), never the legacy Mongo ObjectId. A
+// previous revision of this file fell back to `prisma.profile.findUnique
+// ({where:{legacyMongoId: userId}})` when `userId` wasn't UUID-shaped, to
+// paper over `payment.controller.ts` still passing `req.user!.id` (the
+// Mongo id) into `getPayments`/`getPaymentsByTenancy`. That fallback has
+// been removed -- `payment.controller.ts` now passes `pgId` like every
+// other caller (see payment.controller.ts) -- and must not come back: it
+// silently absorbed the wrong id space instead of failing loudly, which is
+// exactly the failure mode the dual-id migration is designed to surface.
+// A syntactically-invalid id (never a legacy Mongo id under correct
+// callers) collapses to `null` here so every call site's existing
+// `if (!user) throw ... 404` fires, instead of letting Prisma throw P2023
+// on a non-UUID `where: { id }` lookup (same invalid-id-collapse pattern
+// documented in task-14's report).
 // ═══════════════════════════════════════════════════════════════════════
 async function resolveCallerProfile(userId: string) {
-  if (isValidId(userId)) {
-    return prisma.profile.findUnique({ where: { id: userId } });
-  }
-  return prisma.profile.findUnique({ where: { legacyMongoId: userId } });
+  if (!isValidId(userId)) return null;
+  return prisma.profile.findUnique({ where: { id: userId } });
 }
 
 /**
