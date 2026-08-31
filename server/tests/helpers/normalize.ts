@@ -41,6 +41,24 @@ const UNORDERED_ARRAY_SORT_KEY: Record<string, string> = {
 const RAW_ID_ARRAY_KEYS = new Set(['readBy']);
 
 /**
+ * Same problem as RAW_ID_ARRAY_KEYS above, but for a SCALAR raw-id field
+ * rather than an array: `contract.service.ts`'s (Task 20) `applicationId`
+ * embed is the direct port of the original's unqualified, non-cascading
+ * `.populate('applicationId')` -- it turns the Contract's own `applicationId`
+ * FK into a full RentalApplication document, but does NOT further populate
+ * THAT document's own `reviewedBy` FK (no nested populate spec was ever
+ * given), so it stays a raw Mongo ObjectId / Postgres UUID string, same as
+ * the original. `application.service.ts` (Task 19) never emits this shape
+ * (every one of its own remap functions wraps `reviewedBy` in an object
+ * with its own `id`), so this is, per a corpus-wide grep of
+ * tests/golden/*.json, the only fixture value shaped this way. Same fix as
+ * `readBy`: canonicalize to the same `'<ID>'` placeholder so the check
+ * compares "is this the same reviewer", not "is it the byte-identical id
+ * across two different id spaces".
+ */
+const RAW_ID_SCALAR_KEYS = new Set(['reviewedBy']);
+
+/**
  * Strip fields that legitimately differ between runs or engines, and
  * canonicalise IDs to a placeholder so Mongo ObjectIds and Postgres UUIDs
  * compare equal by position rather than by value.
@@ -89,6 +107,10 @@ export function normalizeBody(input: unknown): unknown {
       }
       if (RAW_ID_ARRAY_KEYS.has(k) && Array.isArray(v)) {
         out[k] = (v as unknown[]).map((el) => (typeof el === 'string' ? '<ID>' : normalizeBody(el)));
+        continue;
+      }
+      if (RAW_ID_SCALAR_KEYS.has(k)) {
+        out[k] = typeof v === 'string' ? '<ID>' : normalizeBody(v);
         continue;
       }
       if (Array.isArray(v) && UNORDERED_ARRAY_SORT_KEY[k]) {
