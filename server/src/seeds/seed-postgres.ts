@@ -794,10 +794,17 @@ async function run() {
   // 10. Bills (source: seed.ts seedContractsAndTenancies() utility bill loop).
   //     Arithmetic mirrors seed.ts exactly (elecExtra/waterExtra fixed arrays
   //     replace its Math.random() calls). seed.ts's period boundaries come
-  //     from local-timezone `new Date(y, m, d)` construction, which is
-  //     inherently machine-dependent; this seed instead fixes them as UTC
-  //     literals (see report "Judgment calls") so the values are reproducible
-  //     regardless of the host running this script.
+  //     from local-timezone `new Date(y, m, d)` construction
+  //     (`new Date(today.getFullYear(), month, 1)` etc., evaluated on this
+  //     Asia/Manila (UTC+8) machine, where the golden fixtures were also
+  //     captured from Mongo) -- e.g. "1 March" local becomes the UTC instant
+  //     2026-02-28T16:00:00.000Z, 8 hours earlier. Fixing these as UTC
+  //     midnight literals (the previous revision's approach) produces a
+  //     *different* instant than seed.ts actually writes, which the
+  //     billing.json/payment.json golden fixtures (captured from seed.ts's
+  //     real output) reject. Reconciled below to the exact instants
+  //     seed.ts's local-time construction resolves to on this host, mirroring
+  //     seed.ts byte-for-byte rather than reinterpreting its dates as UTC.
   // ===========================================================================
   console.log('Seeding bills...');
 
@@ -839,8 +846,8 @@ async function run() {
         unitId: unit1Id,
         contractId: contract1Id,
         type: 'utility',
-        billingPeriodStart: new Date('2026-03-01T00:00:00Z'),
-        billingPeriodEnd: new Date('2026-03-31T00:00:00Z'),
+        billingPeriodStart: new Date('2026-02-28T16:00:00.000Z'),
+        billingPeriodEnd: new Date('2026-03-30T16:00:00.000Z'),
         rentAmount: 0,
         utilityAmount: m0PerHead,
         penaltyAmount: 0,
@@ -848,7 +855,7 @@ async function run() {
         paidAmount: 0,
         balanceAmount: m0PerHead,
         status: 'unpaid',
-        dueDate: new Date('2026-04-05T00:00:00Z'),
+        dueDate: new Date('2026-04-04T16:00:00.000Z'),
         utilityBreakdown: {
           electricity: { previousReading: m0ElecPrev, currentReading: m0ElecCurr, consumption: m0ElecCons, rate: elecRate, amount: m0ElecAmount },
           water: { previousReading: m0WaterPrev, currentReading: m0WaterCurr, consumption: m0WaterCons, rate: waterRate, amount: m0WaterAmount },
@@ -865,8 +872,8 @@ async function run() {
         unitId: unit1Id,
         contractId: contract1Id,
         type: 'utility',
-        billingPeriodStart: new Date('2026-02-01T00:00:00Z'),
-        billingPeriodEnd: new Date('2026-02-28T00:00:00Z'),
+        billingPeriodStart: new Date('2026-01-31T16:00:00.000Z'),
+        billingPeriodEnd: new Date('2026-02-27T16:00:00.000Z'),
         rentAmount: 0,
         utilityAmount: m1PerHead,
         penaltyAmount: 0,
@@ -874,7 +881,7 @@ async function run() {
         paidAmount: 0,
         balanceAmount: m1PerHead,
         status: 'unpaid',
-        dueDate: new Date('2026-03-05T00:00:00Z'),
+        dueDate: new Date('2026-03-04T16:00:00.000Z'),
         utilityBreakdown: {
           electricity: { previousReading: m1ElecPrev, currentReading: m1ElecCurr, consumption: m1ElecCons, rate: elecRate, amount: m1ElecAmount },
           water: { previousReading: m1WaterPrev, currentReading: m1WaterCurr, consumption: m1WaterCons, rate: waterRate, amount: m1WaterAmount },
@@ -891,8 +898,8 @@ async function run() {
         unitId: unit1Id,
         contractId: contract1Id,
         type: 'utility',
-        billingPeriodStart: new Date('2026-01-01T00:00:00Z'),
-        billingPeriodEnd: new Date('2026-01-31T00:00:00Z'),
+        billingPeriodStart: new Date('2025-12-31T16:00:00.000Z'),
+        billingPeriodEnd: new Date('2026-01-30T16:00:00.000Z'),
         rentAmount: 0,
         utilityAmount: m2PerHead,
         penaltyAmount: 0,
@@ -900,7 +907,7 @@ async function run() {
         paidAmount: 0,
         balanceAmount: m2PerHead,
         status: 'unpaid',
-        dueDate: new Date('2026-02-05T00:00:00Z'),
+        dueDate: new Date('2026-02-04T16:00:00.000Z'),
         utilityBreakdown: {
           electricity: { previousReading: m2ElecPrev, currentReading: m2ElecCurr, consumption: m2ElecCons, rate: elecRate, amount: m2ElecAmount },
           water: { previousReading: m2WaterPrev, currentReading: m2WaterCurr, consumption: m2WaterCons, rate: waterRate, amount: m2WaterAmount },
