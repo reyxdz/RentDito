@@ -8,10 +8,10 @@
       "status": "success",
       "data": [
         {
-          "_id": "6a93e154107b82fb635d9019",
-          "userId": "6a93e154107b82fb635d8fe5",
+          "_id": "6a94c522145a3dfaa5658478",
+          "userId": "6a94c522145a3dfaa5658444",
           "propertyId": {
-            "_id": "6a93e154107b82fb635d8feb",
+            "_id": "6a94c522145a3dfaa565844a",
             "name": "White Dorm Property",
             "address": {
               "street": "Sikatuna Street",
@@ -27,7 +27,7 @@
             ]
           },
           "unitId": {
-            "_id": "6a93e154107b82fb635d8ff7",
+            "_id": "6a94c522145a3dfaa5658456",
             "unitIdentifier": "Room 2",
             "accommodationType": "room",
             "roomRent": 18000,
@@ -54,8 +54,8 @@
           },
           "reviewNotes": "Approved for move-in.",
           "reviewedAt": "2025-12-20T00:00:00.000Z",
-          "createdAt": "2026-08-30T07:52:52.619Z",
-          "updatedAt": "2026-08-30T07:52:52.619Z",
+          "createdAt": "2026-01-11T08:01:00.000Z",
+          "updatedAt": "2026-01-11T08:01:00.000Z",
           "__v": 0
         }
       ]
@@ -70,10 +70,10 @@
       "status": "success",
       "data": [
         {
-          "_id": "6a93e154107b82fb635d901a",
-          "userId": "6a93e154107b82fb635d8fe6",
+          "_id": "6a94c522145a3dfaa5658479",
+          "userId": "6a94c522145a3dfaa5658445",
           "propertyId": {
-            "_id": "6a93e154107b82fb635d8feb",
+            "_id": "6a94c522145a3dfaa565844a",
             "name": "White Dorm Property",
             "address": {
               "street": "Sikatuna Street",
@@ -89,7 +89,7 @@
             ]
           },
           "unitId": {
-            "_id": "6a93e154107b82fb635d8ff7",
+            "_id": "6a94c522145a3dfaa5658456",
             "unitIdentifier": "Room 2",
             "accommodationType": "room",
             "roomRent": 18000,
@@ -116,15 +116,15 @@
           },
           "reviewNotes": "Approved for move-in.",
           "reviewedAt": "2024-03-01T00:00:00.000Z",
-          "createdAt": "2026-08-30T07:52:52.619Z",
-          "updatedAt": "2026-08-30T07:52:52.619Z",
+          "createdAt": "2026-01-11T08:02:00.000Z",
+          "updatedAt": "2026-01-11T08:02:00.000Z",
           "__v": 0
         },
         {
-          "_id": "6a93e154107b82fb635d9017",
-          "userId": "6a93e154107b82fb635d8fe6",
+          "_id": "6a94c522145a3dfaa5658476",
+          "userId": "6a94c522145a3dfaa5658445",
           "propertyId": {
-            "_id": "6a93e154107b82fb635d8ff1",
+            "_id": "6a94c522145a3dfaa5658450",
             "name": "Uytengso Boardings House",
             "address": {
               "street": "Uytengso Street",
@@ -140,7 +140,7 @@
             ]
           },
           "unitId": {
-            "_id": "6a93e154107b82fb635d9009",
+            "_id": "6a94c522145a3dfaa5658468",
             "unitIdentifier": "Room 1",
             "accommodationType": "room",
             "roomRent": 20000,
@@ -162,13 +162,13 @@
           ],
           "status": "approved",
           "reviewedBy": {
-            "_id": "6a93e154107b82fb635d8fdf",
+            "_id": "6a94c522145a3dfaa565843e",
             "name": "Maria Santos"
           },
           "reviewNotes": "Documents verified, approved for move-in.",
           "reviewedAt": "2026-02-10T00:00:00.000Z",
-          "createdAt": "2026-08-30T07:52:52.615Z",
-          "updatedAt": "2026-08-30T07:52:52.615Z",
+          "createdAt": "2026-01-10T08:01:00.000Z",
+          "updatedAt": "2026-01-10T08:01:00.000Z",
           "__v": 0
         }
       ]
@@ -183,16 +183,16 @@
       "status": "success",
       "data": [
         {
-          "_id": "6a93e154107b82fb635d901b",
+          "_id": "6a94c522145a3dfaa565847a",
           "userId": {
-            "_id": "6a93e154107b82fb635d8fe7",
+            "_id": "6a94c522145a3dfaa5658446",
             "name": "Nena Reyes",
             "email": "user3@rentdito.com",
             "phone": "09995556666",
             "verificationStatus": "verified"
           },
           "propertyId": {
-            "_id": "6a93e154107b82fb635d8feb",
+            "_id": "6a94c522145a3dfaa565844a",
             "name": "White Dorm Property",
             "address": {
               "street": "Sikatuna Street",
@@ -203,7 +203,7 @@
             }
           },
           "unitId": {
-            "_id": "6a93e154107b82fb635d8ff7",
+            "_id": "6a94c522145a3dfaa5658456",
             "unitIdentifier": "Room 2",
             "accommodationType": "room",
             "roomRent": 18000,
@@ -230,21 +230,21 @@
           },
           "reviewNotes": "Approved for move-in.",
           "reviewedAt": "2025-05-01T00:00:00.000Z",
-          "createdAt": "2026-08-30T07:52:52.619Z",
-          "updatedAt": "2026-08-30T07:52:52.619Z",
+          "createdAt": "2026-01-11T08:03:00.000Z",
+          "updatedAt": "2026-01-11T08:03:00.000Z",
           "__v": 0
         },
         {
-          "_id": "6a93e154107b82fb635d901a",
+          "_id": "6a94c522145a3dfaa5658479",
           "userId": {
-            "_id": "6a93e154107b82fb635d8fe6",
+            "_id": "6a94c522145a3dfaa5658445",
             "name": "Cardo Dalisay",
             "email": "user2@rentdito.com",
             "phone": "09993334444",
             "verificationStatus": "verified"
           },
           "propertyId": {
-            "_id": "6a93e154107b82fb635d8feb",
+            "_id": "6a94c522145a3dfaa565844a",
             "name": "White Dorm Property",
             "address": {
               "street": "Sikatuna Street",
@@ -255,7 +255,7 @@
             }
           },
           "unitId": {
-            "_id": "6a93e154107b82fb635d8ff7",
+            "_id": "6a94c522145a3dfaa5658456",
             "unitIdentifier": "Room 2",
             "accommodationType": "room",
             "roomRent": 18000,
@@ -282,21 +282,21 @@
           },
           "reviewNotes": "Approved for move-in.",
           "reviewedAt": "2024-03-01T00:00:00.000Z",
-          "createdAt": "2026-08-30T07:52:52.619Z",
-          "updatedAt": "2026-08-30T07:52:52.619Z",
+          "createdAt": "2026-01-11T08:02:00.000Z",
+          "updatedAt": "2026-01-11T08:02:00.000Z",
           "__v": 0
         },
         {
-          "_id": "6a93e154107b82fb635d9019",
+          "_id": "6a94c522145a3dfaa5658478",
           "userId": {
-            "_id": "6a93e154107b82fb635d8fe5",
+            "_id": "6a94c522145a3dfaa5658444",
             "name": "Luzviminda Macaraeg",
             "email": "user1@rentdito.com",
             "phone": "09991112222",
             "verificationStatus": "verified"
           },
           "propertyId": {
-            "_id": "6a93e154107b82fb635d8feb",
+            "_id": "6a94c522145a3dfaa565844a",
             "name": "White Dorm Property",
             "address": {
               "street": "Sikatuna Street",
@@ -307,7 +307,7 @@
             }
           },
           "unitId": {
-            "_id": "6a93e154107b82fb635d8ff7",
+            "_id": "6a94c522145a3dfaa5658456",
             "unitIdentifier": "Room 2",
             "accommodationType": "room",
             "roomRent": 18000,
@@ -334,21 +334,21 @@
           },
           "reviewNotes": "Approved for move-in.",
           "reviewedAt": "2025-12-20T00:00:00.000Z",
-          "createdAt": "2026-08-30T07:52:52.619Z",
-          "updatedAt": "2026-08-30T07:52:52.619Z",
+          "createdAt": "2026-01-11T08:01:00.000Z",
+          "updatedAt": "2026-01-11T08:01:00.000Z",
           "__v": 0
         },
         {
-          "_id": "6a93e154107b82fb635d9018",
+          "_id": "6a94c522145a3dfaa5658475",
           "userId": {
-            "_id": "6a93e154107b82fb635d8fea",
-            "name": "Ding Dantes",
-            "email": "user6@rentdito.com",
-            "phone": "09881112222",
-            "verificationStatus": "pending"
+            "_id": "6a94c522145a3dfaa5658448",
+            "name": "Inday Bote",
+            "email": "user5@rentdito.com",
+            "phone": "09999990000",
+            "verificationStatus": "unverified"
           },
           "propertyId": {
-            "_id": "6a93e154107b82fb635d8feb",
+            "_id": "6a94c522145a3dfaa565844a",
             "name": "White Dorm Property",
             "address": {
               "street": "Sikatuna Street",
@@ -359,7 +359,53 @@
             }
           },
           "unitId": {
-            "_id": "6a93e154107b82fb635d9003",
+            "_id": "6a94c522145a3dfaa565845c",
+            "unitIdentifier": "Room 3",
+            "accommodationType": "room",
+            "roomRent": 10000,
+            "bedspaceRent": 2500
+          },
+          "personalDetails": {
+            "fullName": "Inday Bote",
+            "phone": "09999990000",
+            "occupation": "Call Center Agent",
+            "address": "45 Lahug St., Cebu City",
+            "emergencyContact": {
+              "name": "Bote Sibling",
+              "phone": "09172223344",
+              "relationship": "Sibling"
+            }
+          },
+          "documents": [
+            "/uploads/applications/user5-id.jpg"
+          ],
+          "status": "under_review",
+          "createdAt": "2026-01-10T08:03:00.000Z",
+          "updatedAt": "2026-01-10T08:03:00.000Z",
+          "__v": 0
+        },
+        {
+          "_id": "6a94c522145a3dfaa5658477",
+          "userId": {
+            "_id": "6a94c522145a3dfaa5658449",
+            "name": "Ding Dantes",
+            "email": "user6@rentdito.com",
+            "phone": "09881112222",
+            "verificationStatus": "pending"
+          },
+          "propertyId": {
+            "_id": "6a94c522145a3dfaa565844a",
+            "name": "White Dorm Property",
+            "address": {
+              "street": "Sikatuna Street",
+              "city": "Cebu City",
+              "province": "Cebu",
+              "zipCode": "6543",
+              "country": "Philippines"
+            }
+          },
+          "unitId": {
+            "_id": "6a94c522145a3dfaa5658462",
             "unitIdentifier": "Room 4",
             "accommodationType": "room",
             "roomRent": 5000,
@@ -384,67 +430,21 @@
           },
           "reviewNotes": "Insufficient proof of income.",
           "reviewedAt": "2026-02-12T00:00:00.000Z",
-          "createdAt": "2026-08-30T07:52:52.615Z",
-          "updatedAt": "2026-08-30T07:52:52.615Z",
+          "createdAt": "2026-01-10T08:02:00.000Z",
+          "updatedAt": "2026-01-10T08:02:00.000Z",
           "__v": 0
         },
         {
-          "_id": "6a93e154107b82fb635d9016",
+          "_id": "6a94c522145a3dfaa5658474",
           "userId": {
-            "_id": "6a93e154107b82fb635d8fe9",
-            "name": "Inday Bote",
-            "email": "user5@rentdito.com",
-            "phone": "09999990000",
-            "verificationStatus": "unverified"
-          },
-          "propertyId": {
-            "_id": "6a93e154107b82fb635d8feb",
-            "name": "White Dorm Property",
-            "address": {
-              "street": "Sikatuna Street",
-              "city": "Cebu City",
-              "province": "Cebu",
-              "zipCode": "6543",
-              "country": "Philippines"
-            }
-          },
-          "unitId": {
-            "_id": "6a93e154107b82fb635d8ffd",
-            "unitIdentifier": "Room 3",
-            "accommodationType": "room",
-            "roomRent": 10000,
-            "bedspaceRent": 2500
-          },
-          "personalDetails": {
-            "fullName": "Inday Bote",
-            "phone": "09999990000",
-            "occupation": "Call Center Agent",
-            "address": "45 Lahug St., Cebu City",
-            "emergencyContact": {
-              "name": "Bote Sibling",
-              "phone": "09172223344",
-              "relationship": "Sibling"
-            }
-          },
-          "documents": [
-            "/uploads/applications/user5-id.jpg"
-          ],
-          "status": "under_review",
-          "createdAt": "2026-08-30T07:52:52.615Z",
-          "updatedAt": "2026-08-30T07:52:52.615Z",
-          "__v": 0
-        },
-        {
-          "_id": "6a93e154107b82fb635d9015",
-          "userId": {
-            "_id": "6a93e154107b82fb635d8fe8",
+            "_id": "6a94c522145a3dfaa5658447",
             "name": "Boyet Fernandez",
             "email": "user4@rentdito.com",
             "phone": "09997778888",
             "verificationStatus": "unverified"
           },
           "propertyId": {
-            "_id": "6a93e154107b82fb635d8feb",
+            "_id": "6a94c522145a3dfaa565844a",
             "name": "White Dorm Property",
             "address": {
               "street": "Sikatuna Street",
@@ -455,7 +455,7 @@
             }
           },
           "unitId": {
-            "_id": "6a93e154107b82fb635d8ff7",
+            "_id": "6a94c522145a3dfaa5658456",
             "unitIdentifier": "Room 2",
             "accommodationType": "room",
             "roomRent": 18000,
@@ -477,8 +477,8 @@
             "/uploads/applications/user4-id.jpg"
           ],
           "status": "pending",
-          "createdAt": "2026-08-30T07:52:52.614Z",
-          "updatedAt": "2026-08-30T07:52:52.614Z",
+          "createdAt": "2026-01-10T08:00:00.000Z",
+          "updatedAt": "2026-01-10T08:00:00.000Z",
           "__v": 0
         }
       ]
@@ -493,16 +493,16 @@
       "status": "success",
       "data": [
         {
-          "_id": "6a93e154107b82fb635d901b",
+          "_id": "6a94c522145a3dfaa565847a",
           "userId": {
-            "_id": "6a93e154107b82fb635d8fe7",
+            "_id": "6a94c522145a3dfaa5658446",
             "name": "Nena Reyes",
             "email": "user3@rentdito.com",
             "phone": "09995556666",
             "verificationStatus": "verified"
           },
           "propertyId": {
-            "_id": "6a93e154107b82fb635d8feb",
+            "_id": "6a94c522145a3dfaa565844a",
             "name": "White Dorm Property",
             "address": {
               "street": "Sikatuna Street",
@@ -513,7 +513,7 @@
             }
           },
           "unitId": {
-            "_id": "6a93e154107b82fb635d8ff7",
+            "_id": "6a94c522145a3dfaa5658456",
             "unitIdentifier": "Room 2",
             "accommodationType": "room",
             "roomRent": 18000,
@@ -540,21 +540,21 @@
           },
           "reviewNotes": "Approved for move-in.",
           "reviewedAt": "2025-05-01T00:00:00.000Z",
-          "createdAt": "2026-08-30T07:52:52.619Z",
-          "updatedAt": "2026-08-30T07:52:52.619Z",
+          "createdAt": "2026-01-11T08:03:00.000Z",
+          "updatedAt": "2026-01-11T08:03:00.000Z",
           "__v": 0
         },
         {
-          "_id": "6a93e154107b82fb635d901a",
+          "_id": "6a94c522145a3dfaa5658479",
           "userId": {
-            "_id": "6a93e154107b82fb635d8fe6",
+            "_id": "6a94c522145a3dfaa5658445",
             "name": "Cardo Dalisay",
             "email": "user2@rentdito.com",
             "phone": "09993334444",
             "verificationStatus": "verified"
           },
           "propertyId": {
-            "_id": "6a93e154107b82fb635d8feb",
+            "_id": "6a94c522145a3dfaa565844a",
             "name": "White Dorm Property",
             "address": {
               "street": "Sikatuna Street",
@@ -565,7 +565,7 @@
             }
           },
           "unitId": {
-            "_id": "6a93e154107b82fb635d8ff7",
+            "_id": "6a94c522145a3dfaa5658456",
             "unitIdentifier": "Room 2",
             "accommodationType": "room",
             "roomRent": 18000,
@@ -592,21 +592,21 @@
           },
           "reviewNotes": "Approved for move-in.",
           "reviewedAt": "2024-03-01T00:00:00.000Z",
-          "createdAt": "2026-08-30T07:52:52.619Z",
-          "updatedAt": "2026-08-30T07:52:52.619Z",
+          "createdAt": "2026-01-11T08:02:00.000Z",
+          "updatedAt": "2026-01-11T08:02:00.000Z",
           "__v": 0
         },
         {
-          "_id": "6a93e154107b82fb635d9019",
+          "_id": "6a94c522145a3dfaa5658478",
           "userId": {
-            "_id": "6a93e154107b82fb635d8fe5",
+            "_id": "6a94c522145a3dfaa5658444",
             "name": "Luzviminda Macaraeg",
             "email": "user1@rentdito.com",
             "phone": "09991112222",
             "verificationStatus": "verified"
           },
           "propertyId": {
-            "_id": "6a93e154107b82fb635d8feb",
+            "_id": "6a94c522145a3dfaa565844a",
             "name": "White Dorm Property",
             "address": {
               "street": "Sikatuna Street",
@@ -617,7 +617,7 @@
             }
           },
           "unitId": {
-            "_id": "6a93e154107b82fb635d8ff7",
+            "_id": "6a94c522145a3dfaa5658456",
             "unitIdentifier": "Room 2",
             "accommodationType": "room",
             "roomRent": 18000,
@@ -644,21 +644,21 @@
           },
           "reviewNotes": "Approved for move-in.",
           "reviewedAt": "2025-12-20T00:00:00.000Z",
-          "createdAt": "2026-08-30T07:52:52.619Z",
-          "updatedAt": "2026-08-30T07:52:52.619Z",
+          "createdAt": "2026-01-11T08:01:00.000Z",
+          "updatedAt": "2026-01-11T08:01:00.000Z",
           "__v": 0
         },
         {
-          "_id": "6a93e154107b82fb635d9016",
+          "_id": "6a94c522145a3dfaa5658475",
           "userId": {
-            "_id": "6a93e154107b82fb635d8fe9",
+            "_id": "6a94c522145a3dfaa5658448",
             "name": "Inday Bote",
             "email": "user5@rentdito.com",
             "phone": "09999990000",
             "verificationStatus": "unverified"
           },
           "propertyId": {
-            "_id": "6a93e154107b82fb635d8feb",
+            "_id": "6a94c522145a3dfaa565844a",
             "name": "White Dorm Property",
             "address": {
               "street": "Sikatuna Street",
@@ -669,7 +669,7 @@
             }
           },
           "unitId": {
-            "_id": "6a93e154107b82fb635d8ffd",
+            "_id": "6a94c522145a3dfaa565845c",
             "unitIdentifier": "Room 3",
             "accommodationType": "room",
             "roomRent": 10000,
@@ -690,21 +690,21 @@
             "/uploads/applications/user5-id.jpg"
           ],
           "status": "under_review",
-          "createdAt": "2026-08-30T07:52:52.615Z",
-          "updatedAt": "2026-08-30T07:52:52.615Z",
+          "createdAt": "2026-01-10T08:03:00.000Z",
+          "updatedAt": "2026-01-10T08:03:00.000Z",
           "__v": 0
         },
         {
-          "_id": "6a93e154107b82fb635d9018",
+          "_id": "6a94c522145a3dfaa5658477",
           "userId": {
-            "_id": "6a93e154107b82fb635d8fea",
+            "_id": "6a94c522145a3dfaa5658449",
             "name": "Ding Dantes",
             "email": "user6@rentdito.com",
             "phone": "09881112222",
             "verificationStatus": "pending"
           },
           "propertyId": {
-            "_id": "6a93e154107b82fb635d8feb",
+            "_id": "6a94c522145a3dfaa565844a",
             "name": "White Dorm Property",
             "address": {
               "street": "Sikatuna Street",
@@ -715,7 +715,7 @@
             }
           },
           "unitId": {
-            "_id": "6a93e154107b82fb635d9003",
+            "_id": "6a94c522145a3dfaa5658462",
             "unitIdentifier": "Room 4",
             "accommodationType": "room",
             "roomRent": 5000,
@@ -740,21 +740,21 @@
           },
           "reviewNotes": "Insufficient proof of income.",
           "reviewedAt": "2026-02-12T00:00:00.000Z",
-          "createdAt": "2026-08-30T07:52:52.615Z",
-          "updatedAt": "2026-08-30T07:52:52.615Z",
+          "createdAt": "2026-01-10T08:02:00.000Z",
+          "updatedAt": "2026-01-10T08:02:00.000Z",
           "__v": 0
         },
         {
-          "_id": "6a93e154107b82fb635d9017",
+          "_id": "6a94c522145a3dfaa5658476",
           "userId": {
-            "_id": "6a93e154107b82fb635d8fe6",
+            "_id": "6a94c522145a3dfaa5658445",
             "name": "Cardo Dalisay",
             "email": "user2@rentdito.com",
             "phone": "09993334444",
             "verificationStatus": "verified"
           },
           "propertyId": {
-            "_id": "6a93e154107b82fb635d8ff1",
+            "_id": "6a94c522145a3dfaa5658450",
             "name": "Uytengso Boardings House",
             "address": {
               "street": "Uytengso Street",
@@ -765,7 +765,7 @@
             }
           },
           "unitId": {
-            "_id": "6a93e154107b82fb635d9009",
+            "_id": "6a94c522145a3dfaa5658468",
             "unitIdentifier": "Room 1",
             "accommodationType": "room",
             "roomRent": 20000,
@@ -787,26 +787,26 @@
           ],
           "status": "approved",
           "reviewedBy": {
-            "_id": "6a93e154107b82fb635d8fdf",
+            "_id": "6a94c522145a3dfaa565843e",
             "name": "Maria Santos"
           },
           "reviewNotes": "Documents verified, approved for move-in.",
           "reviewedAt": "2026-02-10T00:00:00.000Z",
-          "createdAt": "2026-08-30T07:52:52.615Z",
-          "updatedAt": "2026-08-30T07:52:52.615Z",
+          "createdAt": "2026-01-10T08:01:00.000Z",
+          "updatedAt": "2026-01-10T08:01:00.000Z",
           "__v": 0
         },
         {
-          "_id": "6a93e154107b82fb635d9015",
+          "_id": "6a94c522145a3dfaa5658474",
           "userId": {
-            "_id": "6a93e154107b82fb635d8fe8",
+            "_id": "6a94c522145a3dfaa5658447",
             "name": "Boyet Fernandez",
             "email": "user4@rentdito.com",
             "phone": "09997778888",
             "verificationStatus": "unverified"
           },
           "propertyId": {
-            "_id": "6a93e154107b82fb635d8feb",
+            "_id": "6a94c522145a3dfaa565844a",
             "name": "White Dorm Property",
             "address": {
               "street": "Sikatuna Street",
@@ -817,7 +817,7 @@
             }
           },
           "unitId": {
-            "_id": "6a93e154107b82fb635d8ff7",
+            "_id": "6a94c522145a3dfaa5658456",
             "unitIdentifier": "Room 2",
             "accommodationType": "room",
             "roomRent": 18000,
@@ -839,8 +839,8 @@
             "/uploads/applications/user4-id.jpg"
           ],
           "status": "pending",
-          "createdAt": "2026-08-30T07:52:52.614Z",
-          "updatedAt": "2026-08-30T07:52:52.614Z",
+          "createdAt": "2026-01-10T08:00:00.000Z",
+          "updatedAt": "2026-01-10T08:00:00.000Z",
           "__v": 0
         }
       ]
@@ -865,16 +865,16 @@
       "status": "success",
       "data": [
         {
-          "_id": "6a93e154107b82fb635d9015",
+          "_id": "6a94c522145a3dfaa5658474",
           "userId": {
-            "_id": "6a93e154107b82fb635d8fe8",
+            "_id": "6a94c522145a3dfaa5658447",
             "name": "Boyet Fernandez",
             "email": "user4@rentdito.com",
             "phone": "09997778888",
             "verificationStatus": "unverified"
           },
           "propertyId": {
-            "_id": "6a93e154107b82fb635d8feb",
+            "_id": "6a94c522145a3dfaa565844a",
             "name": "White Dorm Property",
             "address": {
               "street": "Sikatuna Street",
@@ -885,7 +885,7 @@
             }
           },
           "unitId": {
-            "_id": "6a93e154107b82fb635d8ff7",
+            "_id": "6a94c522145a3dfaa5658456",
             "unitIdentifier": "Room 2",
             "accommodationType": "room",
             "roomRent": 18000,
@@ -907,8 +907,8 @@
             "/uploads/applications/user4-id.jpg"
           ],
           "status": "pending",
-          "createdAt": "2026-08-30T07:52:52.614Z",
-          "updatedAt": "2026-08-30T07:52:52.614Z",
+          "createdAt": "2026-01-10T08:00:00.000Z",
+          "updatedAt": "2026-01-10T08:00:00.000Z",
           "__v": 0
         }
       ]
@@ -927,21 +927,21 @@
   {
     "name": "application-by-id-owner-user1",
     "method": "get",
-    "path": "/api/applications/6a93e154107b82fb635d9019",
+    "path": "/api/applications/6a94c522145a3dfaa5658478",
     "status": 200,
     "body": {
       "status": "success",
       "data": {
-        "_id": "6a93e154107b82fb635d9019",
+        "_id": "6a94c522145a3dfaa5658478",
         "userId": {
-          "_id": "6a93e154107b82fb635d8fe5",
+          "_id": "6a94c522145a3dfaa5658444",
           "name": "Luzviminda Macaraeg",
           "email": "user1@rentdito.com",
           "phone": "09991112222",
           "verificationStatus": "verified"
         },
         "propertyId": {
-          "_id": "6a93e154107b82fb635d8feb",
+          "_id": "6a94c522145a3dfaa565844a",
           "landlordId": "6a93e154107b82fb635d8fde",
           "name": "White Dorm Property",
           "address": {
@@ -953,7 +953,7 @@
           }
         },
         "unitId": {
-          "_id": "6a93e154107b82fb635d8ff7",
+          "_id": "6a94c522145a3dfaa5658456",
           "unitIdentifier": "Room 2",
           "accommodationType": "room",
           "roomRent": 18000,
@@ -993,8 +993,8 @@
         },
         "reviewNotes": "Approved for move-in.",
         "reviewedAt": "2025-12-20T00:00:00.000Z",
-        "createdAt": "2026-08-30T07:52:52.619Z",
-        "updatedAt": "2026-08-30T07:52:52.619Z",
+        "createdAt": "2026-01-11T08:01:00.000Z",
+        "updatedAt": "2026-01-11T08:01:00.000Z",
         "__v": 0
       }
     }
@@ -1002,21 +1002,21 @@
   {
     "name": "application-by-id-landlord1",
     "method": "get",
-    "path": "/api/applications/6a93e154107b82fb635d9019",
+    "path": "/api/applications/6a94c522145a3dfaa5658478",
     "status": 200,
     "body": {
       "status": "success",
       "data": {
-        "_id": "6a93e154107b82fb635d9019",
+        "_id": "6a94c522145a3dfaa5658478",
         "userId": {
-          "_id": "6a93e154107b82fb635d8fe5",
+          "_id": "6a94c522145a3dfaa5658444",
           "name": "Luzviminda Macaraeg",
           "email": "user1@rentdito.com",
           "phone": "09991112222",
           "verificationStatus": "verified"
         },
         "propertyId": {
-          "_id": "6a93e154107b82fb635d8feb",
+          "_id": "6a94c522145a3dfaa565844a",
           "landlordId": "6a93e154107b82fb635d8fde",
           "name": "White Dorm Property",
           "address": {
@@ -1028,7 +1028,7 @@
           }
         },
         "unitId": {
-          "_id": "6a93e154107b82fb635d8ff7",
+          "_id": "6a94c522145a3dfaa5658456",
           "unitIdentifier": "Room 2",
           "accommodationType": "room",
           "roomRent": 18000,
@@ -1068,8 +1068,8 @@
         },
         "reviewNotes": "Approved for move-in.",
         "reviewedAt": "2025-12-20T00:00:00.000Z",
-        "createdAt": "2026-08-30T07:52:52.619Z",
-        "updatedAt": "2026-08-30T07:52:52.619Z",
+        "createdAt": "2026-01-11T08:01:00.000Z",
+        "updatedAt": "2026-01-11T08:01:00.000Z",
         "__v": 0
       }
     }
@@ -1077,7 +1077,7 @@
   {
     "name": "application-by-id-denied-other-tenant",
     "method": "get",
-    "path": "/api/applications/6a93e154107b82fb635d9019",
+    "path": "/api/applications/6a94c522145a3dfaa5658478",
     "status": 403,
     "body": {
       "status": "error",
@@ -1087,21 +1087,21 @@
   {
     "name": "application-by-id-pending-landlord1",
     "method": "get",
-    "path": "/api/applications/6a93e154107b82fb635d9015",
+    "path": "/api/applications/6a94c522145a3dfaa5658474",
     "status": 200,
     "body": {
       "status": "success",
       "data": {
-        "_id": "6a93e154107b82fb635d9015",
+        "_id": "6a94c522145a3dfaa5658474",
         "userId": {
-          "_id": "6a93e154107b82fb635d8fe8",
+          "_id": "6a94c522145a3dfaa5658447",
           "name": "Boyet Fernandez",
           "email": "user4@rentdito.com",
           "phone": "09997778888",
           "verificationStatus": "unverified"
         },
         "propertyId": {
-          "_id": "6a93e154107b82fb635d8feb",
+          "_id": "6a94c522145a3dfaa565844a",
           "landlordId": "6a93e154107b82fb635d8fde",
           "name": "White Dorm Property",
           "address": {
@@ -1113,7 +1113,7 @@
           }
         },
         "unitId": {
-          "_id": "6a93e154107b82fb635d8ff7",
+          "_id": "6a94c522145a3dfaa5658456",
           "unitIdentifier": "Room 2",
           "accommodationType": "room",
           "roomRent": 18000,
@@ -1147,8 +1147,8 @@
           "/uploads/applications/user4-id.jpg"
         ],
         "status": "pending",
-        "createdAt": "2026-08-30T07:52:52.614Z",
-        "updatedAt": "2026-08-30T07:52:52.614Z",
+        "createdAt": "2026-01-10T08:00:00.000Z",
+        "updatedAt": "2026-01-10T08:00:00.000Z",
         "__v": 0
       }
     }
@@ -1156,21 +1156,21 @@
   {
     "name": "application-by-id-rejected-landlord1",
     "method": "get",
-    "path": "/api/applications/6a93e154107b82fb635d9018",
+    "path": "/api/applications/6a94c522145a3dfaa5658477",
     "status": 200,
     "body": {
       "status": "success",
       "data": {
-        "_id": "6a93e154107b82fb635d9018",
+        "_id": "6a94c522145a3dfaa5658477",
         "userId": {
-          "_id": "6a93e154107b82fb635d8fea",
+          "_id": "6a94c522145a3dfaa5658449",
           "name": "Ding Dantes",
           "email": "user6@rentdito.com",
           "phone": "09881112222",
           "verificationStatus": "pending"
         },
         "propertyId": {
-          "_id": "6a93e154107b82fb635d8feb",
+          "_id": "6a94c522145a3dfaa565844a",
           "landlordId": "6a93e154107b82fb635d8fde",
           "name": "White Dorm Property",
           "address": {
@@ -1182,7 +1182,7 @@
           }
         },
         "unitId": {
-          "_id": "6a93e154107b82fb635d9003",
+          "_id": "6a94c522145a3dfaa5658462",
           "unitIdentifier": "Room 4",
           "accommodationType": "room",
           "roomRent": 5000,
@@ -1220,8 +1220,8 @@
         },
         "reviewNotes": "Insufficient proof of income.",
         "reviewedAt": "2026-02-12T00:00:00.000Z",
-        "createdAt": "2026-08-30T07:52:52.615Z",
-        "updatedAt": "2026-08-30T07:52:52.615Z",
+        "createdAt": "2026-01-10T08:02:00.000Z",
+        "updatedAt": "2026-01-10T08:02:00.000Z",
         "__v": 0
       }
     }
@@ -1229,22 +1229,22 @@
   {
     "name": "application-by-id-approved-property1-landlord2",
     "method": "get",
-    "path": "/api/applications/6a93e154107b82fb635d9017",
+    "path": "/api/applications/6a94c522145a3dfaa5658476",
     "status": 200,
     "body": {
       "status": "success",
       "data": {
-        "_id": "6a93e154107b82fb635d9017",
+        "_id": "6a94c522145a3dfaa5658476",
         "userId": {
-          "_id": "6a93e154107b82fb635d8fe6",
+          "_id": "6a94c522145a3dfaa5658445",
           "name": "Cardo Dalisay",
           "email": "user2@rentdito.com",
           "phone": "09993334444",
           "verificationStatus": "verified"
         },
         "propertyId": {
-          "_id": "6a93e154107b82fb635d8ff1",
-          "landlordId": "6a93e154107b82fb635d8fdf",
+          "_id": "6a94c522145a3dfaa5658450",
+          "landlordId": "6a94c522145a3dfaa565843e",
           "name": "Uytengso Boardings House",
           "address": {
             "street": "Uytengso Street",
@@ -1255,7 +1255,7 @@
           }
         },
         "unitId": {
-          "_id": "6a93e154107b82fb635d9009",
+          "_id": "6a94c522145a3dfaa5658468",
           "unitIdentifier": "Room 1",
           "accommodationType": "room",
           "roomRent": 20000,
@@ -1289,14 +1289,14 @@
         ],
         "status": "approved",
         "reviewedBy": {
-          "_id": "6a93e154107b82fb635d8fdf",
+          "_id": "6a94c522145a3dfaa565843e",
           "name": "Maria Santos",
           "email": "landlord2@rentdito.com"
         },
         "reviewNotes": "Documents verified, approved for move-in.",
         "reviewedAt": "2026-02-10T00:00:00.000Z",
-        "createdAt": "2026-08-30T07:52:52.615Z",
-        "updatedAt": "2026-08-30T07:52:52.615Z",
+        "createdAt": "2026-01-10T08:01:00.000Z",
+        "updatedAt": "2026-01-10T08:01:00.000Z",
         "__v": 0
       }
     }
