@@ -99,38 +99,19 @@
       "status": "success",
       "data": [
         {
-          "_id": "6a93e154107b82fb635d902f",
+          "id": "ede57a70-7266-404e-bdac-d236b78f089a",
           "userId": {
-            "_id": "6a93e154107b82fb635d8fe6",
-            "name": "Cardo Dalisay",
-            "email": "user2@rentdito.com",
-            "phone": "09993334444"
-          },
-          "propertyId": "6a93e154107b82fb635d8feb",
-          "unitId": {
-            "_id": "6a93e154107b82fb635d8ffd",
-            "unitIdentifier": "Room 3"
-          },
-          "requestedDate": "2026-02-03T00:00:00.000Z",
-          "requestedTime": "11:00",
-          "purpose": "viewing",
-          "status": "approved",
-          "createdAt": "2026-08-30T07:52:52.706Z",
-          "updatedAt": "2026-08-30T07:52:52.706Z",
-          "__v": 0
-        },
-        {
-          "_id": "6a93e154107b82fb635d9031",
-          "userId": {
-            "_id": "6a93e154107b82fb635d8fe8",
+            "id": "a3e6af62-e68d-4dcc-b980-b088bf844f6d",
             "name": "Boyet Fernandez",
             "email": "user4@rentdito.com",
-            "phone": "09997778888"
+            "phone": "09997778888",
+            "_id": "a3e6af62-e68d-4dcc-b980-b088bf844f6d"
           },
-          "propertyId": "6a93e154107b82fb635d8feb",
+          "propertyId": "c42c27dc-ce83-4d39-9485-50ea85ad17fa",
           "unitId": {
-            "_id": "6a93e154107b82fb635d8ff7",
-            "unitIdentifier": "Room 2"
+            "id": "b36c156d-e269-4f1e-9aea-77a210770ef1",
+            "unitIdentifier": "Room 2",
+            "_id": "b36c156d-e269-4f1e-9aea-77a210770ef1"
           },
           "requestedDate": "2026-01-20T00:00:00.000Z",
           "requestedTime": "09:00",
@@ -139,34 +120,60 @@
           "purpose": "viewing",
           "status": "completed",
           "assignedStaffId": {
-            "_id": "6a93e154107b82fb635d8fe3",
+            "id": "b46f9fb2-b0c7-4209-99d2-ae15be830391",
             "name": "Gabriela Silang",
-            "phone": "09231234567"
+            "phone": "09231234567",
+            "_id": "b46f9fb2-b0c7-4209-99d2-ae15be830391"
           },
-          "createdAt": "2026-08-30T07:52:52.706Z",
-          "updatedAt": "2026-08-30T07:52:52.706Z",
-          "__v": 0
+          "createdAt": "2023-01-01T00:50:00.000Z",
+          "updatedAt": "2026-08-30T23:52:27.507Z",
+          "_id": "ede57a70-7266-404e-bdac-d236b78f089a"
         },
         {
-          "_id": "6a93e154107b82fb635d902e",
+          "id": "c46d8de7-38c7-443e-9627-b0d8d2489a42",
           "userId": {
-            "_id": "6a93e154107b82fb635d8fe5",
+            "id": "2a0f9a7e-6bce-4f1d-a033-1373571f7022",
+            "name": "Cardo Dalisay",
+            "email": "user2@rentdito.com",
+            "phone": "09993334444",
+            "_id": "2a0f9a7e-6bce-4f1d-a033-1373571f7022"
+          },
+          "propertyId": "c42c27dc-ce83-4d39-9485-50ea85ad17fa",
+          "unitId": {
+            "id": "4f9b4716-1336-42e8-9c64-b4c821beb150",
+            "unitIdentifier": "Room 3",
+            "_id": "4f9b4716-1336-42e8-9c64-b4c821beb150"
+          },
+          "requestedDate": "2026-02-03T00:00:00.000Z",
+          "requestedTime": "11:00",
+          "purpose": "viewing",
+          "status": "approved",
+          "createdAt": "2023-01-01T00:48:00.000Z",
+          "updatedAt": "2026-08-30T23:52:27.507Z",
+          "_id": "c46d8de7-38c7-443e-9627-b0d8d2489a42"
+        },
+        {
+          "id": "65899958-4644-4ff4-af51-deb02e46b1e1",
+          "userId": {
+            "id": "a58c54c6-7df3-4e87-b1de-8eeb072edb3b",
             "name": "Luzviminda Macaraeg",
             "email": "user1@rentdito.com",
-            "phone": "09991112222"
+            "phone": "09991112222",
+            "_id": "a58c54c6-7df3-4e87-b1de-8eeb072edb3b"
           },
-          "propertyId": "6a93e154107b82fb635d8feb",
+          "propertyId": "c42c27dc-ce83-4d39-9485-50ea85ad17fa",
           "unitId": {
-            "_id": "6a93e154107b82fb635d8ff7",
-            "unitIdentifier": "Room 2"
+            "id": "b36c156d-e269-4f1e-9aea-77a210770ef1",
+            "unitIdentifier": "Room 2",
+            "_id": "b36c156d-e269-4f1e-9aea-77a210770ef1"
           },
           "requestedDate": "2026-02-01T00:00:00.000Z",
           "requestedTime": "10:00",
           "purpose": "viewing",
           "status": "pending",
-          "createdAt": "2026-08-30T07:52:52.706Z",
-          "updatedAt": "2026-08-30T07:52:52.706Z",
-          "__v": 0
+          "createdAt": "2023-01-01T00:47:00.000Z",
+          "updatedAt": "2026-08-30T23:52:27.507Z",
+          "_id": "65899958-4644-4ff4-af51-deb02e46b1e1"
         }
       ]
     }
@@ -180,38 +187,19 @@
       "status": "success",
       "data": [
         {
-          "_id": "6a93e154107b82fb635d902f",
+          "id": "ede57a70-7266-404e-bdac-d236b78f089a",
           "userId": {
-            "_id": "6a93e154107b82fb635d8fe6",
-            "name": "Cardo Dalisay",
-            "email": "user2@rentdito.com",
-            "phone": "09993334444"
-          },
-          "propertyId": "6a93e154107b82fb635d8feb",
-          "unitId": {
-            "_id": "6a93e154107b82fb635d8ffd",
-            "unitIdentifier": "Room 3"
-          },
-          "requestedDate": "2026-02-03T00:00:00.000Z",
-          "requestedTime": "11:00",
-          "purpose": "viewing",
-          "status": "approved",
-          "createdAt": "2026-08-30T07:52:52.706Z",
-          "updatedAt": "2026-08-30T07:52:52.706Z",
-          "__v": 0
-        },
-        {
-          "_id": "6a93e154107b82fb635d9031",
-          "userId": {
-            "_id": "6a93e154107b82fb635d8fe8",
+            "id": "a3e6af62-e68d-4dcc-b980-b088bf844f6d",
             "name": "Boyet Fernandez",
             "email": "user4@rentdito.com",
-            "phone": "09997778888"
+            "phone": "09997778888",
+            "_id": "a3e6af62-e68d-4dcc-b980-b088bf844f6d"
           },
-          "propertyId": "6a93e154107b82fb635d8feb",
+          "propertyId": "c42c27dc-ce83-4d39-9485-50ea85ad17fa",
           "unitId": {
-            "_id": "6a93e154107b82fb635d8ff7",
-            "unitIdentifier": "Room 2"
+            "id": "b36c156d-e269-4f1e-9aea-77a210770ef1",
+            "unitIdentifier": "Room 2",
+            "_id": "b36c156d-e269-4f1e-9aea-77a210770ef1"
           },
           "requestedDate": "2026-01-20T00:00:00.000Z",
           "requestedTime": "09:00",
@@ -220,34 +208,60 @@
           "purpose": "viewing",
           "status": "completed",
           "assignedStaffId": {
-            "_id": "6a93e154107b82fb635d8fe3",
+            "id": "b46f9fb2-b0c7-4209-99d2-ae15be830391",
             "name": "Gabriela Silang",
-            "phone": "09231234567"
+            "phone": "09231234567",
+            "_id": "b46f9fb2-b0c7-4209-99d2-ae15be830391"
           },
-          "createdAt": "2026-08-30T07:52:52.706Z",
-          "updatedAt": "2026-08-30T07:52:52.706Z",
-          "__v": 0
+          "createdAt": "2023-01-01T00:50:00.000Z",
+          "updatedAt": "2026-08-30T23:52:27.507Z",
+          "_id": "ede57a70-7266-404e-bdac-d236b78f089a"
         },
         {
-          "_id": "6a93e154107b82fb635d902e",
+          "id": "c46d8de7-38c7-443e-9627-b0d8d2489a42",
           "userId": {
-            "_id": "6a93e154107b82fb635d8fe5",
+            "id": "2a0f9a7e-6bce-4f1d-a033-1373571f7022",
+            "name": "Cardo Dalisay",
+            "email": "user2@rentdito.com",
+            "phone": "09993334444",
+            "_id": "2a0f9a7e-6bce-4f1d-a033-1373571f7022"
+          },
+          "propertyId": "c42c27dc-ce83-4d39-9485-50ea85ad17fa",
+          "unitId": {
+            "id": "4f9b4716-1336-42e8-9c64-b4c821beb150",
+            "unitIdentifier": "Room 3",
+            "_id": "4f9b4716-1336-42e8-9c64-b4c821beb150"
+          },
+          "requestedDate": "2026-02-03T00:00:00.000Z",
+          "requestedTime": "11:00",
+          "purpose": "viewing",
+          "status": "approved",
+          "createdAt": "2023-01-01T00:48:00.000Z",
+          "updatedAt": "2026-08-30T23:52:27.507Z",
+          "_id": "c46d8de7-38c7-443e-9627-b0d8d2489a42"
+        },
+        {
+          "id": "65899958-4644-4ff4-af51-deb02e46b1e1",
+          "userId": {
+            "id": "a58c54c6-7df3-4e87-b1de-8eeb072edb3b",
             "name": "Luzviminda Macaraeg",
             "email": "user1@rentdito.com",
-            "phone": "09991112222"
+            "phone": "09991112222",
+            "_id": "a58c54c6-7df3-4e87-b1de-8eeb072edb3b"
           },
-          "propertyId": "6a93e154107b82fb635d8feb",
+          "propertyId": "c42c27dc-ce83-4d39-9485-50ea85ad17fa",
           "unitId": {
-            "_id": "6a93e154107b82fb635d8ff7",
-            "unitIdentifier": "Room 2"
+            "id": "b36c156d-e269-4f1e-9aea-77a210770ef1",
+            "unitIdentifier": "Room 2",
+            "_id": "b36c156d-e269-4f1e-9aea-77a210770ef1"
           },
           "requestedDate": "2026-02-01T00:00:00.000Z",
           "requestedTime": "10:00",
           "purpose": "viewing",
           "status": "pending",
-          "createdAt": "2026-08-30T07:52:52.706Z",
-          "updatedAt": "2026-08-30T07:52:52.706Z",
-          "__v": 0
+          "createdAt": "2023-01-01T00:47:00.000Z",
+          "updatedAt": "2026-08-30T23:52:27.507Z",
+          "_id": "65899958-4644-4ff4-af51-deb02e46b1e1"
         }
       ]
     }

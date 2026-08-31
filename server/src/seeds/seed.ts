@@ -67,25 +67,108 @@ const seedUsers = async () => {
   console.log('Seeding users...');
   const defaultPassword = await hash('password123');
 
-  const superAdmin = await User.create({ name: 'System Admin', email: 'admin@rentdito.com', phone: '09171234567', passwordHash: defaultPassword, role: 'super_admin', verificationStatus: 'verified' });
+  // Explicit, distinct `createdAt`/`updatedAt` per user (task 18a audit).
+  // These were previously left to `{ timestamps: true }`'s implicit
+  // `Date.now()` default -- harmless for `createdAt` in isolation (each of
+  // these 14 `User.create({...})` calls is awaited individually, in
+  // sequence, so they land on genuinely distinct milliseconds every run,
+  // no batch tie) but NOT reproducible for `updatedAt`: line ~230 below
+  // (`User.findByIdAndUpdate(user1._id, { activeTenancy: ... })`) bumps
+  // ONLY user1's `updatedAt` to a fresh real-clock value, and
+  // `admin.service.ts`'s `getAllVerifications` sorts by `updatedAt: -1` --
+  // `all-verifications-super-admin` depends on the exact resulting order,
+  // which a real-clock value can't guarantee stays put across reseeds.
+  // `createdAt` here is pinned to the SAME simple ascending
+  // declaration-order sequence that was already reproducing correctly
+  // (`users-list-super-admin` / `platform-stats-super-admin`'s "recent
+  // users" both already expect plain reverse-creation-order) -- fixed
+  // now for the same reproducibility reason, not because it was broken.
+  // `updatedAt` is set independently, matching
+  // `all-verifications-super-admin`'s required order directly; the
+  // `activeTenancy` update below pins the SAME `updatedAt` value for user1
+  // explicitly so that later write doesn't silently override it with a
+  // fresh clock read.
+  // NOTE: `admin.service.ts`'s platform-stats `monthlyGrowth` chart groups
+  // users by `$year`/`$month` of `createdAt` within a live
+  // `new Date().setMonth(new Date().getMonth() - 6)` rolling window (real
+  // clock, not seed-controlled) -- `platform-stats-super-admin` expects a
+  // single `{ month: '2026-08', count: 14 }` bucket, so every user's
+  // `createdAt` below is pinned to fixed August-2026 literals (this task's
+  // "no bare `new Date()`" rule is about not READING the clock, not about
+  // which fixed calendar month is chosen) rather than an arbitrary earlier
+  // month that would fall outside that rolling window and return `[]`
+  // instead. This one field aside, this endpoint's live-clock coupling is
+  // a pre-existing fragility of the fixture itself (unrelated to the
+  // ties/ids this audit fixes) that will eventually need a real fix or a
+  // recapture once real time moves far enough past August 2026.
+  const CREATED = (i: number) => new Date(Date.parse('2026-08-01T08:00:00.000Z') + i * 60_000);
+  const UPDATED_RANK = (r: number) => new Date(Date.parse('2026-08-02T09:00:00.000Z') - r * 60_000);
 
-  const landlord1 = await User.create({ name: 'Juan Dela Cruz', email: 'landlord1@rentdito.com', phone: '09181234567', passwordHash: defaultPassword, role: 'landlord', verificationStatus: 'verified' });
-  const landlord2 = await User.create({ name: 'Maria Santos', email: 'landlord2@rentdito.com', phone: '09191234567', passwordHash: defaultPassword, role: 'landlord', verificationStatus: 'verified' });
+  const superAdmin = await User.create({ name: 'System Admin', email: 'admin@rentdito.com', phone: '09171234567', passwordHash: defaultPassword, role: 'super_admin', verificationStatus: 'verified', createdAt: CREATED(0), updatedAt: UPDATED_RANK(2) });
 
-  const staff1 = await User.create({ name: 'Pedro Penduko', email: 'manager@rentdito.com', phone: '09201234567', passwordHash: defaultPassword, role: 'staff', positionName: 'Manager', permissions: ['dashboard', 'properties', 'units', 'tenants', 'pipeline', 'maintenance'], verificationStatus: 'verified', landlordId: landlord1._id });
-  const staff2 = await User.create({ name: 'Jose Rizal', email: 'maintenance@rentdito.com', phone: '09211234567', passwordHash: defaultPassword, role: 'staff', positionName: 'Maintenance Staff', permissions: ['dashboard', 'maintenance', 'inventory'], verificationStatus: 'verified', landlordId: landlord1._id });
-  const staff3 = await User.create({ name: 'Andres Bonifacio', email: 'finance@rentdito.com', phone: '09221234567', passwordHash: defaultPassword, role: 'staff', positionName: 'Accountant', permissions: ['dashboard', 'billing', 'financials', 'reports'], verificationStatus: 'verified', landlordId: landlord2._id });
-  const staff4 = await User.create({ name: 'Gabriela Silang', email: 'receptionist@rentdito.com', phone: '09231234567', passwordHash: defaultPassword, role: 'staff', positionName: 'Front Desk Receptionist', permissions: ['dashboard', 'tenants', 'bookings', 'pipeline'], verificationStatus: 'verified', landlordId: landlord2._id });
-  const staff5 = await User.create({ name: 'Test Staff', email: 'staff@rentdito.com', phone: '09241234567', passwordHash: defaultPassword, role: 'staff', positionName: 'General Staff', permissions: ['dashboard', 'properties'], verificationStatus: 'verified', landlordId: landlord1._id });
+  // `_id` pinned explicitly (task 18a audit): `contract.service.ts`'s
+  // `getContractById` nests the reviewing RentalApplication's own raw
+  // `reviewedBy` scalar (an un-populated ObjectId, one populate level
+  // deeper than this query goes) into its response. That field name
+  // doesn't end in "Id"/"_id", so `normalizeBody` doesn't collapse it to
+  // the `'<ID>'` placeholder like every *populated*/`*Id`-suffixed
+  // reference elsewhere -- it's compared by raw, literal value.
+  // `contract-by-id-owner-user1`/`-landlord1`/`-expired` (all reviewed by
+  // this same landlord1 in the original capture) all expect the literal
+  // `6a93e154107b82fb635d8fde`. A fixed `_id` here reproduces that byte-
+  // for-byte across reseeds, same as any other explicit-timestamp fix in
+  // this audit -- everywhere else landlord1 is referenced via an
+  // `*Id`-suffixed/populated field, so pinning this is a pure addition,
+  // never a behavior change.
+  const landlord1 = await User.create({ _id: new mongoose.Types.ObjectId('6a93e154107b82fb635d8fde'), name: 'Juan Dela Cruz', email: 'landlord1@rentdito.com', phone: '09181234567', passwordHash: defaultPassword, role: 'landlord', verificationStatus: 'verified', createdAt: CREATED(1), updatedAt: UPDATED_RANK(1) });
+  const landlord2 = await User.create({ name: 'Maria Santos', email: 'landlord2@rentdito.com', phone: '09191234567', passwordHash: defaultPassword, role: 'landlord', verificationStatus: 'verified', createdAt: CREATED(2), updatedAt: UPDATED_RANK(9) });
 
-  const user1 = await User.create({ name: 'Luzviminda Macaraeg', email: 'user1@rentdito.com', phone: '09991112222', passwordHash: defaultPassword, role: 'user', verificationStatus: 'verified' });
-  const user2 = await User.create({ name: 'Cardo Dalisay', email: 'user2@rentdito.com', phone: '09993334444', passwordHash: defaultPassword, role: 'user', verificationStatus: 'verified' });
-  const user3 = await User.create({ name: 'Nena Reyes', email: 'user3@rentdito.com', phone: '09995556666', passwordHash: defaultPassword, role: 'user', verificationStatus: 'verified' });
-  const user4 = await User.create({ name: 'Boyet Fernandez', email: 'user4@rentdito.com', phone: '09997778888', passwordHash: defaultPassword, role: 'user', verificationStatus: 'unverified' });
-  const user5 = await User.create({ name: 'Inday Bote', email: 'user5@rentdito.com', phone: '09999990000', passwordHash: defaultPassword, role: 'user', verificationStatus: 'unverified' });
-  const user6 = await User.create({ name: 'Ding Dantes', email: 'user6@rentdito.com', phone: '09881112222', passwordHash: defaultPassword, role: 'user', verificationStatus: 'pending' });
+  const staff1 = await User.create({ name: 'Pedro Penduko', email: 'manager@rentdito.com', phone: '09201234567', passwordHash: defaultPassword, role: 'staff', positionName: 'Manager', permissions: ['dashboard', 'properties', 'units', 'tenants', 'pipeline', 'maintenance'], verificationStatus: 'verified', landlordId: landlord1._id, createdAt: CREATED(3), updatedAt: UPDATED_RANK(8) });
+  const staff2 = await User.create({ name: 'Jose Rizal', email: 'maintenance@rentdito.com', phone: '09211234567', passwordHash: defaultPassword, role: 'staff', positionName: 'Maintenance Staff', permissions: ['dashboard', 'maintenance', 'inventory'], verificationStatus: 'verified', landlordId: landlord1._id, createdAt: CREATED(4), updatedAt: UPDATED_RANK(7) });
+  const staff3 = await User.create({ name: 'Andres Bonifacio', email: 'finance@rentdito.com', phone: '09221234567', passwordHash: defaultPassword, role: 'staff', positionName: 'Accountant', permissions: ['dashboard', 'billing', 'financials', 'reports'], verificationStatus: 'verified', landlordId: landlord2._id, createdAt: CREATED(5), updatedAt: UPDATED_RANK(6) });
+  const staff4 = await User.create({ name: 'Gabriela Silang', email: 'receptionist@rentdito.com', phone: '09231234567', passwordHash: defaultPassword, role: 'staff', positionName: 'Front Desk Receptionist', permissions: ['dashboard', 'tenants', 'bookings', 'pipeline'], verificationStatus: 'verified', landlordId: landlord2._id, createdAt: CREATED(6), updatedAt: UPDATED_RANK(5) });
+  const staff5 = await User.create({ name: 'Test Staff', email: 'staff@rentdito.com', phone: '09241234567', passwordHash: defaultPassword, role: 'staff', positionName: 'General Staff', permissions: ['dashboard', 'properties'], verificationStatus: 'verified', landlordId: landlord1._id, createdAt: CREATED(7), updatedAt: UPDATED_RANK(4) });
 
-  return [superAdmin, landlord1, landlord2, staff1, staff2, staff3, staff4, staff5, user1, user2, user3, user4, user5, user6];
+  const user1 = await User.create({ name: 'Luzviminda Macaraeg', email: 'user1@rentdito.com', phone: '09991112222', passwordHash: defaultPassword, role: 'user', verificationStatus: 'verified', createdAt: CREATED(8), updatedAt: UPDATED_RANK(0) });
+  const user2 = await User.create({ name: 'Cardo Dalisay', email: 'user2@rentdito.com', phone: '09993334444', passwordHash: defaultPassword, role: 'user', verificationStatus: 'verified', createdAt: CREATED(9), updatedAt: UPDATED_RANK(3) });
+  const user3 = await User.create({ name: 'Nena Reyes', email: 'user3@rentdito.com', phone: '09995556666', passwordHash: defaultPassword, role: 'user', verificationStatus: 'verified', createdAt: CREATED(10), updatedAt: UPDATED_RANK(13) });
+  const user4 = await User.create({ name: 'Boyet Fernandez', email: 'user4@rentdito.com', phone: '09997778888', passwordHash: defaultPassword, role: 'user', verificationStatus: 'unverified', createdAt: CREATED(11), updatedAt: UPDATED_RANK(12) });
+  const user5 = await User.create({ name: 'Inday Bote', email: 'user5@rentdito.com', phone: '09999990000', passwordHash: defaultPassword, role: 'user', verificationStatus: 'unverified', createdAt: CREATED(12), updatedAt: UPDATED_RANK(11) });
+  const user6 = await User.create({ name: 'Ding Dantes', email: 'user6@rentdito.com', phone: '09881112222', passwordHash: defaultPassword, role: 'user', verificationStatus: 'pending', createdAt: CREATED(13), updatedAt: UPDATED_RANK(10) });
+
+  // Mongoose's `{ timestamps: true }` unconditionally overwrites
+  // `updatedAt` to a fresh `Date.now()` on every `save()`/`create()` --
+  // unlike `createdAt` (only set when absent), it ignores any explicit
+  // `updatedAt` passed in the document data above, which is exactly why
+  // every user's `updatedAt` above was silently coming back equal to its
+  // own `createdAt` regardless of the `UPDATED_RANK(...)` value given.
+  // Bypassing the Mongoose model (and its timestamps middleware) via the
+  // driver's raw `.collection` handle is the only way to actually pin
+  // these values, so `getAllVerifications`'s `.sort({ updatedAt: -1 })`
+  // reproduces `all-verifications-super-admin`'s required order instead of
+  // silently falling back to (reverse-)creation order.
+  const usersByEmail = [superAdmin, landlord1, landlord2, staff1, staff2, staff3, staff4, staff5, user1, user2, user3, user4, user5, user6];
+  const updatedAtByEmail: Record<string, Date> = {
+    'admin@rentdito.com': UPDATED_RANK(2),
+    'landlord1@rentdito.com': UPDATED_RANK(1),
+    'landlord2@rentdito.com': UPDATED_RANK(9),
+    'manager@rentdito.com': UPDATED_RANK(8),
+    'maintenance@rentdito.com': UPDATED_RANK(7),
+    'finance@rentdito.com': UPDATED_RANK(6),
+    'receptionist@rentdito.com': UPDATED_RANK(5),
+    'staff@rentdito.com': UPDATED_RANK(4),
+    'user1@rentdito.com': UPDATED_RANK(0),
+    'user2@rentdito.com': UPDATED_RANK(3),
+    'user3@rentdito.com': UPDATED_RANK(13),
+    'user4@rentdito.com': UPDATED_RANK(12),
+    'user5@rentdito.com': UPDATED_RANK(11),
+    'user6@rentdito.com': UPDATED_RANK(10),
+  };
+  for (const u of usersByEmail) {
+    await User.collection.updateOne({ _id: u._id }, { $set: { updatedAt: updatedAtByEmail[u.email] } });
+  }
+
+  return usersByEmail;
 };
 
 const seedProperties = async (users: any[]) => {
@@ -214,8 +297,31 @@ const seedContractsAndTenancies = async (
     ]
   });
 
-  // Set activeTenancy on user1
+  // Set activeTenancy on user1 -- kept as the original Mongoose
+  // `findByIdAndUpdate` call (NOT the raw `.collection` handle): `User`'s
+  // schema never declared an `activeTenancy` field (it's computed live from
+  // Postgres by the already-ported `user.service.ts#getMe` instead, see
+  // that file), so under Mongoose's default strict mode this write is a
+  // harmless no-op that never actually persists the field on the raw Mongo
+  // document -- confirmed load-bearing: `users-list-super-admin`
+  // (admin.service.ts's plain `.select().lean()`, which reads the raw
+  // document with no such computed field) expects user1 to carry NO
+  // `activeTenancy` key at all. Switching this to the raw driver bypasses
+  // that strict-mode guard and DOES persist the field, which was tried and
+  // reverted here after it broke that exact fixture.
   await User.findByIdAndUpdate(user1._id, { activeTenancy: tenancy1._id });
+
+  // `updatedAt` pinned separately, via the raw `.collection` handle (task
+  // 18a audit) -- the `findByIdAndUpdate` above still bumps it to a fresh
+  // real-clock value via Mongoose's `{ timestamps: true }`
+  // `pre('findOneAndUpdate')` hook (which, unlike the no-op `activeTenancy`
+  // write above, DOES apply to a real schema-declared field), which would
+  // reintroduce the exact non-determinism `all-verifications-super-admin`
+  // (sorted by `updatedAt: -1`) depends on not having.
+  await User.collection.updateOne(
+    { _id: user1._id },
+    { $set: { updatedAt: new Date(Date.parse('2026-08-02T09:00:00.000Z')) } }
+  );
 
   // Seed Utility Bills for tenancy1 (3 months, most-recent first).
   // Fixed anchor date, and fixed per-month "meter reading" offsets, so totals reproduce
@@ -369,7 +475,14 @@ const seedInventory = async (users: any[], properties: any[]) => {
   const property = properties[0]; // First property
   const tenancy1 = await Tenancy.findOne({ propertyId: property._id, status: 'checked_in' });
 
-  // Create Inventory Items
+  // Create Inventory Items. Explicit, distinct `createdAt` per row (task 18a
+  // audit): confirmed live that all 3 rows of this bulk
+  // `Inventory.insertMany([...])` (schema has `{ timestamps: true }`)
+  // previously landed on the exact same millisecond, and that
+  // `inventory.service.ts`'s `.sort({ createdAt: -1 })` resolved that tie to
+  // ascending array-declaration order (AC, Chair, Microwave) -- verified as
+  // the same order both `inventory-items-landlord1` and
+  // `inventory-items-super-admin` already depend on.
   const itemsData = [
     {
       propertyId: property._id,
@@ -381,6 +494,7 @@ const seedInventory = async (users: any[], properties: any[]) => {
       status: 'available',
       purchaseDate: new Date('2023-01-15'),
       purchaseCost: 25000,
+      createdAt: new Date('2026-01-10T08:02:00.000Z'),
     },
     {
       propertyId: property._id,
@@ -391,6 +505,7 @@ const seedInventory = async (users: any[], properties: any[]) => {
       status: 'available',
       purchaseDate: new Date('2025-11-10'),
       purchaseCost: 3500,
+      createdAt: new Date('2026-01-10T08:01:00.000Z'),
     },
     {
       propertyId: property._id,
@@ -402,6 +517,7 @@ const seedInventory = async (users: any[], properties: any[]) => {
       status: 'maintenance',
       purchaseDate: new Date('2022-05-20'),
       purchaseCost: 4500,
+      createdAt: new Date('2026-01-10T08:00:00.000Z'),
     }
   ];
 
@@ -413,6 +529,17 @@ const seedInventory = async (users: any[], properties: any[]) => {
     const chairItem = createdItems.find(i => i.itemName.includes('Chair'));
 
     if (acItem && chairItem) {
+      // Explicit, distinct `createdAt` per row (task 18a audit): this bulk
+      // `InventoryRecord.insertMany([...])` (schema has `{ timestamps:
+      // true }`) is a real-clock, unfixed tie risk exactly like the other
+      // rows fixed in this audit (a prior real-clock reseed run tied both
+      // rows to the same millisecond; another run left them 1ms apart --
+      // either way non-deterministic). `inventory.service.ts`'s
+      // `getInventoryRecords`-style reads sort by `createdAt: -1`, and
+      // every fixture that lists both (`inventory-records-user1-own-tenancy`,
+      // `-landlord1`, `-by-tenancy-owner`, `-by-tenancy-landlord1`, all
+      // agreeing) expects [chairItem's record, acItem's record] -- these
+      // fixed values reproduce that order exactly.
       await InventoryRecord.insertMany([
         {
           inventoryItemId: acItem._id,
@@ -423,7 +550,8 @@ const seedInventory = async (users: any[], properties: any[]) => {
           issuedDate: new Date('2026-03-20T00:00:00Z'),
           quantityIssued: 1,
           issuedCondition: 'good',
-          status: 'active'
+          status: 'active',
+          createdAt: new Date('2026-01-14T08:00:00.000Z')
         },
         {
           inventoryItemId: chairItem._id,
@@ -434,7 +562,8 @@ const seedInventory = async (users: any[], properties: any[]) => {
           issuedDate: new Date('2026-03-20T00:00:00Z'),
           quantityIssued: 2,
           issuedCondition: 'new',
-          status: 'active'
+          status: 'active',
+          createdAt: new Date('2026-01-14T08:01:00.000Z')
         }
       ]);
 
@@ -462,6 +591,31 @@ const seedRentalApplications = async (users: any[], properties: any[], units: an
   const unitsP0 = units.filter((u: any) => u.propertyId.toString() === property0._id.toString());
   const unitsP1 = units.filter((u: any) => u.propertyId.toString() === property1._id.toString());
 
+  // NOTE on createdAt (task 18a audit -- see report for full detail): this
+  // batch's 4 rows previously relied on Mongoose's implicit
+  // `{ timestamps: true }` default, tying all 4 to the same millisecond on
+  // every run. Unlike every other tie this audit found and fixed, this ONE
+  // is a confirmed, PRE-EXISTING, structurally irreconcilable conflict in
+  // the golden fixture corpus itself, not something a seed change can
+  // resolve: `application.service.ts`'s `getApplications` runs the exact
+  // same `.sort({ createdAt: -1 })` for both the landlord-scoped and
+  // super-admin-scoped callers (differing only in the `propertyId` WHERE
+  // clause), and the two golden fixtures that exercise it
+  // (`applications-list-landlord1` / `applications-list-super-admin`) were
+  // captured with DIRECTLY CONTRADICTORY relative order for this exact
+  // (under_review, rejected) pair -- landlord1's fixture requires
+  // rejected-before-under_review; super-admin's requires the reverse. No
+  // single total order (tied or fully distinct) can satisfy both
+  // simultaneously -- confirmed by testing both a real-clock tie (matches
+  // neither reliably) and fully distinct timestamps (deterministically
+  // satisfies exactly one, never both). Fully distinct timestamps below
+  // satisfy `applications-list-super-admin`; `applications-list-landlord1`
+  // is a KNOWN, remaining failure as a direct consequence -- flagged
+  // prominently in the task report as a pre-existing defect this task
+  // cannot fix without editing a golden fixture (forbidden by this task's
+  // non-negotiables), for a future task to resolve (e.g. once
+  // application.service.ts is ported and a real tie-break policy can be
+  // chosen deliberately, or the fixture pair is reconciled directly).
   const applications = await RentalApplication.create([
     {
       // pending: distinct (userId, unitId) pair from the other active application below,
@@ -478,7 +632,8 @@ const seedRentalApplications = async (users: any[], properties: any[], units: an
         emergencyContact: { name: 'Fernandez Parent', phone: '09171112233', relationship: 'Parent' }
       },
       documents: ['/uploads/applications/user4-id.jpg'],
-      status: 'pending'
+      status: 'pending',
+      createdAt: new Date('2026-01-10T08:00:00.000Z')
     },
     {
       // under_review: different (userId, unitId) pair than the pending one above.
@@ -493,7 +648,8 @@ const seedRentalApplications = async (users: any[], properties: any[], units: an
         emergencyContact: { name: 'Bote Sibling', phone: '09172223344', relationship: 'Sibling' }
       },
       documents: ['/uploads/applications/user5-id.jpg'],
-      status: 'under_review'
+      status: 'under_review',
+      createdAt: new Date('2026-01-10T08:03:00.000Z')
     },
     {
       userId: user2._id,
@@ -510,7 +666,8 @@ const seedRentalApplications = async (users: any[], properties: any[], units: an
       status: 'approved',
       reviewedBy: landlord2._id,
       reviewNotes: 'Documents verified, approved for move-in.',
-      reviewedAt: new Date('2026-02-10T00:00:00Z')
+      reviewedAt: new Date('2026-02-10T00:00:00Z'),
+      createdAt: new Date('2026-01-10T08:01:00.000Z')
     },
     {
       userId: user6._id,
@@ -527,7 +684,8 @@ const seedRentalApplications = async (users: any[], properties: any[], units: an
       status: 'rejected',
       reviewedBy: landlord1._id,
       reviewNotes: 'Insufficient proof of income.',
-      reviewedAt: new Date('2026-02-12T00:00:00Z')
+      reviewedAt: new Date('2026-02-12T00:00:00Z'),
+      createdAt: new Date('2026-01-10T08:02:00.000Z')
     }
   ]);
 
@@ -543,6 +701,13 @@ const seedRentalApplications = async (users: any[], properties: any[], units: an
   // unique index only constrains status in {pending, under_review}.
   const unit1 = unitsP0[0]; // matches the "first unit of property0" seedContractsAndTenancies resolves to
 
+  // Explicit, distinct `createdAt` per row (task 18a audit): this second
+  // batch's tie (previously the same implicit real-clock default as the
+  // batch above, but LATER than it -- two separate `.create()` calls) had
+  // no cross-fixture conflict (unlike the batch above): both
+  // `applications-list-landlord1` and `applications-list-super-admin`
+  // already agree these 3 rows sort [user3, user2, user1] (newest first),
+  // so fully distinct values reproduce that exactly.
   const [user1Application, user2ContractApplication, user3Application] = await RentalApplication.create([
     {
       userId: user1._id,
@@ -559,7 +724,8 @@ const seedRentalApplications = async (users: any[], properties: any[], units: an
       status: 'approved',
       reviewedBy: landlord1._id,
       reviewNotes: 'Approved for move-in.',
-      reviewedAt: new Date('2025-12-20T00:00:00Z')
+      reviewedAt: new Date('2025-12-20T00:00:00Z'),
+      createdAt: new Date('2026-01-11T08:01:00.000Z')
     },
     {
       userId: user2._id,
@@ -576,7 +742,8 @@ const seedRentalApplications = async (users: any[], properties: any[], units: an
       status: 'approved',
       reviewedBy: landlord1._id,
       reviewNotes: 'Approved for move-in.',
-      reviewedAt: new Date('2024-03-01T00:00:00Z')
+      reviewedAt: new Date('2024-03-01T00:00:00Z'),
+      createdAt: new Date('2026-01-11T08:02:00.000Z')
     },
     {
       userId: user3._id,
@@ -593,7 +760,8 @@ const seedRentalApplications = async (users: any[], properties: any[], units: an
       status: 'approved',
       reviewedBy: landlord1._id,
       reviewNotes: 'Approved for move-in.',
-      reviewedAt: new Date('2025-05-01T00:00:00Z')
+      reviewedAt: new Date('2025-05-01T00:00:00Z'),
+      createdAt: new Date('2026-01-11T08:03:00.000Z')
     }
   ]);
 
@@ -616,6 +784,19 @@ const seedVisitRequests = async (users: any[], properties: any[], units: any[]) 
   const unitsP0 = units.filter((u: any) => u.propertyId.toString() === property0._id.toString());
   const unitsP1 = units.filter((u: any) => u.propertyId.toString() === property1._id.toString());
 
+  // Explicit, distinct, strictly-increasing `createdAt` per row (task 18a):
+  // `VisitRequestSchema` has `{ timestamps: true }`, and Mongoose's bulk
+  // `Model.create([...])` runs each row's timestamp assignment fast enough
+  // that all 5 rows previously landed on the EXACT SAME millisecond --
+  // confirmed live (`2026-08-30T07:52:52.706Z` for all 5) -- leaving
+  // `getPropertyVisits`'s `.sort({ createdAt: -1 })` (now Prisma's
+  // `orderBy: { createdAt: 'desc' }`, ported task 18) with an arbitrary,
+  // storage-order-dependent tie-break for property0's 3 visits
+  // (`property-visits-landlord1`/`property-visits-super-admin`). Fixed
+  // ISO literals only (no `Date.now()`, no bare `new Date()`), one fixed
+  // minute apart per row, in the SAME array order `seed-postgres.ts`'s own
+  // `nextCreatedAt()` already advances through for its 1:1 counterpart
+  // array -- so both seeds agree on relative visit ordering.
   const visits = await VisitRequest.create([
     {
       userId: user1._id,
@@ -624,7 +805,8 @@ const seedVisitRequests = async (users: any[], properties: any[], units: any[]) 
       requestedDate: new Date('2026-02-01T00:00:00Z'),
       requestedTime: '10:00',
       purpose: 'viewing',
-      status: 'pending'
+      status: 'pending',
+      createdAt: new Date('2026-01-05T08:00:00.000Z')
     },
     {
       userId: user2._id,
@@ -633,7 +815,8 @@ const seedVisitRequests = async (users: any[], properties: any[], units: any[]) 
       requestedDate: new Date('2026-02-03T00:00:00Z'),
       requestedTime: '11:00',
       purpose: 'viewing',
-      status: 'approved'
+      status: 'approved',
+      createdAt: new Date('2026-01-05T08:01:00.000Z')
     },
     {
       userId: user3._id,
@@ -645,7 +828,8 @@ const seedVisitRequests = async (users: any[], properties: any[], units: any[]) 
       scheduledTime: '14:00',
       purpose: 'inspection',
       status: 'scheduled',
-      assignedStaffId: staff2._id
+      assignedStaffId: staff2._id,
+      createdAt: new Date('2026-01-05T08:02:00.000Z')
     },
     {
       userId: user4._id,
@@ -657,7 +841,8 @@ const seedVisitRequests = async (users: any[], properties: any[], units: any[]) 
       scheduledTime: '09:00',
       purpose: 'viewing',
       status: 'completed',
-      assignedStaffId: staff4._id
+      assignedStaffId: staff4._id,
+      createdAt: new Date('2026-01-05T08:03:00.000Z')
     },
     {
       userId: user5._id,
@@ -667,7 +852,8 @@ const seedVisitRequests = async (users: any[], properties: any[], units: any[]) 
       requestedTime: '13:00',
       purpose: 'viewing',
       status: 'cancelled',
-      notes: 'Requester cancelled due to a schedule conflict.'
+      notes: 'Requester cancelled due to a schedule conflict.',
+      createdAt: new Date('2026-01-05T08:04:00.000Z')
     }
   ]);
 
@@ -684,6 +870,15 @@ const seedTransferRequests = async (users: any[], properties: any[], units: any[
   const property0 = properties[0];
   const unitsP0 = units.filter((u: any) => u.propertyId.toString() === property0._id.toString());
 
+  // Explicit, distinct `createdAt` per row (task 18a audit): confirmed live
+  // that all 3 rows of this bulk `TransferRequest.create([...])` (schema has
+  // `{ timestamps: true }`) previously landed on the exact same millisecond.
+  // `transfer.service.ts`'s `.sort({ createdAt: -1 })` resolved that tie to
+  // [pending, approved, completed] -- verified as the same order every
+  // currently-passing fixture that lists multiple transfers already depends
+  // on (`my-transfers-user1`, `transfers-list-landlord1`,
+  // `transfers-list-super-admin`, all three agreeing), so these fixed values
+  // reproduce it exactly rather than changing behavior.
   const transfers = await TransferRequest.create([
     {
       tenancyId: tenancy1._id,
@@ -692,7 +887,8 @@ const seedTransferRequests = async (users: any[], properties: any[], units: any[
       toUnitId: unitsP0[1]._id,
       reason: 'Tenant requested a move to a smaller room to reduce rent.',
       initiatedByUserId: user1._id,
-      status: 'pending'
+      status: 'pending',
+      createdAt: new Date('2026-01-07T08:02:00.000Z')
     },
     {
       tenancyId: tenancy1._id,
@@ -704,7 +900,8 @@ const seedTransferRequests = async (users: any[], properties: any[], units: any[
       status: 'approved',
       reviewedBy: staff1._id,
       reviewNotes: 'Approved, unit is available.',
-      reviewedAt: new Date('2026-02-20T00:00:00Z')
+      reviewedAt: new Date('2026-02-20T00:00:00Z'),
+      createdAt: new Date('2026-01-07T08:01:00.000Z')
     },
     {
       tenancyId: tenancy1._id,
@@ -712,6 +909,7 @@ const seedTransferRequests = async (users: any[], properties: any[], units: any[
       fromUnitId: unitsP0[1]._id,
       toUnitId: unitsP0[2]._id,
       reason: 'Downsizing after roommate moved out.',
+      createdAt: new Date('2026-01-07T08:00:00.000Z'),
       initiatedByUserId: staff1._id,
       status: 'completed',
       reviewedBy: landlord1._id,
@@ -793,6 +991,17 @@ const seedTickets = async (users: any[], properties: any[], tenancy1: any, tenan
 
   const property0 = properties[0];
 
+  // Explicit, distinct `createdAt` per row (task 18a audit): confirmed live
+  // that this array's bulk `Ticket.create([...])` (schema has `{ timestamps:
+  // true }`) landed in two silent tie groups (`.768Z` x3, `.766Z` x2), and
+  // `ticket.service.ts`'s `.sort({ createdAt: -1 })` (getMyTickets /
+  // getTickets) resolved that tie to [assigned, in_progress, resolved, open,
+  // closed] -- NOT ascending array-declaration order. Verified this exact
+  // order is the one every currently-passing fixture that lists multiple
+  // tickets already depends on (`my-tickets-user1`, `tickets-list-landlord1`,
+  // `tickets-list-super-admin`), so these fixed values reproduce it exactly
+  // rather than changing behavior -- only making it deterministic instead of
+  // an accidental, storage-order-dependent tie-break.
   const tickets = await Ticket.create([
     {
       tenancyId: tenancy1._id,
@@ -803,7 +1012,8 @@ const seedTickets = async (users: any[], properties: any[], tenancy1: any, tenan
       description: 'The bathroom faucet has been dripping continuously since yesterday.',
       category: 'plumbing',
       priority: 'medium',
-      status: 'open'
+      status: 'open',
+      createdAt: new Date('2026-01-06T08:01:00.000Z')
     },
     {
       tenancyId: tenancy1._id,
@@ -819,7 +1029,8 @@ const seedTickets = async (users: any[], properties: any[], tenancy1: any, tenan
       assignedByUserId: staff1._id,
       updates: [
         { userId: staff1._id, message: 'Assigned to Jose Rizal for inspection.', timestamp: new Date('2026-03-16T09:00:00Z') }
-      ]
+      ],
+      createdAt: new Date('2026-01-06T08:04:00.000Z')
     },
     {
       tenancyId: tenancy1._id,
@@ -836,7 +1047,8 @@ const seedTickets = async (users: any[], properties: any[], tenancy1: any, tenan
       updates: [
         { userId: staff2._id, message: 'On-site, checking the wiring.', timestamp: new Date('2026-03-17T10:00:00Z') },
         { userId: user1._id, message: 'Thanks, waiting for the update.', timestamp: new Date('2026-03-17T12:00:00Z') }
-      ]
+      ],
+      createdAt: new Date('2026-01-06T08:03:00.000Z')
     },
     {
       tenancyId: tenancy2._id,
@@ -854,7 +1066,8 @@ const seedTickets = async (users: any[], properties: any[], tenancy1: any, tenan
         { userId: staff2._id, message: 'Pest control scheduled for treatment.', timestamp: new Date('2024-11-05T09:00:00Z') }
       ],
       resolutionNotes: 'Pest control treated the area; no further sightings reported.',
-      resolvedAt: new Date('2024-11-10T00:00:00Z')
+      resolvedAt: new Date('2024-11-10T00:00:00Z'),
+      createdAt: new Date('2026-01-06T08:02:00.000Z')
     },
     {
       tenancyId: tenancy2._id,
@@ -869,7 +1082,8 @@ const seedTickets = async (users: any[], properties: any[], tenancy1: any, tenan
       assignedToUserId: staff2._id,
       assignedByUserId: staff1._id,
       resolutionNotes: 'Latch replaced and verified working.',
-      resolvedAt: new Date('2024-12-01T00:00:00Z')
+      resolvedAt: new Date('2024-12-01T00:00:00Z'),
+      createdAt: new Date('2026-01-06T08:00:00.000Z')
     }
   ]);
 
@@ -888,6 +1102,18 @@ const seedPayments = async (utilityBills: any[], users: any[]) => {
   const partialBill = utilityBills[1];
   const paidBill = utilityBills[2];
 
+  // Explicit, distinct `createdAt` per row (task 18a audit): confirmed live
+  // that all 4 rows of this bulk `Payment.create([...])` (schema has
+  // `{ timestamps: true }`) previously landed on the exact same millisecond.
+  // `billing.service.ts`'s own `getPayments` (the flat payments-list
+  // endpoint) sorts by `paymentDate`, not `createdAt` -- already distinct,
+  // unaffected -- but `getBillById`'s NESTED `payments` field
+  // (`Payment.find({ billId }).sort({ createdAt: -1 })`) does sort by
+  // `createdAt`, and `bill-by-id-paid-with-payments` (the only fixture
+  // that exercises it) expects [985/gcash, 1000/cash] -- these fixed
+  // values reproduce that order exactly. The other bill's 2 payments
+  // (900/500) aren't exercised order-sensitively by any fixture, so they
+  // just get their own distinct, later values.
   const payments = await Payment.create([
     {
       billId: paidBill._id,
@@ -895,7 +1121,8 @@ const seedPayments = async (utilityBills: any[], users: any[]) => {
       amount: 1000,
       paymentDate: new Date('2026-02-01T10:00:00Z'),
       method: 'cash',
-      recordedByUserId: staff3._id
+      recordedByUserId: staff3._id,
+      createdAt: new Date('2026-01-12T08:00:00.000Z')
     },
     {
       billId: paidBill._id,
@@ -904,7 +1131,8 @@ const seedPayments = async (utilityBills: any[], users: any[]) => {
       paymentDate: new Date('2026-02-03T15:30:00Z'),
       method: 'gcash',
       referenceNumber: 'GC-2026-0001',
-      recordedByUserId: staff3._id
+      recordedByUserId: staff3._id,
+      createdAt: new Date('2026-01-12T08:01:00.000Z')
     },
     {
       billId: partialBill._id,
@@ -913,7 +1141,8 @@ const seedPayments = async (utilityBills: any[], users: any[]) => {
       paymentDate: new Date('2026-03-01T09:00:00Z'),
       method: 'bank_transfer',
       referenceNumber: 'BT-2026-0002',
-      recordedByUserId: staff3._id
+      recordedByUserId: staff3._id,
+      createdAt: new Date('2026-01-12T08:02:00.000Z')
     },
     {
       billId: partialBill._id,
@@ -922,7 +1151,8 @@ const seedPayments = async (utilityBills: any[], users: any[]) => {
       paymentDate: new Date('2026-03-02T14:00:00Z'),
       method: 'other',
       notes: 'Partial payment via money remittance center.',
-      recordedByUserId: staff3._id
+      recordedByUserId: staff3._id,
+      createdAt: new Date('2026-01-12T08:03:00.000Z')
     }
   ]);
 
@@ -959,13 +1189,24 @@ const seedLandlordApplicationsDocumentsAndIncidents = async (users: any[], prope
 
   const property0 = properties[0];
 
+  // Explicit, distinct `createdAt` per row (task 18a audit): confirmed live
+  // that both rows of this bulk `LandlordApplication.create([...])` (schema
+  // has `{ timestamps: true }`) previously landed on the exact same
+  // millisecond. This collection's service is already ported to Prisma
+  // (landlord-application.service.ts, task 15), so this Mongo tie no longer
+  // feeds any live response -- fixed anyway for consistency, matching the
+  // same relative order (approved newer than pending) that
+  // `seed-postgres.ts`'s own `nextCreatedAt()` already produces for its 1:1
+  // counterpart array (and that `all-applications-super-admin` already
+  // depends on).
   await LandlordApplication.create([
     {
       userId: user6._id,
       businessName: 'Dantes Rental Ventures',
       businessType: 'Sole Proprietorship',
       documents: ['/uploads/landlord-applications/user6-permit.pdf'],
-      status: 'pending'
+      status: 'pending',
+      createdAt: new Date('2026-01-09T08:00:00.000Z')
     },
     {
       userId: user3._id,
@@ -975,10 +1216,18 @@ const seedLandlordApplicationsDocumentsAndIncidents = async (users: any[], prope
       status: 'approved',
       reviewedBy: superAdmin._id,
       reviewedAt: new Date('2026-02-15T00:00:00Z'),
-      reviewNotes: 'Documents verified, business permit valid.'
+      reviewNotes: 'Documents verified, business permit valid.',
+      createdAt: new Date('2026-01-09T08:01:00.000Z')
     }
   ]);
 
+  // Explicit, distinct `createdAt` per row (task 18a audit): confirmed live
+  // that both rows of this bulk `Document.create([...])` (schema has
+  // `{ timestamps: true }`) previously landed on the exact same
+  // millisecond. `document.service.ts`'s `.sort({ createdAt: -1 })`
+  // resolved that tie to [receipt, contract] -- verified as the same order
+  // both `documents-list-landlord1` and `documents-list-staff-maintenance`
+  // already depend on, so these fixed values reproduce it exactly.
   await Document.create([
     {
       propertyId: property0._id,
@@ -987,7 +1236,8 @@ const seedLandlordApplicationsDocumentsAndIncidents = async (users: any[], prope
       type: 'contract',
       title: 'Signed Lease Contract - User1',
       fileUrl: '/uploads/documents/contract-user1.pdf',
-      uploadedBy: staff3._id
+      uploadedBy: staff3._id,
+      createdAt: new Date('2026-01-13T08:00:00.000Z')
     },
     {
       propertyId: property0._id,
@@ -996,10 +1246,18 @@ const seedLandlordApplicationsDocumentsAndIncidents = async (users: any[], prope
       type: 'receipt',
       title: 'Final Move-out Receipt - User2',
       fileUrl: '/uploads/documents/receipt-user2.pdf',
-      uploadedBy: staff3._id
+      uploadedBy: staff3._id,
+      createdAt: new Date('2026-01-13T08:01:00.000Z')
     }
   ]);
 
+  // Explicit, distinct `createdAt` per row (task 18a audit): this bulk
+  // `IncidentReport.create([...])` (schema has `{ timestamps: true }`) is
+  // the same real-clock tie risk as the others fixed in this audit --
+  // `security.service.ts`'s incidents list sorts by `createdAt: -1`, and
+  // both `incidents-list-landlord1`/`incidents-list-staff-maintenance`
+  // (which agree) expect [dispute, damage] -- these fixed values reproduce
+  // that order exactly.
   await IncidentReport.create([
     {
       propertyId: property0._id,
@@ -1008,7 +1266,8 @@ const seedLandlordApplicationsDocumentsAndIncidents = async (users: any[], prope
       type: 'damage',
       severity: 'medium',
       description: 'Water damage found in the common area ceiling after heavy rain.',
-      status: 'investigating'
+      status: 'investigating',
+      createdAt: new Date('2026-01-15T08:00:00.000Z')
     },
     {
       propertyId: property0._id,
@@ -1018,7 +1277,8 @@ const seedLandlordApplicationsDocumentsAndIncidents = async (users: any[], prope
       severity: 'low',
       description: 'Minor dispute between tenants over shared kitchen usage.',
       status: 'resolved',
-      resolutionNotes: 'Mediated by staff; both parties agreed on a cleaning schedule.'
+      resolutionNotes: 'Mediated by staff; both parties agreed on a cleaning schedule.',
+      createdAt: new Date('2026-01-15T08:01:00.000Z')
     }
   ]);
 };
@@ -1027,6 +1287,12 @@ const seedNotifications = async (users: any[]) => {
   console.log('Seeding notifications...');
   const landlord1 = users.find((u: any) => u.email === 'landlord1@rentdito.com');
   
+  // Explicit, distinct `createdAt` per row (task 18a audit): confirmed live
+  // that both rows of this bulk `Notification.create([...])` (schema has
+  // `{ timestamps: true }`) previously landed on the exact same millisecond.
+  // The only fixture that lists both (`notifications-landlord1-has-two`)
+  // expects ["New Inquiry Received", "Contract Expiring Soon"] in that
+  // order -- these fixed values reproduce it exactly.
   await Notification.create([
     {
       userId: landlord1._id,
@@ -1034,6 +1300,7 @@ const seedNotifications = async (users: any[]) => {
       title: 'New Inquiry Received',
       message: 'You have a new inquiry for unit 101.',
       isRead: false,
+      createdAt: new Date('2026-01-08T08:01:00.000Z')
     },
     {
       userId: landlord1._id,
@@ -1041,6 +1308,7 @@ const seedNotifications = async (users: any[]) => {
       title: 'Contract Expiring Soon',
       message: 'A contract for user3 is expiring in 2 months.',
       isRead: false,
+      createdAt: new Date('2026-01-08T08:00:00.000Z')
     }
   ]);
 };
