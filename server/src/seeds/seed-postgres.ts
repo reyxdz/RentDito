@@ -826,17 +826,38 @@ async function run() {
   //     (tests/golden/utility.json) would 0-out unconditionally against
   //     Postgres while correctly matching against Mongo -- not a service-
   //     logic bug, a seed-data divergence between the two stores for what
-  //     is supposed to be the same real-world data. Fixed with its OWN
-  //     real-time-anchored counter (deliberately NOT reusing/mutating the
-  //     shared `seedClockMs`, to avoid shifting every other table's
-  //     already-fixture-verified relative ordering) that mirrors seed.ts's
-  //     actual behavior: "created when this seed script ran," strictly
-  //     increasing across the 3 bills in the same m=0/m=1/m=2 order
-  //     `nextCreatedAt()` already produced.
+  //     is supposed to be the same real-world data.
+  //
+  //     Task 27's original fix used a REAL-TIME-anchored counter
+  //     (`billClockMs = Date.now()`) instead, on the theory that mirroring
+  //     seed.ts's actual wall-clock `createdAt` behavior was the correct
+  //     port. That was itself the bug (Task 30c): `getConsumption`'s window
+  //     is `[now - (months-1) months, now]` -- a bill whose `createdAt` is
+  //     wall-clock-at-SEED-TIME only lands inside that window when the seed
+  //     is run on (or within ~6 months after) the same calendar day the
+  //     replay suite's frozen clock (`tests/golden-meta.json`) represents.
+  //     Re-seeding a day after that frozen instant -- exactly what happened
+  //     here, and what will happen again at every future reseed or month
+  //     boundary -- pushes `createdAt` to the day AFTER `now`, which fails
+  //     `createdAt <= end` and 0s out `consumption-landlord1` unconditionally,
+  //     the same way the 2023-epoch value did in the other direction.
+  //
+  //     Fixed instead with a FIXED ISO literal base (deliberately NOT
+  //     `Date.now()`, NOT reusing/mutating the shared `seedClockMs` to avoid
+  //     shifting every other table's already-fixture-verified relative
+  //     ordering, and NOT the 2023 epoch that caused the original bug),
+  //     chosen well inside the frozen replay clock's window
+  //     (`getConsumption`'s default 6-month lookback from
+  //     2026-08-30T23:59:59.999Z resolves to [2026-02-28T16:00:00.000Z,
+  //     2026-08-30T23:59:59.999Z]) with comfortable margin on both sides:
+  //     2026-08-15T10:00:00.000Z. Strictly increasing by 1 second per bill,
+  //     across the 3 bills in the same m=0/m=1/m=2 order `nextCreatedAt()`
+  //     already produced, matching seed.ts's identical fixed literals below
+  //     bill-for-bill.
   // ===========================================================================
   console.log('Seeding bills...');
 
-  let billClockMs = Date.now();
+  let billClockMs = Date.parse('2026-08-15T10:00:00.000Z');
   const nextBillCreatedAt = (): Date => {
     const ts = new Date(billClockMs);
     billClockMs += 1_000; // +1 second per bill -- just enough to keep strict ordering
