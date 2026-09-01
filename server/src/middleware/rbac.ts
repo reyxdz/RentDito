@@ -1,6 +1,6 @@
 import { Response, NextFunction } from 'express';
 import { AuthRequest } from './auth';
-import { User } from '../models/User';
+import prisma from '../config/prisma';
 
 /**
  * Require that the authenticated user has one of the specified roles.
@@ -60,8 +60,15 @@ export const requirePermission = (key: string) => {
 
     // Staff — check permissions array
     if (role === 'staff') {
-      const staff = await User.findById(req.user.id).select('permissions');
-      if (!staff || !staff.permissions || !staff.permissions.includes(key)) {
+      // TRANSITIONAL: reads `req.user.pgId` (the Postgres profile UUID), not
+      // `req.user.id`, because this middleware was ported to Prisma before
+      // the dual-id strangler was collapsed (see middleware/auth.ts). Once
+      // collapsed, `id` itself becomes the UUID and this reverts to `id`.
+      const staff = await prisma.profile.findUnique({
+        where: { id: req.user.pgId },
+        select: { permissions: true },
+      });
+      if (!staff || !staff.permissions.includes(key)) {
         res.status(403).json({
           status: 'error',
           message: `Access denied. Missing permission: ${key}`,
@@ -82,7 +89,7 @@ export const requirePermission = (key: string) => {
  * Rules:
  *  - super_admin → always passes
  *  - landlord   → property.landlordId must match req.user.id
- *  - staff      → propertyId must be in assignedPropertyIds
+ *  - staff      → must have a row in staff_property_assignments for this property
  *  - user       → blocked
  */
 export const requirePropertyAccess = () => {
@@ -92,7 +99,9 @@ export const requirePropertyAccess = () => {
       return;
     }
 
-    const { role, id: userId } = req.user;
+    // TRANSITIONAL: `pgId` is the Postgres profile UUID -- see the note in
+    // requirePermission() above.
+    const { role, pgId: userId } = req.user;
     const propertyId = req.params.propertyId || req.body.propertyId;
 
     if (!propertyId) {
@@ -108,9 +117,8 @@ export const requirePropertyAccess = () => {
 
     // Landlord — must own the property
     if (role === 'landlord') {
-      const { Property } = await import('../models/Property');
-      const property = await Property.findById(propertyId);
-      if (!property || property.landlordId?.toString() !== userId) {
+      const property = await prisma.property.findUnique({ where: { id: propertyId } });
+      if (!property || property.landlordId !== userId) {
         res.status(403).json({
           status: 'error',
           message: 'You do not own this property.',
@@ -121,14 +129,12 @@ export const requirePropertyAccess = () => {
       return;
     }
 
-    // Staff — must be assigned to this property
+    // Staff — must be assigned to this property via staff_property_assignments
     if (role === 'staff') {
-      const staff = await User.findById(userId).select('assignedPropertyIds');
-      if (
-        !staff ||
-        !staff.assignedPropertyIds ||
-        !staff.assignedPropertyIds.map((id) => id.toString()).includes(propertyId)
-      ) {
+      const assignment = await prisma.staffPropertyAssignment.findUnique({
+        where: { staffId_propertyId: { staffId: userId, propertyId } },
+      });
+      if (!assignment) {
         res.status(403).json({
           status: 'error',
           message: 'You are not assigned to this property.',
