@@ -69,6 +69,14 @@ beforeAll(async () => {
 }, 30000);
 
 afterAll(async () => {
+  // Reverse-FK order (mirrors seed-postgres.ts's teardownDatabase): the
+  // "authenticates a protected route" test above makes a real authenticated
+  // request through the full app, and server.ts's `app.use(auditLog)`
+  // middleware writes an `audit_logs` row for every authenticated mutating
+  // request. `audit_logs.user_id -> profiles.id` is `ON DELETE Restrict`, so
+  // deleting the profile before its audit rows would throw a foreign key
+  // constraint violation.
+  await prisma.auditLog.deleteMany({ where: { userId: { in: createdUserIds } } });
   await prisma.profile.deleteMany({ where: { id: { in: createdUserIds } } });
   await Promise.all(createdUserIds.map((id) => supabaseAdmin.auth.admin.deleteUser(id)));
   await prisma.$disconnect();
