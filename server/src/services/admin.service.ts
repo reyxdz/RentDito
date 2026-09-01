@@ -317,7 +317,13 @@ export const updateUserStatus = async (
 //  Activity / Audit Log (GET /activity)
 // ─────────────────────────────────────────────────────────────
 
-function remapAuditUser<T extends { userId: string; user?: unknown }>(row: T) {
+// `userId`/`user` are nullable now that `audit_logs.user_id` is
+// `ON DELETE SetNull` (see schema.prisma's AuditLog doc comment): a row
+// whose actor was later deleted comes back from Prisma with `user: null`
+// (not `undefined` -- `include` always resolves an optional relation to
+// either the row or `null`), and this must render as a null actor rather
+// than throw or leak the literal string "undefined" into the response.
+function remapAuditUser<T extends { userId: string | null; user?: unknown }>(row: T) {
   if (row.user === undefined) return row;
   const { user, ...rest } = row;
   return { ...rest, userId: user };

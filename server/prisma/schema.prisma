@@ -1080,7 +1080,7 @@ model LandlordApplication {
 
 model AuditLog {
   id           String  @id @default(uuid()) @db.Uuid
-  userId       String  @map("user_id") @db.Uuid
+  userId       String? @map("user_id") @db.Uuid
   action       String
   resourceType String  @map("resource_type")
   resourceId   String? @map("resource_id")
@@ -1092,7 +1092,13 @@ model AuditLog {
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
   updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
 
-  user Profile @relation(fields: [userId], references: [id], onDelete: Restrict)
+  // Deliberately SetNull, not Restrict: audit_logs is an immutable event
+  // log with no "reassign the actor" workflow, so a deleted user must not
+  // be permanently un-deletable just because they once made a mutating
+  // request (every authenticated POST/PUT/PATCH/DELETE writes a row here
+  // via src/middleware/auditLog.ts). Deleting the actor severs only the
+  // link -- action, resource, timestamp and IP survive on the row.
+  user Profile? @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   @@index([userId])
   @@index([resourceType, resourceId])

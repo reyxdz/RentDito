@@ -7,7 +7,7 @@ export interface AuditLog {
     name: string;
     email: string;
     avatar?: string;
-  } | string;
+  } | string | null;
   action: string;
   resourceType: string;
   resourceId?: string;
