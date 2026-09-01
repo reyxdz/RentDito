@@ -1,20 +1,24 @@
 /**
  * Golden-fixture contract replay.
  *
- * Replays every case captured by server/scripts/capture-golden.ts against
- * the CURRENT (MongoDB) implementation of the app, so that later phases of
- * the Mongo -> Supabase/Postgres migration — in particular the rewrite of
- * 235 `.populate()` call sites into Prisma `include`s — have a real
- * regression gate to run against. If this suite passes vacuously (0 cases
- * discovered, or auth silently missing so everything 401s "successfully"),
- * the whole migration proceeds unguarded, so several things here are
- * deliberately paranoid: see the fixture-discovery guards below and the
- * "has an identity mapped for every discovered case" test.
+ * Replays every case captured by server/scripts/capture-golden.ts (back when
+ * it still ran against the live MongoDB app -- see that script's own
+ * docstring; it has since been deleted along with the rest of the MongoDB
+ * layer, task 31b) against the CURRENT (Postgres/Prisma) implementation of
+ * the app, so that the migration -- in particular the rewrite of 235
+ * `.populate()` call sites into Prisma `include`s -- has a real regression
+ * gate to run against. If this suite passes vacuously (0 cases discovered,
+ * or auth silently missing so everything 401s "successfully"), the whole
+ * migration proceeds unguarded, so several things here are deliberately
+ * paranoid: see the fixture-discovery guards below and the "has an identity
+ * mapped for every discovered case" test.
  *
- * IMPORTANT — named import. `server.ts` only calls connectDB()/app.listen()
- * under `if (require.main === module)`; the default export is `undefined`
- * on import (see tests/server-import.test.ts). Importing `app` here does
- * NOT connect to MongoDB — this file owns its own connection below.
+ * IMPORTANT — named import. `server.ts` only calls prisma.$connect()/
+ * app.listen() under `if (require.main === module)`; the default export is
+ * `undefined` on import (see tests/server-import.test.ts). Importing `app`
+ * here does NOT open a Postgres connection of its own -- Prisma lazily
+ * connects on first query, and `resolveAllCaseIds()` below (via
+ * `../../src/config/prisma`) is what actually triggers that.
  *
  * RESOLVED BUG (commits 7264f23 / cc03c83) — GET /api/tickets/:id used to
  * return 403 even to the ticket's own reporter. In
@@ -35,7 +39,6 @@
 import fs from 'fs';
 import path from 'path';
 import request from 'supertest';
-import mongoose from 'mongoose';
 import { app } from '../../src/server';
 import { normalizeBody } from '../helpers/normalize';
 import { tokenForEmail } from '../helpers/auth';
@@ -341,23 +344,10 @@ beforeAll(() => {
 });
 
 beforeAll(async () => {
-  // Importing `app` does not connect to MongoDB (see docstring above) — the
-  // suite must connect itself. MongoDB is expected already running and
-  // seeded at 127.0.0.1:27017/rentdito (same seed the fixtures were
-  // captured against). No server/.env is required or created.
-  await mongoose.connect('mongodb://127.0.0.1:27017/rentdito');
-});
-
-beforeAll(async () => {
-  // Requires the Mongo connection above (Mongo-backed natural-key lookups)
-  // and reads server/.env for Postgres/Supabase connectivity (Postgres-
-  // backed lookups, for whichever services are in PORTED_SERVICES). Runs
-  // exactly once for the whole suite -- see replay-id-resolver.ts.
+  // Reads server/.env for Postgres/Supabase connectivity and resolves every
+  // registered natural key against Postgres. Runs exactly once for the whole
+  // suite -- see replay-id-resolver.ts.
   RESOLVED_IDS = await resolveAllCaseIds();
-});
-
-afterAll(async () => {
-  await mongoose.disconnect();
 });
 
 afterAll(() => {
