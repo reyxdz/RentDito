@@ -18,9 +18,13 @@
  * they are freshly generated UUIDs (crypto.randomUUID()), exactly as
  * `@default(uuid())` would generate them at insert time in normal operation --
  * this is identifier generation, not seed *data*, so determinism does not apply
- * to it. createdAt/updatedAt columns are left to their Prisma defaults
- * (`now()` / `@updatedAt`), matching how seed.ts never sets Mongoose's
- * automatic `timestamps: true` fields explicitly either.
+ * to it. Most createdAt/updatedAt columns are left to their Prisma defaults
+ * (`now()` / `@updatedAt`) -- harmless everywhere those columns are only
+ * ever compared as VOLATILE (stripped) fixture fields. A handful of tables
+ * pin explicit fixed literals instead, each because some ported service
+ * endpoint's `orderBy`/date-range filter is directly sensitive to them (see
+ * `nextProfileCreatedAt()`/`UPDATED_RANK()` for profiles and
+ * `nextBillCreatedAt()` for bills, both below, for the specifics).
  *
  * Idempotent: run() tears down (Postgres rows in reverse-FK order, then the
  * Supabase auth users it created, matched by the seed emails) before seeding,
@@ -225,6 +229,56 @@ function nextProfileCreatedAt(): Date {
   return ts;
 }
 
+// =============================================================================
+// Task 30d: explicit, fixed `updatedAt` per profile.
+//
+// admin.service.ts's Prisma-ported `getAllVerifications`/
+// `getPendingVerifications` sort profiles with `orderBy: { updatedAt: 'desc' }`
+// -- a faithful port of the pre-port Mongo behavior, and NOT something this
+// seed is allowed to change. Every profile row above is written in a single
+// `createMany()` call, which (unlike seed.ts's sequential, individually-
+// awaited `User.create()` calls) evaluates `updatedAt`'s default exactly ONCE
+// for the whole statement if left unset -- every row would land on the
+// identical instant, leaving `all-verifications-super-admin`'s required
+// order non-deterministic (Postgres has no obligation to break the tie the
+// way the original Mongo capture's incidentally-distinct real-clock
+// `updatedAt` values happened to).
+//
+// Fixed with the SAME `UPDATED_RANK(rank)` formula and the SAME per-email
+// rank assignment as seed.ts (see that file's `seedUsers()` for the full
+// derivation of why this exact order -- user1 first, user3 last, NOT
+// role/status-ordered) so both stores agree byte-for-byte on the resulting
+// order. Anchor instant (2026-08-02T09:00:00.000Z) is inside the frozen
+// replay clock's window (tests/golden-meta.json), same as seed.ts's.
+//
+// Confirmed Prisma HONOURS an explicit `updatedAt` passed into `createMany()`
+// data despite the column being declared `@updatedAt` in schema.prisma:
+// `@updatedAt` only auto-stamps a value when the field is absent from the
+// write, exactly like `@default(now())` on `createdAt` above -- it does not
+// unconditionally overwrite supplied values the way Mongoose's
+// `{ timestamps: true }` does (contrast seed.ts's own comment on why IT
+// needed the raw `.collection` handle to bypass that overwrite). Verified
+// live by reading the seeded rows back and confirming their `updated_at`
+// column matches these literals exactly (see task-30d-report.md) -- no
+// follow-up raw UPDATE was needed.
+const UPDATED_RANK = (rank: number) => new Date(Date.parse('2026-08-02T09:00:00.000Z') - rank * 60_000);
+const UPDATED_AT_RANK_BY_EMAIL: Record<string, number> = {
+  'user1@rentdito.com': 0,
+  'landlord1@rentdito.com': 1,
+  'admin@rentdito.com': 2,
+  'user2@rentdito.com': 3,
+  'staff@rentdito.com': 4,
+  'receptionist@rentdito.com': 5,
+  'finance@rentdito.com': 6,
+  'maintenance@rentdito.com': 7,
+  'manager@rentdito.com': 8,
+  'landlord2@rentdito.com': 9,
+  'user6@rentdito.com': 10,
+  'user5@rentdito.com': 11,
+  'user4@rentdito.com': 12,
+  'user3@rentdito.com': 13,
+};
+
 async function seedProfiles(legacyIds: Record<string, string>): Promise<Record<string, string>> {
   console.log('Seeding profiles (Supabase auth users first)...');
   const profileIdByEmail: Record<string, string> = {};
@@ -256,6 +310,7 @@ async function seedProfiles(legacyIds: Record<string, string>): Promise<Record<s
     positionName: spec.positionName ?? null,
     legacyMongoId: legacyIds[spec.email],
     createdAt: nextProfileCreatedAt(),
+    updatedAt: UPDATED_RANK(UPDATED_AT_RANK_BY_EMAIL[spec.email]),
   }));
 
   await prisma.profile.createMany({ data: rows });
