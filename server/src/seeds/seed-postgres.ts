@@ -191,7 +191,39 @@ async function teardownDatabase(): Promise<void> {
 // =============================================================================
 // 4. Profiles -- Supabase auth user first (profiles.id has a real FK to
 //    auth.users), then the profile row with legacyMongoId set from Mongo.
+//
+// `createdAt` uses its OWN fixed-clock sequence (`profileClockMs`), NOT the
+// shared `seedClockMs`/`nextCreatedAt()` every other table below uses --
+// same class of fix, and same reasoning, as `nextBillCreatedAt()` a few
+// hundred lines down (search "Task 27's original fix" for the full
+// writeup): under seed.ts (Mongoose, `timestamps: true`), every profile's
+// `createdAt` is auto-stamped to the REAL wall-clock instant seed.ts
+// actually ran, which is why tests/golden/admin.json's captured fixture
+// shows all 14 users created within the same few hundred milliseconds of
+// 2026-08-30 (the day that fixture was captured) and its `monthlyGrowth`
+// chart groups all 14 into one `{month: "2026-08", count: 14}` bucket.
+// `nextCreatedAt()`'s shared 2023-01-01 epoch is harmless for every
+// fixture that only compares createdAt-derived ORDER (createdAt/updatedAt
+// are stripped from every fixture body by `tests/helpers/normalize.ts`'s
+// VOLATILE set) but fatal for a "created in the last N months" WHERE/GROUP
+// BY relative to real `now()` -- exactly what admin.service.ts's
+// `getPlatformStats` (Task 29) is the first ported function to ever apply
+// to `Profile.createdAt`. Fixed with a FIXED ISO literal base (per this
+// migration's own determinism rule: no `Date.now()`), chosen well inside
+// both the frozen replay clock's window AND the same calendar month as
+// "now" (`2026-08-30T23:59:59.999Z`, per `tests/golden-meta.json`) so
+// every seeded profile lands in the same `2026-08` bucket the captured
+// fixture expects. Strictly increasing by 1 second per profile, in the
+// same `USER_SPECS` order `nextCreatedAt()` already iterated in, so
+// `recentUsers`' (last-5-by-createdAt-desc) order is unchanged.
 // =============================================================================
+
+let profileClockMs = Date.parse('2026-08-30T00:00:00.000Z');
+function nextProfileCreatedAt(): Date {
+  const ts = new Date(profileClockMs);
+  profileClockMs += 1_000; // +1 second per profile -- just enough to keep strict ordering
+  return ts;
+}
 
 async function seedProfiles(legacyIds: Record<string, string>): Promise<Record<string, string>> {
   console.log('Seeding profiles (Supabase auth users first)...');
@@ -223,7 +255,7 @@ async function seedProfiles(legacyIds: Record<string, string>): Promise<Record<s
     permissions: spec.permissions ?? [],
     positionName: spec.positionName ?? null,
     legacyMongoId: legacyIds[spec.email],
-    createdAt: nextCreatedAt(),
+    createdAt: nextProfileCreatedAt(),
   }));
 
   await prisma.profile.createMany({ data: rows });
