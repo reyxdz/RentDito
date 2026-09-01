@@ -75,7 +75,15 @@ export const logout = catchAsync(async (req: AuthRequest, res: Response): Promis
     res.status(401).json({ status: 'error', message: 'Not authenticated' });
     return;
   }
-  await authService.logout(req.user.id);
+  // `authService.logout` revokes a SESSION (by its JWT), not a user id --
+  // see that function's own doc comment for the two independent bugs this
+  // fixes. The token is already known-valid at this point (the `auth`
+  // middleware verified it to populate `req.user`), so it's re-extracted
+  // from the same header rather than re-deriving any id.
+  const accessToken = req.headers.authorization?.split(' ')[1];
+  if (accessToken) {
+    await authService.logout(accessToken);
+  }
   res.status(200).json({
     status: 'success',
     message: 'Logged out successfully',

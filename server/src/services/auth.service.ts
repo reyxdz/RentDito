@@ -168,7 +168,36 @@ export const resetPassword = async (token: string, newPassword: string) => {
 
 /**
  * Logout – revoke the user's Supabase sessions.
+ *
+ * BUG FIXED HERE: this used to be `logout(userId: string)`, called as
+ * `authService.logout(req.user.id)` (the legacy Mongo id, or the Postgres
+ * UUID for a profile with none) and passed straight to
+ * `supabaseAdmin.auth.admin.signOut(userId)`. That was wrong on TWO
+ * independent levels:
+ *
+ *  1. Wrong id space (the class of bug this migration's `payment.controller`
+ *     fix already found once): `req.user.id` is the legacy/strangler id, not
+ *     `req.user.pgId` -- irrelevant here since the argument shouldn't be an
+ *     id at all (see #2), but it was doubly wrong regardless.
+ *  2. Wrong API contract entirely: GoTrue's admin `signOut(jwt, scope?)` --
+ *     see `@supabase/auth-js`'s `GoTrueAdminApi.signOut` -- takes the
+ *     caller's own SESSION JWT (the access token from the `Authorization`
+ *     header), never a user id. There is no admin endpoint that revokes
+ *     sessions BY USER ID; Supabase's admin API can only sign out a
+ *     specific, already-known session token (default `scope: 'global'`
+ *     revokes every refresh token tied to that session's user, i.e. "log
+ *     out everywhere", not just the one session). Handing it a UUID/Mongo
+ *     id made the call a no-op against a token GoTrue couldn't associate
+ *     with any real session -- it fails silently (`signOut` catches
+ *     `AuthError` and returns `{error}` rather than throwing), so nothing
+ *     was ever actually revoked.
+ *
+ * Fixed by accepting the raw access token instead of any id, and passing
+ * THAT to `signOut` -- the only shape the underlying API actually accepts.
+ * `auth.controller.ts` now extracts it from the `Authorization` header the
+ * same way `middleware/auth.ts` does, and no longer references
+ * `req.user.id`/`req.user.pgId` for this route at all.
  */
-export const logout = async (userId: string) => {
-  await supabaseAdmin.auth.admin.signOut(userId);
+export const logout = async (accessToken: string) => {
+  await supabaseAdmin.auth.admin.signOut(accessToken);
 };
