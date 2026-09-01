@@ -19,7 +19,7 @@ export const getIncidentReport = catchAsync(async (req: AuthRequest, res: Respon
 });
 
 export const createIncidentReport = catchAsync(async (req: AuthRequest, res: Response) => {
-    const incidentData = { ...req.body, reportedBy: req.user!.id };
+    const incidentData = { ...req.body, reportedBy: req.user!.pgId };
     const newIncident = await securityService.createIncidentReport(incidentData);
     res.status(201).json({ status: 'success', data: newIncident });
 });
