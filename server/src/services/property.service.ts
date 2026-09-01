@@ -3,7 +3,48 @@ import prisma from '../config/prisma';
 import { Prisma, PropertyType, PropertyStatus } from '@prisma/client';
 import { serializeDoc, serializeList } from '../utils/serialize';
 import { toHttpError } from '../utils/prismaErrors';
-import type { IProperty } from '../models/Property';
+
+/**
+ * Request-body shape for create/update property calls, mirroring the
+ * pre-migration Mongoose `IProperty` document's nested fields (address,
+ * billingSettings, venues, emergencyContacts, geoCoords) -- NOT the flat
+ * Prisma `Property` row shape, which createProperty/updateProperty below
+ * translate to/from by hand (see PROPERTY_TYPE_TO_DB above). Defined
+ * locally, rather than importing the generated Prisma input types, because
+ * the two shapes genuinely differ (nested vs. flat) and this service no
+ * longer depends on the Mongoose model, which is being retired.
+ */
+interface PropertyInput {
+  landlordId?: string;
+  name: string;
+  description: string;
+  address: {
+    street: string;
+    barangay?: string;
+    city: string;
+    province: string;
+    zipCode: string;
+    country?: string;
+  };
+  amenities?: string[];
+  inclusions?: string[];
+  propertyType: string;
+  status?: string;
+  images?: string[];
+  venues?: {
+    reviewCenters?: Array<{ name: string; distance: string }>;
+    schools?: Array<{ name: string; distance: string }>;
+    commercial?: Array<{ name: string; distance: string }>;
+  };
+  billingSettings?: {
+    billingDay?: number;
+    dueDay?: number;
+    lateFeePercent?: number;
+    utilityDefault?: 'included' | 'metered' | 'shared';
+  };
+  emergencyContacts?: Array<{ name: string; phone: string; role: string }>;
+  geoCoords?: { latitude: number; longitude: number };
+}
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const isValidId = (id: string): boolean => UUID_RE.test(id);
@@ -257,7 +298,7 @@ export const getPropertyById = async (userId: string, propertyId: string) => {
 /**
  * Create new property (landlord only)
  */
-export const createProperty = async (userId: string, data: Partial<IProperty>) => {
+export const createProperty = async (userId: string, data: Partial<PropertyInput>) => {
   const user = await prisma.profile.findUnique({ where: { id: userId } });
   if (!user) {
     throw Object.assign(new Error('User not found'), { statusCode: 404 });
@@ -314,7 +355,7 @@ export const createProperty = async (userId: string, data: Partial<IProperty>) =
 export const updateProperty = async (
   userId: string,
   propertyId: string,
-  data: Partial<IProperty>
+  data: Partial<PropertyInput>
 ) => {
   // Validate ID format
   if (!isValidId(propertyId)) {

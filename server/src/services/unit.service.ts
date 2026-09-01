@@ -3,7 +3,31 @@ import { Prisma } from '@prisma/client';
 import { serializeDoc, serializeList } from '../utils/serialize';
 import { toHttpError } from '../utils/prismaErrors';
 import { PROPERTY_REF_SELECT, shapePropertyRef } from '../utils/propertyRef.mapper';
-import type { IUnit } from '../models/Unit';
+
+/**
+ * Request-body shape for create/update unit calls, mirroring the
+ * pre-migration Mongoose `IUnit` document's fields. Defined locally,
+ * rather than importing the generated Prisma input types, so this service
+ * no longer depends on the Mongoose model, which is being retired (the
+ * Prisma create/update input types don't carry the nested `slots` shape
+ * this service accepts and maps by hand -- see createUnit/updateUnit below).
+ */
+interface UnitInput {
+  propertyId: string;
+  unitIdentifier: string;
+  accommodationType: 'room' | 'bedspace';
+  roomRent?: number;
+  bedspaceRent?: number;
+  perHeadRate?: number;
+  deposit: number;
+  capacity: number;
+  maxOccupants: number;
+  sizeSqm?: number;
+  features?: string[];
+  images?: string[];
+  status?: 'vacant' | 'occupied' | 'reserved' | 'maintenance';
+  slots?: Array<{ slotNumber: number; status?: 'vacant' | 'occupied' | 'reserved'; tenancyId?: string }>;
+}
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const isValidId = (id: string): boolean => UUID_RE.test(id);
@@ -208,7 +232,7 @@ export const getUnitsByProperty = async (userId: string, propertyId: string) => 
 /**
  * Create new unit
  */
-export const createUnit = async (userId: string, data: Partial<IUnit>) => {
+export const createUnit = async (userId: string, data: Partial<UnitInput>) => {
   const body = data as any;
 
   if (!isValidId(body.propertyId)) {
@@ -274,7 +298,7 @@ export const createUnit = async (userId: string, data: Partial<IUnit>) => {
 /**
  * Update unit
  */
-export const updateUnit = async (userId: string, unitId: string, data: Partial<IUnit>) => {
+export const updateUnit = async (userId: string, unitId: string, data: Partial<UnitInput>) => {
   if (!isValidId(unitId)) {
     throw Object.assign(new Error('Invalid unit ID'), { statusCode: 400 });
   }
