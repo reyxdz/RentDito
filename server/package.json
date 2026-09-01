@@ -5,8 +5,10 @@
   "main": "index.js",
   "scripts": {
     "dev": "tsx watch src/server.ts",
-    "build": "tsc",
+    "build": "tsc -p tsconfig.build.json",
     "start": "node dist/server.js",
+    "migrate:deploy": "prisma migrate deploy",
+    "deploy": "npm run migrate:deploy && npm start",
     "seed:pg": "tsx src/seeds/seed-postgres.ts",
     "test": "jest --runInBand --detectOpenHandles",
     "test:watch": "jest --watch --runInBand",
