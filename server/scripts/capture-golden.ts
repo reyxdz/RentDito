@@ -172,13 +172,52 @@ function checkNotCatastrophic(): void {
   }
 }
 
+/**
+ * Path to the capture-instant metadata file consumed by
+ * tests/contract/replay.test.ts to freeze `Date` during replay (see that
+ * file's own comments for why). Deliberately a SIBLING of OUT_DIR
+ * (tests/golden-meta.json), not a file inside it (tests/golden/*.json) —
+ * replay.test.ts's fixture-discovery loop globs *.json directly under
+ * tests/golden/ and fails loudly if that count looks wrong, so a metadata
+ * file placed inside that directory would silently inflate the fixture
+ * count instead of being excluded from it.
+ */
+const GOLDEN_META_PATH = path.resolve(OUT_DIR, '../golden-meta.json');
+
 /** Only called once checkNotCatastrophic() has passed — writes every buffered group to disk. */
-function flushToDisk(): void {
+function flushToDisk(capturedAt: string): void {
   fs.mkdirSync(OUT_DIR, { recursive: true });
   for (const [group, results] of pendingGroups.entries()) {
     fs.writeFileSync(path.join(OUT_DIR, `${group}.json`), JSON.stringify(results, null, 2));
   }
   console.log(`\nWrote ${pendingGroups.size} fixture files to ${OUT_DIR}`);
+
+  // Re-recorded on every run so a re-capture's frozen replay instant never silently drifts
+  // from the fixtures it actually reflects — see GOLDEN_META_PATH's doc comment and
+  // replay.test.ts's use of this value. `capturedAt` is the real wall-clock instant taken
+  // at the END of main() (after every capture request above has already completed), not
+  // script start — deliberately erring slightly LATE relative to the true capture window
+  // rather than early (see golden-meta.json's own `_comment` for why that direction is the
+  // safe one).
+  fs.writeFileSync(
+    GOLDEN_META_PATH,
+    JSON.stringify(
+      {
+        capturedAt,
+        _comment: [
+          'Wall-clock instant recorded by server/scripts/capture-golden.ts at the end of ',
+          'its run (after every request above completed), consumed by ',
+          'tests/contract/replay.test.ts to freeze Date during golden-fixture replay so ',
+          "rolling-window report endpoints (checkout-forecast, inventory's monthly report, ",
+          'etc.) reproduce the exact months this capture ran against. Regenerated ',
+          'automatically on every re-capture — do not hand-edit.',
+        ],
+      },
+      null,
+      2
+    ) + '\n'
+  );
+  console.log(`Wrote capture metadata to ${GOLDEN_META_PATH} (capturedAt: ${capturedAt})`);
 }
 
 async function loginRaw(email: string, password = 'password123') {
@@ -720,7 +759,10 @@ async function main() {
   // mode (see checkNotCatastrophic()'s doc comment). Every group above is still only
   // buffered in memory at this point — nothing has been written to tests/golden/ yet.
   checkNotCatastrophic();
-  flushToDisk();
+  // Taken here (after every capture request has completed, immediately before the only
+  // gated flush) rather than at script start — see flushToDisk()'s doc comment.
+  const capturedAt = new Date().toISOString();
+  flushToDisk(capturedAt);
 
   await mongoose.disconnect();
   console.log('Disconnected from MongoDB.');

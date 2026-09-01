@@ -44,6 +44,12 @@ import { resolveAllCaseIds, ResolvedIdOverrides } from './replay-id-resolver';
 
 const GOLDEN_DIR = path.resolve(__dirname, '../golden');
 
+// Deliberately a SIBLING of GOLDEN_DIR, not inside it — see the fixture-discovery guard
+// immediately below, which globs *.json directly under tests/golden/ and fails loudly if
+// that count looks wrong. A metadata file placed inside tests/golden/ would silently
+// count as a 27th fixture file instead of being excluded from that check.
+const GOLDEN_META_PATH = path.resolve(__dirname, '../golden-meta.json');
+
 // ───────────────────────────────────────────────────────────────────────
 // Fixture discovery. This runs at module-load time, synchronously, and
 // THROWS (rather than degrading to an empty test list) if the golden
@@ -87,6 +93,92 @@ const suites: { file: string; cases: GoldenCase[] }[] = fixtureFiles.map((file) 
 });
 
 const totalCases = suites.reduce((sum, s) => sum + s.cases.length, 0);
+
+// ───────────────────────────────────────────────────────────────────────
+// Frozen-clock replay. report.service.ts's getCheckoutForecast() and
+// inventory.service.ts's getMonthlyInventoryReport() both compute a rolling
+// window relative to `new Date()` — "last 12 months", "next 6 months",
+// "this month" by default. That's correct, intentional behaviour: it is NOT
+// a bug that a report answers "as of right now". But this fixture corpus
+// freezes ONE specific set of request/response pairs captured at ONE
+// specific instant (see tests/golden-meta.json), and a body comparison
+// against a frozen "expected" answer can only ever reproduce if "now" is
+// also frozen to that same instant when the request replays. Left to the
+// real wall clock, both windows silently shift by a month at every calendar
+// month boundary (and by a year at every year boundary) — which is exactly
+// what broke `checkout-forecast-landlord1` and
+// `inventory-monthly-report-landlord1` on 2026-09-01: fixtures captured
+// 2026-08-30, replayed one day into September. The values were never wrong;
+// only the window moved. Re-capturing would just postpone the same failure
+// to 1 October (and would record Postgres behaviour as the new expectation
+// for services already ported off Mongo — see this file's other doc
+// comments on why tests/golden/*.json is a spec, not a snapshot to refresh).
+//
+// The fix: freeze `Date` to the fixture corpus's own recorded capture
+// instant for the lifetime of this suite (see the `beforeAll`/`afterAll`
+// pair below, next to the other suite-lifecycle hooks).
+// ───────────────────────────────────────────────────────────────────────
+
+interface GoldenMeta {
+  capturedAt: string;
+}
+
+function loadFrozenNowMs(): number {
+  if (!fs.existsSync(GOLDEN_META_PATH)) {
+    throw new Error(
+      `golden replay: capture-instant metadata file missing: ${GOLDEN_META_PATH}. This ` +
+        `file records the wall-clock instant tests/golden/*.json was captured against — ` +
+        `without it, time-relative report endpoints (checkout-forecast, inventory's ` +
+        `monthly report) cannot be replayed deterministically. It is written by ` +
+        `server/scripts/capture-golden.ts on every capture run; if this is a fresh ` +
+        `checkout that somehow lost the file, restore it from git rather than inventing ` +
+        `a value by hand.`
+    );
+  }
+  const raw = fs.readFileSync(GOLDEN_META_PATH, 'utf8');
+  let parsed: GoldenMeta;
+  try {
+    parsed = JSON.parse(raw);
+  } catch (err) {
+    throw new Error(
+      `golden replay: ${GOLDEN_META_PATH} is not valid JSON (${(err as Error).message})`
+    );
+  }
+  const ms = Date.parse(parsed.capturedAt);
+  if (Number.isNaN(ms)) {
+    throw new Error(
+      `golden replay: ${GOLDEN_META_PATH}'s "capturedAt" (${JSON.stringify(parsed.capturedAt)}) ` +
+        `did not parse as a valid ISO-8601 instant.`
+    );
+  }
+  return ms;
+}
+
+const FROZEN_NOW_MS = loadFrozenNowMs();
+
+// Every API Jest's modern fake timers ("@sinonjs/fake-timers" under the hood) are
+// capable of faking, EXCEPT `Date` — passed as `doNotFake` below so `Date` is the ONLY
+// one actually faked. Faking any of these would stop Prisma's connection pool,
+// supertest's HTTP client, the MongoDB driver, or Node's own networking stack from ever
+// firing their callbacks — a hang there would be far worse than the two assertions this
+// freeze exists to fix, since this suite talks to a real, remote Postgres instance and a
+// local MongoDB over real sockets.
+const REAL_TIMER_APIS = [
+  'hrtime',
+  'nextTick',
+  'performance',
+  'queueMicrotask',
+  'requestAnimationFrame',
+  'cancelAnimationFrame',
+  'requestIdleCallback',
+  'cancelIdleCallback',
+  'setImmediate',
+  'clearImmediate',
+  'setInterval',
+  'clearInterval',
+  'setTimeout',
+  'clearTimeout',
+] as const;
 
 // Cases deliberately replayed with NO Authorization header at all, matching
 // the capture-golden.ts CaseDefs that never set `token`.
@@ -238,6 +330,16 @@ let RESOLVED_IDS: ResolvedIdOverrides;
 // segment and a query-string value.
 const MONGO_OBJECT_ID_RE = /[0-9a-f]{24}/;
 
+beforeAll(() => {
+  // See the "Frozen-clock replay" comment block above for WHY. Scope note: this
+  // `beforeAll`/`afterAll` pair lives ONLY in this file — Jest gives every test FILE its
+  // own global environment/realm, so faking `Date` here has no effect on any other test
+  // file's `Date`. In particular, tests/contract/dual-id.test.ts's own, separate,
+  // deliberately-real-clock `__setClockForTests` injection (its profile-cache TTL proof,
+  // which flaked historically before being made deterministic) is untouched by this.
+  jest.useFakeTimers({ now: FROZEN_NOW_MS, doNotFake: [...REAL_TIMER_APIS] });
+});
+
 beforeAll(async () => {
   // Importing `app` does not connect to MongoDB (see docstring above) — the
   // suite must connect itself. MongoDB is expected already running and
@@ -256,6 +358,12 @@ beforeAll(async () => {
 
 afterAll(async () => {
   await mongoose.disconnect();
+});
+
+afterAll(() => {
+  // Restore the real clock. `setTimeout`/etc. were never faked (see REAL_TIMER_APIS
+  // above), so this only ever affected `Date` — nothing else needs unwinding.
+  jest.useRealTimers();
 });
 
 describe('golden fixture discovery', () => {
