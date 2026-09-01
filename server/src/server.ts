@@ -95,22 +95,26 @@ let server: import('http').Server | undefined;
 // directly (`npm run dev` / `npm start`), not when it is imported (e.g. by
 // tests via supertest). Importing must be side-effect free.
 if (require.main === module) {
+  // Fired synchronously (both the call and the assignments to `server`
+  // below), so a test can prove the guard gates both the connection
+  // attempt and the port bind without needing to await anything -- see
+  // tests/server-import.test.ts. A failed connection logs and exits
+  // non-zero rather than silently leaving a server up with no working
+  // database behind it.
   prisma
     .$connect()
-    .then(() => {
-      console.log('Prisma connected to Postgres.');
-
-      server = app.listen(PORT, () => {
-        console.log(`Server is running in development mode on port ${PORT}`);
-
-        // Initialize cron scheduler (gated by ENABLE_CRON=true)
-        initScheduler();
-      });
-    })
+    .then(() => console.log('Prisma connected to Postgres.'))
     .catch((error) => {
       console.error('Failed to connect to Postgres via Prisma:', error);
       process.exit(1);
     });
+
+  server = app.listen(PORT, () => {
+    console.log(`Server is running in development mode on port ${PORT}`);
+
+    // Initialize cron scheduler (gated by ENABLE_CRON=true)
+    initScheduler();
+  });
 }
 
 export { app };
