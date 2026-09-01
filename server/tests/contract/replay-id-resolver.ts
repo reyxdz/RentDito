@@ -155,6 +155,7 @@ export const PORTED_SERVICES: ReadonlySet<string> = new Set<string>([
   'admin', // Task 29 (server/src/services/admin.service.ts)
   'document', // Task 29 (server/src/services/document.service.ts)
   'security', // Task 29 (server/src/services/security.service.ts)
+  'notification', // Task 29 (server/src/services/notification.service.ts, extracted from notification.controller.ts)
   // ...and so on, one line per port, in whatever order the ports land.
 ]);
 
