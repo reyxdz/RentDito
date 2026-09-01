@@ -1,11 +1,10 @@
 import express from 'express';
 import cors from 'cors';
-import mongoSanitize from 'express-mongo-sanitize';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
 import path from 'path';
-import connectDB from './config/db';
+import prisma from './config/prisma';
 import authRoutes from './routes/auth.routes';
 import userRoutes from './routes/user.routes';
 import landlordApplicationRoutes from './routes/landlord-application.routes';
@@ -49,19 +48,6 @@ app.use(cors({
 app.use(morgan('dev'));
 app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: true, limit: '1mb' }));
-// Workaround Express 5 read-only query getter for express-mongo-sanitize compatibility
-app.use((req, res, next) => {
-  if (req.query) {
-    Object.defineProperty(req, 'query', {
-      value: { ...req.query },
-      writable: true,
-      configurable: true,
-      enumerable: true,
-    });
-  }
-  next();
-});
-app.use(mongoSanitize());
 
 // Serve locally-uploaded files (fallback when Cloudinary is unavailable)
 app.use('/uploads', express.static(path.resolve(__dirname, '../uploads')));
@@ -109,15 +95,22 @@ let server: import('http').Server | undefined;
 // directly (`npm run dev` / `npm start`), not when it is imported (e.g. by
 // tests via supertest). Importing must be side-effect free.
 if (require.main === module) {
-  // Database connection
-  connectDB();
+  prisma
+    .$connect()
+    .then(() => {
+      console.log('Prisma connected to Postgres.');
 
-  server = app.listen(PORT, () => {
-    console.log(`Server is running in development mode on port ${PORT}`);
+      server = app.listen(PORT, () => {
+        console.log(`Server is running in development mode on port ${PORT}`);
 
-    // Initialize cron scheduler (gated by ENABLE_CRON=true)
-    initScheduler();
-  });
+        // Initialize cron scheduler (gated by ENABLE_CRON=true)
+        initScheduler();
+      });
+    })
+    .catch((error) => {
+      console.error('Failed to connect to Postgres via Prisma:', error);
+      process.exit(1);
+    });
 }
 
 export { app };
