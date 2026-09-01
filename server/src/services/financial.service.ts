@@ -1,6 +1,14 @@
-import { Payment } from '../models/Payment';
-import { Property } from '../models/Property';
-import { User } from '../models/User';
+import { Prisma } from '@prisma/client';
+import prisma from '../config/prisma';
+
+// NOTE on propertyRef.mapper.ts / embeddedProfile.mapper.ts (listed as
+// "existing utilities to use" for this port): neither applies here. Nothing
+// in this file returns a Property or Profile row (embedded or otherwise) --
+// every export builds a plain JS aggregation object (totals/trend buckets)
+// from Payment+Bill rows, and the only "relation" read is a narrow `bill`
+// select on Payment purely to compute a split, never surfaced to the caller.
+// No child-table (`tenancy_comments`/`unit_slots`/`ticket_updates`/
+// `conversation_participants`/`message_reads`) is reachable from here either.
 
 type DateRangeInput = {
   from?: string;
@@ -23,47 +31,75 @@ type SplitResult = {
   refund: number;
 };
 
+type ScopedBill = {
+  propertyId: string;
+  type: string;
+  rentAmount: Prisma.Decimal;
+  utilityAmount: Prisma.Decimal;
+  penaltyAmount: Prisma.Decimal;
+  totalAmount: Prisma.Decimal;
+};
+
+type ScopedPayment = {
+  amount: Prisma.Decimal;
+  paymentDate: Date;
+  bill: ScopedBill;
+};
+
 const throwWithStatus = (message: string, statusCode: number): never => {
   throw Object.assign(new Error(message), { statusCode });
 };
 
 const round2 = (value: number): number => Math.round(value * 100) / 100;
 
-const ensureUser = async (userId: string): Promise<any> => {
-  const user: any = await User.findById(userId);
+// Decimal->number conversion via an explicit `.toNumber()` call, never a
+// bare truthy/`||` check against the Decimal instance itself -- a
+// Prisma.Decimal is an object and therefore always truthy regardless of the
+// value it wraps (see property.service.ts's `decimalOrNull` and task-10's
+// report for the exact class of bug this avoids: `if (unit.roomRent)`
+// silently keeping a corrupted "$0 rent" check).
+const num = (value: Prisma.Decimal | number | null | undefined): number =>
+  value === null || value === undefined ? 0 : value instanceof Prisma.Decimal ? value.toNumber() : Number(value);
+
+const ensureUser = async (userId: string) => {
+  const user = await prisma.profile.findUnique({ where: { id: userId } });
   if (!user) {
     throwWithStatus('User not found', 404);
   }
-  return user;
+  return user!;
 };
 
-const hasFinancialPermission = (user: any): boolean => {
-  return user.role !== 'staff' || Boolean(user.permissions?.includes('financials'));
+const hasFinancialPermission = (user: { role: string; permissions: string[] }): boolean => {
+  return user.role !== 'staff' || user.permissions.includes('financials');
 };
 
-const resolveScopedPropertyIds = async (user: any): Promise<string[] | null> => {
+const resolveScopedPropertyIds = async (user: { id: string; role: string; permissions: string[] }): Promise<string[] | null> => {
   if (user.role === 'super_admin') {
     return null;
   }
 
   if (user.role === 'landlord') {
-    const properties = await Property.find({ landlordId: user._id }).select('_id');
-    return properties.map((property: any) => property._id.toString());
+    const properties = await prisma.property.findMany({ where: { landlordId: user.id }, select: { id: true } });
+    return properties.map((property) => property.id);
   }
 
   if (user.role === 'staff') {
     if (!hasFinancialPermission(user)) {
       throwWithStatus('Access denied. Missing permission: financials', 403);
     }
-    return (user.assignedPropertyIds || []).map((id: any) => id.toString());
+    const assignments = await prisma.staffPropertyAssignment.findMany({
+      where: { staffId: user.id },
+      select: { propertyId: true },
+    });
+    return assignments.map((a) => a.propertyId);
   }
 
   throwWithStatus('Access denied', 403);
   return [];
 };
 
-const ensurePropertyAccess = async (user: any, propertyId: string) => {
-  const property: any = await Property.findById(propertyId);
+const ensurePropertyAccess = async (user: { id: string; role: string; permissions: string[] }, propertyId: string) => {
+  const property = await prisma.property.findUnique({ where: { id: propertyId } });
   if (!property) {
     throwWithStatus('Property not found', 404);
   }
@@ -71,14 +107,17 @@ const ensurePropertyAccess = async (user: any, propertyId: string) => {
   if (user.role === 'super_admin') {
     return;
   }
-  if (user.role === 'landlord' && property.landlordId.toString() === user._id.toString()) {
+  if (user.role === 'landlord' && property!.landlordId === user.id) {
     return;
   }
   if (user.role === 'staff') {
     if (!hasFinancialPermission(user)) {
       throwWithStatus('Access denied. Missing permission: financials', 403);
     }
-    if (user.assignedPropertyIds?.some((id: any) => id.toString() === propertyId)) {
+    const assignment = await prisma.staffPropertyAssignment.findUnique({
+      where: { staffId_propertyId: { staffId: user.id, propertyId } },
+    });
+    if (assignment) {
       return;
     }
   }
@@ -106,11 +145,11 @@ const parseDateRange = (filters: DateRangeInput) => {
   return { from, to };
 };
 
-const splitPaymentByBillComposition = (amount: number, bill: any): SplitResult => {
-  const rent = Number(bill?.rentAmount || 0);
-  const utility = Number(bill?.utilityAmount || 0);
-  const penalty = Number(bill?.penaltyAmount || 0);
-  const total = Number(bill?.totalAmount || 0);
+const splitPaymentByBillComposition = (amount: number, bill: ScopedBill | null | undefined): SplitResult => {
+  const rent = num(bill?.rentAmount);
+  const utility = num(bill?.utilityAmount);
+  const penalty = num(bill?.penaltyAmount);
+  const total = num(bill?.totalAmount);
 
   if (amount < 0) {
     // Negative payments are treated as refunds if ever supported in the future.
@@ -130,7 +169,7 @@ const splitPaymentByBillComposition = (amount: number, bill: any): SplitResult =
       rent: round2(rentPart + diff),
       utility: utilityPart,
       penalty: penaltyPart,
-      refund: 0
+      refund: 0,
     };
   }
 
@@ -143,24 +182,38 @@ const splitPaymentByBillComposition = (amount: number, bill: any): SplitResult =
 };
 
 const getPaymentsForScope = async (
-  user: any,
+  user: { id: string; role: string; permissions: string[] },
   range: { from: Date; to: Date },
   propertyId?: string
-) => {
+): Promise<ScopedPayment[]> => {
   const scopedPropertyIds = await resolveScopedPropertyIds(user);
   if (propertyId) {
     await ensurePropertyAccess(user, propertyId);
   }
 
-  const payments: any[] = await Payment.find({
-    paymentDate: { $gte: range.from, $lte: range.to }
-  })
-    .populate('billId', 'propertyId type rentAmount utilityAmount penaltyAmount totalAmount')
-    .lean();
+  const payments = await prisma.payment.findMany({
+    where: {
+      paymentDate: { gte: range.from, lte: range.to },
+    },
+    select: {
+      amount: true,
+      paymentDate: true,
+      bill: {
+        select: {
+          propertyId: true,
+          type: true,
+          rentAmount: true,
+          utilityAmount: true,
+          penaltyAmount: true,
+          totalAmount: true,
+        },
+      },
+    },
+  });
 
-  const scoped = payments.filter((payment: any) => {
-    const bill = payment.billId;
-    const billPropertyId = bill?.propertyId?.toString?.() || bill?.propertyId?._id?.toString?.();
+  const scoped = payments.filter((payment) => {
+    const bill = payment.bill;
+    const billPropertyId = bill?.propertyId;
     if (!bill || !billPropertyId) return false;
 
     if (propertyId && billPropertyId !== propertyId) return false;
@@ -168,7 +221,7 @@ const getPaymentsForScope = async (
     return true;
   });
 
-  return scoped;
+  return scoped as ScopedPayment[];
 };
 
 export const getFinancialSummary = async (userId: string, filters: FinancialFilters = {}) => {
@@ -177,8 +230,8 @@ export const getFinancialSummary = async (userId: string, filters: FinancialFilt
   const payments = await getPaymentsForScope(user, range, filters.propertyId);
 
   const totals = payments.reduce(
-    (acc: any, payment: any) => {
-      const split = splitPaymentByBillComposition(Number(payment.amount || 0), payment.billId);
+    (acc, payment) => {
+      const split = splitPaymentByBillComposition(num(payment.amount), payment.bill);
       acc.rentCollected += split.rent;
       acc.utilitiesCollected += split.utility;
       acc.penaltiesCollected += split.penalty;
@@ -189,7 +242,7 @@ export const getFinancialSummary = async (userId: string, filters: FinancialFilt
       rentCollected: 0,
       utilitiesCollected: 0,
       penaltiesCollected: 0,
-      refunds: 0
+      refunds: 0,
     }
   );
 
@@ -205,7 +258,7 @@ export const getFinancialSummary = async (userId: string, filters: FinancialFilt
   return {
     ...totals,
     netIncome,
-    range
+    range,
   };
 };
 
@@ -220,7 +273,7 @@ export const getMonthlyFinancialTrend = async (userId: string, filters: MonthlyF
 
   const range = {
     from: new Date(year, 0, 1, 0, 0, 0, 0),
-    to: new Date(year, 11, 31, 23, 59, 59, 999)
+    to: new Date(year, 11, 31, 23, 59, 59, 999),
   };
 
   const payments = await getPaymentsForScope(user, range, filters.propertyId);
@@ -232,13 +285,13 @@ export const getMonthlyFinancialTrend = async (userId: string, filters: MonthlyF
     utilitiesCollected: 0,
     penaltiesCollected: 0,
     refunds: 0,
-    netIncome: 0
+    netIncome: 0,
   }));
 
   for (const payment of payments) {
     const paymentDate = new Date(payment.paymentDate);
     const monthIndex = paymentDate.getMonth();
-    const split = splitPaymentByBillComposition(Number(payment.amount || 0), payment.billId);
+    const split = splitPaymentByBillComposition(num(payment.amount), payment.bill);
     buckets[monthIndex].rentCollected += split.rent;
     buckets[monthIndex].utilitiesCollected += split.utility;
     buckets[monthIndex].penaltiesCollected += split.penalty;
@@ -257,7 +310,7 @@ export const getMonthlyFinancialTrend = async (userId: string, filters: MonthlyF
 
   return {
     year,
-    trend: buckets
+    trend: buckets,
   };
 };
 
@@ -266,18 +319,21 @@ export const getFinancialByProperty = async (userId: string, filters: FinancialF
   const range = parseDateRange(filters);
   const payments = await getPaymentsForScope(user, range, filters.propertyId);
 
-  const totalsByProperty = new Map<string, {
-    propertyId: string;
-    rentCollected: number;
-    utilitiesCollected: number;
-    penaltiesCollected: number;
-    refunds: number;
-    netIncome: number;
-  }>();
+  const totalsByProperty = new Map<
+    string,
+    {
+      propertyId: string;
+      rentCollected: number;
+      utilitiesCollected: number;
+      penaltiesCollected: number;
+      refunds: number;
+      netIncome: number;
+    }
+  >();
 
   for (const payment of payments) {
-    const bill = payment.billId;
-    const propertyId = bill?.propertyId?.toString?.() || bill?.propertyId?._id?.toString?.();
+    const bill = payment.bill;
+    const propertyId = bill?.propertyId;
     if (!propertyId) continue;
 
     if (!totalsByProperty.has(propertyId)) {
@@ -287,12 +343,12 @@ export const getFinancialByProperty = async (userId: string, filters: FinancialF
         utilitiesCollected: 0,
         penaltiesCollected: 0,
         refunds: 0,
-        netIncome: 0
+        netIncome: 0,
       });
     }
 
     const row = totalsByProperty.get(propertyId)!;
-    const split = splitPaymentByBillComposition(Number(payment.amount || 0), bill);
+    const split = splitPaymentByBillComposition(num(payment.amount), bill);
     row.rentCollected += split.rent;
     row.utilitiesCollected += split.utility;
     row.penaltiesCollected += split.penalty;
@@ -300,10 +356,8 @@ export const getFinancialByProperty = async (userId: string, filters: FinancialF
   }
 
   const propertyIds = Array.from(totalsByProperty.keys());
-  const properties = await Property.find({ _id: { $in: propertyIds } }).select('name').lean();
-  const propertyNameMap = new Map<string, string>(
-    properties.map((property: any) => [property._id.toString(), property.name])
-  );
+  const properties = await prisma.property.findMany({ where: { id: { in: propertyIds } }, select: { id: true, name: true } });
+  const propertyNameMap = new Map<string, string>(properties.map((property) => [property.id, property.name]));
 
   const data = Array.from(totalsByProperty.values()).map((row) => {
     const rentCollected = round2(row.rentCollected);
@@ -319,7 +373,7 @@ export const getFinancialByProperty = async (userId: string, filters: FinancialF
       utilitiesCollected,
       penaltiesCollected,
       refunds,
-      netIncome
+      netIncome,
     };
   });
 
@@ -327,6 +381,6 @@ export const getFinancialByProperty = async (userId: string, filters: FinancialF
 
   return {
     range,
-    data
+    data,
   };
 };

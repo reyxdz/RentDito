@@ -7,7 +7,7 @@ import * as financialService from '../services/financial.service';
  * GET /api/financials/summary - Financial summary
  */
 export const getSummary = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
-    const summary = await financialService.getFinancialSummary(req.user!.id, {
+    const summary = await financialService.getFinancialSummary(req.user!.pgId, {
       from: req.query.from as string,
       to: req.query.to as string,
       propertyId: req.query.propertyId as string
@@ -24,7 +24,7 @@ export const getSummary = catchAsync(async (req: AuthRequest, res: Response): Pr
  */
 export const getMonthly = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
     const year = req.query.year ? Number(req.query.year) : undefined;
-    const monthly = await financialService.getMonthlyFinancialTrend(req.user!.id, {
+    const monthly = await financialService.getMonthlyFinancialTrend(req.user!.pgId, {
       year,
       propertyId: req.query.propertyId as string
     });
@@ -39,7 +39,7 @@ export const getMonthly = catchAsync(async (req: AuthRequest, res: Response): Pr
  * GET /api/financials/by-property - Income grouped by property
  */
 export const getByProperty = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
-    const byProperty = await financialService.getFinancialByProperty(req.user!.id, {
+    const byProperty = await financialService.getFinancialByProperty(req.user!.pgId, {
       from: req.query.from as string,
       to: req.query.to as string,
       propertyId: req.query.propertyId as string
