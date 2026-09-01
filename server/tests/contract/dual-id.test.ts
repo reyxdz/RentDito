@@ -126,6 +126,47 @@ describe('profile cache TTL expiry', () => {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const freshPrisma = require('../../src/config/prisma').default;
 
+    // This test used to exercise the cache against a SEEDED profile
+    // (EMAILS.user2), mutating its `role` and then restoring it in a
+    // `finally`. That looked safe but wasn't: `profiles.updated_at` is a
+    // Prisma `@updatedAt` column, so BOTH the mutation and the "restore"
+    // re-stamp it to the real current time -- the restore never actually put
+    // `updated_at` back to what server/src/seeds/seed-postgres.ts pinned it
+    // to. That column is exactly what tests/golden/admin.json's
+    // `all-verifications-super-admin` case sorts 14 profiles by (desc), so
+    // the first run after a fresh seed passed and every run after that
+    // failed, because this test had already dragged user2's `updated_at` to
+    // "now" and no restore could undo it.
+    //
+    // Fix: use throwaway fixture data instead of restoring-after-the-fact.
+    // A disposable Supabase auth user + matching `profiles` row (the same
+    // pattern the "rejects a token" test above already uses) is exercised
+    // and deleted at the end, so no seeded row's `updated_at` -- or anything
+    // else -- is ever touched by this test.
+    const { supabaseAdmin } = await import('../../src/config/supabase');
+    const email = `dual-id-ttl-${Date.now()}@rentdito.com`;
+    const { data, error } = await supabaseAdmin.auth.admin.createUser({
+      email,
+      password: 'password123',
+      email_confirm: true,
+    });
+    if (error || !data.user) {
+      throw new Error(`fixture setup failed: ${error?.message}`);
+    }
+    const throwawayId = data.user.id;
+    await freshPrisma.profile.create({
+      data: {
+        id: throwawayId,
+        name: 'Dual-ID TTL throwaway',
+        email,
+        role: 'user',
+        status: 'active',
+        verificationStatus: 'unverified',
+        idPhotos: [],
+        permissions: [],
+      },
+    });
+
     let mockNow = 1_000_000_000;
     freshAuth.__setClockForTests(() => mockNow);
 
@@ -134,15 +175,16 @@ describe('profile cache TTL expiry', () => {
       res.json({ user: req.user });
     });
 
-    const token = await tokenForEmail(EMAILS.user2);
-
-    const before = await request(app).get('/whoami').set('Authorization', `Bearer ${token}`);
-    expect(before.status).toBe(200);
-    expect(before.body.user.role).toBe('user');
-
-    await freshPrisma.profile.update({ where: { id: before.body.user.id }, data: { role: 'landlord' } });
-
     try {
+      const token = await tokenForEmail(email);
+
+      const before = await request(app).get('/whoami').set('Authorization', `Bearer ${token}`);
+      expect(before.status).toBe(200);
+      expect(before.body.user.role).toBe('user');
+      expect(before.body.user.id).toBe(throwawayId);
+
+      await freshPrisma.profile.update({ where: { id: throwawayId }, data: { role: 'landlord' } });
+
       // Advance the mock clock by less than the TTL: still within the
       // window, so the cached (stale) value must win.
       mockNow += 500;
@@ -156,8 +198,11 @@ describe('profile cache TTL expiry', () => {
       expect(afterExpiry.status).toBe(200);
       expect(afterExpiry.body.user.role).toBe('landlord');
     } finally {
-      // Restore the seed data so no other test observes a mutated role.
-      await freshPrisma.profile.update({ where: { id: before.body.user.id }, data: { role: 'user' } });
+      // Throwaway fixture only -- deleting the Supabase auth user cascades
+      // (profiles.id -> auth.users.id `ON DELETE CASCADE`) to delete the
+      // `profiles` row too, so nothing seeded is ever mutated and nothing
+      // throwaway is left behind.
+      await supabaseAdmin.auth.admin.deleteUser(throwawayId);
       await freshPrisma.$disconnect();
     }
   }, 20000);
