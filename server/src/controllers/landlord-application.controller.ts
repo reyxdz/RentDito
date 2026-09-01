@@ -7,7 +7,7 @@ import * as landlordApplicationService from '../services/landlord-application.se
  * POST /api/landlord-applications — Submit application
  */
 export const apply = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
-    const result = await landlordApplicationService.apply(req.user!.pgId, req.body);
+    const result = await landlordApplicationService.apply(req.user!.id, req.body);
     res.status(201).json({
       status: 'success',
       message: 'Landlord application submitted successfully.',
@@ -19,7 +19,7 @@ export const apply = catchAsync(async (req: AuthRequest, res: Response): Promise
  * GET /api/landlord-applications/me — Get my application
  */
 export const getMyApplication = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
-    const result = await landlordApplicationService.getMyApplication(req.user!.pgId);
+    const result = await landlordApplicationService.getMyApplication(req.user!.id);
     res.status(200).json({
       status: 'success',
       data: result,
@@ -42,7 +42,7 @@ export const getAll = catchAsync(async (req: Request, res: Response): Promise<vo
  * PATCH /api/landlord-applications/:id/approve
  */
 export const approve = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
-    const result = await landlordApplicationService.approve(req.params.id as string, req.user!.pgId);
+    const result = await landlordApplicationService.approve(req.params.id as string, req.user!.id);
     res.status(200).json({
       status: 'success',
       message: 'Application approved. User has been promoted to landlord.',
@@ -56,7 +56,7 @@ export const approve = catchAsync(async (req: AuthRequest, res: Response): Promi
 export const reject = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
     const result = await landlordApplicationService.reject(
       req.params.id as string,
-      req.user!.pgId,
+      req.user!.id,
       req.body.reviewNotes
     );
     res.status(200).json({

@@ -11,7 +11,7 @@ export const getPayments = catchAsync(async (req: AuthRequest, res: Response): P
       tenancyId: req.query.tenancyId as string,
       method: req.query.method as string
     };
-    const payments = await billingService.getPayments(req.user!.pgId, filters);
+    const payments = await billingService.getPayments(req.user!.id, filters);
     res.status(200).json({ status: 'success', data: payments });
 });
 
@@ -19,6 +19,6 @@ export const getPayments = catchAsync(async (req: AuthRequest, res: Response): P
  * GET /api/payments/tenancy/:id - Get payment history for a tenancy
  */
 export const getPaymentsByTenancy = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
-    const payments = await billingService.getPaymentsByTenancy(req.user!.pgId, req.params.id as string);
+    const payments = await billingService.getPaymentsByTenancy(req.user!.id, req.params.id as string);
     res.status(200).json({ status: 'success', data: payments });
 });

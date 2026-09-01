@@ -14,11 +14,11 @@ import path from 'path';
  * grew a `resolveCallerProfile()` helper that fell back to
  * `prisma.profile.findUnique({ where: { legacyMongoId: userId } })` whenever
  * the incoming id wasn't UUID-shaped. The fallback was added to paper over
- * `payment.controller.ts` still passing `req.user!.id` (the Mongo id)
- * instead of `req.user!.pgId` into a now-ported service -- and it worked
- * well enough that every fixture kept passing. That is exactly the danger:
- * the fallback silently absorbed a request from the wrong id space instead
- * of failing loudly, hiding a missed controller swap that should have been
+ * `payment.controller.ts` still passing the legacy Mongo id instead of the
+ * Postgres UUID into a now-ported service -- and it worked well enough
+ * that every fixture kept passing. That is exactly the danger: the
+ * fallback silently absorbed a request from the wrong id space instead of
+ * failing loudly, hiding a missed controller swap that should have been
  * caught by a red test, not a manual audit.
  *
  * This test scans every file under `server/src/services/` (recursively)
@@ -33,9 +33,9 @@ import path from 'path';
  *
  * If this test just went red because you added a legitimate new
  * `legacyMongoId` reference: it isn't legitimate. Fix the real problem
- * instead -- find whichever controller call site is still passing
- * `req.user!.id` where it should pass `req.user!.pgId`, and fix that. Do
- * not restore the fallback and do not delete this guard.
+ * instead -- find whichever controller call site is still passing the
+ * wrong id space, and fix that. Do not restore the fallback and do not
+ * delete this guard.
  */
 
 const SERVICES_DIR = path.resolve(__dirname, '../../src/services');
@@ -87,9 +87,9 @@ describe('no dual-id fallback in production services', () => {
             `dual-id fallback (try the UUID, fall back to the legacy Mongo id) was ` +
             `deliberately banned from production query paths in this migration ` +
             `because it silently absorbs a caller that's still passing the wrong ` +
-            `id space, hiding a missed "req.user!.id -> req.user!.pgId" controller ` +
-            `swap that should fail loudly instead. Fix the controller call site ` +
-            `that's still passing the Mongo id; do not reintroduce this fallback.`
+            `id space, hiding a missed controller swap that should fail loudly ` +
+            `instead. Fix the controller call site that's still passing the Mongo ` +
+            `id; do not reintroduce this fallback.`
         );
       }
     });

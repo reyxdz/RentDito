@@ -176,9 +176,11 @@ export const resetPassword = async (token: string, newPassword: string) => {
  * independent levels:
  *
  *  1. Wrong id space (the class of bug this migration's `payment.controller`
- *     fix already found once): `req.user.id` is the legacy/strangler id, not
- *     `req.user.pgId` -- irrelevant here since the argument shouldn't be an
- *     id at all (see #2), but it was doubly wrong regardless.
+ *     fix already found once): `req.user.id` was the legacy/strangler id at
+ *     the time, not the Postgres UUID field this middleware exposed
+ *     alongside it back then -- irrelevant here since the argument
+ *     shouldn't be an id at all (see #2), but it was doubly wrong
+ *     regardless.
  *  2. Wrong API contract entirely: GoTrue's admin `signOut(jwt, scope?)` --
  *     see `@supabase/auth-js`'s `GoTrueAdminApi.signOut` -- takes the
  *     caller's own SESSION JWT (the access token from the `Authorization`
@@ -195,8 +197,8 @@ export const resetPassword = async (token: string, newPassword: string) => {
  * Fixed by accepting the raw access token instead of any id, and passing
  * THAT to `signOut` -- the only shape the underlying API actually accepts.
  * `auth.controller.ts` now extracts it from the `Authorization` header the
- * same way `middleware/auth.ts` does, and no longer references
- * `req.user.id`/`req.user.pgId` for this route at all.
+ * same way `middleware/auth.ts` does, and no longer references `req.user`
+ * at all for this route.
  */
 export const logout = async (accessToken: string) => {
   await supabaseAdmin.auth.admin.signOut(accessToken);

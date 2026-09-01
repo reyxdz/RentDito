@@ -8,17 +8,13 @@ import prisma from '../config/prisma';
  */
 export interface AuthRequest extends Request {
   user?: {
-    // TRANSITIONAL: during the strangler migration this holds the legacy
-    // MongoDB ObjectId (falling back to the Postgres UUID for profiles that
-    // have no legacy id), because all 24 not-yet-ported services still
-    // query MongoDB by this value. As each service is ported to Prisma it
-    // switches from reading `id` to reading `pgId`. At final cutover — once
-    // every service is ported — `id` becomes the Postgres UUID directly and
-    // `pgId` is deleted.
+    // The Postgres/Supabase profile UUID. Every service is now ported to
+    // Prisma, so this is the only id `req.user` carries -- the transitional
+    // secondary Postgres-id field this middleware used to also expose (and
+    // the legacy-Mongo-ObjectId value `id` used to hold during the
+    // strangler migration) has been removed. See git history for the
+    // dual-id era this collapsed.
     id: string;
-    // The Postgres/Supabase profile UUID, always present. Ported (Prisma)
-    // services should read this instead of `id`.
-    pgId: string;
     role: string;
   };
 }
@@ -57,7 +53,7 @@ export const isJwksInfraFailure = (err: any): boolean =>
  * In-process cache of the profile lookup, keyed on the JWT `sub` (the
  * Supabase/Postgres profile id). Every request otherwise pays a full Prisma
  * round-trip to the (remote, Singapore-hosted) Postgres instance —
- * 200-400ms each — purely to resolve id/pgId/role, which is what turned the
+ * 200-400ms each — purely to resolve id/role, which is what turned the
  * 186-case golden replay suite from seconds into minutes. TTL is short
  * (60s) and deliberately simple: a plain Map keyed by sub, storing the
  * resolved payload plus the time it was cached, with a bounded size so a
@@ -77,7 +73,6 @@ const PROFILE_CACHE_MAX_SIZE = 500;
 
 interface CachedProfile {
   id: string;
-  pgId: string;
   role: string;
 }
 
@@ -197,19 +192,18 @@ const auth = async (req: AuthRequest, res: Response, next: NextFunction): Promis
     if (!cached) {
       const profile = await prisma.profile.findUnique({
         where: { id: decoded.sub },
-        select: { id: true, role: true, legacyMongoId: true },
+        select: { id: true, role: true },
       });
       if (!profile) {
         res.status(401).json({ status: 'error', message: 'Invalid token.' });
         return;
       }
-      // TRANSITIONAL: `id` reverts to the Mongo ObjectId (falling back to
-      // the Postgres UUID when a profile has no legacy id, e.g. one created
-      // after the migration) so the 24 not-yet-ported services — which all
-      // still query MongoDB by this value — keep working untouched. `pgId`
-      // is always the Postgres UUID. At final cutover, `id` becomes the
-      // UUID directly and `pgId` is removed.
-      cached = { id: profile.legacyMongoId ?? profile.id, pgId: profile.id, role: profile.role };
+      // Every service now reads Prisma directly, so `id` is simply the
+      // Postgres profile UUID -- no legacy-Mongo-id fallback. The
+      // `profiles.legacy_mongo_id` column itself is untouched (kept as a
+      // rollback aid and still populated by the seed); this middleware just
+      // no longer reads it.
+      cached = { id: profile.id, role: profile.role };
       setCachedProfile(decoded.sub, cached);
     }
 

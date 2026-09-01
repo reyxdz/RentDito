@@ -18,7 +18,7 @@ export const getDocument = catchAsync(async (req: AuthRequest, res: Response) =>
 });
 
 export const createDocument = catchAsync(async (req: AuthRequest, res: Response) => {
-    const documentData = { ...req.body, uploadedBy: req.user!.pgId };
+    const documentData = { ...req.body, uploadedBy: req.user!.id };
     const newDocument = await documentService.createDocument(documentData);
     res.status(201).json({ status: 'success', data: newDocument });
 });

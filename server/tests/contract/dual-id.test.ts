@@ -1,12 +1,24 @@
 /**
- * Dual-ID auth middleware contract (Task: strangler transition with dual
- * IDs, server/src/middleware/auth.ts).
+ * Auth middleware profile-resolution contract (server/src/middleware/auth.ts).
  *
- * Design under test: `req.user.id` reverts to holding the legacy MongoDB
- * ObjectId (falling back to the Postgres UUID when a profile has no legacy
- * id) so the not-yet-ported services — which still query MongoDB by this
- * value — keep working untouched, while `req.user.pgId` always carries the
- * Postgres/Supabase profile UUID for services as they're ported to Prisma.
+ * HISTORY: this file used to guard the strangler-era dual-id shape --
+ * `req.user.id` reverting to the legacy MongoDB ObjectId (falling back to
+ * the Postgres UUID for profiles with none) so not-yet-ported services could
+ * keep querying MongoDB by it, while a second field on `req.user` always
+ * carried the Postgres/Supabase profile UUID for services as they were
+ * ported to Prisma. Now that every service is ported to Prisma, that
+ * strangler has been collapsed (see middleware/auth.ts): `req.user.id` IS
+ * the Postgres UUID directly, the second field is gone, and the
+ * `legacyMongoId` lookup that used to populate it has been removed from the
+ * middleware (the `profiles.legacy_mongo_id` column itself still exists as
+ * a rollback aid -- only the middleware's read of it is gone).
+ *
+ * What still needs guarding after the collapse:
+ *   1. a valid token resolves to the right Postgres profile
+ *   2. the short-TTL profile cache actually expires (and re-fetches) once
+ *      its TTL elapses, rather than serving a stale role forever
+ *   3. a token with no matching profile is rejected (401), rather than
+ *      silently admitting a caller the middleware can't actually resolve
  *
  * This file mounts the real middleware on a throwaway express app (no
  * src/routes/** involved) so `req.user` can be observed directly, rather
@@ -15,14 +27,11 @@
  */
 import express from 'express';
 import request from 'supertest';
-import mongoose from 'mongoose';
 import auth, { AuthRequest, __clearProfileCacheForTests } from '../../src/middleware/auth';
 import prisma from '../../src/config/prisma';
-import { User } from '../../src/models/User';
 import { tokenForEmail } from '../helpers/auth';
 import { EMAILS } from './replay.meta';
 
-const MONGO_OBJECT_ID_RE = /^[0-9a-f]{24}$/;
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 function buildWhoAmIApp() {
@@ -33,12 +42,7 @@ function buildWhoAmIApp() {
   return app;
 }
 
-beforeAll(async () => {
-  await mongoose.connect('mongodb://127.0.0.1:27017/rentdito');
-});
-
 afterAll(async () => {
-  await mongoose.disconnect();
   await prisma.$disconnect();
 });
 
@@ -46,8 +50,8 @@ beforeEach(() => {
   __clearProfileCacheForTests();
 });
 
-describe('dual-id middleware: req.user.id (Mongo ObjectId) vs req.user.pgId (Postgres UUID)', () => {
-  it('sets id to the seeded user\'s legacy Mongo ObjectId and pgId to their Postgres profile UUID', async () => {
+describe('auth middleware: profile resolution', () => {
+  it("resolves a valid token to the seeded user's own Postgres profile, with no leftover secondary id field on req.user", async () => {
     const token = await tokenForEmail(EMAILS.user1);
 
     const res = await request(buildWhoAmIApp()).get('/whoami').set('Authorization', `Bearer ${token}`);
@@ -55,30 +59,22 @@ describe('dual-id middleware: req.user.id (Mongo ObjectId) vs req.user.pgId (Pos
     expect(res.status).toBe(200);
     const { user } = res.body;
 
+    // Exactly {id, role} -- the collapsed shape carries nothing else.
+    expect(Object.keys(user).sort()).toEqual(['id', 'role']);
     expect(user.role).toBe('user');
-    expect(user.id).toMatch(MONGO_OBJECT_ID_RE);
-    expect(user.pgId).toMatch(UUID_RE);
-    expect(user.id).not.toBe(user.pgId);
+    expect(user.id).toMatch(UUID_RE);
 
-    // id really is a live Mongo ObjectId for this same user, not just
-    // something that happens to look like one.
-    const mongoUser = await User.findById(user.id);
-    expect(mongoUser).not.toBeNull();
-    expect(mongoUser!.email).toBe(EMAILS.user1);
-
-    // pgId really is this user's Postgres profile id, and that profile's
-    // legacyMongoId is exactly what came back as `id`.
-    const profile = await prisma.profile.findUnique({ where: { id: user.pgId } });
+    // id really is this user's own Postgres profile id.
+    const profile = await prisma.profile.findUnique({ where: { id: user.id } });
     expect(profile).not.toBeNull();
     expect(profile!.email).toBe(EMAILS.user1);
-    expect(profile!.legacyMongoId).toBe(user.id);
   });
 
-  it('falls back id to the Postgres UUID for a profile with no legacyMongoId (post-migration signup)', async () => {
-    // Mirrors tests/contract/auth.test.ts's own fixture pattern: a profile
-    // created directly via Prisma, with no legacyMongoId, representing a
-    // user who signed up after the Mongo -> Postgres cutover.
-    const email = `dual-id-no-legacy-${Date.now()}@rentdito.com`;
+  it('rejects a token whose sub has no matching profile with 401 "Invalid token."', async () => {
+    // A real Supabase Auth user, signed with no matching `profiles` row --
+    // the exact case middleware/auth.ts's `if (!profile)` branch guards
+    // against (a token that verifies cleanly but resolves to nobody).
+    const email = `dual-id-unknown-profile-${Date.now()}@rentdito.com`;
     const { supabaseAdmin } = await import('../../src/config/supabase');
     const { data, error } = await supabaseAdmin.auth.admin.createUser({
       email,
@@ -89,26 +85,12 @@ describe('dual-id middleware: req.user.id (Mongo ObjectId) vs req.user.pgId (Pos
       throw new Error(`fixture setup failed: ${error?.message}`);
     }
     try {
-      await prisma.profile.create({
-        data: {
-          id: data.user.id,
-          name: 'No Legacy Id Fixture',
-          email,
-          role: 'user',
-          status: 'active',
-          verificationStatus: 'verified',
-        },
-      });
-
       const token = await tokenForEmail(email);
       const res = await request(buildWhoAmIApp()).get('/whoami').set('Authorization', `Bearer ${token}`);
 
-      expect(res.status).toBe(200);
-      expect(res.body.user.pgId).toBe(data.user.id);
-      // No legacyMongoId to fall back from -> id must equal the UUID.
-      expect(res.body.user.id).toBe(data.user.id);
+      expect(res.status).toBe(401);
+      expect(res.body).toEqual({ status: 'error', message: 'Invalid token.' });
     } finally {
-      await prisma.profile.deleteMany({ where: { id: data.user.id } });
       await supabaseAdmin.auth.admin.deleteUser(data.user.id);
     }
   }, 30000);
@@ -158,7 +140,7 @@ describe('profile cache TTL expiry', () => {
     expect(before.status).toBe(200);
     expect(before.body.user.role).toBe('user');
 
-    await freshPrisma.profile.update({ where: { id: before.body.user.pgId }, data: { role: 'landlord' } });
+    await freshPrisma.profile.update({ where: { id: before.body.user.id }, data: { role: 'landlord' } });
 
     try {
       // Advance the mock clock by less than the TTL: still within the
@@ -175,7 +157,7 @@ describe('profile cache TTL expiry', () => {
       expect(afterExpiry.body.user.role).toBe('landlord');
     } finally {
       // Restore the seed data so no other test observes a mutated role.
-      await freshPrisma.profile.update({ where: { id: before.body.user.pgId }, data: { role: 'user' } });
+      await freshPrisma.profile.update({ where: { id: before.body.user.id }, data: { role: 'user' } });
       await freshPrisma.$disconnect();
     }
   }, 20000);

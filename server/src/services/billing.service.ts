@@ -45,15 +45,18 @@ function stripNulls<T extends Record<string, unknown>>(obj: T): T {
 // Caller resolution.
 //
 // This service is ported: every call site is expected to pass the real
-// Postgres UUID (`req.user!.pgId`), never the legacy Mongo ObjectId. A
+// Postgres UUID (`req.user!.id`), never a legacy Mongo ObjectId. Back when
+// the dual-id strangler was still in place (`req.user!.id` held the Mongo
+// id then; a separate field on `req.user` carried the Postgres UUID --
+// see git history / middleware/auth.ts for the collapsed shape), a
 // previous revision of this file fell back to `prisma.profile.findUnique
 // ({where:{legacyMongoId: userId}})` when `userId` wasn't UUID-shaped, to
-// paper over `payment.controller.ts` still passing `req.user!.id` (the
-// Mongo id) into `getPayments`/`getPaymentsByTenancy`. That fallback has
-// been removed -- `payment.controller.ts` now passes `pgId` like every
-// other caller (see payment.controller.ts) -- and must not come back: it
+// paper over `payment.controller.ts` still passing the Mongo id into
+// `getPayments`/`getPaymentsByTenancy`. That fallback has been removed --
+// `payment.controller.ts` now passes the Postgres UUID like every other
+// caller (see payment.controller.ts) -- and must not come back: it
 // silently absorbed the wrong id space instead of failing loudly, which is
-// exactly the failure mode the dual-id migration is designed to surface.
+// exactly the failure mode the dual-id migration was designed to surface.
 // A syntactically-invalid id (never a legacy Mongo id under correct
 // callers) collapses to `null` here so every call site's existing
 // `if (!user) throw ... 404` fires, instead of letting Prisma throw P2023

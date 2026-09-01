@@ -7,7 +7,7 @@ import * as adminService from '../services/admin.service';
  * GET /api/admin/stats - Platform KPIs
  */
 export const getPlatformStats = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
-    const stats = await adminService.getPlatformStats(req.user!.pgId);
+    const stats = await adminService.getPlatformStats(req.user!.id);
     res.status(200).json({ status: 'success', data: stats });
 });
 
@@ -23,7 +23,7 @@ export const getUsers = catchAsync(async (req: AuthRequest, res: Response): Prom
       page: req.query.page ? parseInt(req.query.page as string) : undefined,
       limit: req.query.limit ? parseInt(req.query.limit as string) : undefined,
     };
-    const result = await adminService.getUsers(req.user!.pgId, filters);
+    const result = await adminService.getUsers(req.user!.id, filters);
     res.status(200).json({
       status: 'success',
       data: result.users,
@@ -36,7 +36,7 @@ export const getUsers = catchAsync(async (req: AuthRequest, res: Response): Prom
  */
 export const updateUserStatus = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
     const { status } = req.body;
-    const user = await adminService.updateUserStatus(req.user!.pgId, req.params.id as string, status);
+    const user = await adminService.updateUserStatus(req.user!.id, req.params.id as string, status);
     res.status(200).json({
       status: 'success',
       message: `User ${status === 'suspended' ? 'suspended' : 'activated'} successfully.`,
@@ -55,7 +55,7 @@ export const getActivityLog = catchAsync(async (req: AuthRequest, res: Response)
       page: req.query.page ? parseInt(req.query.page as string) : undefined,
       limit: req.query.limit ? parseInt(req.query.limit as string) : undefined,
     };
-    const result = await adminService.getActivityLog(req.user!.pgId, filters);
+    const result = await adminService.getActivityLog(req.user!.id, filters);
     res.status(200).json({
       status: 'success',
       data: result.logs,
@@ -71,7 +71,7 @@ export const getPendingVerifications = catchAsync(async (req: AuthRequest, res: 
       page: req.query.page ? parseInt(req.query.page as string) : undefined,
       limit: req.query.limit ? parseInt(req.query.limit as string) : undefined,
     };
-    const result = await adminService.getPendingVerifications(req.user!.pgId, filters);
+    const result = await adminService.getPendingVerifications(req.user!.id, filters);
     res.status(200).json({
       status: 'success',
       data: result.users,
@@ -88,7 +88,7 @@ export const getAllVerifications = catchAsync(async (req: AuthRequest, res: Resp
       page: req.query.page ? parseInt(req.query.page as string) : undefined,
       limit: req.query.limit ? parseInt(req.query.limit as string) : undefined,
     };
-    const result = await adminService.getAllVerifications(req.user!.pgId, filters);
+    const result = await adminService.getAllVerifications(req.user!.id, filters);
     res.status(200).json({
       status: 'success',
       data: result.users,
@@ -100,7 +100,7 @@ export const getAllVerifications = catchAsync(async (req: AuthRequest, res: Resp
  * PATCH /api/admin/verifications/:userId/approve - Approve verification
  */
 export const approveVerification = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
-    const user = await adminService.approveVerification(req.user!.pgId, req.params.userId as string);
+    const user = await adminService.approveVerification(req.user!.id, req.params.userId as string);
     res.status(200).json({
       status: 'success',
       message: 'User verification approved',
@@ -113,7 +113,7 @@ export const approveVerification = catchAsync(async (req: AuthRequest, res: Resp
  */
 export const rejectVerification = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
     const { reason } = req.body;
-    const user = await adminService.rejectVerification(req.user!.pgId, req.params.userId as string, reason);
+    const user = await adminService.rejectVerification(req.user!.id, req.params.userId as string, reason);
     res.status(200).json({
       status: 'success',
       message: 'User verification rejected',

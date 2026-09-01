@@ -60,12 +60,8 @@ export const requirePermission = (key: string) => {
 
     // Staff — check permissions array
     if (role === 'staff') {
-      // TRANSITIONAL: reads `req.user.pgId` (the Postgres profile UUID), not
-      // `req.user.id`, because this middleware was ported to Prisma before
-      // the dual-id strangler was collapsed (see middleware/auth.ts). Once
-      // collapsed, `id` itself becomes the UUID and this reverts to `id`.
       const staff = await prisma.profile.findUnique({
-        where: { id: req.user.pgId },
+        where: { id: req.user.id },
         select: { permissions: true },
       });
       if (!staff || !staff.permissions.includes(key)) {
@@ -99,9 +95,7 @@ export const requirePropertyAccess = () => {
       return;
     }
 
-    // TRANSITIONAL: `pgId` is the Postgres profile UUID -- see the note in
-    // requirePermission() above.
-    const { role, pgId: userId } = req.user;
+    const { role, id: userId } = req.user;
     const propertyId = req.params.propertyId || req.body.propertyId;
 
     if (!propertyId) {

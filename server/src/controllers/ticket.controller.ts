@@ -7,7 +7,7 @@ import * as ticketService from '../services/ticket.service';
  * POST /api/tickets - Tenant creates ticket
  */
 export const createTicket = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
-    const ticket = await ticketService.createTicket(req.user!.pgId, req.body);
+    const ticket = await ticketService.createTicket(req.user!.id, req.body);
     res.status(201).json({
       status: 'success',
       message: 'Maintenance ticket submitted successfully.',
@@ -24,7 +24,7 @@ export const getMyTickets = catchAsync(async (req: AuthRequest, res: Response): 
       priority: req.query.priority as string,
       category: req.query.category as string
     };
-    const tickets = await ticketService.getMyTickets(req.user!.pgId, filters);
+    const tickets = await ticketService.getMyTickets(req.user!.id, filters);
     res.status(200).json({ status: 'success', data: tickets });
 });
 
@@ -39,7 +39,7 @@ export const getTickets = catchAsync(async (req: AuthRequest, res: Response): Pr
       category: req.query.category as string,
       assignedToUserId: req.query.assignedToUserId as string
     };
-    const tickets = await ticketService.getTickets(req.user!.pgId, filters);
+    const tickets = await ticketService.getTickets(req.user!.id, filters);
     res.status(200).json({ status: 'success', data: tickets });
 });
 
@@ -47,7 +47,7 @@ export const getTickets = catchAsync(async (req: AuthRequest, res: Response): Pr
  * GET /api/tickets/:id - Single ticket
  */
 export const getTicketById = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
-    const ticket = await ticketService.getTicketById(req.user!.pgId, req.params.id as string);
+    const ticket = await ticketService.getTicketById(req.user!.id, req.params.id as string);
     res.status(200).json({ status: 'success', data: ticket });
 });
 
@@ -56,7 +56,7 @@ export const getTicketById = catchAsync(async (req: AuthRequest, res: Response):
  */
 export const assignTicket = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
     const ticket = await ticketService.assignTicket(
-      req.user!.pgId,
+      req.user!.id,
       req.params.id as string,
       req.body.staffId,
       'assign'
@@ -73,7 +73,7 @@ export const assignTicket = catchAsync(async (req: AuthRequest, res: Response): 
  */
 export const reassignTicket = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
     const ticket = await ticketService.assignTicket(
-      req.user!.pgId,
+      req.user!.id,
       req.params.id as string,
       req.body.staffId,
       'reassign'
@@ -90,7 +90,7 @@ export const reassignTicket = catchAsync(async (req: AuthRequest, res: Response)
  */
 export const addTicketUpdate = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
     const ticket = await ticketService.addTicketUpdate(
-      req.user!.pgId,
+      req.user!.id,
       req.params.id as string,
       req.body.message
     );
@@ -106,7 +106,7 @@ export const addTicketUpdate = catchAsync(async (req: AuthRequest, res: Response
  */
 export const resolveTicket = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
     const ticket = await ticketService.resolveTicket(
-      req.user!.pgId,
+      req.user!.id,
       req.params.id as string,
       req.body.resolutionNotes
     );
@@ -122,7 +122,7 @@ export const resolveTicket = catchAsync(async (req: AuthRequest, res: Response):
  */
 export const closeTicket = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
     const ticket = await ticketService.closeTicket(
-      req.user!.pgId,
+      req.user!.id,
       req.params.id as string,
       req.body?.closingNotes
     );

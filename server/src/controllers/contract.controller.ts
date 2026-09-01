@@ -8,7 +8,7 @@ import * as contractService from '../services/contract.service';
  */
 export const createFromApplication = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
     const contract = await contractService.createFromApplication(
-      req.user!.pgId,
+      req.user!.id,
       req.body.applicationId
     );
 
@@ -23,7 +23,7 @@ export const createFromApplication = catchAsync(async (req: AuthRequest, res: Re
  * GET /api/contracts/my - Get user's contracts
  */
 export const getMyContracts = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
-    const contracts = await contractService.getMyContracts(req.user!.pgId);
+    const contracts = await contractService.getMyContracts(req.user!.id);
 
     res.status(200).json({
       status: 'success',
@@ -40,7 +40,7 @@ export const getContracts = catchAsync(async (req: AuthRequest, res: Response): 
       propertyId: req.query.propertyId as string
     };
 
-    const contracts = await contractService.getContracts(req.user!.pgId, filters);
+    const contracts = await contractService.getContracts(req.user!.id, filters);
 
     res.status(200).json({
       status: 'success',
@@ -52,7 +52,7 @@ export const getContracts = catchAsync(async (req: AuthRequest, res: Response): 
  * GET /api/contracts/:id - Get contract by ID
  */
 export const getContractById = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
-    const contract = await contractService.getContractById(req.user!.pgId, req.params.id as string);
+    const contract = await contractService.getContractById(req.user!.id, req.params.id as string);
 
     res.status(200).json({
       status: 'success',
@@ -64,7 +64,7 @@ export const getContractById = catchAsync(async (req: AuthRequest, res: Response
  * PATCH /api/contracts/:id - Update contract (draft only)
  */
 export const updateContract = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
-    const contract = await contractService.updateContract(req.user!.pgId, req.params.id as string, req.body);
+    const contract = await contractService.updateContract(req.user!.id, req.params.id as string, req.body);
 
     res.status(200).json({
       status: 'success',
@@ -79,7 +79,7 @@ export const updateContract = catchAsync(async (req: AuthRequest, res: Response)
 export const signContract = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
     const { signatureData, role } = req.body;
     const contract = await contractService.addSignature(
-      req.user!.pgId,
+      req.user!.id,
       req.params.id as string,
       signatureData,
       role
@@ -97,7 +97,7 @@ export const signContract = catchAsync(async (req: AuthRequest, res: Response): 
  */
 export const updateStatus = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
     const contract = await contractService.updateStatus(
-      req.user!.pgId,
+      req.user!.id,
       req.params.id as string,
       req.body.status
     );
@@ -113,7 +113,7 @@ export const updateStatus = catchAsync(async (req: AuthRequest, res: Response): 
  * POST /api/contracts/:id/generate-pdf - Generate PDF for contract
  */
 export const generatePDF = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
-    const result = await contractService.generatePDF(req.user!.pgId, req.params.id as string);
+    const result = await contractService.generatePDF(req.user!.id, req.params.id as string);
 
     res.status(200).json({
       status: 'success',
@@ -126,7 +126,7 @@ export const generatePDF = catchAsync(async (req: AuthRequest, res: Response): P
  * GET /api/contracts/:id/download - Get download URL
  */
 export const getDownloadUrl = catchAsync(async (req: AuthRequest, res: Response): Promise<void> => {
-    const result = await contractService.getDownloadUrl(req.user!.pgId, req.params.id as string);
+    const result = await contractService.getDownloadUrl(req.user!.id, req.params.id as string);
 
     res.status(200).json({
       status: 'success',

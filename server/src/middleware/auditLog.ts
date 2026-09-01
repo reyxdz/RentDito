@@ -37,12 +37,7 @@ export const auditLog = (req: AuthRequest, res: Response, next: NextFunction) =>
 
         await prisma.auditLog.create({
           data: {
-            // TRANSITIONAL: reads `req.user.pgId` (the Postgres profile
-            // UUID), not `req.user.id`, because this middleware was ported
-            // to Prisma before the dual-id strangler was collapsed (see
-            // middleware/auth.ts). Once collapsed, `id` itself becomes the
-            // UUID and this reverts to `id`.
-            userId: req.user.pgId,
+            userId: req.user.id,
             action,
             resourceType,
             resourceId,
